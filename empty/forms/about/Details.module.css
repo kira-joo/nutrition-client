@@ -1,0 +1,84 @@
+/* Details.module.css */
+
+/* Container for the entire page */
+.container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+}
+
+/* Heading style */
+.heading {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #333;
+  text-align: center;
+}
+
+/* Style for the loading state */
+.loading {
+  font-size: 1.5rem;
+  color: #007bff;
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* Style for the error message */
+.error {
+  font-size: 1.5rem;
+  color: #dc3545;
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* Style for the no data message */
+.noData {
+  font-size: 1.2rem;
+  color: #6c757d;
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* List container */
+.list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Style for each item in the list */
+.rectangleBox {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+  margin-bottom: 10px;
+  background-color: #f9f9f9;
+  width: 100%;
+  max-width: 600px;
+  color: #000; /* Set font color to black */
+}
+
+.rectangleBox p {
+  margin: 0;
+  padding: 5px 0;
+  font-size: 1rem;
+  color: #000; /* Set font color to black */
+}
+
+.rectangleBox hr {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin: 10px 0;
+}
+.messageText {
+  display: flex;
+  flex-wrap: wrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px; /* Adjust the max-width as needed */
+  white-space: nowrap;
+}

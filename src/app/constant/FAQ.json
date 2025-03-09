@@ -1,0 +1,60 @@
+{
+  "EN": {
+    "faqAsked": "Most frequently asked questions",
+    "faqCheck": "We try to make things easier for you, please check this FAQ",
+    "faqs": [
+      {
+        "section": "Section 1",
+        "faqs": [
+          {
+            "question": "What is a balanced diet?",
+            "answer": "A balanced diet provides all the essential nutrients your body needs to function optimally. It typically includes a variety of foods from different groups: fruits, vegetables, whole grains, lean proteins, and healthy fats. A balanced diet ensures you're getting sufficient vitamins, minerals, and energy without excess calories.",
+            "sources": "EatRight",
+            "sourceUrl": "https://www.eatright.org/"
+          },
+          {
+            "question": "How much water should I drink daily?",
+            "answer": "The recommended daily intake of water varies by age, gender, and activity level. On average, adults should aim for about 8 glasses (or about 2 liters) per day. However, people who exercise or live in hot climates may need more to stay hydrated.",
+            "sources": "Nutrition.gov",
+            "sourceUrl": "https://www.nutrition.gov/"
+          },
+          {
+            "question": "What are healthy fats?",
+            "answer": "Healthy fats, such as monounsaturated and polyunsaturated fats, are essential for heart health and brain function. These fats can be found in foods like avocados, nuts, seeds, olive oil, and fatty fish (e.g., salmon, mackerel). It's important to avoid trans fats and limit saturated fats.",
+            "sources": "MyPlate",
+            "sourceUrl": "https://www.myplate.gov/"
+          }
+        ]
+      },
+      {
+        "section": "Section 2",
+        "faqs": [
+          {
+            "question": "How can I reduce sugar in my diet?",
+            "answer": "Reducing sugar intake involves cutting back on sugary beverages (soda, juices), processed snacks, and sweets. Opt for natural sugars found in fruits, and try substituting with healthier alternatives like stevia or using smaller amounts of honey or maple syrup.",
+            "sources": "Food Insight",
+            "sourceUrl": "https://foodinsight.org/"
+          },
+          {
+            "question": "What are good sources of protein for vegetarians?",
+            "answer": "Vegetarians can get their protein from various plant-based sources such as lentils, chickpeas, beans, tofu, tempeh, quinoa, nuts, seeds, and dairy products (if not vegan). Combining different protein sources can also help ensure you get all essential amino acids.",
+            "sources": "NutritionFacts",
+            "sourceUrl": "https://nutritionfacts.org/"
+          },
+          {
+            "question": "How do vitamins and minerals affect health?",
+            "answer": "Vitamins and minerals are essential for various bodily functions, including immune support, energy production, and bone health. For example, vitamin C boosts immunity, while calcium and vitamin D are crucial for strong bones. Eating a variety of fruits, vegetables, and whole grains helps provide these nutrients.",
+            "sources": "EatRight",
+            "sourceUrl": "https://www.eatright.org/"
+          },
+          {
+            "question": "What are the benefits of eating whole grains?",
+            "answer": "Whole grains, such as oats, brown rice, quinoa, and whole wheat, are rich in fiber, vitamins, and minerals. They help with digestion, regulate blood sugar levels, and lower the risk of heart disease.",
+            "sources": "MyPlate",
+            "sourceUrl": "https://www.myplate.gov/"
+          }
+        ]
+      }
+    ]
+  }
+}
