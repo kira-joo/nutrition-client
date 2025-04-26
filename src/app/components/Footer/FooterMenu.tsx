@@ -1,4 +1,4 @@
-import { MenuLinks } from "@/app/components/Footer/constant/menu";
+import { FooterMenulist } from "@/app/components/Footer/constant/menu";
 import { Box, Grid, Link, Typography } from "@mui/material";
 
 function FooterMenu() {
@@ -31,7 +31,7 @@ function FooterMenu() {
           ml: { md: 18, xs: 0 },
         }}
       >
-        {MenuLinks.map(({ icon, label, href }, index) => (
+        {FooterMenulist.map(({ icon, label, href }, index) => (
           <Link
             key={index}
             href={href}

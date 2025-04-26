@@ -1,28 +1,31 @@
-import { Container } from "@mui/material"; // Import Box for layout
+import { Box, Container, Typography } from "@mui/material"; // Import Box for layout
 import Faq from "./[locale]/faq/page";
 import SendMessage from "./[locale]/forms/page";
 import Videos from "./[locale]/videos/page";
 import ImageN from "./image";
 
-export default function HomePage() {
+const HomePage = () => {
   return (
     <>
-      <div className="image-section">
+      <Box className="image-section">
         <ImageN />
-      </div>
+      </Box>
+
+      <Box sx={{ padding: 2 }}>
+        <Typography variant="h4" gutterBottom align="center">
+          Videos
+        </Typography>
+        <Videos />
+      </Box>
+
+      <SendMessage />
 
       <Container>
-        <section className="videos-section">
-          <h2>Videos</h2>
-          <Videos />
-        </section>
-
-        <SendMessage />
-
-        <section className="faq-section">
+        <Box sx={{ marginTop: 4 }}>
           <Faq />
-        </section>
+        </Box>
       </Container>
     </>
   );
-}
+};
+export default HomePage;
