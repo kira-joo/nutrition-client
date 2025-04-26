@@ -1,20 +1,20 @@
 "use client";
-import React, { useState } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
 import SendIcon from "@mui/icons-material/Send";
 import {
+  Box,
   Button,
-  TextField,
   CircularProgress,
   Container,
-  Typography,
-  Box,
   Grid,
+  TextField,
+  Typography,
 } from "@mui/material";
-import SuccessMessage from "./SuccessMessage";
-import ErrorMessage from "./ErrorMessage";
+import React, { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { sendEmail } from "../../utils/sendMessage";
+import ErrorMessage from "./ErrorMessage";
 import MessageSVG from "./message";
+import SuccessMessage from "./SuccessMessage";
 
 interface FormValues {
   email: string;
@@ -22,7 +22,7 @@ interface FormValues {
   phone?: string;
 }
 
-const SubmitForm: React.FC = () => {
+const SendMessage: React.FC = () => {
   const {
     register,
     handleSubmit,
@@ -187,4 +187,4 @@ const SubmitForm: React.FC = () => {
   );
 };
 
-export default SubmitForm;
+export default SendMessage;

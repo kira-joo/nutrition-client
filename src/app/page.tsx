@@ -1,17 +1,27 @@
-import Faq from "./[locale]/faq/page";
 import { Container } from "@mui/material"; // Import Box for layout
-
+import Faq from "./[locale]/faq/page";
+import SendMessage from "./[locale]/forms/page";
+import Videos from "./[locale]/videos/page";
 import ImageN from "./image";
 
 export default function HomePage() {
   return (
     <>
-      {/* Container for the image */}
-      <ImageN />
+      <div className="image-section">
+        <ImageN />
+      </div>
 
-      {/* FAQ Section */}
       <Container>
-        <Faq />
+        <section className="videos-section">
+          <h2>Videos</h2>
+          <Videos />
+        </section>
+
+        <SendMessage />
+
+        <section className="faq-section">
+          <Faq />
+        </section>
       </Container>
     </>
   );

@@ -1,7 +1,7 @@
 // DesktopNavbar.tsx
 "use client";
 import { NavigatePages } from "@/app/constant/navigate-pages";
-import { settings } from "@/app/constant/Settings";
+import { settings } from "@/app/constant/settings";
 import {
   Avatar,
   Box,

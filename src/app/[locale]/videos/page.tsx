@@ -1,3 +1,4 @@
+import { AppRoute } from "@/app/constant/AppRoute";
 import { videos } from "@/app/constant/videos";
 import { Box, ImageList, ImageListItem, Typography } from "@mui/material";
 import Link from "next/link";
@@ -45,7 +46,7 @@ export default function Videos() {
           >
             <Link
               style={{ color: "#333333", textDecoration: "none" }} // Change text color to dark gray for contrast
-              href={`/videos/${video.id}`} // Use backticks here
+              href={`${AppRoute.Videos}/${video.id}`} // Use backticks here
               passHref
             >
               <video

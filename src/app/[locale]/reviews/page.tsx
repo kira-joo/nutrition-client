@@ -1,3 +1,4 @@
+import { AppRoute } from "@/app/constant/AppRoute";
 import { Box, ImageList, ImageListItem } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
@@ -46,7 +47,7 @@ export default function Reviews() {
               display: "flex",
             }}
             passHref
-            href={`/reviews/${review.id}`}
+            href={`${AppRoute.Reviews}/${review.id}`}
           >
             <ImageListItem
               sx={{

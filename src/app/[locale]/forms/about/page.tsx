@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 
-import { DataI } from "@/app/interfaces/Data.interface";
+import { DataI } from "@/app/interfaces/data.interface";
 import { fetchAllMessages } from "@/app/utils/Messages";
 
 const DataPage = () => {
