@@ -1,20 +1,20 @@
 // DesktopNavbar.tsx
 "use client";
-import * as React from "react";
+import { NavigatePages } from "@/app/constant/navigate-pages";
+import { settings } from "@/app/constant/settings";
 import {
+  Avatar,
   Box,
   Button,
   IconButton,
-  Tooltip,
   Menu,
   MenuItem,
-  Avatar,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import Link from "next/link";
-import { NavigatePages } from "@/app/constant/navigate-pages";
 import { usePathname } from "next/navigation";
-import { settings } from "@/app/constant/Settings";
+import * as React from "react";
 
 interface DesktopNavbarProps {
   anchorElUser: null | HTMLElement;
