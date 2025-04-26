@@ -12,7 +12,7 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import Link from "next/link";
 import { usePathname } from "next/navigation"; // Import usePathname hook
-import { PAGES } from "@/app/constant/pages";
+import { NavigatePages } from "@/app/constant/navigate-pages";
 
 export default function MobileNavbar() {
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
@@ -52,10 +52,10 @@ export default function MobileNavbar() {
             onKeyDown={toggleDrawer(false)}
           >
             <List>
-              {PAGES.map((page) => (
+              {NavigatePages.map((page, i) => (
                 <ListItem
                   button
-                  key={page.id}
+                  key={i}
                   sx={{
                     backgroundColor:
                       pathname === page.url ? "#99d6d2" : "#ffffff", // Change background if active

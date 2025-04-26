@@ -12,9 +12,9 @@ import {
   Typography,
 } from "@mui/material";
 import Link from "next/link";
-import { SETTINGS } from "@/app/constant/Settings";
-import { PAGES } from "@/app/constant/pages";
+import { NavigatePages } from "@/app/constant/navigate-pages";
 import { usePathname } from "next/navigation";
+import { settings } from "@/app/constant/Settings";
 
 interface DesktopNavbarProps {
   anchorElUser: null | HTMLElement;
@@ -30,11 +30,11 @@ export default function DesktopNavbar({
   return (
     <>
       <Box sx={{ ml: 2, flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-        {PAGES.map((page) => {
+        {NavigatePages.map((page, i) => {
           const isActive = pathname === page.url; // Check if current page matches the URL
           return (
             <Link
-              key={page.id}
+              key={i}
               href={page.url}
               style={{
                 textDecoration: "none",
@@ -85,7 +85,7 @@ export default function DesktopNavbar({
           open={Boolean(anchorElUser)}
           onClose={handleSwitchNavMenu}
         >
-          {SETTINGS.map((setting, index) => {
+          {settings.map((setting, index) => {
             const isActive = pathname === setting.url; // Check if current path matches the setting URL
             return (
               <Link

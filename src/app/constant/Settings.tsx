@@ -1,25 +1,17 @@
-import InfoIcon from "@mui/icons-material/Info";
 import FAQIcon from "@mui/icons-material/HelpOutline";
-import { ReactNode } from "react";
+import InfoIcon from "@mui/icons-material/Info";
+import { settingI } from "../interfaces/setting.interface";
+import { AppRoute } from "./AppRoute";
 
-interface SETTING {
-  id: number;
-  title: string;
-  url: string;
-  icon: ReactNode;
-}
-
-export const SETTINGS: SETTING[] = [
+export const settings: settingI[] = [
   {
-    id: 1,
     title: "About Us",
-    url: "/about_us",
+    url: AppRoute.About_Us,
     icon: <InfoIcon fontSize="small" />,
   },
   {
-    id: 2,
     title: "FAQ",
-    url: "/faq",
+    url: AppRoute.Faq,
     icon: <FAQIcon fontSize="small" />,
   },
 ];

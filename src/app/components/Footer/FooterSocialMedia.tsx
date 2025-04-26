@@ -1,5 +1,5 @@
-import { SOCIALMEDIALINKS } from "@/app/constant/footer/socialMediaLinks";
-import { Box, IconButton, Typography, Grid, Tooltip } from "@mui/material";
+import { SocialMediaLinks } from "@/app/components/Footer/constant/socialMediaLinks";
+import { Box, Grid, IconButton, Tooltip, Typography } from "@mui/material";
 
 function FooterSocialMedia() {
   return (
@@ -22,7 +22,7 @@ function FooterSocialMedia() {
         Connect with me
       </Typography>
       <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
-        {SOCIALMEDIALINKS.map(({ icon, color, href, name }, index) => (
+        {SocialMediaLinks.map(({ icon, color, href, name }, index) => (
           <Tooltip title={name} key={index}>
             <IconButton
               key={index}

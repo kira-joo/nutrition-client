@@ -1,4 +1,4 @@
-import Faq from "./faq/page";
+import Faq from "./[locale]/faq/page";
 import { Container } from "@mui/material"; // Import Box for layout
 
 import ImageN from "./image";

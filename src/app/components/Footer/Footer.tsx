@@ -2,7 +2,7 @@ import { Box, Typography, Grid } from "@mui/material";
 import FooterWelcome from "./FooterWelcome";
 import FooterSocialMedia from "./FooterSocialMedia";
 import FooterMenu from "./FooterMenu";
-import { Name } from "../../constant/constant"; // Assuming Name contains the business owner's info
+import { Name } from "../../constant/name"; // Assuming Name contains the business owner's info
 
 function Footer() {
   return (

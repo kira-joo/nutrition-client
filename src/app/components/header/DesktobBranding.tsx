@@ -1,7 +1,7 @@
 import { Typography, Box } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
-import { Name } from "../../constant/constant";
+import { Name } from "../../constant/name";
 
 const Branding = () => {
   return (
