@@ -1,5 +1,5 @@
-export enum AppRoute {
-  Home = "/",
+const enum AppRoute {
+  Home = "/en",
   About_Us = "/en/about_us",
   Calculator = "/en/calculator",
   Faq = "/en/faq",
@@ -10,3 +10,4 @@ export enum AppRoute {
   Reviews = "/en/reviews",
   Videos = "/en/videos",
 }
+export default AppRoute;

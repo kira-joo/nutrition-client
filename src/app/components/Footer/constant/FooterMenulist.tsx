@@ -1,4 +1,4 @@
-import { AppRoute } from "@/app/constant/AppRoute";
+import AppRoute from "@/constant/AppRoute.enum";
 import CalculateIcon from "@mui/icons-material/Calculate";
 import FAQIcon from "@mui/icons-material/HelpOutline"; // Make sure to import the right icon for FAQ
 import HomeIcon from "@mui/icons-material/Home";

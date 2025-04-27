@@ -1,23 +1,23 @@
 "use client";
-import React, { useState } from "react";
 import {
-  Container,
-  TextField,
-  Button,
-  Typography,
   Box,
-  MenuItem,
+  Button,
+  CircularProgress,
+  Container,
   FormControl,
+  Grid,
   InputLabel,
+  MenuItem,
   Select,
+  TextField,
   ToggleButton,
   ToggleButtonGroup,
-  CircularProgress,
-  Grid,
+  Typography,
 } from "@mui/material";
-import { useForm, Controller } from "react-hook-form";
+import React, { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import DietSVG from "./Calculate";
-import { ActivityLevels  } from "@/app/constant/activity-levels";
+import { ActivityLevels } from "@/constant/activity-levels";
 
 interface FormValues {
   age: number;

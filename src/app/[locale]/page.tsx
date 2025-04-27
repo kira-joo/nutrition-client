@@ -1,10 +1,14 @@
-import { Box, Container, Typography } from "@mui/material"; // Import Box for layout
-import Faq from "./[locale]/faq/page";
-import SendMessage from "./[locale]/forms/page";
-import Videos from "./[locale]/videos/page";
+"use client";
+import { DictionaryFiles } from "@/constant/DictionaryFiles";
+import useI18n from "@/hooks/useI18n";
+import { Box, Container, Typography } from "@mui/material";
+import Faq from "./faq/page";
+import SendMessage from "./forms/page";
 import ImageN from "./image";
+import Videos from "./videos/page";
 
 const HomePage = () => {
+  const { t } = useI18n(DictionaryFiles.Home);
   return (
     <>
       <Box className="image-section">
@@ -13,7 +17,7 @@ const HomePage = () => {
 
       <Box sx={{ padding: 2 }}>
         <Typography variant="h4" gutterBottom align="center">
-          Videos
+          {t("video")}
         </Typography>
         <Videos />
       </Box>

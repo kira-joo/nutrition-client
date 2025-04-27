@@ -1,40 +1,36 @@
 "use client";
-import * as React from "react";
-import {
-  Box,
-  Container,
-  Typography,
-  Card,
-  CardContent,
-  Grid,
-  Button,
-  Avatar,
-} from "@mui/material";
+import { DictionaryFiles } from "@/constant/DictionaryFiles";
+import useI18n from "@/hooks/useI18n";
 import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
+import {
+  Avatar,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Container,
+  Grid,
+  Typography,
+} from "@mui/material";
 
-export default function AboutUs() {
+const AboutUs = () => {
+  const { t } = useI18n(DictionaryFiles.AboutUs);
+
   return (
     <>
-      <Box
-        sx={{
-          background: "#6ce6d0",
-          py: 5,
-        }}
-      >
+      <Box sx={{ background: "#6ce6d0", py: 5 }}>
         <Box
           sx={{
-            background: "#6ce6d0", // Softer tones#e3f4f1
+            background: "#6ce6d0",
             py: 5,
-            direction: "rtl",
-            textAlign: "right",
           }}
         >
           <Container maxWidth="md">
             {/* Header */}
             <Box textAlign="center" mb={4}>
               <Avatar
-                alt="Dr.Omnia Ahmed"
+                alt={t("avatarAlt")}
                 src="../favicon.ico"
                 sx={{ width: 120, height: 120, mx: "auto" }}
               />
@@ -48,10 +44,10 @@ export default function AboutUs() {
                   color: "#f27a8c",
                 }}
               >
-                مرحبا بكم!
+                {t("welcome")}
               </Typography>
               <Typography variant="subtitle1" color="#000000" gutterBottom>
-                د. أمنية أحمد - أخصائية التغذية العلاجية والسمنة والنحافة
+                {t("subtitle")}
               </Typography>
             </Box>
 
@@ -59,7 +55,7 @@ export default function AboutUs() {
             <Card
               sx={{
                 p: 3,
-                backgroundColor: "#cff7f0", // Softer background for card
+                backgroundColor: "#cff7f0",
                 boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
               }}
             >
@@ -68,51 +64,44 @@ export default function AboutUs() {
                   variant="h6"
                   component="h2"
                   color="primary"
-                  sx={{ mb: 2, fontWeight: "bold", color: "#f27a8c" }} // Softer primary color
+                  sx={{ mb: 2, fontWeight: "bold", color: "#f27a8c" }}
                 >
-                  بتحس بتعب وإرهاق من أقل مجهود؟ عايز جسم رياضي ورشيق؟ بتعاني من
-                  مشاكل الوزن؟
+                  {t("feelTired")}
                 </Typography>
                 <Typography variant="body1" paragraph>
-                  عايزه نظام غذائي مناسب لحياتك؟! أنا د. أمنية أحمد، أخصائية
-                  التغذية العلاجية والسمنة والنحافة، حاصلة علي بكالوريوس الصيدلة
-                  جامعة أسيوط، ودبلومة التغذية العلاجية والسمنة والنحافة جامعة
-                  أسيوط.
+                  {t("description1")}
                 </Typography>
                 <Typography variant="body1" paragraph>
-                  بقدم متابعات واستشارات غذائية علاجية عبر الإنترنت، مخصصة لكل
-                  اللي بيعاني من مشاكل الوزن سواء السمنة أو النحافة، ولكل اللي
-                  عايز يحسن صحته العامة. وكمان بنقدم تغذية للحوامل والمرضعات
-                  والأطفال والرياضيين.
+                  {t("description2")}
                 </Typography>
 
                 <Typography
                   variant="h6"
                   component="h2"
                   color="primary"
-                  sx={{ mt: 4, mb: 2, fontWeight: "bold", color: "#f27a8c" }} // Softer primary color
+                  sx={{ mt: 4, mb: 2, fontWeight: "bold", color: "#f27a8c" }}
                 >
-                  في برنامج المتابعة معايا هتحصل علي:
+                  {t("programHeader")}
                 </Typography>
                 <ul>
                   <li>
                     <Typography variant="body1">
-                      ✅ خطة تغذوية شخصية مصممة خصيصاً لك.
+                      {t("program.benefit1")}
                     </Typography>
                   </li>
                   <li>
                     <Typography variant="body1">
-                      ✅ متابعة يومية لضمان التزامك ونجاحك.
+                      {t("program.benefit2")}
                     </Typography>
                   </li>
                   <li>
                     <Typography variant="body1">
-                      ✅ نصائح عملية تناسب نمط حياتك.
+                      {t("program.benefit3")}
                     </Typography>
                   </li>
                   <li>
                     <Typography variant="body1">
-                      ✅ دعم مستمر لتحقيق أهدافك الصحية.
+                      {t("program.benefit4")}
                     </Typography>
                   </li>
                 </ul>
@@ -121,35 +110,34 @@ export default function AboutUs() {
                   variant="h6"
                   component="h2"
                   color="primary"
-                  sx={{ mt: 4, mb: 2, fontWeight: "bold", color: "#f27a8c" }} // Softer primary color
+                  sx={{ mt: 4, mb: 2, fontWeight: "bold", color: "#f27a8c" }}
                 >
-                  ليه تختارني؟
+                  {t("whyChooseMe")}
                 </Typography>
                 <ul>
                   <li>
                     <Typography variant="body1">
-                      خبرة في مجال الصيدلة والأدوية لأكثر من ٦ سنوات.
+                      {t("reasons.reason1")}
                     </Typography>
                   </li>
                   <li>
                     <Typography variant="body1">
-                      خبرة واحترافية في تقديم الاستشارات الغذائية لأكثر من خمس
-                      سنوات.
+                      {t("reasons.reason2")}
                     </Typography>
                   </li>
                   <li>
                     <Typography variant="body1">
-                      متابعة دقيقة وشخصية لكل حالة.
+                      {t("reasons.reason3")}
                     </Typography>
                   </li>
                   <li>
                     <Typography variant="body1">
-                      دعم مستمر وتحفيز لتحقيق أهدافك الصحية.
+                      {t("reasons.reason4")}
                     </Typography>
                   </li>
                   <li>
                     <Typography variant="body1">
-                      أسعار تنافسية وعروض خاصة.
+                      {t("reasons.reason5")}
                     </Typography>
                   </li>
                 </ul>
@@ -175,7 +163,7 @@ export default function AboutUs() {
                   startIcon={<LocalPhoneIcon />}
                   href="tel:01155924248"
                 >
-                  اتصل بنا: 01155924248
+                  {t("contact.phone")} 01155924248
                 </Button>
               </Grid>
               <Grid item>
@@ -191,7 +179,7 @@ export default function AboutUs() {
                   startIcon={<MailOutlineIcon />}
                   href="mailto:omniaalnagy@gmail.com"
                 >
-                  راسلنا عبر البريد الإلكتروني
+                  {t("contact.email")}
                 </Button>
               </Grid>
             </Grid>
@@ -200,4 +188,6 @@ export default function AboutUs() {
       </Box>
     </>
   );
-}
+};
+
+export default AboutUs;

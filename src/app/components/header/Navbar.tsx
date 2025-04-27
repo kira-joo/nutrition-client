@@ -1,14 +1,14 @@
 // Navbar.tsx
 "use client";
-import * as React from "react";
 import { Container, Toolbar } from "@mui/material";
-import MobileNavbar from "./MobileNavbar";
+import * as React from "react";
 import DesktopNavbar from "./DesktopNavbar";
+import MobileNavbar from "./MobileNavbar";
 
-import MobileBranding from "./MobileBranding";
 import Branding from "./DesktobBranding";
+import MobileBranding from "./MobileBranding";
 
-export default function Navbar() {
+const Navbar = () => {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
@@ -34,4 +34,5 @@ export default function Navbar() {
       </Toolbar>
     </Container>
   );
-}
+};
+export default Navbar;

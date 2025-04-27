@@ -1,11 +1,12 @@
+import AppRoute from "@/constant/AppRoute.enum";
+import { Name } from "@/constant/name";
+import { Box } from "@mui/material"; // Import Box from MUI
 import Image from "next/image";
 import Link from "next/link";
-import { Name } from "../../constant/name";
-import { Box } from "@mui/material"; // Import Box from MUI
 
 const MobileBranding = () => {
   return (
-    <Link href="/">
+    <Link href={AppRoute.Home}>
       <Box
         sx={{
           display: { xs: "flex", md: "none" }, // Display flex on extra-small screens and none on medium and larger screens

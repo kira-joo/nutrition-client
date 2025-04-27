@@ -1,5 +1,6 @@
 // app/videos/[id]/page.tsx
-import { videos } from "@/app/constant/videos";
+
+import { videos } from "@/constant/videos";
 import { Box, Button, Typography } from "@mui/material";
 import { notFound } from "next/navigation";
 

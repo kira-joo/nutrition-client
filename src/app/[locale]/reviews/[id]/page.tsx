@@ -1,6 +1,7 @@
+import { Box, Button, ImageListItem, Typography } from "@mui/material";
 import Image from "next/image";
-import { Box, Typography, Button, ImageListItem } from "@mui/material";
-import { reviews } from "@/app/constant/reviews";
+
+import { reviews } from "@/constant/reviews";
 import { notFound } from "next/navigation";
 
 // Fetches data for the specific `id`

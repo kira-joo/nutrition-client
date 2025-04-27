@@ -1,8 +1,8 @@
-import { AppRoute } from "@/app/constant/AppRoute";
+import AppRoute from "@/constant/AppRoute.enum";
+import { reviews } from "@/constant/reviews";
 import { Box, ImageList, ImageListItem } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
-import { reviews } from "../../constant/reviews";
 
 export default function Reviews() {
   return (

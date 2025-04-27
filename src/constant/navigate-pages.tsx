@@ -1,37 +1,39 @@
+import navigatePagesI from "@/app/interfaces/navigate-pages.interface";
 import FastfoodIcon from "@mui/icons-material/Fastfood";
 import HomeIcon from "@mui/icons-material/Home";
 import InfoIcon from "@mui/icons-material/Info";
 import MessageIcon from "@mui/icons-material/Message";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
-import { AppRoute } from "./AppRoute";
+import AppRoute from "./AppRoute.enum";
 
-export const NavigatePages = [
+export const NavigatePages: navigatePagesI[] = [
   {
-    title: "Home",
-    description: "Welcome to the home page",
+    title: "home",
+    description: "description-Home",
     url: AppRoute.Home,
     icon: <HomeIcon />,
   },
   {
-    title: "About",
-    description: "Learn more about us",
+    title: "about",
+    description: "description-Calories",
     url: AppRoute.About_Us,
     icon: <InfoIcon />,
   },
   {
-    title: "Calories",
-    description: "Nutrition Calculator",
+    title: "calories",
+    description: "description-Calories",
     url: AppRoute.Calculator,
     icon: <FastfoodIcon />,
   },
   {
-    title: "Recipes",
-    description: "Find delicious recipes",
+    title: "recipes",
+    description: "description-Recipes",
     url: AppRoute.Recipes,
     icon: <RestaurantMenuIcon />,
   },
   {
-    title: "Send Message",
+    title: "sendMessage",
+    description: "description-SendMessage",
     url: AppRoute.Forms,
     icon: <MessageIcon fontSize="small" />,
   },

@@ -11,7 +11,8 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { sendEmail } from "../../utils/sendMessage";
+
+import { sendEmail } from "@/utils/sendMessage";
 import ErrorMessage from "./ErrorMessage";
 import MessageSVG from "./message";
 import SuccessMessage from "./SuccessMessage";

@@ -20,7 +20,7 @@ import {
 import { useEffect, useState } from "react";
 
 import { DataI } from "@/app/interfaces/data.interface";
-import { fetchAllMessages } from "@/app/utils/Messages";
+import { fetchAllMessages } from "@/utils/Messages";
 
 const DataPage = () => {
   const [data, setData] = useState<DataI[]>([]);

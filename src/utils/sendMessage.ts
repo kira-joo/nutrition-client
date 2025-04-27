@@ -1,4 +1,4 @@
-import { postRequest } from "../api/post";
+import { postRequest } from "@/app/api/post";
 
 export const sendEmail = async (data: {
   email: string;

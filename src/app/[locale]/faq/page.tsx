@@ -1,3 +1,4 @@
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
   Accordion,
   AccordionDetails,
@@ -6,9 +7,8 @@ import {
   Link,
   Typography,
 } from "@mui/material";
-import faqData from "../../constant/FAQ.json"; // Adjust the path to your FAQ JSON file
+import faqData from "../../../constant/FAQ.json"; // Adjust the path to your FAQ JSON file
 import TitleAndBodyComponent from "./TitleAndBodyComponent";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const Faq = () => {
   // Retrieve FAQ data for English (EN)

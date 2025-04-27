@@ -1,5 +1,5 @@
-import { AppRoute } from "@/app/constant/AppRoute";
-import { videos } from "@/app/constant/videos";
+import AppRoute from "@/constant/AppRoute.enum";
+import { videos } from "@/constant/videos";
 import { Box, ImageList, ImageListItem, Typography } from "@mui/material";
 import Link from "next/link";
 

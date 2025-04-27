@@ -1,8 +1,8 @@
-import { Box, Typography, Grid } from "@mui/material";
-import FooterWelcome from "./FooterWelcome";
-import FooterSocialMedia from "./FooterSocialMedia";
+import { Box, Grid, Typography } from "@mui/material";
+import { Name } from "../../../constant/name"; // Assuming Name contains the business owner's info
 import FooterMenu from "./FooterMenu";
-import { Name } from "../../constant/name"; // Assuming Name contains the business owner's info
+import FooterSocialMedia from "./FooterSocialMedia";
+import FooterWelcome from "./FooterWelcome";
 
 function Footer() {
   return (
