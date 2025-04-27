@@ -30,7 +30,7 @@ interface LocaleLayoutProps {
   children: ReactNode;
   params: { locale: Locale };
 }
-export default function LocaleLayout({ children, params }: LocaleLayoutProps) {
+const LocaleLayout = ({ children, params }: LocaleLayoutProps) => {
   const { locale } = params;
 
   return (
@@ -54,4 +54,5 @@ export default function LocaleLayout({ children, params }: LocaleLayoutProps) {
       </body>
     </html>
   );
-}
+};
+export default LocaleLayout;

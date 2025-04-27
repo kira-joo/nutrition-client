@@ -14,4 +14,13 @@ export type TranslationKeyMap = {
   [DictionaryFiles.AboutUs]: NestedKeyOf<
     typeof import("../i18n/locales/en/about-us.json")
   >;
+  [DictionaryFiles.SendMessage]: NestedKeyOf<
+    typeof import("../i18n/locales/en/send-message.json")
+  >;
+  [DictionaryFiles.Recipes]: NestedKeyOf<
+    typeof import("../i18n/locales/en/recipes.json")
+  >;
+  [DictionaryFiles.Calculator]: NestedKeyOf<
+    typeof import("../i18n/locales/en/calculator.json")
+  >;
 };

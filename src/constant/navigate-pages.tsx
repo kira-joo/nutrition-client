@@ -34,7 +34,7 @@ export const NavigatePages: navigatePagesI[] = [
   {
     title: "sendMessage",
     description: "description-SendMessage",
-    url: AppRoute.Forms,
+    url: AppRoute.SendMessage,
     icon: <MessageIcon fontSize="small" />,
   },
 ];

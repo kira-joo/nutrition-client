@@ -1,24 +1,22 @@
+"use client";
+import AppLink from "@/app/components/AppLink/AppLink";
+import { Recipe } from "@/app/interfaces/recipes";
+import AppRoute from "@/constant/AppRoute.enum";
+import { DictionaryFiles } from "@/constant/DictionaryFiles";
+import useI18n from "@/hooks/useI18n";
+import { Card, CardContent, CardMedia, Typography } from "@mui/material";
 import React from "react";
-import { Card, CardMedia, CardContent, Typography } from "@mui/material";
-import Link from "next/link"; // Import Link from Next.js
 
-interface ResourceCardProps {
-  image: string; // URL of the resource image
-  title: string; // Title of the resource
-  description: string; // Short description of the resource
-  foodGroup: string[]; // Required food groups for the resource
-  category?: string; // Optional category for the resource
-  id: number; // Required ID for the resource link
-}
-
-const RecipesCard: React.FC<ResourceCardProps> = ({
+const RecipesCard: React.FC<Recipe> = ({
   image,
   title,
   description,
   foodGroup,
   category,
-  id, // Add id as a required prop
+  id,
 }) => {
+  const { t } = useI18n(DictionaryFiles.Recipes);
+
   return (
     <Card
       sx={{
@@ -35,23 +33,20 @@ const RecipesCard: React.FC<ResourceCardProps> = ({
           component="div"
           sx={{ fontWeight: "bold", marginBottom: 1 }}
         >
-          <Link
-            href={`/recipes/${id}`}
-            style={{ textDecoration: "none" }} // Remove default link underline
-          >
+          <AppLink href={AppRoute.Recipe} params={{ id }}>
             <Typography
               sx={{
-                color: "#007B7F", // Default link color
+                color: "#007B7F",
                 "&:hover": {
-                  color: "#005B5B", // Change color on hover
+                  color: "#005B5B",
                 },
               }}
-              component="span" // Use span to ensure proper styling
+              component="span"
               variant="h6"
             >
-              {title}
+              {t(title)}
             </Typography>
-          </Link>
+          </AppLink>
         </Typography>
 
         <Typography
@@ -59,7 +54,7 @@ const RecipesCard: React.FC<ResourceCardProps> = ({
           color="text.secondary"
           sx={{ marginBottom: 1 }}
         >
-          {description}
+          {t(description)}
         </Typography>
 
         <Typography
@@ -68,21 +63,26 @@ const RecipesCard: React.FC<ResourceCardProps> = ({
           sx={{ marginBottom: 1 }}
         >
           <span style={{ color: "#007B7F", fontWeight: "bold" }}>
-            Food group:{" "}
+            {t("Food group")}:{" "}
           </span>
-          {foodGroup.join(", ")} {/* Display food groups */}
+          {foodGroup.map((group, index) => (
+            <span key={index}>
+              {t(group)}
+              {index < foodGroup.length - 1 ? ", " : ""}
+            </span>
+          ))}
         </Typography>
 
-        {category && ( // Conditionally render the category if it exists
+        {category && (
           <Typography
             variant="body2"
             color="text.secondary"
             sx={{ marginBottom: 1 }}
           >
             <span style={{ color: "#007B7F", fontWeight: "bold" }}>
-              Category:{" "}
+              {t("Category")}:{" "}
             </span>
-            {category}
+            {t(category)}
           </Typography>
         )}
       </CardContent>

@@ -3,8 +3,8 @@ import { DictionaryFiles } from "@/constant/DictionaryFiles";
 import useI18n from "@/hooks/useI18n";
 import { Box, Container, Typography } from "@mui/material";
 import Faq from "./faq/page";
-import SendMessage from "./forms/page";
 import ImageN from "./image";
+import SendMessage from "./send-message/page";
 import Videos from "./videos/page";
 
 const HomePage = () => {
@@ -21,9 +21,9 @@ const HomePage = () => {
         </Typography>
         <Videos />
       </Box>
-
-      <SendMessage />
-
+      <Box sx={{ padding: 2, justifyContent: "center", display: "flex" }}>
+        <SendMessage />
+      </Box>
       <Container>
         <Box sx={{ marginTop: 4 }}>
           <Faq />

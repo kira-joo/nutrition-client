@@ -1,4 +1,7 @@
 "use client";
+import { DictionaryFiles } from "@/constant/DictionaryFiles";
+import useI18n from "@/hooks/useI18n";
+import { sendEmail } from "@/utils/sendMessage";
 import SendIcon from "@mui/icons-material/Send";
 import {
   Box,
@@ -11,8 +14,6 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-
-import { sendEmail } from "@/utils/sendMessage";
 import ErrorMessage from "./ErrorMessage";
 import MessageSVG from "./message";
 import SuccessMessage from "./SuccessMessage";
@@ -24,6 +25,7 @@ interface FormValues {
 }
 
 const SendMessage: React.FC = () => {
+  const { t } = useI18n(DictionaryFiles.SendMessage);
   const {
     register,
     handleSubmit,
@@ -49,10 +51,10 @@ const SendMessage: React.FC = () => {
 
     try {
       await sendEmail(data);
-      setSuccess("Message sent successfully!");
+      setSuccess(t("MessageSentSuccessfully"));
       reset();
     } catch (err) {
-      setFetchError("Failed to send Mail. Please try again later.");
+      setFetchError(t("FailedToSendMail"));
     } finally {
       setLoading(false);
     }
@@ -80,10 +82,10 @@ const SendMessage: React.FC = () => {
         {/* Right Column: Contact Form */}
         <Grid item xs={12} md={6}>
           <Typography variant="h4" gutterBottom align="center">
-            Send Message
+            {t("SendMessage")}
           </Typography>
           <Typography variant="body1" gutterBottom align="center">
-            We would love to hear from you! Send us your message below.
+            {t("WeWouldLoveToHearFromYou")}
           </Typography>
 
           <Box
@@ -92,14 +94,14 @@ const SendMessage: React.FC = () => {
             sx={{ mt: 3 }}
           >
             <TextField
-              label="Email"
+              label={t("Email")}
               fullWidth
               variant="outlined"
               {...register("email", {
-                required: "Email is required",
+                required: t("EmailIsRequired"),
                 pattern: {
                   value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: "Please enter a valid email address",
+                  message: t("PleaseEnterValidEmail"),
                 },
               })}
               error={!!errors.email}
@@ -107,20 +109,20 @@ const SendMessage: React.FC = () => {
             />
 
             <TextField
-              label="Message"
+              label={t("Message")}
               multiline
               rows={4}
               fullWidth
               variant="outlined"
               {...register("message", {
-                required: "Message is required",
+                required: t("MessageIsRequired"),
                 minLength: {
                   value: 1,
-                  message: "Message cannot be empty",
+                  message: t("MessageCannotBeEmpty"),
                 },
                 maxLength: {
                   value: 500,
-                  message: "Message must be under 500 characters",
+                  message: t("MessageMustBeUnder500Characters"),
                 },
               })}
               error={!!errors.message}
@@ -129,13 +131,13 @@ const SendMessage: React.FC = () => {
             />
 
             <TextField
-              label="Phone Number (Optional)"
+              label={t("PhoneNumberOptional")}
               fullWidth
               variant="outlined"
               {...register("phone", {
                 pattern: {
                   value: /^[+]?[0-9]{11}$/,
-                  message: "Invalid phone number, must be 11 digits",
+                  message: t("InvalidPhoneNumber"),
                 },
               })}
               error={!!errors.phone}
@@ -148,15 +150,22 @@ const SendMessage: React.FC = () => {
               fullWidth
               variant="contained"
               color="primary"
-              endIcon={loading ? <CircularProgress size={24} /> : <SendIcon />}
+              endIcon={
+                loading ? (
+                  <CircularProgress size={24} />
+                ) : (
+                  <SendIcon sx={{ mx: 1 }} />
+                )
+              }
               disabled={loading}
               sx={{
                 mt: 2,
                 backgroundColor: "#4caf50",
+                marginX: "auto",
                 "&:hover": { backgroundColor: "#388e3c" },
               }}
             >
-              {loading ? "Sending..." : "Send Email"}
+              {loading ? t("Sending") : t("SendEmail")}
             </Button>
           </Box>
         </Grid>
@@ -164,9 +173,9 @@ const SendMessage: React.FC = () => {
         <Grid
           item
           xs={12}
-          md={6} // Show on md and up
+          md={6}
           sx={{
-            display: { xs: "none", md: "flex" }, // Hide on xs and sm devices
+            display: { xs: "none", md: "flex" },
             justifyContent: "center",
             alignItems: "center",
             mb: 20,
@@ -180,7 +189,9 @@ const SendMessage: React.FC = () => {
               maxHeight: "400px",
             }}
           >
-            <MessageSVG /> {/* Replace with your SVG */}
+            <Box>
+              <MessageSVG />
+            </Box>
           </Box>
         </Grid>
       </Grid>

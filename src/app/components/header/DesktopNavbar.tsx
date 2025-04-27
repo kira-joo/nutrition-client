@@ -13,9 +13,9 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import * as React from "react";
+import AppLink from "../AppLink/AppLink";
 
 interface DesktopNavbarProps {
   anchorElUser: null | HTMLElement;
@@ -34,14 +34,7 @@ const DesktopNavbar = ({
         {NavigatePages.map((page, i) => {
           const isActive = pathname === page.url;
           return (
-            <Link
-              key={i}
-              href={page.url}
-              style={{
-                textDecoration: "none",
-                color: "inherit",
-              }}
-            >
+            <AppLink key={i} href={page.url}>
               <Button
                 sx={{
                   my: 2,
@@ -59,7 +52,7 @@ const DesktopNavbar = ({
               >
                 {t(page.title as keyof typeof t)}
               </Button>
-            </Link>
+            </AppLink>
           );
         })}
       </Box>
@@ -87,14 +80,7 @@ const DesktopNavbar = ({
           onClose={handleSwitchNavMenu}
         >
           {settings.map((setting, index) => (
-            <Link
-              key={index}
-              href={setting.url}
-              style={{
-                textDecoration: "none",
-                color: "inherit",
-              }}
-            >
+            <AppLink key={index} href={setting.url}>
               <MenuItem
                 onMouseEnter={(e: {
                   currentTarget: { style: { color: string } };
@@ -122,7 +108,7 @@ const DesktopNavbar = ({
                   {t(setting.title as keyof typeof t)}
                 </Typography>
               </MenuItem>
-            </Link>
+            </AppLink>
           ))}
         </Menu>
       </Box>

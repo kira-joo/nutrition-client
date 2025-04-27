@@ -1,9 +1,9 @@
+import AppLink from "@/app/components/AppLink/AppLink";
 import AppRoute from "@/constant/AppRoute.enum";
 import { videos } from "@/constant/videos";
 import { Box, ImageList, ImageListItem, Typography } from "@mui/material";
-import Link from "next/link";
 
-export default function Videos() {
+const Videos = () => {
   return (
     <Box sx={{ display: "flex", justifyContent: "center" }}>
       <ImageList
@@ -44,9 +44,10 @@ export default function Videos() {
               },
             }}
           >
-            <Link
-              style={{ color: "#333333", textDecoration: "none" }} // Change text color to dark gray for contrast
-              href={`${AppRoute.Videos}/${video.id}`} // Use backticks here
+            <AppLink
+              style={{ color: "#333333" }} // Change text color to dark gray for contrast
+              href={AppRoute.Videos}
+              params={{ id: video.id }}
               passHref
             >
               <video
@@ -71,10 +72,11 @@ export default function Videos() {
               >
                 {video.title}
               </Typography>
-            </Link>
+            </AppLink>
           </ImageListItem>
         ))}
       </ImageList>
     </Box>
   );
-}
+};
+export default Videos;

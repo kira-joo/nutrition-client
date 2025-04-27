@@ -2,7 +2,7 @@ import AppRoute from "@/constant/AppRoute.enum";
 import { Name } from "@/constant/name";
 import { Box } from "@mui/material";
 import Image from "next/image";
-import Link from "next/link";
+import AppLink from "../AppLink/AppLink";
 
 const Branding = () => {
   return (
@@ -15,14 +15,14 @@ const Branding = () => {
     >
       {/* Logo for medium and larger screens */}
       <Box>
-        <Link href={AppRoute.Home} passHref>
+        <AppLink href={AppRoute.Home}>
           <Image
             src="/images/leftLogo.png" // Replace with the path to your logo
             alt={Name.NavProfile}
             width={150} // Adjust based on the size of your logo
             height={50} // Adjust based on the size of your logo
           />
-        </Link>
+        </AppLink>
       </Box>
     </Box>
   );

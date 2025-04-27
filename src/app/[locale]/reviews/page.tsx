@@ -1,10 +1,10 @@
+import AppLink from "@/app/components/AppLink/AppLink";
 import AppRoute from "@/constant/AppRoute.enum";
 import { reviews } from "@/constant/reviews";
 import { Box, ImageList, ImageListItem } from "@mui/material";
 import Image from "next/image";
-import Link from "next/link";
 
-export default function Reviews() {
+const Reviews = () => {
   return (
     <Box
       flexWrap="wrap"
@@ -38,7 +38,7 @@ export default function Reviews() {
         }}
       >
         {reviews.map((review, i) => (
-          <Link
+          <AppLink
             key={i}
             style={{
               color: "#007B7F", // Link Color
@@ -47,7 +47,8 @@ export default function Reviews() {
               display: "flex",
             }}
             passHref
-            href={`${AppRoute.Reviews}/${review.id}`}
+            href={AppRoute.Reviews}
+            params={{ id: review.id }} // Pass the ID as a parameter
           >
             <ImageListItem
               sx={{
@@ -77,9 +78,10 @@ export default function Reviews() {
                 }}
               />
             </ImageListItem>
-          </Link>
+          </AppLink>
         ))}
       </ImageList>
     </Box>
   );
-}
+};
+export default Reviews;

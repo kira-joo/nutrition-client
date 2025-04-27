@@ -1,0 +1,17 @@
+{
+  "SendMessage": "إرسال رسالة",
+  "WeWouldLoveToHearFromYou": "يسعدنا سماع رأيك! أرسل لنا رسالتك أدناه.",
+  "Email": "البريد الإلكتروني",
+  "Message": "الرسالة",
+  "PhoneNumberOptional": "رقم الهاتف (اختياري)",
+  "Sending": "جارٍ الإرسال...",
+  "SendEmail": "إرسال البريد الإلكتروني",
+  "EmailIsRequired": "البريد الإلكتروني مطلوب",
+  "PleaseEnterValidEmail": "يرجى إدخال بريد إلكتروني صالح",
+  "MessageIsRequired": "الرسالة مطلوبة",
+  "MessageCannotBeEmpty": "لا يمكن أن تكون الرسالة فارغة",
+  "MessageMustBeUnder500Characters": "يجب ألا تتجاوز الرسالة 500 حرف",
+  "InvalidPhoneNumber": "رقم الهاتف غير صالح، يجب أن يتكون من 11 رقمًا",
+  "MessageSentSuccessfully": "تم إرسال الرسالة بنجاح!",
+  "FailedToSendMail": "فشل في إرسال البريد. يرجى المحاولة لاحقاً."
+}

@@ -10,13 +10,13 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import Link from "next/link";
 import { usePathname } from "next/navigation"; // Import usePathname hook
 import * as React from "react";
+import AppLink from "../AppLink/AppLink";
 
-export default function MobileNavbar() {
+const MobileNavbar = () => {
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
-  const pathname = usePathname(); // Get the current path
+  const pathname = usePathname();
 
   const toggleDrawer =
     (open: boolean) => (event: React.MouseEvent | React.KeyboardEvent) => {
@@ -46,7 +46,7 @@ export default function MobileNavbar() {
 
         <Drawer anchor="left" open={isDrawerOpen} onClose={toggleDrawer(false)}>
           <Box
-            sx={{ width: 250 }} // Set width of the sidebar
+            sx={{ width: 250 }}
             role="presentation"
             onClick={toggleDrawer(false)}
             onKeyDown={toggleDrawer(false)}
@@ -58,25 +58,24 @@ export default function MobileNavbar() {
                   key={i}
                   sx={{
                     backgroundColor:
-                      pathname === page.url ? "#99d6d2" : "#ffffff", // Change background if active
+                      pathname === page.url ? "#99d6d2" : "#ffffff",
                     "&:hover": {
-                      backgroundColor: "#99d6d2", // Darken on hover
+                      backgroundColor: "#99d6d2",
                     },
                   }}
                 >
-                  <Link
+                  <AppLink
                     href={page.url}
                     style={{
-                      color: pathname === page.url ? "#007B7F" : "#333333", // Change text color if active
-                      textDecoration: "none",
-                      display: "flex", // Flex layout for icon and text
+                      color: pathname === page.url ? "#007B7F" : "#333333",
+                      display: "flex",
                       alignItems: "center",
-                      width: "100%", // Ensure the link takes full width
+                      width: "100%",
                     }}
                   >
                     <ListItemIcon>{page.icon}</ListItemIcon>
                     <ListItemText primary={page.title} />
-                  </Link>
+                  </AppLink>
                 </ListItem>
               ))}
             </List>
@@ -85,4 +84,5 @@ export default function MobileNavbar() {
       </Box>
     </>
   );
-}
+};
+export default MobileNavbar;

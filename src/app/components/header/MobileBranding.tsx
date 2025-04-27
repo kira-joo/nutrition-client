@@ -2,11 +2,11 @@ import AppRoute from "@/constant/AppRoute.enum";
 import { Name } from "@/constant/name";
 import { Box } from "@mui/material"; // Import Box from MUI
 import Image from "next/image";
-import Link from "next/link";
+import AppLink from "../AppLink/AppLink";
 
 const MobileBranding = () => {
   return (
-    <Link href={AppRoute.Home}>
+    <AppLink href={AppRoute.Home}>
       <Box
         sx={{
           display: { xs: "flex", md: "none" }, // Display flex on extra-small screens and none on medium and larger screens
@@ -21,7 +21,7 @@ const MobileBranding = () => {
           height={50} // Adjust based on the size of your logo
         />
       </Box>
-    </Link>
+    </AppLink>
   );
 };
 

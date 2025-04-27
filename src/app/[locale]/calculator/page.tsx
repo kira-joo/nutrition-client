@@ -1,4 +1,7 @@
 "use client";
+import { ActivityLevels } from "@/constant/activity-levels";
+import { DictionaryFiles } from "@/constant/DictionaryFiles";
+import useI18n from "@/hooks/useI18n";
 import {
   Box,
   Button,
@@ -17,16 +20,16 @@ import {
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import DietSVG from "./Calculate";
-import { ActivityLevels } from "@/constant/activity-levels";
 
 interface FormValues {
   age: number;
   weight: number; // in kg
   height: number; // in cm
-  activityLevel: string;
+  activityLevel: ActivityLevels; // or keyof typeof ActivityLevels if ActivityLevels is an object
 }
 
 const NutritionCalculator: React.FC = () => {
+  const { t } = useI18n(DictionaryFiles.Calculator);
   const {
     control,
     handleSubmit,
@@ -37,7 +40,7 @@ const NutritionCalculator: React.FC = () => {
       age: 0,
       weight: 0,
       height: 0,
-      activityLevel: "sedentary",
+      activityLevel: ActivityLevels.Sedentary, // Default to sedentary
     },
   });
 
@@ -49,7 +52,6 @@ const NutritionCalculator: React.FC = () => {
   const calculateCalories = async (data: FormValues) => {
     setLoading(true);
     setFetchError("");
-
     try {
       const { age, weight, height, activityLevel } = data;
 
@@ -61,16 +63,16 @@ const NutritionCalculator: React.FC = () => {
       let activityMultiplier = 1.2; // Sedentary by default
 
       switch (activityLevel) {
-        case "light":
+        case ActivityLevels.Light:
           activityMultiplier = 1.375;
           break;
-        case "moderate":
+        case ActivityLevels.Moderate:
           activityMultiplier = 1.55;
           break;
-        case "active":
+        case ActivityLevels.Active:
           activityMultiplier = 1.725;
           break;
-        case "very-active":
+        case ActivityLevels.VeryActive:
           activityMultiplier = 1.9;
           break;
         default:
@@ -78,6 +80,8 @@ const NutritionCalculator: React.FC = () => {
       }
 
       const dailyCalories = Math.round(bmr * activityMultiplier);
+      console.log({ bmr, dailyCalories });
+
       setCaloricNeeds(dailyCalories);
     } catch (err) {
       setFetchError("Failed to calculate calories. Please try again.");
@@ -137,13 +141,13 @@ const NutritionCalculator: React.FC = () => {
         {/* Left Column: Form and Gender Selector */}
         <Grid item xs={12} md={6} sx={{ textAlign: "left" }}>
           <Typography variant="h4" align="center" gutterBottom>
-            Calculate Calories
+            {t("calculateCalories")}
           </Typography>
 
           {/* Gender Selection */}
           <Grid item>
             <Typography variant="h6" align="center" gutterBottom>
-              Select Gender
+              {t("selectGender")}
             </Typography>
 
             <ToggleButtonGroup
@@ -164,7 +168,7 @@ const NutritionCalculator: React.FC = () => {
                   "&.Mui-selected": { bgcolor: "#4caf50" },
                 }}
               >
-                Men
+                {t("men")}
               </ToggleButton>
               <ToggleButton
                 value="female"
@@ -174,7 +178,7 @@ const NutritionCalculator: React.FC = () => {
                   "&.Mui-selected": { bgcolor: "#4caf50" },
                 }}
               >
-                Women
+                {t("women")}
               </ToggleButton>
             </ToggleButtonGroup>
           </Grid>
@@ -194,17 +198,13 @@ const NutritionCalculator: React.FC = () => {
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    label="Age"
+                    label={t("age")}
                     type="number"
                     fullWidth
                     variant="outlined"
                     inputProps={{ min: 1 }}
                     error={!!errors.age}
-                    helperText={
-                      errors.age
-                        ? "Age is required and must be greater than 0"
-                        : ""
-                    }
+                    helperText={errors.age ? t("ageError") : ""}
                     sx={{ bgcolor: "transparent", mt: 2 }}
                   />
                 )}
@@ -217,17 +217,13 @@ const NutritionCalculator: React.FC = () => {
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    label="Weight (kg)"
+                    label={t("weight")}
                     type="number"
                     fullWidth
                     variant="outlined"
                     inputProps={{ min: 1 }}
                     error={!!errors.weight}
-                    helperText={
-                      errors.weight
-                        ? "Weight is required and must be greater than 0"
-                        : ""
-                    }
+                    helperText={errors.weight ? t("weightError") : ""}
                     sx={{ bgcolor: "transparent" }}
                   />
                 )}
@@ -240,17 +236,13 @@ const NutritionCalculator: React.FC = () => {
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    label="Height (cm)"
+                    label={t("height")}
                     type="number"
                     fullWidth
                     variant="outlined"
                     inputProps={{ min: 1 }}
                     error={!!errors.height}
-                    helperText={
-                      errors.height
-                        ? "Height is required and must be greater than 0"
-                        : ""
-                    }
+                    helperText={errors.height ? t("heightError") : ""}
                     sx={{ bgcolor: "transparent" }}
                   />
                 )}
@@ -261,27 +253,32 @@ const NutritionCalculator: React.FC = () => {
                 control={control}
                 render={({ field }) => (
                   <FormControl fullWidth error={!!errors.activityLevel}>
-                    <InputLabel>Activity Level</InputLabel>
+                    <InputLabel>{t("activityLevel")}</InputLabel>
                     <Select
                       {...field}
-                      label="Activity Level"
+                      label={t("activityLevel")}
                       sx={{
                         fontSize: { md: "0.600rem", lg: "1rem" },
                       }}
                     >
-                      {ActivityLevels.map((option) => (
-                        <MenuItem
-                          key={option.value}
-                          value={option.value}
-                          sx={{ fontSize: "0.750rem" }}
-                        >
-                          {option.label}
-                        </MenuItem>
-                      ))}
+                      {Object.values(ActivityLevels).map(
+                        (option: any, index) => {
+                          const value = `activity.${option}`;
+                          return (
+                            <MenuItem
+                              key={index}
+                              value={option}
+                              sx={{ fontSize: "0.750rem" }}
+                            >
+                              {t(value as any)}
+                            </MenuItem>
+                          );
+                        }
+                      )}
                     </Select>
                     {errors.activityLevel && (
                       <Typography variant="caption" color="error">
-                        Activity level is required.
+                        {t("activityLevelError")}
                       </Typography>
                     )}
                   </FormControl>
@@ -300,7 +297,7 @@ const NutritionCalculator: React.FC = () => {
                   "&:hover": { backgroundColor: "#388e3c" },
                 }}
               >
-                {loading ? "Calculating..." : "Calculate"}
+                {loading ? t("calculating") : t("calculate")}
               </Button>
             </Box>
           </Grid>
@@ -309,7 +306,7 @@ const NutritionCalculator: React.FC = () => {
           {caloricNeeds !== null && (
             <Grid item xs={12}>
               <Typography variant="h6" align="center" sx={{ mt: 2 }}>
-                Daily Caloric Needs: {caloricNeeds} kcal
+                {t("dailyCalories", { caloricNeeds })}
               </Typography>
             </Grid>
           )}

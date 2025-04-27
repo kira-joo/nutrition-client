@@ -1,7 +1,8 @@
 import { FooterMenulist } from "@/app/components/Footer/constant/FooterMenulist";
-import { Box, Grid, Link, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
+import AppLinkMUI from "../AppLink/AppLinkMUI";
 
-function FooterMenu() {
+const FooterMenu = () => {
   return (
     <Grid
       item
@@ -32,7 +33,7 @@ function FooterMenu() {
         }}
       >
         {FooterMenulist.map(({ icon, label, href }, index) => (
-          <Link
+          <AppLinkMUI
             key={index}
             href={href}
             sx={{
@@ -53,11 +54,11 @@ function FooterMenu() {
             }}
           >
             {icon} {label}
-          </Link>
+          </AppLinkMUI>
         ))}
       </Box>
     </Grid>
   );
-}
+};
 
 export default FooterMenu;

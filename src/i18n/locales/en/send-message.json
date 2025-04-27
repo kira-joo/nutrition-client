@@ -1,0 +1,17 @@
+{
+  "SendMessage": "Send Message",
+  "WeWouldLoveToHearFromYou": "We would love to hear from you! Send us your message below.",
+  "Email": "Email",
+  "Message": "Message",
+  "PhoneNumberOptional": "Phone Number (Optional)",
+  "Sending": "Sending...",
+  "SendEmail": "Send Email",
+  "EmailIsRequired": "Email is required",
+  "PleaseEnterValidEmail": "Please enter a valid email address",
+  "MessageIsRequired": "Message is required",
+  "MessageCannotBeEmpty": "Message cannot be empty",
+  "MessageMustBeUnder500Characters": "Message must be under 500 characters",
+  "InvalidPhoneNumber": "Invalid phone number, must be 11 digits",
+  "MessageSentSuccessfully": "Message sent successfully!",
+  "FailedToSendMail": "Failed to send Mail. Please try again later."
+}
