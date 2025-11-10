@@ -23,4 +23,10 @@ export type TranslationKeyMap = {
   [DictionaryFiles.Calculator]: NestedKeyOf<
     typeof import("../i18n/locales/en/calculator.json")
   >;
+  [DictionaryFiles.Packages]: NestedKeyOf<
+    typeof import("../i18n/locales/en/packages.json")
+  >;
+  [DictionaryFiles.Faq]: NestedKeyOf<
+    typeof import("../i18n/locales/en/faq.json")
+  >;
 };

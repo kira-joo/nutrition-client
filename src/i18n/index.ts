@@ -12,6 +12,8 @@ i18n.use(initReactI18next).init({
       [DictionaryFiles.SendMessage]: require("./locales/en/send-message.json"),
       [DictionaryFiles.Recipes]: require("./locales/en/recipes.json"),
       [DictionaryFiles.Calculator]: require("./locales/en/calculator.json"),
+      [DictionaryFiles.Packages]: require("./locales/en/packages.json"),
+      [DictionaryFiles.Faq]: require("./locales/en/faq.json"),
     },
     ar: {
       [DictionaryFiles.Home]: require("./locales/ar/home.json"),
@@ -19,13 +21,13 @@ i18n.use(initReactI18next).init({
       [DictionaryFiles.SendMessage]: require("./locales/ar/send-message.json"),
       [DictionaryFiles.Recipes]: require("./locales/ar/recipes.json"),
       [DictionaryFiles.Calculator]: require("./locales/ar/calculator.json"),
+      [DictionaryFiles.Packages]: require("./locales/ar/packages.json"),
+      [DictionaryFiles.Faq]: require("./locales/ar/faq.json"),
     },
   },
   lng: Locale.AR,
   fallbackLng: Locale.AR,
-  interpolation: {
-    escapeValue: false,
-  },
+  interpolation: { escapeValue: false },
 });
 
 export default i18n;

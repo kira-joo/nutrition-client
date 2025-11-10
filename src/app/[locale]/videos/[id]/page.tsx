@@ -1,39 +1,32 @@
-// app/videos/[id]/page.tsx
-
+"use client";
+import { DictionaryFiles } from "@/constant/DictionaryFiles";
 import { videos } from "@/constant/videos";
+import useI18n from "@/hooks/useI18n";
 import { Box, Button, Typography } from "@mui/material";
 import { notFound } from "next/navigation";
 
-// Fetches data for the specific `id`
 const getVideoById = (id: string) => {
   return videos.find((video) => video.id.toString() === id);
 };
 
-export default async function VideoPage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const videoId = params.id; // Get the id from params
-  const video = getVideoById(videoId); // Find the video by id
+const VideoPage = ({ params }: { params: { id: string } }) => {
+  const videoId = params.id;
+  const video = getVideoById(videoId);
 
   if (!video) {
-    notFound(); // Handle not found case
+    notFound();
   }
-
+  const { t } = useI18n(DictionaryFiles.Home);
   return (
     <Box sx={{ textAlign: "center" }}>
-      <Typography sx={{ color: "white" }} variant="h4" gutterBottom>
-        {video.title}
+      <Typography sx={{ color: "black", marginBottom: "20px" }} variant="h5">
+        {t(`videos.${video.id}` as keyof typeof t)}
       </Typography>
       <video
-        width="300" // Adjust width as necessary
-        height="600" // Adjust height as necessary
+        width="300"
+        height="600"
         controls
-        style={{
-          borderRadius: "10px",
-          objectFit: "cover",
-        }}
+        style={{ borderRadius: "10px", objectFit: "cover" }}
       >
         <source src={video.source} type="video/mp4" />
         Your browser does not support the video tag.
@@ -42,13 +35,14 @@ export default async function VideoPage({
         <Button
           variant="contained"
           color="primary"
-          href={video.url} // Replace with the appropriate URL for the Facebook reel
+          href={video.url}
           target="_blank"
           rel="noopener noreferrer"
         >
-          Go to The Reel
+          {t("videos.GotoTheReel")}
         </Button>
       </Box>
     </Box>
   );
-}
+};
+export default VideoPage;

@@ -6,21 +6,14 @@ import AppLink from "../AppLink/AppLink";
 
 const Branding = () => {
   return (
-    <Box
-      sx={{
-        display: { xs: "none", md: "flex" },
-
-        alignItems: "center", // Align the text and image vertically
-      }}
-    >
-      {/* Logo for medium and larger screens */}
+    <Box sx={{ display: { xs: "none", md: "flex" }, alignItems: "center" }}>
       <Box>
         <AppLink href={AppRoute.Home}>
           <Image
-            src="/images/leftLogo.png" // Replace with the path to your logo
+            src="/images/leftLogo.png"
             alt={Name.NavProfile}
-            width={150} // Adjust based on the size of your logo
-            height={50} // Adjust based on the size of your logo
+            width={150}
+            height={50}
           />
         </AppLink>
       </Box>

@@ -1,15 +1,15 @@
 "use client";
 // pages/newsletter-signup.tsx
-import React from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
 import {
-  Container,
-  Typography,
-  TextField,
-  Button,
-  Box,
   Alert,
+  Box,
+  Button,
+  Container,
+  TextField,
+  Typography,
 } from "@mui/material";
+import React from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 // Define the form input types
 interface IFormInput {
@@ -31,8 +31,6 @@ const NewsletterSignup: React.FC = () => {
 
   const onSubmit: SubmitHandler<IFormInput> = async (data: IFormInput) => {
     try {
-      console.log(data.email);
-
       reset(); // Reset the form on successful submission
     } catch (err) {
       console.error("Error submitting email:", err);

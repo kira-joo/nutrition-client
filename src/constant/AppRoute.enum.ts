@@ -12,5 +12,7 @@ const enum AppRoute {
   Videos = `/videos`,
   Video = `/videos/:id`,
   Recipe = "/recipes/:id",
+  Consultation = "/consultation",
+  Packages = "/packages",
 }
 export default AppRoute;

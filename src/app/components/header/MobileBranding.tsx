@@ -6,22 +6,16 @@ import AppLink from "../AppLink/AppLink";
 
 const MobileBranding = () => {
   return (
-    <AppLink href={AppRoute.Home}>
-      <Box
-        sx={{
-          display: { xs: "flex", md: "none" }, // Display flex on extra-small screens and none on medium and larger screens
-          mr: 5,
-          flexGrow: 1,
-        }}
-      >
+    <Box sx={{ display: { xs: "flex", md: "none" }, flexGrow: 1 }}>
+      <AppLink href={AppRoute.Home}>
         <Image
-          src="/images/leftLogo.png" // Replace with the path to your logo
+          src="/images/leftLogo.png"
           alt={Name.NavProfile}
-          width={150} // Adjust based on the size of your logo
-          height={50} // Adjust based on the size of your logo
+          width={150}
+          height={50}
         />
-      </Box>
-    </AppLink>
+      </AppLink>
+    </Box>
   );
 };
 

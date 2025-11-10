@@ -7,10 +7,10 @@ import RecipeIcon from "@mui/icons-material/Restaurant"; // Make sure to import 
 import VideoLibraryIcon from "@mui/icons-material/VideoLibrary";
 
 export const FooterMenulist = [
-  { icon: <HomeIcon fontSize="medium" />, label: "Home", href: AppRoute.Home },
+  { icon: <HomeIcon fontSize="medium" />, label: "home", href: AppRoute.Home },
   {
     icon: <CalculateIcon fontSize="medium" />,
-    label: "Nutrition Calculator",
+    label: "calories",
     href: AppRoute.Calculator,
   },
   // {
@@ -20,22 +20,22 @@ export const FooterMenulist = [
   // },
   {
     icon: <VideoLibraryIcon fontSize="medium" />,
-    label: "Videos",
+    label: "video",
     href: AppRoute.Videos,
   },
   {
     icon: <InfoIcon fontSize="medium" />,
-    label: "About Us",
+    label: "about",
     href: AppRoute.About_Us,
   },
   {
     icon: <RecipeIcon fontSize="medium" />,
-    label: "Recipes",
+    label: "recipes",
     href: AppRoute.Recipes,
   },
   {
     icon: <FAQIcon fontSize="medium" />,
-    label: "FAQ",
+    label: "faq",
     href: AppRoute.Faq,
   },
 ];

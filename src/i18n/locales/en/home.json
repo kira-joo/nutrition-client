@@ -4,7 +4,6 @@
   "contact": "Contact",
   "footerText": "All rights reserved.",
   "welcomeMessage": "Welcome to our website!",
-  "description": "This is the English version of our site.",
   "video": "Video",
   "about": "About us",
   "description-About": "Learn more about us",
@@ -14,5 +13,19 @@
   "description-Recipes": "Find delicious recipes",
   "sendMessage": "Send Message",
   "description-SendMessage": "Contact us for inquiries",
-  "faq": "FAQ"
+  "faq": "FAQ",
+  "logoAlt": "Nutrition Hub Logo",
+  "description": "Welcome to my Nutrition Hub! I am dedicated to helping you achieve your health and wellness goals. Whether you need personalized advice or resources, I'm here for you. Reach out anytime for support!",
+  "connectWithMe": "Connect with me",
+  "menu": "Menu",
+  "footerProfile": "Dr.Omnia Ahmed Nagib - Nutrition Specialist",
+  "videos": {
+    "1": "Light Dinner",
+    "2": "Recipes Without Bread",
+    "3": "Healthy Breakfast",
+    "4": "Lunchbox",
+    "GotoTheReel": "Go to The Reel"
+  },
+  "consultation": "consultation",
+  "packages": "Packages"
 }

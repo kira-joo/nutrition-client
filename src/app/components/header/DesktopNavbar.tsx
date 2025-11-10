@@ -14,25 +14,31 @@ import {
   Typography,
 } from "@mui/material";
 import { usePathname } from "next/navigation";
-import * as React from "react";
+import { useState } from "react";
 import AppLink from "../AppLink/AppLink";
+import LanguageSwitch from "./LanguageSwitch";
 
-interface DesktopNavbarProps {
-  anchorElUser: null | HTMLElement;
-  handleSwitchNavMenu: (event: React.MouseEvent<HTMLElement>) => void;
-}
+interface DesktopNavbarProps {}
 
-const DesktopNavbar = ({
-  anchorElUser,
-  handleSwitchNavMenu,
-}: DesktopNavbarProps) => {
+const DesktopNavbar: React.FC<DesktopNavbarProps> = () => {
+  const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
+
+  const handleSwitchNavMenu = (event: React.MouseEvent<HTMLElement>) => {
+    if (!anchorElUser) {
+      setAnchorElUser(event.currentTarget);
+    } else {
+      setAnchorElUser(null);
+    }
+  };
+
   const pathname = usePathname();
+  const appRoute = pathname.split("/")[2];
   const { t } = useI18n(DictionaryFiles.Home);
   return (
     <>
       <Box sx={{ ml: 2, flexGrow: 1, display: { xs: "none", md: "flex" } }}>
         {NavigatePages.map((page, i) => {
-          const isActive = pathname === page.url;
+          const isActive = `/${appRoute}` === page.url;
           return (
             <AppLink key={i} href={page.url}>
               <Button
@@ -56,6 +62,7 @@ const DesktopNavbar = ({
           );
         })}
       </Box>
+      <LanguageSwitch />
 
       <Box sx={{ flexGrow: 0 }}>
         <Tooltip title="Open settings">
@@ -97,9 +104,9 @@ const DesktopNavbar = ({
                   display: "flex",
                   alignItems: "center",
                   gap: "10px",
-                  color: pathname === setting.url ? "#007B7F" : "#333333",
+                  color: appRoute === setting.url ? "#007B7F" : "#333333",
                   backgroundColor:
-                    pathname === setting.url ? "#f0f0f0" : "transparent",
+                    appRoute === setting.url ? "#f0f0f0" : "transparent",
                   transition: "color 0.3s ease",
                 }}
               >

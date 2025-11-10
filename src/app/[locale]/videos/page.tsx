@@ -1,9 +1,11 @@
 import AppLink from "@/app/components/AppLink/AppLink";
 import AppRoute from "@/constant/AppRoute.enum";
+import { DictionaryFiles } from "@/constant/DictionaryFiles";
 import { videos } from "@/constant/videos";
+import useI18n from "@/hooks/useI18n";
 import { Box, ImageList, ImageListItem, Typography } from "@mui/material";
-
 const Videos = () => {
+  const { t } = useI18n(DictionaryFiles.Home);
   return (
     <Box sx={{ display: "flex", justifyContent: "center" }}>
       <ImageList
@@ -15,15 +17,14 @@ const Videos = () => {
           padding: 2,
           scrollBehavior: "smooth",
           "&::-webkit-scrollbar": {
-            // Custom scrollbar styling
             height: "8px",
           },
           "&::-webkit-scrollbar-thumb": {
-            background: "#4db6b2", // Match the navbar and footer colors
+            background: "#4db6b2",
             borderRadius: "10px",
           },
           "&::-webkit-scrollbar-track": {
-            background: "#e3f4f1", // Match the background color
+            background: "#e3f4f1",
           },
         }}
       >
@@ -33,20 +34,20 @@ const Videos = () => {
             sx={{
               minWidth: 300,
               padding: "10px",
-              border: "2px solid #4db6b2", // Match footer and navbar colors
+              border: "2px solid #4db6b2",
               borderRadius: "10px",
               boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-              backgroundColor: "#f0f0f0", // A lighter background for contrast
+              backgroundColor: "#f0f0f0",
               transition: "transform 0.3s ease",
               "&:hover": {
                 transform: "scale(1.02)",
-                boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.15)", // Enhance shadow on hover
+                boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.15)",
               },
             }}
           >
             <AppLink
-              style={{ color: "#333333" }} // Change text color to dark gray for contrast
-              href={AppRoute.Videos}
+              style={{ color: "#333333" }}
+              href={AppRoute.Video}
               params={{ id: video.id }}
               passHref
             >
@@ -67,10 +68,10 @@ const Videos = () => {
                 sx={{
                   marginTop: 1,
                   textAlign: "center",
-                  color: "#333333", // Ensure the text is legible
+                  color: "#333333",
                 }}
               >
-                {video.title}
+                {t(`videos.${video.id}` as keyof typeof t)}
               </Typography>
             </AppLink>
           </ImageListItem>

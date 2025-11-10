@@ -8,4 +8,5 @@ export enum DictionaryFiles {
   Videos = "videos",
   Faq = "faq",
   Calculator = "calculator",
+  Packages = "packages",
 }

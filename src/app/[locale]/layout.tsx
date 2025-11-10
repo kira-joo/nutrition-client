@@ -43,14 +43,12 @@ const LocaleLayout = ({ children, params }: LocaleLayoutProps) => {
             flexDirection="column"
             mb={5}
             minHeight="80vh"
-            sx={{
-              pt: { xs: 5, md: 3 },
-            }}
+            sx={{ pt: { xs: 5, md: 3 } }}
           >
             {children}
           </Box>
+          <Footer />
         </LanguageProvider>
-        <Footer />
       </body>
     </html>
   );

@@ -1,20 +1,62 @@
+"use client";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
   Box,
-  Link,
   Typography,
 } from "@mui/material";
-import faqData from "../../../constant/FAQ.json"; // Adjust the path to your FAQ JSON file
+
+import { DictionaryFiles } from "@/constant/DictionaryFiles";
+import useI18n from "@/hooks/useI18n";
 import TitleAndBodyComponent from "./TitleAndBodyComponent";
 
 const Faq = () => {
-  // Retrieve FAQ data for English (EN)
-  const textFaq = faqData.EN;
+  const { t } = useI18n(DictionaryFiles.Faq);
 
-  if (!textFaq || !textFaq.faqs) {
+  const sections = [
+    {
+      title: t("section1.title"),
+      faqs: [
+        {
+          question: t("section1.q1.question"),
+          answer: t("section1.q1.answer"),
+        },
+        {
+          question: t("section1.q2.question"),
+          answer: t("section1.q2.answer"),
+        },
+        {
+          question: t("section1.q3.question"),
+          answer: t("section1.q3.answer"),
+        },
+      ],
+    },
+    {
+      title: t("section2.title"),
+      faqs: [
+        {
+          question: t("section2.q1.question"),
+          answer: t("section2.q1.answer"),
+        },
+        {
+          question: t("section2.q2.question"),
+          answer: t("section2.q2.answer"),
+        },
+        {
+          question: t("section2.q3.question"),
+          answer: t("section2.q3.answer"),
+        },
+        {
+          question: t("section2.q4.question"),
+          answer: t("section2.q4.answer"),
+        },
+      ],
+    },
+  ];
+
+  if (!sections) {
     return (
       <Box sx={{ width: "100%", textAlign: "center", marginBottom: "16px" }}>
         <Typography variant="body1">Error fetching FAQ data.</Typography>
@@ -24,7 +66,6 @@ const Faq = () => {
 
   return (
     <Box sx={{ width: "100%", marginBottom: "16px" }}>
-      {/* Center the TitleAndBodyComponent */}
       <Box
         sx={{
           display: "flex",
@@ -32,19 +73,15 @@ const Faq = () => {
           textAlign: "center",
           flexDirection: "column",
           alignItems: "center",
-          marginBottom: "24px", // Adjust space between title and FAQ
+          marginBottom: "24px",
         }}
       >
-        <TitleAndBodyComponent
-          Title={textFaq.faqAsked}
-          Body={textFaq.faqCheck}
-        />
+        <TitleAndBodyComponent Title={t("faqAsked")} Body={t("faqCheck")} />
       </Box>
 
-      {/* Render each section of FAQs as an Accordion */}
-      {textFaq.faqs.map((section, sectionIndex) => (
+      {sections.map((section, i) => (
         <Accordion
-          key={sectionIndex}
+          key={i}
           sx={{
             border: "2px solid #66b2a0",
             borderRadius: "10px",
@@ -53,10 +90,10 @@ const Faq = () => {
         >
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
-            aria-controls={`panel${sectionIndex}-content`}
-            id={`panel${sectionIndex}-header`}
+            aria-controls={`panel${i}-content`}
+            id={`panel${i}-header`}
           >
-            <Typography variant="h5">{section.section}</Typography>
+            <Typography variant="h5">{section.title}</Typography>
           </AccordionSummary>
           <AccordionDetails>
             {section.faqs.map((faq, faqIndex) => (
@@ -71,8 +108,8 @@ const Faq = () => {
               >
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
-                  aria-controls={`panel${sectionIndex}-${faqIndex}-content`}
-                  id={`panel${sectionIndex}-${faqIndex}-header`}
+                  aria-controls={`panel${i}-${faqIndex}-content`}
+                  id={`panel${i}-${faqIndex}-header`}
                 >
                   <Typography variant="h6">{faq.question}</Typography>
                 </AccordionSummary>
@@ -80,22 +117,6 @@ const Faq = () => {
                   <Typography variant="body2" sx={{ textAlign: "start" }}>
                     {faq.answer}
                   </Typography>
-                  {faq.sources && faq.sourceUrl && (
-                    <Typography
-                      variant="caption"
-                      sx={{ display: "block", marginTop: "8px" }}
-                    >
-                      Sources:{" "}
-                      <Link
-                        href={faq.sourceUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        sx={{ marginLeft: "4px" }}
-                      >
-                        {faq.sources}
-                      </Link>
-                    </Typography>
-                  )}
                 </AccordionDetails>
               </Accordion>
             ))}

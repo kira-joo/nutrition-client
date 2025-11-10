@@ -4,6 +4,7 @@ import useI18n from "@/hooks/useI18n";
 import { Box, Container, Typography } from "@mui/material";
 import Faq from "./faq/page";
 import ImageN from "./image";
+import Packages from "./packages/page";
 import SendMessage from "./send-message/page";
 import Videos from "./videos/page";
 
@@ -24,6 +25,8 @@ const HomePage = () => {
       <Box sx={{ padding: 2, justifyContent: "center", display: "flex" }}>
         <SendMessage />
       </Box>
+
+      <Packages />
       <Container>
         <Box sx={{ marginTop: 4 }}>
           <Faq />

@@ -8,7 +8,7 @@ export const SocialMediaLinks = [
   {
     icon: <InstagramIcon fontSize="large" />,
     color: "#E1306C",
-    href: "https://www.instagram.com/monnaa_almasry/",
+    href: "https://www.instagram.com/dr.omnia.ahmed/",
     name: "Instagram",
   },
   {

@@ -1,7 +1,9 @@
 import navigatePagesI from "@/app/interfaces/navigate-pages.interface";
+import { Subscriptions } from "@mui/icons-material";
 import FastfoodIcon from "@mui/icons-material/Fastfood";
 import HomeIcon from "@mui/icons-material/Home";
 import InfoIcon from "@mui/icons-material/Info";
+import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
 import MessageIcon from "@mui/icons-material/Message";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import AppRoute from "./AppRoute.enum";
@@ -15,7 +17,7 @@ export const NavigatePages: navigatePagesI[] = [
   },
   {
     title: "about",
-    description: "description-Calories",
+    description: "description-About",
     url: AppRoute.About_Us,
     icon: <InfoIcon />,
   },
@@ -36,5 +38,17 @@ export const NavigatePages: navigatePagesI[] = [
     description: "description-SendMessage",
     url: AppRoute.SendMessage,
     icon: <MessageIcon fontSize="small" />,
+  },
+  {
+    title: "consultation",
+    description: "consultation",
+    url: AppRoute.Consultation,
+    icon: <LocalHospitalIcon />,
+  },
+  {
+    title: "packages",
+    description: "packages",
+    url: AppRoute.Packages,
+    icon: <Subscriptions />,
   },
 ];

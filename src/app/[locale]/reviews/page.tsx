@@ -47,7 +47,7 @@ const Reviews = () => {
               display: "flex",
             }}
             passHref
-            href={AppRoute.Reviews}
+            href={AppRoute.Review}
             params={{ id: review.id }} // Pass the ID as a parameter
           >
             <ImageListItem

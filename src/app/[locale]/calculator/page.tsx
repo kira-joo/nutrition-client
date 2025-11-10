@@ -80,7 +80,6 @@ const NutritionCalculator: React.FC = () => {
       }
 
       const dailyCalories = Math.round(bmr * activityMultiplier);
-      console.log({ bmr, dailyCalories });
 
       setCaloricNeeds(dailyCalories);
     } catch (err) {
