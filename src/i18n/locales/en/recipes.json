@@ -1,0 +1,37 @@
+{
+  "Food group": "Food group",
+  "Category": "Category",
+  "30 Minutes or Less, Kid-Friendly": "30 Minutes or Less, Kid-Friendly",
+  "30 Minutes or Less": "30 Minutes or Less",
+  "Fruits": "Fruits",
+  "Vegetables": "Vegetables",
+  "Protein": "Protein",
+  "Grains": "Grains",
+  "Dairy": "Dairy",
+  "recipes": {
+    "leek_mushroom_orzo": {
+      "title": "Leek and Mushroom Orzo",
+      "description": "Cook this delicious pasta dish in 45 minutes that will taste great for dinner and for leftovers the next day."
+    },
+    "asparagus_mushroom_melt": {
+      "title": "Asparagus Mushroom Melt",
+      "description": "This warm, cheesy sandwich will make your taste buds water."
+    },
+    "curried_chicken_wraps": {
+      "title": "Curried Chicken Wraps",
+      "description": "You can use curry powder in a variety of recipes. In this recipe, it adds a wonderful flavor to the familiar wrap."
+    },
+    "five_a_day_salad": {
+      "title": "5 A Day Salad",
+      "description": "This nutrient-packed salad uses ten different vegetables, and each serving is equal to five cups of vegetables!"
+    },
+    "couscous_with_carrots": {
+      "title": "Couscous With Carrots, Walnuts, and Raisins",
+      "description": "This quick-cooking grain dish has a touch of sweet and nutty flavors to go with most main dishes."
+    },
+    "veggie_skillet_eggs": {
+      "title": "Veggie Skillet Eggs",
+      "description": "Quick and healthy breakfast packed with protein, veggies, and cheddar cheese."
+    }
+  }
+}

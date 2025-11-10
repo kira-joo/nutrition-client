@@ -1,0 +1,4 @@
+export enum Images {
+  Image1 = "https://scontent.fcai22-4.fna.fbcdn.net/v/t39.30808-6/454674920_495016399804702_4274266052268464660_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeF3Z3MX42niosSkrYlwFdq9Gb_4fDpc9VIZv_h8Olz1UhOejJgtgCQvF3oDRnyGkKqJtkKgeWYsdDSa0DDK8fvV&_nc_ohc=Ia1wBfUrvxEQ7kNvgFFCZYW&_nc_ht=scontent.fcai22-4.fna&oh=00_AYAQYM9h4mr98Aun7MeU5EjUxiHcE7eBdzmB0sJVHWsa3Q&oe=66F28BCF",
+  Image2 = "https://scontent.fcai22-4.fna.fbcdn.net/v/t39.30808-6/454948169_495186379787704_8451993955587072057_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=cc71e4&_nc_eui2=AeHDo4zYY4eVYUak0VLFjIG_BKYMXhrBYWQEpgxeGsFhZNcf6xDzDo_Cukm8fXohXtw1j5rnkcWz-xUwyhIemdw3&_nc_ohc=vzvCQFbNz78Q7kNvgFefh-z&_nc_ht=scontent.fcai22-4.fna&_nc_gid=ARrWSTOz6PGFguwMZAc79Qh&oh=00_AYA6D7dHvhVuEmfHZ-FqSgsdmZHHhh-kYUdLnRgn2pKwCQ&oe=66F29890",
+}
