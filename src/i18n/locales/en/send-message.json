@@ -14,6 +14,7 @@
   "InvalidPhoneNumber": "Invalid phone number, must be 11 digits",
   "MessageSentSuccessfully": "Message sent successfully!",
   "FailedToSendMail": "Failed to send Mail. Please try again later.",
+  "SendViaWhatsApp": "Send via WhatsApp",
   "ConsultationRequest": "Consultation Request",
   "PleaseProvideYourInformationForPersonalizedNutritionConsultation": "Please provide your information for a personalized nutrition consultation designed specifically for you",
   "Name": "Name",
@@ -72,5 +73,12 @@
   "LabTestsNote": "• If lab tests are needed, I’ll let you know.",
   "InbodyNote": "• You can use the InBody device at any pharmacy to get accurate body composition details",
   "PersonalConsultationTitle": "Personalized Nutrition Consultations",
-  "PersonalConsultationSubtitle": "Tailored specifically for you"
+  "PersonalConsultationSubtitle": "Tailored specifically for you",
+  "Package": "Package",
+  "PackageIsRequired": "Package is required",
+  "Duration": "Duration",
+  "DurationIsRequired": "Duration is required",
+  "OneMonth": "1 Month",
+  "TwoMonths": "2 Months",
+  "ThreeMonths": "3 Months"
 }

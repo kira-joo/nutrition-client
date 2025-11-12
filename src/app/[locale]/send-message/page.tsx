@@ -1,7 +1,7 @@
 "use client";
+import { WhatsappNumber } from "@/app/components/constant/numbers";
 import { DictionaryFiles } from "@/constant/DictionaryFiles";
 import useI18n from "@/hooks/useI18n";
-import { sendEmail } from "@/utils/sendMessage";
 import SendIcon from "@mui/icons-material/Send";
 import {
   Box,
@@ -14,14 +14,10 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import ErrorMessage from "./ErrorMessage";
 import MessageSVG from "./message";
-import SuccessMessage from "./SuccessMessage";
 
 interface FormValues {
-  email: string;
   message: string;
-  phone?: string;
 }
 
 const SendMessage: React.FC = () => {
@@ -34,51 +30,28 @@ const SendMessage: React.FC = () => {
   } = useForm<FormValues>({
     mode: "all",
     defaultValues: {
-      email: "",
       message: "",
-      phone: "",
     },
   });
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [success, setSuccess] = useState<string>("");
-  const [fetchError, setFetchError] = useState<string>("");
 
   const onSubmit: SubmitHandler<FormValues> = async (data: FormValues) => {
     setLoading(true);
-    setSuccess("");
-    setFetchError("");
 
     try {
-      await sendEmail(data);
-      setSuccess(t("MessageSentSuccessfully"));
+      const encodedMessage = encodeURIComponent(`👋 ${data.message}`);
+      const whatsappUrl = `https://wa.me/${WhatsappNumber}?text=${encodedMessage}`;
+      window.open(whatsappUrl, "_blank");
       reset();
-    } catch (err) {
-      setFetchError(t("FailedToSendMail"));
     } finally {
       setLoading(false);
     }
   };
 
-  const handleReset = () => {
-    reset();
-    setSuccess("");
-    setFetchError("");
-  };
-
-  if (success) {
-    return <SuccessMessage message={success} onReset={handleReset} />;
-  }
-
-  if (fetchError) {
-    return <ErrorMessage message={fetchError} onReset={handleReset} />;
-  }
-
   return (
     <Container maxWidth="lg">
       <Grid container spacing={2}>
-        {/* Left Column: SVG */}
-
         {/* Right Column: Contact Form */}
         <Grid item xs={12} md={6}>
           <Typography variant="h4" gutterBottom align="center">
@@ -94,32 +67,14 @@ const SendMessage: React.FC = () => {
             sx={{ mt: 3 }}
           >
             <TextField
-              label={t("Email")}
-              fullWidth
-              variant="outlined"
-              {...register("email", {
-                required: t("EmailIsRequired"),
-                pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: t("PleaseEnterValidEmail"),
-                },
-              })}
-              error={!!errors.email}
-              helperText={errors.email ? errors.email.message : ""}
-            />
-
-            <TextField
               label={t("Message")}
               multiline
-              rows={4}
+              rows={5}
               fullWidth
               variant="outlined"
               {...register("message", {
                 required: t("MessageIsRequired"),
-                minLength: {
-                  value: 1,
-                  message: t("MessageCannotBeEmpty"),
-                },
+                minLength: { value: 1, message: t("MessageCannotBeEmpty") },
                 maxLength: {
                   value: 500,
                   message: t("MessageMustBeUnder500Characters"),
@@ -127,22 +82,6 @@ const SendMessage: React.FC = () => {
               })}
               error={!!errors.message}
               helperText={errors.message ? errors.message.message : ""}
-              sx={{ mt: 2 }}
-            />
-
-            <TextField
-              label={t("PhoneNumberOptional")}
-              fullWidth
-              variant="outlined"
-              {...register("phone", {
-                pattern: {
-                  value: /^[+]?[0-9]{11}$/,
-                  message: t("InvalidPhoneNumber"),
-                },
-              })}
-              error={!!errors.phone}
-              helperText={errors.phone ? errors.phone.message : ""}
-              sx={{ mt: 2 }}
             />
 
             <Button
@@ -159,17 +98,17 @@ const SendMessage: React.FC = () => {
               }
               disabled={loading}
               sx={{
-                mt: 2,
+                mt: 3,
                 backgroundColor: "#4caf50",
-                marginX: "auto",
                 "&:hover": { backgroundColor: "#388e3c" },
               }}
             >
-              {loading ? t("Sending") : t("SendEmail")}
+              {loading ? t("Sending") : t("SendViaWhatsApp")}
             </Button>
           </Box>
         </Grid>
 
+        {/* Left Column: SVG */}
         <Grid
           item
           xs={12}
@@ -189,9 +128,7 @@ const SendMessage: React.FC = () => {
               maxHeight: "400px",
             }}
           >
-            <Box>
-              <MessageSVG />
-            </Box>
+            <MessageSVG />
           </Box>
         </Grid>
       </Grid>

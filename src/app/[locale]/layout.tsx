@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Toolbar } from "@mui/material";
 import { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Locale } from "../../constant/Locale.enum";
@@ -7,6 +7,7 @@ import Footer from "../components/Footer/Footer";
 import Navbar from "../components/header/Navbar";
 
 import LanguageProvider from "@/utils/Provider/LanguageProvider";
+import ThemeProvider from "@/utils/Provider/ThemeProvider";
 import "./global.css";
 
 export const metadata: Metadata = {
@@ -34,20 +35,23 @@ const LocaleLayout = ({ children, params }: LocaleLayoutProps) => {
   const { locale } = params;
 
   return (
-    <html lang="en">
+    <html lang={locale} dir={locale === Locale.AR ? "rtl" : "ltr"}>
       <body>
         <LanguageProvider locale={locale}>
-          <Navbar />
-          <Box
-            display="flex"
-            flexDirection="column"
-            mb={5}
-            minHeight="80vh"
-            sx={{ pt: { xs: 5, md: 3 } }}
-          >
-            {children}
-          </Box>
-          <Footer />
+          <ThemeProvider locale={locale}>
+            <Navbar />
+            <Box
+              display="flex"
+              flexDirection="column"
+              mb={5}
+              minHeight="80vh"
+              sx={{ pt: { xs: 5, md: 3 } }}
+            >
+              <Toolbar />
+              {children}
+            </Box>
+            <Footer />
+          </ThemeProvider>
         </LanguageProvider>
       </body>
     </html>

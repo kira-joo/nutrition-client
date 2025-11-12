@@ -7,7 +7,10 @@ import MobileNavbar from "./MobileNavbar";
 
 const Navbar = () => {
   return (
-    <Container maxWidth="xl">
+    <Container
+      maxWidth="xl"
+      sx={{ position: "fixed", zIndex: 1000, backgroundColor: "white" }}
+    >
       <Toolbar
         disableGutters
         sx={{ justifyContent: "space-between", px: { xs: 0, md: 0 } }}

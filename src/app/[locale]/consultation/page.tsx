@@ -7,12 +7,17 @@ import {
   Button,
   CircularProgress,
   Container,
+  FormControl,
   Grid,
+  InputLabel,
+  MenuItem,
+  Select,
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useParams, useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import ErrorMessage from "../send-message/ErrorMessage";
 import SuccessMessage from "../send-message/SuccessMessage";
 
@@ -26,16 +31,26 @@ interface FormValues {
   sleepPattern: string;
   workType: string;
   physicalActivity: string;
+  package: string;
+  duration: string;
   additionalNotes?: string;
 }
 
-const ConsultationRequest: React.FC = () => {
+const Consultation: React.FC = () => {
   const { t } = useI18n(DictionaryFiles.SendMessage);
+  const packagesI18n = useI18n(DictionaryFiles.Packages);
+  const { locale } = useParams();
+  const searchParams = useSearchParams();
+  const packageFromUrl = searchParams.get("package");
+  const [packageDisabled, setPackageDisabled] = useState<boolean>(false);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
+    control,
   } = useForm<FormValues>({
     mode: "all",
     defaultValues: {
@@ -48,9 +63,18 @@ const ConsultationRequest: React.FC = () => {
       sleepPattern: "",
       workType: "",
       physicalActivity: "",
+      package: packageFromUrl || "",
+      duration: "",
       additionalNotes: "",
     },
   });
+
+  useEffect(() => {
+    if (packageFromUrl) {
+      setValue("package", packageFromUrl);
+      setPackageDisabled(true);
+    }
+  }, [packageFromUrl, setValue]);
 
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<string>("");
@@ -62,7 +86,18 @@ const ConsultationRequest: React.FC = () => {
     setFetchError("");
 
     try {
-      // Format the message for WhatsApp
+      // Get translated package and duration names
+      const packageName =
+        packagesI18n.t(
+          `packages.${data.package}.category` as keyof typeof packagesI18n.t
+        ) || data.package;
+      const durationMap: { [key: string]: string } = {
+        "1": t("OneMonth"),
+        "2": t("TwoMonths"),
+        "3": t("ThreeMonths"),
+      };
+      const durationName = durationMap[data.duration] || data.duration;
+
       const whatsappMessage = `
 اهلا وسهلا بحضرتك 🌟
 معاكم د. أمنية أحمد، أخصائية التغذية العلاجية
@@ -72,6 +107,8 @@ const ConsultationRequest: React.FC = () => {
 📅 العمر: ${data.age} سنة
 📏 الطول: ${data.height} سم
 ⚖️ الوزن: ${data.weight} كيلو
+📦 الباقة المختارة: ${packageName}
+⏱️ المدة: ${durationName}
 
 📋 التاريخ المرضي:
 ${data.medicalHistory}
@@ -330,14 +367,8 @@ ${data.additionalNotes ? `📝 ملاحظات إضافية:\n${data.additionalNo
               type="number"
               {...register("age", {
                 required: t("AgeIsRequired"),
-                min: {
-                  value: 1,
-                  message: t("AgeCannotBeLessThan1"),
-                },
-                max: {
-                  value: 120,
-                  message: t("AgeCannotBeMoreThan120"),
-                },
+                min: { value: 1, message: t("AgeCannotBeLessThan1") },
+                max: { value: 120, message: t("AgeCannotBeMoreThan120") },
               })}
               error={!!errors.age}
               helperText={errors.age ? errors.age.message : ""}
@@ -497,6 +528,86 @@ ${data.additionalNotes ? `📝 ملاحظات إضافية:\n${data.additionalNo
               sx={{ mt: 2 }}
             />
 
+            <FormControl fullWidth sx={{ mt: 2 }} disabled={packageDisabled}>
+              <InputLabel id="package-select-label">{t("Package")}</InputLabel>
+              <Controller
+                name="package"
+                control={control}
+                rules={{
+                  required: t("PackageIsRequired"),
+                }}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    labelId="package-select-label"
+                    id="package-select"
+                    label={t("Package")}
+                    error={!!errors.package}
+                  >
+                    <MenuItem value="Basic">
+                      {packagesI18n.t(
+                        "packages.Basic.category" as keyof typeof packagesI18n.t
+                      )}
+                    </MenuItem>
+                    <MenuItem value="Standard">
+                      {packagesI18n.t(
+                        "packages.Standard.category" as keyof typeof packagesI18n.t
+                      )}
+                    </MenuItem>
+                    <MenuItem value="Premium">
+                      {packagesI18n.t(
+                        "packages.Premium.category" as keyof typeof packagesI18n.t
+                      )}
+                    </MenuItem>
+                  </Select>
+                )}
+              />
+              {errors.package && (
+                <Typography
+                  variant="caption"
+                  color="error"
+                  sx={{ mt: 0.5, ml: 1.75 }}
+                >
+                  {errors.package.message}
+                </Typography>
+              )}
+            </FormControl>
+
+            <FormControl fullWidth sx={{ mt: 2 }}>
+              <InputLabel id="duration-select-label">
+                {t("Duration")}
+              </InputLabel>
+              <Controller
+                name="duration"
+                control={control}
+                rules={{
+                  required: t("DurationIsRequired"),
+                }}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    labelId="duration-select-label"
+                    id="duration-select"
+                    label={t("Duration")}
+                    error={!!errors.duration}
+                  >
+                    <MenuItem value="1">{t("OneMonth")}</MenuItem>
+                    <MenuItem value="2">{t("TwoMonths")}</MenuItem>
+                    <MenuItem value="3">{t("ThreeMonths")}</MenuItem>
+                  </Select>
+                )}
+              />
+              {errors.duration && (
+                <Typography
+                  variant="caption"
+                  color="error"
+                  sx={{ mt: 0.5, ml: 1.75 }}
+                >
+                  {errors.duration.message}
+                </Typography>
+              )}
+            </FormControl>
+
             <TextField
               label={t("AdditionalNotes")}
               multiline
@@ -539,4 +650,4 @@ ${data.additionalNotes ? `📝 ملاحظات إضافية:\n${data.additionalNo
   );
 };
 
-export default ConsultationRequest;
+export default Consultation;

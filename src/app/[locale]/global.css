@@ -1,4 +1,10 @@
 /* global.css */
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
 body {
   background-image: linear-gradient(
     135deg,
