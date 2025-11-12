@@ -1,4 +1,6 @@
 "use client";
+import AppLink from "@/app/components/AppLink/AppLink";
+import AppRoute from "@/constant/AppRoute.enum";
 import { DictionaryFiles } from "@/constant/DictionaryFiles";
 import useI18n from "@/hooks/useI18n";
 import {
@@ -337,12 +339,19 @@ const Packages = () => {
                   </CardContent>
 
                   <CardActions sx={{ p: 3, pt: 0 }}>
-                    <Button
-                      variant="contained"
-                      sx={getGradientButtonStyles(pkg.popular)}
+                    <AppLink
+                      href={AppRoute.Consultation}
+                      query={{ package: pkg.category }}
+                      style={{ width: "100%", display: "block" }}
                     >
-                      {t("subscribeButton")}
-                    </Button>
+                      <Button
+                        variant="contained"
+                        sx={getGradientButtonStyles(pkg.popular)}
+                        fullWidth
+                      >
+                        {t("subscribeButton")}
+                      </Button>
+                    </AppLink>
                   </CardActions>
                 </Card>
               </Grid>

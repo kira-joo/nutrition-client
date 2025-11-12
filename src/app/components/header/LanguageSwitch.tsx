@@ -6,12 +6,17 @@ import { usePathname, useRouter } from "next/navigation";
 const LanguageSwitch = () => {
   const pathname = usePathname();
   const router = useRouter();
-  const currentLocale = pathname.split("/")[1];
+
+  const currentLocale = pathname.split("/")[1] || Locale.AR;
   const otherLocale = currentLocale === Locale.AR ? Locale.EN : Locale.AR;
 
   const switchLocale = () => {
     const segments = pathname.split("/");
-    segments[1] = otherLocale;
+    if (!segments[1]) {
+      segments.splice(1, 0, otherLocale);
+    } else {
+      segments[1] = otherLocale;
+    }
     router.push(segments.join("/"));
   };
 
@@ -21,10 +26,7 @@ const LanguageSwitch = () => {
         variant="outlined"
         size="small"
         onClick={switchLocale}
-        sx={{
-          minWidth: "auto",
-          px: 2,
-        }}
+        sx={{ minWidth: "auto", px: 2 }}
       >
         {otherLocale.toUpperCase()}
       </Button>

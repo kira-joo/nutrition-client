@@ -72,5 +72,12 @@
   "LabTestsNote": "• لو في تحاليل ضرورية، هاقولك عليها",
   "InbodyNote": "• ممكن تستخدم جهاز \"InBody\" في أي صيدلية للحصول على تفاصيل دقيقة عن جسمك",
   "PersonalConsultationTitle": "استشارات تغذية شخصية",
-  "PersonalConsultationSubtitle": "مصممة خصيصاً لك"
+  "PersonalConsultationSubtitle": "مصممة خصيصاً لك",
+  "Package": "الباقة",
+  "PackageIsRequired": "الباقة مطلوبة",
+  "Duration": "المدة",
+  "DurationIsRequired": "المدة مطلوبة",
+  "OneMonth": "شهر واحد",
+  "TwoMonths": "شهران",
+  "ThreeMonths": "ثلاثة أشهر"
 }

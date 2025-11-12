@@ -8,6 +8,7 @@ interface AppLinkProps {
   href: AppRoute;
   children: React.ReactNode;
   params?: { [key: string | number]: string | number };
+  query?: { [key: string]: string | number | null | undefined };
   [key: string]: any;
 }
 
@@ -15,6 +16,7 @@ const AppLink: React.FC<AppLinkProps> = ({
   href,
   children,
   params,
+  query,
   ...props
 }) => {
   const { locale } = useParams();
@@ -23,6 +25,15 @@ const AppLink: React.FC<AppLinkProps> = ({
     Object.keys(params).forEach((key) => {
       localizedHref = localizedHref.replace(`:${key}`, String(params[key]));
     });
+  }
+  if (query) {
+    const queryString = Object.entries(query)
+      .filter(([_, value]) => value !== null && value !== undefined)
+      .map(([key, value]) => `${key}=${encodeURIComponent(String(value))}`)
+      .join("&");
+    if (queryString) {
+      localizedHref += `?${queryString}`;
+    }
   }
 
   return (

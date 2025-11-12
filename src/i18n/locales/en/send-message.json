@@ -72,5 +72,12 @@
   "LabTestsNote": "• If lab tests are needed, I’ll let you know.",
   "InbodyNote": "• You can use the InBody device at any pharmacy to get accurate body composition details",
   "PersonalConsultationTitle": "Personalized Nutrition Consultations",
-  "PersonalConsultationSubtitle": "Tailored specifically for you"
+  "PersonalConsultationSubtitle": "Tailored specifically for you",
+  "Package": "Package",
+  "PackageIsRequired": "Package is required",
+  "Duration": "Duration",
+  "DurationIsRequired": "Duration is required",
+  "OneMonth": "1 Month",
+  "TwoMonths": "2 Months",
+  "ThreeMonths": "3 Months"
 }

@@ -1,5 +1,7 @@
 {
-  "Food group": "Food group",
+  "pageTitle": "Delicious Recipes",
+  "pageSubtitle": "Discover healthy and nutritious recipes",
+  "Food group": "Food Group",
   "Category": "Category",
   "30 Minutes or Less, Kid-Friendly": "30 Minutes or Less, Kid-Friendly",
   "30 Minutes or Less": "30 Minutes or Less",
@@ -8,30 +10,342 @@
   "Protein": "Protein",
   "Grains": "Grains",
   "Dairy": "Dairy",
+  "Carbohydrates": "Carbohydrates",
+  "Legumes": "Legumes",
   "recipes": {
-    "leek_mushroom_orzo": {
-      "title": "Leek and Mushroom Orzo",
-      "description": "Cook this delicious pasta dish in 45 minutes that will taste great for dinner and for leftovers the next day."
+    "healthy_koshary": {
+      "title": "Healthy Koshary",
+      "description": "A lighter version of the traditional Egyptian koshary made with brown rice and boiled lentils in a light tomato sauce.",
+      "prepTime": "20 minutes",
+      "cookTime": "30 minutes",
+      "servings": "4 servings",
+      "ingredients": [
+        "1 cup brown rice",
+        "1 cup boiled brown lentils",
+        "1/2 cup whole wheat pasta",
+        "2 medium onions, roasted or oven-cooked",
+        "2 cups natural tomato sauce",
+        "2 tbsp olive oil",
+        "1 tsp cumin",
+        "Salt and pepper to taste"
+      ],
+      "instructions": [
+        "Boil the brown rice, pasta, and lentils separately.",
+        "Mix them together in a large bowl.",
+        "In a pan, heat olive oil, then add tomato sauce, cumin, and salt.",
+        "Let the sauce simmer until slightly thickened.",
+        "Serve the koshary in bowls topped with sauce and roasted onions."
+      ]
     },
-    "asparagus_mushroom_melt": {
-      "title": "Asparagus Mushroom Melt",
-      "description": "This warm, cheesy sandwich will make your taste buds water."
+    "molokhia_with_grilled_chicken": {
+      "title": "Molokhia with Grilled Chicken",
+      "description": "A delicious Egyptian meal combining fiber-rich green molokhia with low-fat grilled chicken.",
+      "prepTime": "15 minutes",
+      "cookTime": "25 minutes",
+      "servings": "3 servings",
+      "ingredients": [
+        "2 cups chopped green molokhia",
+        "2 cups fat-free chicken broth",
+        "2 garlic cloves, minced",
+        "1 teaspoon dried coriander",
+        "1 tablespoon olive oil",
+        "2 grilled chicken breasts, seasoned",
+        "Salt to taste"
+      ],
+      "instructions": [
+        "Heat the broth until it boils, then add the molokhia and stir gently to combine.",
+        "In a small pan, heat olive oil and add garlic and coriander until golden.",
+        "Add the sautéed garlic mix to the molokhia and serve with the grilled chicken."
+      ]
     },
-    "curried_chicken_wraps": {
-      "title": "Curried Chicken Wraps",
-      "description": "You can use curry powder in a variety of recipes. In this recipe, it adds a wonderful flavor to the familiar wrap."
+
+    "stuffed_zucchini_light": {
+      "title": "Light Stuffed Zucchini",
+      "description": "Tender zucchini stuffed with brown rice and vegetables, cooked in natural tomato sauce without excess fat.",
+      "prepTime": "25 minutes",
+      "cookTime": "40 minutes",
+      "servings": "4 servings",
+      "ingredients": [
+        "8 medium zucchinis, hollowed",
+        "1 cup half-cooked brown rice",
+        "1/2 cup chopped tomatoes",
+        "1/2 cup chopped onion",
+        "2 tablespoons chopped parsley",
+        "1 teaspoon dried mint",
+        "2 cups natural tomato sauce",
+        "1 tablespoon olive oil"
+      ],
+      "instructions": [
+        "Mix the rice with tomatoes, onion, parsley, and mint.",
+        "Stuff the zucchinis with the mixture and place them in a pot.",
+        "Pour the tomato sauce over them and drizzle with olive oil.",
+        "Cook on low heat for 30–40 minutes until tender."
+      ]
     },
-    "five_a_day_salad": {
-      "title": "5 A Day Salad",
-      "description": "This nutrient-packed salad uses ten different vegetables, and each serving is equal to five cups of vegetables!"
+
+    "bamia_with_olive_oil": {
+      "title": "Okra with Olive Oil",
+      "description": "A lighter Egyptian-style okra stew made with olive oil instead of ghee and fresh tomatoes.",
+      "prepTime": "15 minutes",
+      "cookTime": "35 minutes",
+      "servings": "4 servings",
+      "ingredients": [
+        "500 g fresh okra",
+        "2 cups grated tomatoes",
+        "1 medium onion, chopped",
+        "3 garlic cloves, minced",
+        "2 tablespoons olive oil",
+        "Salt and pepper to taste",
+        "Dried coriander to taste"
+      ],
+      "instructions": [
+        "In a pot, heat olive oil and sauté onion and garlic until soft.",
+        "Add tomatoes, okra, and seasonings.",
+        "Simmer on low heat for 30 minutes until the sauce thickens and okra is cooked."
+      ]
     },
-    "couscous_with_carrots": {
-      "title": "Couscous With Carrots, Walnuts, and Raisins",
-      "description": "This quick-cooking grain dish has a touch of sweet and nutty flavors to go with most main dishes."
+
+    "grilled_fish_with_tahini": {
+      "title": "Grilled Fish with Tahini Sauce",
+      "description": "Lightly grilled tilapia or sea bream served with a protein-rich tahini sauce full of healthy fats.",
+      "prepTime": "20 minutes",
+      "cookTime": "25 minutes",
+      "servings": "2 servings",
+      "ingredients": [
+        "2 cleaned tilapia or sea bream fish",
+        "2 tablespoons olive oil",
+        "2 garlic cloves, minced",
+        "Salt and cumin to taste",
+        "For the tahini sauce:",
+        "2 tablespoons tahini",
+        "2 tablespoons lemon juice",
+        "3 tablespoons warm water",
+        "Pinch of salt"
+      ],
+      "instructions": [
+        "Season the fish with garlic, salt, cumin, and olive oil.",
+        "Grill in the oven or air fryer until cooked through.",
+        "Mix the tahini sauce ingredients until smooth.",
+        "Serve the grilled fish topped with tahini sauce."
+      ]
     },
-    "veggie_skillet_eggs": {
-      "title": "Veggie Skillet Eggs",
-      "description": "Quick and healthy breakfast packed with protein, veggies, and cheddar cheese."
+
+    "light_lentil_soup": {
+      "title": "Light Lentil Soup",
+      "description": "A classic Egyptian lentil soup prepared in a light, nutritious way — perfect for diet meals and rich in plant protein.",
+      "prepTime": "10 minutes",
+      "cookTime": "25 minutes",
+      "servings": "4 servings",
+      "ingredients": [
+        "1 cup yellow lentils",
+        "1 small onion, chopped",
+        "1 carrot, chopped",
+        "1 small tomato, chopped",
+        "2 cups water or vegetable broth",
+        "1 teaspoon cumin",
+        "1 tablespoon olive oil",
+        "Salt and pepper to taste"
+      ],
+      "instructions": [
+        "In a pot, heat olive oil and sauté onion, carrot, and tomato until soft.",
+        "Add lentils, water, and spices, then simmer until the lentils are tender.",
+        "Blend until smooth and serve hot with a sprinkle of cumin."
+      ]
+    },
+
+    "light_potato_tagine": {
+      "title": "Light Baked Potato Tagine",
+      "description": "A healthy version of Egyptian potato tagine using olive oil and chicken breast pieces.",
+      "prepTime": "15 minutes",
+      "cookTime": "35 minutes",
+      "servings": "4 servings",
+      "ingredients": [
+        "3 medium potatoes, sliced",
+        "1 chicken breast, cut into cubes",
+        "1 small onion, chopped",
+        "2 cups grated tomatoes",
+        "2 tbsp olive oil",
+        "Salt, pepper, and cumin to taste"
+      ],
+      "instructions": [
+        "Preheat the oven to 180°C.",
+        "In a baking dish, layer half of the potatoes, then the chicken and onion, and top with the remaining potatoes.",
+        "Mix the tomatoes with oil and spices, then pour over the dish.",
+        "Cover with foil and bake for 30–35 minutes until cooked through."
+      ]
+    },
+
+    "diet_grape_leaves": {
+      "title": "Diet Grape Leaves",
+      "description": "Light Egyptian-style grape leaves stuffed with brown rice and vegetables, made without butter or meat.",
+      "prepTime": "30 minutes",
+      "cookTime": "40 minutes",
+      "servings": "4 servings",
+      "ingredients": [
+        "40 fresh or blanched grape leaves",
+        "1 cup half-cooked brown rice",
+        "1/2 cup chopped onion",
+        "1/2 cup chopped tomatoes",
+        "2 tablespoons chopped parsley",
+        "1 tablespoon olive oil",
+        "2 cups vegetable broth",
+        "Juice of half a lemon",
+        "Salt and dried mint to taste"
+      ],
+      "instructions": [
+        "Mix the rice with onion, tomatoes, parsley, and mint.",
+        "Stuff the grape leaves and arrange them tightly in a pot.",
+        "Mix the broth with lemon juice and olive oil, then pour it over the grape leaves.",
+        "Cover and cook on low heat for 40 minutes until fully tender."
+      ]
+    },
+    "diet_tuna_salad": {
+      "title": "Light Tuna Salad",
+      "description": "A complete meal rich in protein and omega-3, very filling and perfect for a diet.",
+      "prepTime": "10 minutes",
+      "cookTime": "—",
+      "servings": "1 serving",
+      "ingredients": [
+        "1 can drained tuna",
+        "Chopped cucumber",
+        "Chopped tomato",
+        "Chopped lettuce",
+        "Corn",
+        "Juice of 1 lemon",
+        "1 tsp olive oil",
+        "Pinch of black pepper"
+      ],
+      "instructions": [
+        "Chop the vegetables.",
+        "Add tuna and corn.",
+        "Toss with lemon juice, olive oil, and pepper."
+      ]
+    },
+
+    "diet_vegetable_omelette": {
+      "title": "Baked Vegetable Omelette",
+      "description": "A healthy alternative to fried eggs, packed with protein and veggies — very filling.",
+      "prepTime": "20 minutes",
+      "cookTime": "15 minutes",
+      "servings": "1–2 servings",
+      "ingredients": [
+        "2 eggs",
+        "Chopped onion",
+        "Chopped bell pepper",
+        "Diced tomato",
+        "1 tsp olive oil",
+        "Pinch of light salt",
+        "Pinch of pepper",
+        "Pinch of dried mint"
+      ],
+      "instructions": [
+        "Mix all the ingredients together.",
+        "Pour into a small greased baking dish.",
+        "Bake at 180°C until cooked and edges are golden."
+      ]
+    },
+
+    "diet_baked_potatoes": {
+      "title": "Baked Potatoes with Thyme",
+      "description": "Crispy and very tasty — perfect as a side dish or healthy snack.",
+      "prepTime": "30 minutes",
+      "cookTime": "25 minutes",
+      "servings": "2–3 servings",
+      "ingredients": [
+        "Sliced potatoes",
+        "1 tsp olive oil",
+        "Pinch of thyme",
+        "Pinch of paprika",
+        "Pinch of pepper"
+      ],
+      "instructions": [
+        "Mix the potatoes with spices and oil.",
+        "Bake at 200°C until golden and crispy."
+      ]
+    },
+
+    "diet_banana_oat_smoothie": {
+      "title": "Banana Oat Smoothie",
+      "description": "A filling, healthy smoothie rich in fiber and potassium — great for breakfast or a snack.",
+      "prepTime": "5 minutes",
+      "cookTime": "—",
+      "servings": "1 serving",
+      "ingredients": [
+        "1 banana",
+        "2 tbsp oats",
+        "½ cup skimmed milk",
+        "Pinch of cinnamon",
+        "½ tsp honey (optional)"
+      ],
+      "instructions": [
+        "Add all ingredients to a blender.",
+        "Blend until smooth and creamy.",
+        "Serve cold and add ice cubes if desired."
+      ]
+    },
+
+    "diet_cottage_cheese_avocado_sandwich": {
+      "title": "Cottage Cheese & Avocado Sandwich",
+      "description": "An excellent source of protein and healthy fats — perfect for breakfast or a light meal.",
+      "prepTime": "7 minutes",
+      "cookTime": "—",
+      "servings": "1 serving",
+      "ingredients": [
+        "2 slices whole wheat toast",
+        "2 tbsp cottage cheese",
+        "¼ mashed avocado",
+        "Pinch of black pepper",
+        "Squeeze of lemon juice"
+      ],
+      "instructions": [
+        "Mix the cheese with avocado and seasonings.",
+        "Fill the sandwich and serve with sliced veggies or cucumber."
+      ]
+    },
+
+    "diet_yogurt_cucumber_salad": {
+      "title": "Yogurt Cucumber Mint Salad",
+      "description": "Refreshing and very light — perfect as a quick dinner or side dish.",
+      "prepTime": "5 minutes",
+      "cookTime": "—",
+      "servings": "1–2 servings",
+      "ingredients": [
+        "1 cup low-fat yogurt",
+        "Chopped cucumber",
+        "Pinch of dried mint",
+        "Light salt",
+        "Squeeze of lemon juice"
+      ],
+      "instructions": [
+        "Mix all ingredients together.",
+        "Serve chilled and garnish with mint leaves if desired."
+      ]
+    },
+
+    "diet_grilled_chicken_lemon": {
+      "title": "Grilled Lemon Chicken Breast",
+      "description": "A classic healthy meal full of protein and great flavor — ideal for lunch or dinner.",
+      "prepTime": "25 minutes",
+      "cookTime": "15 minutes",
+      "servings": "1–2 servings",
+      "ingredients": [
+        "150 g chicken breast",
+        "Juice of 1 lemon",
+        "Pinch of paprika",
+        "Pinch of thyme",
+        "Light salt",
+        "½ tsp olive oil"
+      ],
+      "instructions": [
+        "Marinate the chicken with all ingredients for 15 minutes.",
+        "Grill on a nonstick pan or griddle.",
+        "Serve with sautéed vegetables or green salad."
+      ]
     }
-  }
+  },
+  "PrepTime": "Preparation Time",
+  "CookTime": "Cooking Time",
+  "Servings": "Servings",
+  "Ingredients": "Ingredients",
+  "Instructions": "Instructions"
 }

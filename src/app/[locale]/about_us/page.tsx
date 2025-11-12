@@ -172,9 +172,7 @@ const AboutUs = () => {
                   sx={{
                     background: "#4381c1",
                     color: "#fff",
-                    "&:hover": {
-                      background: "#2ed8c0",
-                    },
+                    "&:hover": { background: "#2ed8c0" },
                   }}
                   startIcon={<MailOutlineIcon />}
                   href="mailto:omniaalnagy@gmail.com"
