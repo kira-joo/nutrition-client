@@ -307,10 +307,7 @@ const RecipeDetailPage = () => {
                 instructions.map((instruction: string, index: number) => (
                   <ListItem
                     key={index}
-                    sx={{
-                      px: 0,
-                      alignItems: "flex-start",
-                    }}
+                    sx={{ px: 0, alignItems: "flex-start" }}
                   >
                     <Box
                       sx={{

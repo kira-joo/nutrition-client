@@ -12,8 +12,8 @@ const Branding = () => {
           <Image
             src="/images/leftLogo.png"
             alt={Name.NavProfile}
-            width={150}
-            height={50}
+            width={180}
+            height={70}
           />
         </AppLink>
       </Box>

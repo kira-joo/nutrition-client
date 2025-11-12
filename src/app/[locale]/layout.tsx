@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Toolbar } from "@mui/material";
 import { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Locale } from "../../constant/Locale.enum";
@@ -47,6 +47,7 @@ const LocaleLayout = ({ children, params }: LocaleLayoutProps) => {
               minHeight="80vh"
               sx={{ pt: { xs: 5, md: 3 } }}
             >
+              <Toolbar />
               {children}
             </Box>
             <Footer />

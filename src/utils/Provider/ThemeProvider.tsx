@@ -1,10 +1,10 @@
 "use client";
 
-import { ThemeProvider as MUIThemeProvider } from "@mui/material/styles";
-import { CssBaseline } from "@mui/material";
 import { Locale } from "@/constant/Locale.enum";
-import { createAppTheme } from "../theme/theme";
+import { CssBaseline } from "@mui/material";
+import { ThemeProvider as MUIThemeProvider } from "@mui/material/styles";
 import { useMemo } from "react";
+import { createAppTheme } from "../theme/theme";
 
 interface ThemeProviderProps {
   children: React.ReactNode;
@@ -24,4 +24,3 @@ export default function ThemeProvider({
     </MUIThemeProvider>
   );
 }
-

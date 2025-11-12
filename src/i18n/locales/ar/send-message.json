@@ -59,6 +59,7 @@
   "SendingToWhatsApp": "جاري الإرسال إلى واتساب...",
   "ConsultationRequestSentSuccessfully": "تم إرسال طلب الاستشارة بنجاح! سيتم فتح واتساب لإرسال البيانات",
   "FailedToSendConsultationRequest": "فشل في إرسال طلب الاستشارة. يرجى المحاولة مرة أخرى",
+  "SendViaWhatsApp": "إرسال عبر واتساب",
   "DoctorName": "د. أمنية أحمد",
   "DoctorTitle": "أخصائية التغذية العلاجية",
   "WelcomeTitle": "🌟 مرحباً بك",

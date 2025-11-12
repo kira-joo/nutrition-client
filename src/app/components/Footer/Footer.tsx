@@ -19,7 +19,7 @@ const footerStyles = {
     borderTop: "1px solid #ddd",
     mt: "auto",
   },
-  logoContainer: { mb: 4, display: { xs: "none", md: "block" } },
+  logoContainer: { mb: 1, display: { xs: "none", md: "block" } },
   logoSection: { textAlign: { xs: "center", md: "start" } },
   description: { color: "#ffffff", fontWeight: 500 },
   socialSection: {
@@ -88,10 +88,10 @@ const Footer = () => {
         <Grid item xs={12} md={4} sx={footerStyles.logoSection}>
           <Box sx={footerStyles.logoContainer}>
             <Image
-              src="/images/TopLogooooo.png"
+              src="/images/leftLogo.png"
               alt={t("logoAlt")}
-              width={230}
-              height={70}
+              width={290}
+              height={120}
             />
           </Box>
           <Typography variant="subtitle1" sx={footerStyles.description}>

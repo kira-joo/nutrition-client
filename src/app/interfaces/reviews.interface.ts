@@ -3,4 +3,6 @@ export interface reviewI {
   url: string;
   id: number;
   image: string;
+  width: number;
+  height: number;
 }

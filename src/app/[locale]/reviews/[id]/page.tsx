@@ -1,45 +1,34 @@
+"use client"; // مهم لو هنعمل useState و Dialog
+
 import { Box, Button, ImageListItem, Typography } from "@mui/material";
 import Image from "next/image";
 
 import { reviews } from "@/constant/reviews";
 import { notFound } from "next/navigation";
 
-// Fetches data for the specific `id`
 const getReviewById = (id: string) => {
   return reviews.find((review) => review.id.toString() === id);
 };
 
-export default async function ReviewPage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const reviewId = params.id; // Get the id from params
-  const review = getReviewById(reviewId); // Find the review by id
+export default function ReviewPage({ params }: { params: { id: string } }) {
+  const reviewId = params.id;
+  const review = getReviewById(reviewId);
 
   if (!review) {
-    notFound(); // Handle not found case
+    notFound();
   }
 
   return (
     <Box
       sx={{
         display: "flex",
-        flexDirection: "column", // Default layout for mobile (centered)
-        gap: 2, // Add some spacing between elements
-        alignItems: "center", // Center elements horizontally on mobile
-        justifyContent: "center", // Center elements vertically on mobile
+        flexDirection: "column",
+        gap: 2,
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
-      <Box
-        sx={{
-          padding: 1,
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
-        {" "}
-        {/* Image container */}
+      <Box sx={{ padding: 1, display: "flex", justifyContent: "center" }}>
         <ImageListItem
           key={review.id}
           sx={{
@@ -56,21 +45,16 @@ export default async function ReviewPage({
           <Image
             src={review.image}
             alt={review.title}
-            width={315}
-            height={460}
+            width={review.width}
+            height={review.height}
             priority
-            style={{
-              borderRadius: "10px",
-              border: "2px solid ",
-              objectFit: "cover",
-            }}
+            style={{ borderRadius: "10px", objectFit: "cover" }}
           />
         </ImageListItem>
       </Box>
+
       <Box sx={{ width: "100%" }}>
-        {/* Content container */}
-        <Typography variant="h4" gutterBottom dir="rtl">
-          {/* Add dir="rtl" */}
+        <Typography variant="h5" sx={{ textAlign: "center" }}>
           {review.title}
         </Typography>
         <Button
@@ -79,9 +63,16 @@ export default async function ReviewPage({
           href={review.url}
           target="_blank"
           rel="noopener noreferrer"
-          sx={{ marginTop: 2, width: "100%" }}
+          sx={{
+            marginTop: 2,
+            width: "50%",
+            display: "block",
+            textAlign: "center",
+            borderRadius: 25,
+            mx: "auto",
+          }}
         >
-          Go to the post
+          اذهب الي المنشور
         </Button>
       </Box>
     </Box>

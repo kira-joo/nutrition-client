@@ -367,14 +367,8 @@ ${data.additionalNotes ? `📝 ملاحظات إضافية:\n${data.additionalNo
               type="number"
               {...register("age", {
                 required: t("AgeIsRequired"),
-                min: {
-                  value: 1,
-                  message: t("AgeCannotBeLessThan1"),
-                },
-                max: {
-                  value: 120,
-                  message: t("AgeCannotBeMoreThan120"),
-                },
+                min: { value: 1, message: t("AgeCannotBeLessThan1") },
+                max: { value: 120, message: t("AgeCannotBeMoreThan120") },
               })}
               error={!!errors.age}
               helperText={errors.age ? errors.age.message : ""}

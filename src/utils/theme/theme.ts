@@ -6,7 +6,37 @@ export const createAppTheme = (locale: Locale): Theme => {
 
   return createTheme({
     direction: isRTL ? "rtl" : "ltr",
+    palette: {
+      primary: {
+        main: "#007B7F",
+      },
+      secondary: {
+        main: "#4db6b2",
+      },
+      text: {
+        primary: "#333333",
+        secondary: "#666666",
+      },
+      background: {
+        default: "#ffffff",
+        paper: "#ffffff",
+      },
+    },
     components: {
+      MuiTypography: {
+        styleOverrides: {
+          root: {
+            direction: "inherit",
+          },
+        },
+      },
+      MuiGrid: {
+        styleOverrides: {
+          root: {
+            direction: "inherit",
+          },
+        },
+      },
       MuiTextField: {
         styleOverrides: {
           root: isRTL
@@ -113,15 +143,7 @@ export const createAppTheme = (locale: Locale): Theme => {
             : {},
         },
       },
-      MuiList: {
-        styleOverrides: {
-          root: isRTL
-            ? {
-                direction: "rtl",
-              }
-            : {},
-        },
-      },
+      MuiList: { styleOverrides: { root: isRTL ? { direction: "rtl" } : {} } },
       MuiListItem: {
         styleOverrides: {
           root: isRTL

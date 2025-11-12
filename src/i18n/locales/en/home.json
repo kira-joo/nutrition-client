@@ -27,5 +27,17 @@
     "GotoTheReel": "Go to The Reel"
   },
   "consultation": "consultation",
-  "packages": "Packages"
+  "packages": "Packages",
+  "whyChooseTitle": "Why Choose Our Programs",
+  "benefit1Title": "Personalized Nutrition Plans",
+  "benefit1Description": "Customized meal plans tailored to your unique health goals and dietary needs.",
+  "benefit2Title": "Expert Guidance",
+  "benefit2Description": "Professional support from certified nutrition specialists throughout your journey.",
+  "benefit3Title": "Proven Results",
+  "benefit3Description": "Evidence-based programs that help you achieve sustainable health improvements.",
+  "whatOurClientsSay": "What Our Clients Say",
+  "viewAllReviews": "View All Reviews",
+  "heroTitle": "Transform Your Health Journey",
+  "heroSubtitle": "Expert nutrition guidance tailored to your unique needs. Start your path to wellness today.",
+  "heroCTA": "Get Started"
 }
