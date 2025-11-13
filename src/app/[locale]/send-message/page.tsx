@@ -2,6 +2,7 @@
 import { WhatsappNumber } from "@/app/components/constant/numbers";
 import { DictionaryFiles } from "@/constant/DictionaryFiles";
 import useI18n from "@/hooks/useI18n";
+import { useRTL } from "@/hooks/useRTL";
 import SendIcon from "@mui/icons-material/Send";
 import {
   Box,
@@ -12,9 +13,9 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import Image from "next/image";
 import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import MessageSVG from "./message";
 
 interface FormValues {
   message: string;
@@ -22,6 +23,7 @@ interface FormValues {
 
 const SendMessage: React.FC = () => {
   const { t } = useI18n(DictionaryFiles.SendMessage);
+  const { isRTL } = useRTL();
   const {
     register,
     handleSubmit,
@@ -117,7 +119,6 @@ const SendMessage: React.FC = () => {
             display: { xs: "none", md: "flex" },
             justifyContent: "center",
             alignItems: "center",
-            mb: 20,
           }}
         >
           <Box
@@ -126,9 +127,16 @@ const SendMessage: React.FC = () => {
               height: "100%",
               maxWidth: "400px",
               maxHeight: "400px",
+              transform: isRTL ? "scaleX(-1)" : "scaleX(1)",
             }}
           >
-            <MessageSVG />
+            <Image
+              src="/images/download.svg"
+              alt="Send Message Illustration"
+              width={400}
+              height={400}
+              style={{ width: "100%", height: "auto" }}
+            />
           </Box>
         </Grid>
       </Grid>

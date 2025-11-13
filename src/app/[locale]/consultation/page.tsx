@@ -15,7 +15,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useParams, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import ErrorMessage from "../send-message/ErrorMessage";
@@ -39,7 +39,6 @@ interface FormValues {
 const Consultation: React.FC = () => {
   const { t } = useI18n(DictionaryFiles.SendMessage);
   const packagesI18n = useI18n(DictionaryFiles.Packages);
-  const { locale } = useParams();
   const searchParams = useSearchParams();
   const packageFromUrl = searchParams.get("package");
   const [packageDisabled, setPackageDisabled] = useState<boolean>(false);

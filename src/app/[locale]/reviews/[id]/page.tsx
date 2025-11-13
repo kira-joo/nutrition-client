@@ -1,8 +1,8 @@
 "use client"; // مهم لو هنعمل useState و Dialog
 
 import { Box, Button, ImageListItem, Typography } from "@mui/material";
-import Image from "next/image";
 
+import ImageDialog from "@/app/components/ImageDialog";
 import { reviews } from "@/constant/reviews";
 import { notFound } from "next/navigation";
 
@@ -42,12 +42,11 @@ export default function ReviewPage({ params }: { params: { id: string } }) {
             },
           }}
         >
-          <Image
+          <ImageDialog
             src={review.image}
             alt={review.title}
             width={review.width}
             height={review.height}
-            priority
             style={{ borderRadius: "10px", objectFit: "cover" }}
           />
         </ImageListItem>
