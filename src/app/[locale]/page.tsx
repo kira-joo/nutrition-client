@@ -172,22 +172,12 @@ const HomePage = () => {
             </Grid>
 
             {/* Personal Image - Right in EN, Left in AR */}
-            <Grid
-              item
-              xs={12}
-              md={6}
-              sx={{
-                order: { md: isRTL ? 1 : 2 },
-              }}
-            >
+            <Grid item xs={12} md={6} sx={{ order: { md: 1 } }}>
               <Box
                 sx={{
                   position: "relative",
                   display: "flex",
-                  justifyContent: {
-                    xs: "center",
-                    md: isRTL ? "flex-start" : "flex-end",
-                  },
+                  justifyContent: { xs: "center", md: "flex-end" },
                   alignItems: "center",
                 }}
               >
@@ -583,8 +573,7 @@ const HomePage = () => {
                       sx={{
                         width: 80,
                         height: 80,
-                        mr: isRTL ? 0 : 2,
-                        ml: isRTL ? 2 : 0,
+                        ...getPosition(2, "auto"),
                         border: `3px solid ${alpha("#4db6b2", 0.3)}`,
                       }}
                     />
