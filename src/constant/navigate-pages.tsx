@@ -1,10 +1,9 @@
 import navigatePagesI from "@/app/interfaces/navigate-pages.interface";
-import { Subscriptions } from "@mui/icons-material";
+import { ReviewsSharp, Subscriptions, VideoLibrary } from "@mui/icons-material";
 import FastfoodIcon from "@mui/icons-material/Fastfood";
 import HomeIcon from "@mui/icons-material/Home";
 import InfoIcon from "@mui/icons-material/Info";
 import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
-import MessageIcon from "@mui/icons-material/Message";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import AppRoute from "./AppRoute.enum";
 
@@ -34,12 +33,6 @@ export const NavigatePages: navigatePagesI[] = [
     icon: <RestaurantMenuIcon />,
   },
   {
-    title: "sendMessage",
-    description: "description-SendMessage",
-    url: AppRoute.SendMessage,
-    icon: <MessageIcon fontSize="small" />,
-  },
-  {
     title: "consultation",
     description: "consultation",
     url: AppRoute.Consultation,
@@ -50,5 +43,17 @@ export const NavigatePages: navigatePagesI[] = [
     description: "packages",
     url: AppRoute.Packages,
     icon: <Subscriptions />,
+  },
+  {
+    title: "reviews",
+    description: "reviews",
+    url: AppRoute.Reviews,
+    icon: <ReviewsSharp />,
+  },
+  {
+    title: "reels",
+    description: "reels",
+    url: AppRoute.Videos,
+    icon: <VideoLibrary />,
   },
 ];
