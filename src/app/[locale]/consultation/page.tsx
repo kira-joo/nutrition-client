@@ -98,10 +98,9 @@ const Consultation: React.FC = () => {
       const durationName = durationMap[data.duration] || data.duration;
 
       const whatsappMessage = `
-اهلا وسهلا بحضرتك 🌟
-معاكم د. أمنية أحمد، أخصائية التغذية العلاجية
 
-بيانات المريض:
+
+بيانات العميل:
 📝 الاسم: ${data.name}
 📅 العمر: ${data.age} سنة
 📏 الطول: ${data.height} سم
@@ -130,7 +129,7 @@ ${data.additionalNotes ? `📝 ملاحظات إضافية:\n${data.additionalNo
       `.trim();
 
       // WhatsApp phone number (replace with your actual number)
-      const phoneNumber = "201110373648"; // Replace with your WhatsApp number
+      const phoneNumber = "201155924548"; // Replace with your WhatsApp number
       const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
         whatsappMessage
       )}`;
