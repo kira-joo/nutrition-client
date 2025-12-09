@@ -4,7 +4,6 @@ import { WhatsappNumber } from "@/app/components/constant/numbers";
 import { DictionaryFiles } from "@/constant/DictionaryFiles";
 import useI18n from "@/hooks/useI18n";
 import {
-  Alert,
   Box,
   Button,
   CircularProgress,
@@ -53,13 +52,8 @@ export default function LandingForm({ selectedProgram }: LandingFormProps) {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<
-    "idle" | "success" | "error"
-  >("idle");
-
   const onSubmit: SubmitHandler<FormData> = async (data: FormData) => {
     setIsSubmitting(true);
-    setSubmitStatus("idle");
 
     try {
       // Use selectedProgram if available, otherwise derive from goal field
@@ -97,14 +91,11 @@ I would like to register for the camp program.
       // Open WhatsApp in new tab
       window.open(whatsappUrl, "_blank");
 
-      setSubmitStatus("success");
-
       // Reset form
       reset();
       hasTrackedLead.current = false;
     } catch (error) {
       console.error("Error opening WhatsApp:", error);
-      setSubmitStatus("error");
     } finally {
       setIsSubmitting(false);
     }
@@ -136,28 +127,6 @@ I would like to register for the camp program.
         >
           {t("form.registerNow")}
         </Typography>
-
-        {submitStatus === "success" && (
-          <Alert severity="success" sx={{ mb: 3 }}>
-            <Typography variant="body1" sx={{ fontWeight: 600 }}>
-              {t("form.thankYouForRegistering")}
-            </Typography>
-            <Typography variant="body2">
-              {t("form.weWillContactYouSoon")}
-            </Typography>
-          </Alert>
-        )}
-
-        {submitStatus === "error" && (
-          <Alert severity="error" sx={{ mb: 3 }}>
-            <Typography variant="body1" sx={{ fontWeight: 600 }}>
-              {t("form.somethingWentWrong")}
-            </Typography>
-            <Typography variant="body2">
-              {t("form.pleaseTryAgainLater")}
-            </Typography>
-          </Alert>
-        )}
 
         <TextField
           label={t("form.fullName")}
