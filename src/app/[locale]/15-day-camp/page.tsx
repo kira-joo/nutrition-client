@@ -19,7 +19,6 @@ import RegistrationFormSection from "./components/RegistrationFormSection";
  * - selectedProgram state management
  * - trackViewContent tracking
  * - campEndDate logic
- * - Scrolling behavior
  */
 
 type ProgramType = "Weight Loss" | "Weight Gain" | null;
