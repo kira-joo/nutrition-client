@@ -14,6 +14,7 @@ i18n.use(initReactI18next).init({
       [DictionaryFiles.Calculator]: require("./locales/en/calculator.json"),
       [DictionaryFiles.Packages]: require("./locales/en/packages.json"),
       [DictionaryFiles.Faq]: require("./locales/en/faq.json"),
+      [DictionaryFiles._15DayCamp]: require("./locales/en/15-day-camp.json"),
     },
     ar: {
       [DictionaryFiles.Home]: require("./locales/ar/home.json"),
@@ -23,6 +24,7 @@ i18n.use(initReactI18next).init({
       [DictionaryFiles.Calculator]: require("./locales/ar/calculator.json"),
       [DictionaryFiles.Packages]: require("./locales/ar/packages.json"),
       [DictionaryFiles.Faq]: require("./locales/ar/faq.json"),
+      [DictionaryFiles._15DayCamp]: require("./locales/ar/15-day-camp.json"),
     },
   },
   lng: Locale.AR,

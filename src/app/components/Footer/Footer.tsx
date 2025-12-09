@@ -4,7 +4,7 @@ import { Locale } from "@/constant/Locale.enum";
 import useI18n from "@/hooks/useI18n";
 import { Box, Grid, IconButton, Tooltip, Typography } from "@mui/material";
 import Image from "next/image";
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import AppLinkMUI from "../AppLink/AppLinkMUI";
 import { FooterMenulist } from "./constant/FooterMenulist";
 import { SocialMediaLinks } from "./constant/socialMediaLinks";
@@ -76,8 +76,17 @@ const footerStyles = {
 const Footer = () => {
   const { t } = useI18n(DictionaryFiles.Home);
   const { locale }: { locale: Locale } = useParams();
+  const pathname = usePathname();
+  const isLandingPage = pathname?.includes("/15-day-camp");
+
   return (
-    <Box component="footer" sx={footerStyles.container}>
+    <Box
+      component="footer"
+      sx={{
+        ...footerStyles.container,
+        ...(isLandingPage && { mb: { xs: 10, md: 12 } }), // Add margin only on landing page
+      }}
+    >
       <Grid
         container
         spacing={{

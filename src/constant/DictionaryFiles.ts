@@ -9,4 +9,5 @@ export enum DictionaryFiles {
   Faq = "faq",
   Calculator = "calculator",
   Packages = "packages",
+  _15DayCamp = "15-day-camp",
 }

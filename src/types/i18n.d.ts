@@ -29,4 +29,7 @@ export type TranslationKeyMap = {
   [DictionaryFiles.Faq]: NestedKeyOf<
     typeof import("../i18n/locales/en/faq.json")
   >;
+  [DictionaryFiles._15DayCamp]: NestedKeyOf<
+    typeof import("../i18n/locales/en/15-day-camp.json")
+  >;
 };

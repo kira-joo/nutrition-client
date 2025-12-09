@@ -3,6 +3,7 @@ import FacebookIcon from "@mui/icons-material/Facebook";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
+import { WhatsappNumber } from "../../constant/numbers";
 
 export const SocialMediaLinks = [
   {
@@ -26,7 +27,7 @@ export const SocialMediaLinks = [
   {
     icon: <WhatsAppIcon fontSize="large" />,
     color: "green",
-    href: "https://wa.me/+201155924548",
+    href: `https://wa.me/${WhatsappNumber}`,
     name: "WhatsApp",
   },
   {

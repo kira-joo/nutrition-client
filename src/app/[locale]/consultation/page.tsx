@@ -1,4 +1,5 @@
 "use client";
+import { WhatsappNumber } from "@/app/components/constant/numbers";
 import { DictionaryFiles } from "@/constant/DictionaryFiles";
 import useI18n from "@/hooks/useI18n";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
@@ -129,8 +130,7 @@ ${data.additionalNotes ? `📝 ملاحظات إضافية:\n${data.additionalNo
       `.trim();
 
       // WhatsApp phone number (replace with your actual number)
-      const phoneNumber = "201155924548"; // Replace with your WhatsApp number
-      const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
+      const whatsappUrl = `https://wa.me/${WhatsappNumber}?text=${encodeURIComponent(
         whatsappMessage
       )}`;
 
