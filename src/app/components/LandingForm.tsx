@@ -27,6 +27,7 @@ interface FormData {
   phone: string;
   age: string;
   weight: string;
+  height: string;
   goal: "Loss" | "Gain";
 }
 
@@ -47,6 +48,7 @@ export default function LandingForm({ selectedProgram }: LandingFormProps) {
       phone: "",
       age: "",
       weight: "",
+      height: "",
       goal: "Loss",
     },
   });
@@ -71,6 +73,7 @@ export default function LandingForm({ selectedProgram }: LandingFormProps) {
 📞 Phone: ${data.phone}
 🎂 Age: ${data.age} years
 ⚖️ Weight: ${data.weight} kg
+👤 Height: ${data.height} cm
 🎯 Goal: ${goalText}
 📋 Program: ${program}
 
@@ -159,7 +162,7 @@ I would like to register for the camp program.
         />
 
         <Grid container spacing={2} sx={{ mt: 1 }}>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <TextField
               label={t("form.age")}
               fullWidth
@@ -176,7 +179,7 @@ I would like to register for the camp program.
             />
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <TextField
               label={t("form.weight")}
               fullWidth
@@ -194,6 +197,23 @@ I would like to register for the camp program.
               })}
               error={!!errors.weight}
               helperText={errors.weight ? errors.weight.message : ""}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <TextField
+              label={t("form.height")}
+              fullWidth
+              variant="outlined"
+              type="number"
+              inputProps={{ step: "0.1", min: "50", max: "250" }}
+              {...register("height", {
+                required: t("form.heightRequired"),
+                min: { value: 50, message: t("form.heightMin") },
+                max: { value: 250, message: t("form.heightMax") },
+                valueAsNumber: false,
+              })}
+              error={!!errors.height}
+              helperText={errors.height ? errors.height.message : ""}
             />
           </Grid>
         </Grid>
