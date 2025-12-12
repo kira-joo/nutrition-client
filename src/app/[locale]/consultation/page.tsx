@@ -130,7 +130,7 @@ ${data.additionalNotes ? `📝 ملاحظات إضافية:\n${data.additionalNo
       `.trim();
 
       // WhatsApp phone number (replace with your actual number)
-      const whatsappUrl = `https://wa.me/${WhatsappNumber}?text=${encodeURIComponent(
+      const whatsappUrl = `https://api.whatsapp.com/send?phone=${WhatsappNumber}&text=${encodeURIComponent(
         whatsappMessage
       )}`;
 

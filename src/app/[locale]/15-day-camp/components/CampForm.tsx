@@ -18,7 +18,7 @@ import {
 import { useRef, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 
-interface LandingFormProps {
+interface CampFormProps {
   selectedProgram: "Weight Loss" | "Weight Gain" | null;
 }
 
@@ -30,8 +30,7 @@ interface FormData {
   height: string;
   goal: "Loss" | "Gain";
 }
-
-export default function LandingForm({ selectedProgram }: LandingFormProps) {
+const CampForm: React.FC<CampFormProps> = ({ selectedProgram }) => {
   const { t } = useI18n(DictionaryFiles._15DayCamp);
   const hasTrackedLead = useRef(false);
 
@@ -73,25 +72,17 @@ export default function LandingForm({ selectedProgram }: LandingFormProps) {
 📞 Phone: ${data.phone}
 🎂 Age: ${data.age} years
 ⚖️ Weight: ${data.weight} kg
-👤 Height: ${data.height} cm
+� Height: ${data.height} cm
 🎯 Goal: ${goalText}
 📋 Program: ${program}
 
 I would like to register for the camp program.
       `.trim();
 
-      // Create WhatsApp URL
-      const whatsappUrl = `https://wa.me/${WhatsappNumber.replace(
-        /[^0-9]/g,
-        ""
-      )}?text=${encodeURIComponent(whatsappMessage)}`;
+      const whatsappUrl = `https://api.whatsapp.com/send?phone=${WhatsappNumber}&text=${encodeURIComponent(
+        whatsappMessage
+      )}`;
 
-      // Track CompleteRegistration event before opening WhatsApp
-      const programForTracking =
-        selectedProgram ||
-        (data.goal === "Loss" ? "Weight Loss" : "Weight Gain");
-
-      // Open WhatsApp in new tab
       window.open(whatsappUrl, "_blank");
 
       // Reset form
@@ -275,4 +266,5 @@ I would like to register for the camp program.
       </Box>
     </Box>
   );
-}
+};
+export default CampForm;

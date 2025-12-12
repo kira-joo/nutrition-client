@@ -1,6 +1,6 @@
 "use client";
 
-import LandingForm from "@/app/components/LandingForm";
+import CampForm from "@/app/[locale]/15-day-camp/components/CampForm";
 import { DictionaryFiles } from "@/constant/DictionaryFiles";
 import useI18n from "@/hooks/useI18n";
 import { alpha, Box, Container, Typography } from "@mui/material";
@@ -48,7 +48,7 @@ export default function RegistrationFormSection({
                 : t("selectProgramAbove")}
             </Typography>
           </Box>
-          <LandingForm selectedProgram={selectedProgram} />
+          <CampForm selectedProgram={selectedProgram} />
         </Container>
       </Box>
     </AnimatedSection>
