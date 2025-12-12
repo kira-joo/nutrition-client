@@ -3,8 +3,9 @@
 import { Box } from "@mui/material";
 import { useState } from "react";
 import BottomCTABar from "./components/BottomCTABar";
-import CTASection from "./components/CTASection";
+import CampInfoSection from "./components/CampInfoSection";
 import CountdownSection from "./components/CountdownSection";
+import CTASection from "./components/CTASection";
 import FAQSection from "./components/FAQSection";
 import FeaturesSection from "./components/FeaturesSection";
 import HeroSection from "./components/HeroSection";
@@ -57,6 +58,7 @@ export default function LandingPage() {
       <FeaturesSection />
       {/* <TestimonialsSection /> */}
       <FAQSection />
+      <CampInfoSection />
       <RegistrationFormSection selectedProgram={selectedProgram} />
       <CTASection />
       <BottomCTABar endDate={campEndDate} />

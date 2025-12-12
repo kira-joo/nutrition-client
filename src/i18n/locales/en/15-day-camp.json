@@ -55,6 +55,14 @@
     "minutes": "Minutes",
     "seconds": "Seconds"
   },
+  "campInfo": {
+    "welcome": "Welcome! 👋✨",
+    "point1": "The camp is group-based and lasts only 15 days.",
+    "point2": "There is a unified diet plan suitable for healthy people",
+    "point3": "Follow-up within a dedicated group for participants.",
+    "point4": "Every day there will be simple tasks + guidance + continuous support.",
+    "point5": "Limited spots, so once payment is confirmed, you'll be added immediately to the group."
+  },
   "form": {
     "registerNow": "Register Now",
     "fullName": "Full Name",
