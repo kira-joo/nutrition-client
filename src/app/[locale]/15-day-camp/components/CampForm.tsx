@@ -24,7 +24,6 @@ interface CampFormProps {
 
 interface FormData {
   name: string;
-  phone: string;
   age: string;
   weight: string;
   height: string;
@@ -44,7 +43,6 @@ const CampForm: React.FC<CampFormProps> = ({ selectedProgram }) => {
     mode: "onChange",
     defaultValues: {
       name: "",
-      phone: "",
       age: "",
       weight: "",
       height: "",
@@ -69,7 +67,6 @@ const CampForm: React.FC<CampFormProps> = ({ selectedProgram }) => {
 
 📝 *Client Information:*
 👤 Name: ${data.name}
-📞 Phone: ${data.phone}
 🎂 Age: ${data.age} years
 ⚖️ Weight: ${data.weight} kg
 � Height: ${data.height} cm
@@ -135,23 +132,6 @@ I would like to register for the camp program.
           sx={{ mt: 2 }}
         />
 
-        <TextField
-          label={t("form.phoneNumber")}
-          fullWidth
-          variant="outlined"
-          type="tel"
-          {...register("phone", {
-            required: t("form.phoneRequired"),
-            pattern: {
-              value: /^[0-9+\-\s()]+$/,
-              message: t("form.phoneInvalid"),
-            },
-          })}
-          error={!!errors.phone}
-          helperText={errors.phone ? errors.phone.message : ""}
-          sx={{ mt: 2 }}
-        />
-
         <Grid container spacing={2} sx={{ mt: 1 }}>
           <Grid item xs={12} sm={4}>
             <TextField
@@ -170,7 +150,7 @@ I would like to register for the camp program.
             />
           </Grid>
 
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={6} sm={4}>
             <TextField
               label={t("form.weight")}
               fullWidth
@@ -190,7 +170,7 @@ I would like to register for the camp program.
               helperText={errors.weight ? errors.weight.message : ""}
             />
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={6} sm={4}>
             <TextField
               label={t("form.height")}
               fullWidth
