@@ -29,7 +29,7 @@ export default function LandingPage() {
 
   // Set the camp end date (15 days from now, or customize as needed)
   // You can change this to a specific date, e.g., new Date("2024-12-31T23:59:59")
-  const campEndDate = new Date("2025-12-15");
+  const campEndDate = new Date("2026-12-15");
   campEndDate.setDate(campEndDate.getDate());
   campEndDate.setHours(23, 59, 59, 999); // End of day
 
