@@ -29,7 +29,7 @@ const NewsletterSignup: React.FC = () => {
     },
   });
 
-  const onSubmit: SubmitHandler<IFormInput> = async (data: IFormInput) => {
+  const onSubmit: SubmitHandler<IFormInput> = async (_data: IFormInput) => {
     try {
       reset(); // Reset the form on successful submission
     } catch (err) {

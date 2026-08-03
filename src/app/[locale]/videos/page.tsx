@@ -4,7 +4,6 @@ import AppRoute from "@/constant/AppRoute.enum";
 import { DictionaryFiles } from "@/constant/DictionaryFiles";
 import { videos } from "@/constant/videos";
 import useI18n from "@/hooks/useI18n";
-import { useRTL } from "@/hooks/useRTL";
 import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
 import {
   alpha,
@@ -18,7 +17,6 @@ import {
 
 const Videos = () => {
   const { t } = useI18n(DictionaryFiles.Home);
-  const { isRTL } = useRTL();
 
   return (
     <Container maxWidth="lg" sx={{ py: 6 }}>

@@ -82,7 +82,7 @@ const NutritionCalculator: React.FC = () => {
       const dailyCalories = Math.round(bmr * activityMultiplier);
 
       setCaloricNeeds(dailyCalories);
-    } catch (err) {
+    } catch {
       setFetchError("Failed to calculate calories. Please try again.");
     } finally {
       setLoading(false);
@@ -261,7 +261,7 @@ const NutritionCalculator: React.FC = () => {
                       }}
                     >
                       {Object.values(ActivityLevels).map(
-                        (option: any, index) => {
+                        (option: ActivityLevels, index) => {
                           const value = `activity.${option}`;
                           return (
                             <MenuItem
@@ -269,6 +269,7 @@ const NutritionCalculator: React.FC = () => {
                               value={option}
                               sx={{ fontSize: "0.750rem" }}
                             >
+                              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any -- useI18n's typed key map can't express this dynamically-built key; useI18n is removed in the next-intl migration (Phase 3), which resolves this */}
                               {t(value as any)}
                             </MenuItem>
                           );

@@ -139,7 +139,7 @@ ${data.additionalNotes ? `📝 ملاحظات إضافية:\n${data.additionalNo
 
       setSuccess(t("ConsultationRequestSentSuccessfully"));
       reset();
-    } catch (err) {
+    } catch {
       setFetchError(t("FailedToSendConsultationRequest"));
     } finally {
       setLoading(false);
