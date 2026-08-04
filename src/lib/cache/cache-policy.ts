@@ -1,3 +1,4 @@
+import { createCachePolicyResolver } from "@kira-joo/frontend-toolkit-core/server";
 import { CacheTag } from "@/lib/cache/cache-tags";
 
 /**
@@ -31,13 +32,21 @@ export const CACHE_POLICY: Record<StaticCacheTagValue, number> = {
   [CacheTag.RECIPES]: DEFAULT_REVALIDATE_SECONDS,
   [CacheTag.REVIEWS]: DEFAULT_REVALIDATE_SECONDS,
   [CacheTag.VIDEOS]: DEFAULT_REVALIDATE_SECONDS,
-  [CacheTag.FAQ_SECTIONS]: DEFAULT_REVALIDATE_SECONDS,
-  [CacheTag.FAQ_ITEMS]: DEFAULT_REVALIDATE_SECONDS,
+  [CacheTag.FAQ]: DEFAULT_REVALIDATE_SECONDS,
   [CacheTag.CAMPAIGNS]: 300,
 };
 
-/** `tags[0]` by convention is the policy tag — see cache-tags.ts. Falls back to `DEFAULT_REVALIDATE_SECONDS` for a tag with no explicit policy entry (e.g. an entity-level-only tag passed first by mistake) rather than throwing. */
-export function resolvePolicyRevalidate(tags: string[]): number {
-  const [policyTag] = tags;
-  return CACHE_POLICY[policyTag as StaticCacheTagValue] ?? DEFAULT_REVALIDATE_SECONDS;
-}
+/**
+ * `tags[0]` by convention is the policy tag — see cache-tags.ts. Falls back
+ * to `DEFAULT_REVALIDATE_SECONDS` for a tag with no explicit policy entry
+ * (e.g. an entity-level-only tag passed first by mistake) rather than
+ * throwing. The lookup mechanism itself is frontend-toolkit-core's
+ * `createCachePolicyResolver` — generic across any tag/interval shape; only
+ * the concrete tags and intervals above are this app's own business
+ * decision, and stay local per the explicit decision recorded in
+ * docs/architecture.md.
+ */
+export const resolvePolicyRevalidate = createCachePolicyResolver(
+  CACHE_POLICY as Record<string, number>,
+  DEFAULT_REVALIDATE_SECONDS
+);

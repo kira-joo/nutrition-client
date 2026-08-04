@@ -1,10 +1,12 @@
 import type { PaginatedResponse } from "@kira-joo/toolkit-common";
-import type { PublicEndpoint } from "../src/lib/api/public-endpoint.type";
+import { MethodType, type Endpoint } from "@kira-joo/frontend-toolkit-core/server";
+import { PublicApiRoute } from "./public-api-route";
 import type { Video } from "../src/lib/domain/video";
 
-export const listVideosEndpoint: PublicEndpoint<{
+export const listVideosEndpoint: Endpoint<{
   query: { page?: number; limit?: number; search?: string };
   returnType: PaginatedResponse<Video>;
 }> = {
-  url: "/api/public/videos",
+  url: PublicApiRoute.VIDEOS,
+  methodType: MethodType.GET,
 };

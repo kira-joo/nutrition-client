@@ -1,10 +1,12 @@
 import type { PaginatedResponse } from "@kira-joo/toolkit-common";
-import type { PublicEndpoint } from "../src/lib/api/public-endpoint.type";
+import { MethodType, type Endpoint } from "@kira-joo/frontend-toolkit-core/server";
+import { PublicApiRoute } from "./public-api-route";
 import type { Review } from "../src/lib/domain/review";
 
-export const listReviewsEndpoint: PublicEndpoint<{
+export const listReviewsEndpoint: Endpoint<{
   query: { page?: number; limit?: number; search?: string };
   returnType: PaginatedResponse<Review>;
 }> = {
-  url: "/api/public/reviews",
+  url: PublicApiRoute.REVIEWS,
+  methodType: MethodType.GET,
 };

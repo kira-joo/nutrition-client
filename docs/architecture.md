@@ -21,7 +21,10 @@ that's a deliberate non-goal of this phase).
 
 Phase 4's layer — nutrition-staff is the single backend for every piece of
 CMS content and the one public mutation. Nothing here builds page UI yet
-(that's Phase 6); this is the data/API layer pages will consume.
+(that's Phase 6); this is the data/API layer pages will consume. Revised
+after Phase 4's approval to make the toolkit ecosystem, not this app, the
+default home for anything generic (see "Package-first architecture"
+below).
 
 ### Layers, browser to database
 
@@ -29,14 +32,14 @@ CMS content and the one public mutation. Nothing here builds page UI yet
 Server Component (a future page)
   -> src/lib/data/*.ts        (one function per domain, e.g. getRecipe(id))
     -> src/lib/api/fetch-public.ts   (tagged, cached fetch)
-      -> ServerApiConfig.baseURL      (STAFF_API_BASE_URL)
+      -> ServerApiConfig.baseURL      (API_URL, owns nutrition-staff's /api prefix)
         -> nutrition-staff's /api/public/* (read-only GET)
 
 Client Component (a future consultation form)
   -> src/lib/mutations/use-consultation-request.ts   (useRequesterMutation)
-    -> APIConfig.baseURL = "" (same-origin)
+    -> APIConfig.baseURL = "/api" (same-origin, owns this app's own /api prefix)
       -> this app's own /api/consultation-requests    (Route Handler, proxy)
-        -> ServerApiConfig.baseURL (STAFF_API_BASE_URL)
+        -> ServerApiConfig.baseURL (API_URL)
           -> nutrition-staff's /api/public/consultation-requests (POST)
 ```
 
@@ -58,97 +61,147 @@ works.
 | Recipes | `getRecipes(params)`, `getRecipe(id)` | `GET /api/public/recipes`, `/recipes/:id` | paginated list + detail |
 | Reviews | `getReviews(params)` | `GET /api/public/reviews` | paginated list (no detail endpoint) |
 | Videos | `getVideos(params)` | `GET /api/public/videos` | paginated list (no detail endpoint) |
-| FAQ | `getFaqSectionsWithItems()` | `GET /api/public/faq-sections`, `/faq-items` | two flat arrays, grouped client-side |
+| FAQ | `getFaqSectionsWithItems()` | `GET /api/public/faq` | sections with items already joined, ordered, published-filtered |
 | Campaigns | `getCampaign(slug)` | `GET /api/public/campaigns/:slug` | single, time-gated |
 | Consultation | `useConsultationRequest()` | `POST /api/consultation-requests` (proxy) → nutrition-staff's `/api/public/consultation-requests` | mutation |
 
 All 8 read domains and the consultation proxy were verified against a real
-running nutrition-staff instance and real MongoDB data during this phase —
-see "Verification" below.
+running nutrition-staff instance and real MongoDB data — see
+"Verification" below.
+
+### Package-first architecture
+
+Standing rule for this codebase, not just a one-time cleanup: before
+writing any generic (non-nutrition-specific) helper, hook, mapping
+function, or server/client abstraction, check whether
+`@kira-joo/frontend-toolkit-core` or `@kira-joo/toolkit-common` already
+provides it. If it does, consume it directly. If it's genuinely generic
+and doesn't exist yet, it belongs in the toolkit — implemented there,
+documented, exported, and consumed back — not built locally "for now."
+Code stays in this app only when it's genuinely nutrition-specific (cache
+tag values, domain types, the CMS-to-content mapping layer) or a thin
+glue layer between a toolkit primitive and an app-specific choice (e.g.
+next-intl).
+
+Concretely promoted into the toolkit ecosystem during this pass, all
+consumed back from the published package rather than duplicated:
+- `resolveLocalized`/`isLocalizedFallback` → `@kira-joo/toolkit-common`
+  (pure `LocalizedString` display-side logic, zero framework dependency —
+  see "CMS content vs. UI copy" below).
+- `AppError`/`isAppError`/`toAppError`/`isNotFoundError`/
+  `nullableOnNotFound` → `@kira-joo/frontend-toolkit-core` (built directly
+  on that package's own `classifyApiError`/`normalizeApiError`/
+  `isApiError` — see "Error model" below).
+- `joinUrl` → `@kira-joo/frontend-toolkit-core` (extracted from
+  `requester`'s own internal implementation into a named export —
+  `requester` now consumes the same exported function instead of a
+  private copy — see "Base URL and route composition" below).
+- `createCachePolicyResolver` → `@kira-joo/frontend-toolkit-core` (the
+  tag→revalidate-seconds lookup *mechanism*; the concrete tags/intervals
+  stay local — see "Caching" below).
+- `createLazyEnvBaseUrlConfig` → `@kira-joo/frontend-toolkit-core` (the
+  lazy-env-var-config *pattern*; see "Base URL and route composition").
+
+What stays local, and why: `CacheTag`'s concrete string values and
+`CACHE_POLICY`'s concrete intervals (nutrition-specific business
+contracts — the toolkit packages must stay reusable across unrelated
+projects and carry no nutrition domain knowledge), every `domain/*.ts`
+type (mirrors nutrition-staff's actual response shapes), `PublicApiRoute`
+(this app's own route registry), and `use-resolve-localized.ts`'s
+`"use client"` wrapper (glues toolkit-common's pure functions to
+next-intl's `useLocale()`, an app-specific i18n library choice the
+toolkit shouldn't assume).
 
 ### Endpoint definitions (`api/*.endpoints.ts`)
 
 Same convention as nutrition-staff's own frontend (`api/site-settings.
 endpoints.ts` there): one file per domain under a top-level `api/`
 directory (sibling to `src/`, not inside it), each exporting named
-endpoint constants. No data function or route handler ever hardcodes a
-path string.
+endpoint constants against frontend-toolkit-core's real `Endpoint`/
+`MethodType` — no separate local `Endpoint`-shaped type anymore (see "The
+barrel-import build bug, and its real fix" below for why an earlier
+revision of this phase needed one). No data function or route handler
+ever hardcodes a path string; every `url` reads from `api/public-api-route.ts`.
 
-**Two different endpoint types, not one** — this split exists because of a
-real constraint discovered during this phase (see "The barrel-import
-build bug" below), not by choice:
-- The 8 read-only domains use a **local** `PublicEndpoint` type
-  (`src/lib/api/public-endpoint.type.ts`) — structurally identical to
-  frontend-toolkit-core's `Endpoint`, but importing that package's actual
-  `Endpoint`/`MethodType` would break every page that reads CMS data.
-- `createConsultationRequestEndpoint` (the one endpoint actually passed to
-  `requester`/`useRequesterMutation`) uses frontend-toolkit-core's real
-  `Endpoint`/`MethodType` — safe there, because it's only ever imported
-  from a `"use client"` file.
+Two import sources, matched to execution context:
+- The 8 read-only domains import `Endpoint`/`MethodType` from
+  frontend-toolkit-core's `./server` subpath (consumed by `fetchPublic`,
+  which runs only in Server Components/Route Handlers).
+- `createConsultationRequestEndpoint` imports from the root package
+  (consumed by `requester`/`useRequesterMutation` from a `"use client"`
+  file).
 
 Placeholder syntax is `:id`/`:slug`, not `[id]`/`[slug]` — matching
 frontend-toolkit-core's actual `buildUrl` convention (bracket syntax would
 silently never match anything).
 
-### The barrel-import build bug
+### The barrel-import build bug, and its real fix
 
-`@kira-joo/frontend-toolkit-core`'s single entry point calls React's
-`createContext()` at module top level (for `AuthUserContext`/
-`QueryParamsRouterContext`), unconditionally, the moment *any* named
-export is imported — even a plain enum like `MethodType` or a pure
-function like `buildUrl`. Confirmed during this phase: importing anything
-real (non-`type`) from that barrel crashes Next's "Collecting page data"
-build step with `TypeError: createContext is not a function`, for **both**
-Route Handlers and ordinary Server Component pages — not just one or the
-other, which is what made this expensive to track down (early fixes only
-addressed the Route Handler case before a Server Component hit the same
-wall).
+`@kira-joo/frontend-toolkit-core`'s root entry point bundles React-context
+code (`AuthUserProvider`/`QueryParamsRouterProvider`/`ToolkitProviders`)
+together with everything else into one file. Server Components and Route
+Handlers resolve `react` through the "react-server" condition, which
+doesn't export `createContext` — so importing *anything* from that bundle,
+even a plain enum like `MethodType`, crashed Next's "Collecting page data"
+build step with `TypeError: createContext is not a function`, for both
+Route Handlers and ordinary Server Component pages.
 
-`type`-only imports from the same package are completely safe (erased at
-compile time, zero runtime footprint) — the problem is exclusively real
-value imports. Client Components are also unaffected (they run with a
-real React runtime, so `api-config.ts` and `use-consultation-request.ts`
-safely import `APIConfig`/`ContentType`/`useRequesterMutation` from the
-same barrel with no issue).
+**The actual fix, landed in `frontend-toolkit-core` 0.5.0**: a second,
+genuinely separate build entry point, `@kira-joo/frontend-toolkit-core/server`
+— a distinct bundle (`tsup`'s multi-entry output) containing only
+React-free modules (`APIConfig`, `requester`, `buildUrl`/`joinUrl`,
+`MethodType`/`ContentType`, `Endpoint` and friends, `AppError`/
+`nullableOnNotFound`, `createCachePolicyResolver`,
+`createLazyEnvBaseUrlConfig`, and more) — never bundled alongside the
+context/provider code, so importing it can't pull that code in even
+transitively. This app now imports every server-side toolkit value from
+that subpath (`fetch-public.ts`, `server-api-config.ts`, `cache-policy.ts`,
+every read-only `api/*.endpoints.ts` file, the consultation proxy Route
+Handler); Client Components keep importing the root package, which still
+carries the context/provider code they actually need.
 
-**What got locally reimplemented, and why each one is safe to trust**:
-verified byte-for-byte against the package's own compiled `dist/index.mjs`
-output, not reinvented from scratch.
-- `src/lib/api/build-url.ts` — `buildUrl`/`buildQueryString`.
-- `src/lib/api/normalize-api-error.ts` — `normalizeApiError` + its
-  `extractMessage`/`extractError`/`extractValidationErrors` helpers.
-- `src/lib/api/classify-api-error.ts` — `classifyApiError`/`isApiError`/
-  `getApiErrorStatusCode`.
-- `src/lib/api/public-endpoint.type.ts` — the `Endpoint`/`EndpointParams`/
-  `EndpointQuery`/`EndpointReturn` type shapes (pure types, reimplemented
-  only so the 8 read endpoints don't need the real `Endpoint` interface,
-  which would require the real `MethodType` value alongside it).
+The four local reimplementations an earlier revision of this phase built
+as a stopgap (`build-url.ts`, `normalize-api-error.ts`,
+`classify-api-error.ts`, `public-endpoint.type.ts`) have all been deleted
+— every call site now consumes the real functions/types from `./server`
+directly. `type`-only imports from the root package were always safe
+(erased at compile time); the fix is specifically about real value
+imports.
 
-This is a real gap worth raising upstream in `frontend-toolkit-core`
-itself (splitting the barrel so React-free primitives don't force-load
-`createContext`), not something to keep working around indefinitely as
-the app grows — flagged here rather than fixed in that package during
-this phase (modifying a shared package wasn't in scope for this work).
+### Base URL and route composition
 
-### Server-only base URL
+One rule, applied on both the client and server side: **a base URL owns
+the shared `/api` prefix; a route constant owns only the resource path —
+never both, never neither.**
 
-`src/lib/api/server-api-config.ts` exports `ServerApiConfig`, mirroring
-`APIConfig`'s "configure once, every caller reads the same object" shape —
-deliberately a **separate** object from frontend-toolkit-core's actual
-`APIConfig`, not the same instance repointed at nutrition-staff. `APIConfig`
-is a process-wide static the client path already sets to `""` (same-origin,
-in `api-config.ts`) — Next.js's server runtime is one shared Node process
-across concurrent requests (and even evaluates `"use client"` modules
-server-side during SSR), so if a server-side read also pointed
-`APIConfig.baseURL` at nutrition-staff's origin, the two would stomp on
-each other's intent in that shared process. Two small config objects, one
-per execution context, is what prevents that — not a duplication to clean
-up later.
+- `ServerApiConfig` (`src/lib/api/server-api-config.ts`) —
+  `createLazyEnvBaseUrlConfig()` from frontend-toolkit-core's `./server`
+  subpath, called with **no arguments**: this app has exactly one upstream
+  backend, so it uses the helper's default env var (`API_URL`) and default
+  hint (`"see .env.example"`) rather than overriding them. `API_URL`
+  includes nutrition-staff's `/api` prefix (e.g.
+  `"https://staff.example.com/api"`); `api/public-api-route.ts`'s
+  `PublicApiRoute` constants are resource paths only (e.g.
+  `"/public/site-settings"`).
+- `APIConfig.baseURL` (`api-config.ts`) is set to `"/api"` — this app's
+  OWN same-origin `/api` prefix. `PublicApiRoute.CONSULTATION_REQUESTS` is
+  just `"/consultation-requests"`.
+- Both sides join their base URL and route constant via
+  frontend-toolkit-core's `joinUrl` — **never** `new URL(path, base)`. The
+  latter treats a leading-`/` `path` as replacing the base's entire path
+  (keeping only its origin): `new URL("/public/x", "https://host/api")`
+  resolves to `"https://host/public/x"`, silently dropping `/api`. This
+  was a real bug caught during this pass, before `API_URL` ever had a path
+  segment to lose — the old base URL (`STAFF_API_BASE_URL`, origin-only,
+  no path) never exposed it, but adding an owned prefix in the same base
+  URL would have hit it immediately without the switch to `joinUrl`.
+  `requester` (used by the client-side consultation mutation) has always
+  joined this way internally; `fetchPublic` and the consultation proxy
+  Route Handler now call the same exported `joinUrl` explicitly.
 
-`ServerApiConfig.baseURL` resolves `STAFF_API_BASE_URL` lazily (on first
-read, not at module-import time) specifically so a build environment where
-that env var genuinely isn't set until runtime doesn't fail `next build`
-itself.
+`ServerApiConfig.baseURL` resolves lazily (on first read, not at
+module-import time) specifically so a build environment where `API_URL`
+genuinely isn't set until runtime doesn't fail `next build` itself.
 
 ### Caching
 
@@ -170,9 +223,13 @@ Two concerns, two files, deliberately not merged:
   with zero underlying data change to trigger on-demand invalidation at
   all.
 
-`fetchPublic` derives `revalidate` from `tags[0]` automatically via
-`resolvePolicyRevalidate` — ordinary data functions only ever pass `tags`,
-never `revalidate`, unless a call genuinely needs to deviate from policy.
+`resolvePolicyRevalidate` (the `tags[0]` → interval lookup) is now built
+from frontend-toolkit-core's `createCachePolicyResolver(policy,
+defaultSeconds)` — a generic mechanism the toolkit provides; `CACHE_POLICY`
+itself, with its concrete nutrition-specific tags and intervals, stays
+local. `fetchPublic` derives `revalidate` from `tags[0]` automatically via
+this resolver — ordinary data functions only ever pass `tags`, never
+`revalidate`, unless a call genuinely needs to deviate from policy.
 Convention for multi-tag calls: the **first** tag is always the
 policy/domain tag; any further tags are entity-level and participate in
 invalidation only (e.g. `[CacheTag.RECIPES, CacheTag.recipe(id)]` — busts
@@ -181,21 +238,24 @@ policy lookup always uses `RECIPES`).
 
 ### Error model
 
-One shape, `AppError` (`src/lib/api/error-model.ts`), used by every layer:
-`{__isAppError, category, message, statusCode?, validationErrors?, cause}`.
-`category` is one of the same categories frontend-toolkit-core's
+One shape, `AppError`, imported directly from
+`@kira-joo/frontend-toolkit-core` (root) /`./server` (server-side) — no
+local `error-model.ts` anymore, since the toolkit now ships this exact
+shape: `{__isAppError, category, message, statusCode?, validationErrors?,
+cause}`. `category` is one of the categories frontend-toolkit-core's
 `classifyApiError` produces (`notFound`, `validation`, `network`, etc.) —
 components in a later phase branch on `category`, never on a raw status
 code or a parsed response body directly.
 
-`nullableOnNotFound(fn)` is the one place "a 404 becomes `null`, everything
-else rethrows" lives — `getRecipe`/`getCampaign` both use it instead of
-repeating their own try/catch. It never calls Next's `notFound()` itself;
-a data function isn't the right layer to make a navigation decision — the
-calling page decides what `null` means (a 404, an empty state, something
-else).
+`nullableOnNotFound(fn)`, also from the toolkit, is the one place "a 404
+becomes `null`, everything else rethrows" lives — `getRecipe`/
+`getCampaign` both use it instead of repeating their own try/catch. It
+never calls Next's `notFound()` itself; a data function isn't the right
+layer to make a navigation decision — the calling page decides what `null`
+means (a 404, an empty state, something else).
 
-**A real classification bug, caught during verification**: `isApiError`'s
+**A real classification bug, caught during verification and fixed
+upstream in the toolkit's `isApiError`/`toAppError` docs**: `isApiError`'s
 check (`"message" in error`) is loose enough that a plain `Error` instance
 satisfies it too — `fetchPublic` originally constructed
 `new Error("Request failed with status 404")` to pass into `toAppError`
@@ -210,31 +270,52 @@ backend afterward to confirm the fix.
 
 ### CMS content vs. UI copy stay separate systems (recap)
 
-`resolveLocalized(value, locale)` / `isLocalizedFallback(value, locale)`
-(`src/lib/i18n/resolve-localized.ts`) resolve a CMS `LocalizedString`
-`{ar, en}` to a plain string — the display-side counterpart toolkit-common
-never shipped (it only has write-side helpers). Deliberately **not** in a
-`"use client"` file: a Server Component importing a plain function from a
-`"use client"` module gets a client reference it can't call directly
-(confirmed during this phase — `resolveLocalized` briefly lived in a
-`"use client"` file and threw `"resolveLocalized is not a function"` from
-every Server Component that tried to call it). `useResolveLocalized()`
-(`src/lib/i18n/use-resolve-localized.ts`) is the separate, genuinely
-`"use client"` sugar for Client Components that don't want to re-pass
-`locale` on every call — it wraps the same two functions, it doesn't
-duplicate their logic.
+`resolveLocalized(value, locale)`/`isLocalizedFallback(value, locale)` now
+live in `@kira-joo/toolkit-common` — the display-side counterpart to that
+package's `isLocalizedComplete`/`findIncompleteLocalizedPaths` (which gate
+*publishing*, not *display*), resolving a CMS `LocalizedString` `{ar, en}`
+to a plain string with an honest fallback to the other locale when the
+requested one is empty. `useResolveLocalized()`
+(`src/lib/i18n/use-resolve-localized.ts`) is this app's own thin,
+genuinely `"use client"` wrapper for Client Components that don't want to
+re-pass `locale` on every call — it wraps toolkit-common's functions via
+next-intl's `useLocale()`, it doesn't duplicate their logic. Server
+Components call `resolveLocalized`/`isLocalizedFallback` directly from
+`@kira-joo/toolkit-common`, passing the locale from the route param.
+
+(This was originally a local file, and briefly lived under a `"use
+client"` directive that broke calling it from Server Components — a plain
+function exported from a `"use client"` module becomes a client reference
+a Server Component can't call directly. Moving it to toolkit-common
+removed the local file and the class of bug with it.)
 
 This stays a fundamentally different system from next-intl's UI-copy
 translation (`useI18n`/`useTranslations`): CMS content is live data fetched
 per-request; UI copy is versioned with the app and known at build time.
 Neither should route through the other's mechanism.
 
+### FAQ: joined and ordered server-side
+
+`getFaqSectionsWithItems()` is a single `GET /api/public/faq` call —
+nutrition-staff joins sections with their items, applies the
+staff-authored `order` field, and filters to published-only, all
+server-side (`getPublicFaq()` in nutrition-staff's `src/server/faq/`).
+This replaced an earlier two-endpoint shape (`/api/public/faq-sections` +
+`/api/public/faq-items`, joined and sorted client-side via a
+`groupFaqItemsBySection` helper) — grouping/ordering/filtering published
+content is backend business logic, not frontend presentation logic, so it
+shouldn't be repeated by every frontend consumer nutrition-staff ever
+grows. The public response shape (`FaqSectionWithItems`/`FaqItem` in
+`src/lib/domain/faq.ts`) deliberately excludes `order`/`status`/
+`createdAt`/`updatedAt` — fields the admin CRUD shape carries but the
+public site never renders.
+
 ### Verification
 
 Real, not simulated: a local nutrition-staff instance was run against its
-actual MongoDB data for this phase's verification (a temporary Server
-Component page exercised every data function directly, since no real page
-consumes this layer yet — Phase 6 builds that). Confirmed:
+actual MongoDB data (a temporary Server Component page exercised the data
+functions directly each time, since no real page consumes this layer yet
+— Phase 6 builds that; deleted after each check). Confirmed:
 - Every one of the 8 read domains returns real data, in both `ar` and
   `en`, including a genuine partial-translation case (`site-settings`'s
   `defaultSeo.description.en` is empty in the live database) correctly
@@ -243,25 +324,25 @@ consumes this layer yet — Phase 6 builds that). Confirmed:
   crash) for a real 404/expired-or-nonexistent slug.
 - A genuine validation error (`GET .../recipes/not-a-valid-id`) classifies
   correctly as `"validation"` with the real `{field, message}` array from
-  nutrition-staff's response — the fix described above was verified
-  against this exact live response, not a mocked one.
-- FAQ items group and sort correctly by the CMS-authored `order` field
-  against real backend data that is *not* already in that order (`/api/
-  public/faq-sections` returns "Section 2" before "Section 1") — proving
-  the sort is load-bearing, not defensive.
+  nutrition-staff's response.
 - The consultation-requests proxy was posted to directly and confirmed to
   round-trip through to nutrition-staff and back with a real `{success:
   true}` response.
-- This also caught and fixed a real Phase 3 regression unrelated to this
-  phase's own code: the `faq` UI-copy namespace (`src/i18n/locales/*/
+- After introducing `API_URL`'s owned `/api` prefix and switching to
+  `joinUrl`, `getSiteSettings()` and the consultation proxy were both
+  re-verified against the real backend to confirm the resolved request URL
+  was correct (no dropped/duplicated `/api` segment).
+- `getFaqSectionsWithItems()` was re-verified against the new composed
+  `/api/public/faq` endpoint: sections return correctly ordered
+  (`["Section 1", "Section 2"]`, matching the CMS-authored `order` — the
+  same underlying data that, before this endpoint existed, came back from
+  the two old flat endpoints as `["Section 2", "Section 1"]`) with items
+  correctly nested.
+- A dormant Phase 3 regression, found and fixed during this phase's
+  original pass: the `faq` UI-copy namespace (`src/i18n/locales/*/
   faq.json`) stored flat keys with literal dots (`"section1.q1.question"`)
   instead of nested objects, which next-intl rejects outright
-  (`INVALID_KEY`) — the actual `/ar/faq`/`/en/faq` pages were broken since
-  Phase 3 and nobody had hit them with next-intl's real namespace
-  validation until this phase's testing did. Restructured both locale
-  files into proper nested JSON; the page code's `t("section1.q1.
-  question")` calls needed no changes, since next-intl's dot-path lookup
-  against a real nested object is exactly what that call syntax expects.
+  (`INVALID_KEY`) — restructured into proper nested JSON.
 
 ## Localization & RTL
 

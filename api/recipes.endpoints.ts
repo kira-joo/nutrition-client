@@ -1,15 +1,17 @@
 import type { PaginatedResponse } from "@kira-joo/toolkit-common";
-import type { PublicEndpoint } from "../src/lib/api/public-endpoint.type";
+import { MethodType, type Endpoint } from "@kira-joo/frontend-toolkit-core/server";
+import { PublicApiRoute } from "./public-api-route";
 import type { Recipe } from "../src/lib/domain/recipe";
 
-export const listRecipesEndpoint: PublicEndpoint<{
+export const listRecipesEndpoint: Endpoint<{
   query: { page?: number; limit?: number; search?: string; category?: string };
   returnType: PaginatedResponse<Recipe>;
 }> = {
-  url: "/api/public/recipes",
+  url: PublicApiRoute.RECIPES,
+  methodType: MethodType.GET,
 };
 
-/** `:id` placeholder — see public-endpoint.type.ts / build-url.ts for why this is `:id`, not `[id]`. */
-export const getRecipeEndpoint: PublicEndpoint<{ params: { id: string }; returnType: Recipe }> = {
-  url: "/api/public/recipes/:id",
+export const getRecipeEndpoint: Endpoint<{ params: { id: string }; returnType: Recipe }> = {
+  url: PublicApiRoute.RECIPE_DETAIL,
+  methodType: MethodType.GET,
 };

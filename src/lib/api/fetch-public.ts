@@ -1,13 +1,11 @@
 import "server-only";
-import { buildUrl } from "@/lib/api/build-url";
-import { toAppError } from "@/lib/api/error-model";
-import type { PublicEndpoint, PublicEndpointParams, PublicEndpointQuery, PublicEndpointReturn } from "@/lib/api/public-endpoint.type";
+import { buildUrl, joinUrl, toAppError, type Endpoint, type EndpointParams, type EndpointQuery, type EndpointReturn } from "@kira-joo/frontend-toolkit-core/server";
 import { ServerApiConfig } from "@/lib/api/server-api-config";
 import { resolvePolicyRevalidate } from "@/lib/cache/cache-policy";
 
-interface FetchPublicOptions<TEndpoint extends PublicEndpoint> {
-  params?: PublicEndpointParams<TEndpoint>;
-  query?: PublicEndpointQuery<TEndpoint>;
+interface FetchPublicOptions<TEndpoint extends Endpoint> {
+  params?: EndpointParams<TEndpoint>;
+  query?: EndpointQuery<TEndpoint>;
   /** Cache tag(s) for this call — see src/lib/cache/cache-tags.ts. `tags[0]` is the policy tag (drives the revalidate default) by convention; any further tags are entity-level, invalidation-only. */
   tags: string[];
   /** Explicit override — priority over the tag-derived policy. Ordinary CMS reads shouldn't need this; see src/lib/cache/cache-policy.ts. */
@@ -16,12 +14,10 @@ interface FetchPublicOptions<TEndpoint extends PublicEndpoint> {
 
 /**
  * The one place every server-side read of nutrition-staff's public API
- * goes through. Takes the same shape of `Endpoint` object defined under
- * `api/*.endpoints.ts` (the `PublicEndpoint` local type — see
- * public-endpoint.type.ts for why it's not frontend-toolkit-core's own
- * `Endpoint`) — never a bare path string at a call site — and infers its
- * return type from the endpoint definition, so call sites don't repeat a
- * generic.
+ * goes through. Takes the same `Endpoint` object defined under
+ * `api/*.endpoints.ts` — never a bare path string at a call site — and
+ * infers its return type from the endpoint definition, so call sites don't
+ * repeat a generic.
  *
  * Revalidation is derived from `tags[0]` via cache-policy.ts unless the
  * caller passes an explicit `revalidate` — ordinary data functions only
@@ -38,17 +34,22 @@ interface FetchPublicOptions<TEndpoint extends PublicEndpoint> {
  * `import "server-only"` makes it a build error to accidentally import
  * this from a client component — the base URL comes from
  * `ServerApiConfig` (server-api-config.ts), itself sourced from
- * `STAFF_API_BASE_URL`, a server-only env var with no `NEXT_PUBLIC_`
- * prefix, specifically so the browser can never be pointed at
- * nutrition-staff directly.
+ * `API_URL` (which owns nutrition-staff's shared `/api`
+ * prefix — see api/public-api-route.ts), a server-only env var with no
+ * `NEXT_PUBLIC_` prefix, specifically so the browser can never be pointed
+ * at nutrition-staff directly. Joined with `joinUrl`, not `new URL(path,
+ * base)` — the latter would silently drop `API_URL`'s `/api`
+ * segment, since URL resolution treats an absolute `path` as replacing
+ * the base's own path rather than appending to it.
  */
-export async function fetchPublic<TEndpoint extends PublicEndpoint>(
+export async function fetchPublic<TEndpoint extends Endpoint>(
   endpoint: TEndpoint,
   { params, query, tags, revalidate }: FetchPublicOptions<TEndpoint>
-): Promise<PublicEndpointReturn<TEndpoint>> {
+): Promise<EndpointReturn<TEndpoint>> {
   const path = buildUrl(endpoint.url, params, query);
   const resolvedRevalidate = revalidate ?? resolvePolicyRevalidate(tags);
-  const response = await fetch(new URL(path, ServerApiConfig.baseURL), {
+  const url = joinUrl(ServerApiConfig.baseURL, path);
+  const response = await fetch(url, {
     next: { revalidate: resolvedRevalidate, tags },
   });
 
@@ -64,5 +65,5 @@ export async function fetchPublic<TEndpoint extends PublicEndpoint>(
     throw await toAppError(null, response);
   }
 
-  return response.json() as Promise<PublicEndpointReturn<TEndpoint>>;
+  return response.json() as Promise<EndpointReturn<TEndpoint>>;
 }

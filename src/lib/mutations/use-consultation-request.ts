@@ -1,7 +1,6 @@
 "use client";
-import { useRequesterMutation } from "@kira-joo/frontend-toolkit-core";
+import { toAppError, useRequesterMutation, type AppError } from "@kira-joo/frontend-toolkit-core";
 import { createConsultationRequestEndpoint } from "../../../api/consultation-requests.endpoints";
-import { toAppError, type AppError } from "@/lib/api/error-model";
 import type { CreateConsultationRequestInput } from "@/lib/domain/consultation-request";
 
 interface UseConsultationRequestOptions {

@@ -1,4 +1,5 @@
 import { MethodType, type Endpoint } from "@kira-joo/frontend-toolkit-core";
+import { PublicApiRoute } from "./public-api-route";
 import type { ConsultationRequestResult, CreateConsultationRequestInput } from "../src/lib/domain/consultation-request";
 
 /**
@@ -13,13 +14,6 @@ export const createConsultationRequestEndpoint: Endpoint<{
   body: CreateConsultationRequestInput;
   returnType: ConsultationRequestResult;
 }> = {
-  url: "/api/consultation-requests",
+  url: PublicApiRoute.CONSULTATION_REQUESTS,
   methodType: MethodType.POST,
 };
-
-// nutrition-staff's real upstream endpoint — used only by the proxy route
-// handler (src/app/api/consultation-requests/route.ts), which can't import
-// anything from this file (or anywhere else that touches
-// @kira-joo/frontend-toolkit-core's barrel — see
-// consultation-requests.route-paths.ts for why). That plain-string
-// constant is the one the route handler actually uses.

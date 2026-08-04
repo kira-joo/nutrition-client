@@ -3,7 +3,7 @@ import { getRecipeEndpoint, listRecipesEndpoint } from "../../../api/recipes.end
 import { fetchPublic } from "@/lib/api/fetch-public";
 import { CacheTag } from "@/lib/cache/cache-tags";
 import type { Recipe, RecipesListParams } from "@/lib/domain/recipe";
-import { nullableOnNotFound } from "@/lib/api/error-model";
+import { nullableOnNotFound } from "@kira-joo/frontend-toolkit-core/server";
 
 export async function getRecipes(params: RecipesListParams = {}): Promise<PaginatedResponse<Recipe>> {
   const { foodGroup, ...query } = params;

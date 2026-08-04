@@ -1,6 +1,7 @@
 import "server-only";
 import { NextRequest, NextResponse } from "next/server";
-import { UPSTREAM_CONSULTATION_REQUESTS_PATH } from "../../../../api/consultation-requests.route-paths";
+import { ContentType, joinUrl, MethodType } from "@kira-joo/frontend-toolkit-core/server";
+import { PublicApiRoute } from "../../../../api/public-api-route";
 import { ServerApiConfig } from "@/lib/api/server-api-config";
 
 export const dynamic = "force-dynamic";
@@ -11,16 +12,12 @@ export const dynamic = "force-dynamic";
  * here, never to nutrition-staff directly. This keeps nutrition-staff's
  * origin off the public internet's CORS surface entirely (it has no CORS
  * support today) and means the browser never needs to know
- * `STAFF_API_BASE_URL` exists. A thin pass-through: forward the body,
+ * `API_URL` exists. A thin pass-through: forward the body,
  * forward the response (success or error) verbatim, add nothing.
  *
- * Imports `UPSTREAM_CONSULTATION_REQUESTS_PATH` and `ServerApiConfig`
- * specifically (not the typed `Endpoint` object from
- * consultation-requests.endpoints.ts, and not `MethodType`/`ContentType`)
- * — anything importing @kira-joo/frontend-toolkit-core's barrel breaks
- * this route's build; see consultation-requests.route-paths.ts for the
- * full story. The raw `"POST"`/`"content-type": "application/json"`
- * strings below are that same documented exception, not an oversight.
+ * Joined via `joinUrl`, not `new URL(path, base)` — see fetch-public.ts's
+ * doc comment for why the latter would silently drop
+ * `API_URL`'s `/api` prefix.
  */
 export async function POST(request: NextRequest) {
   let baseUrl: string;
@@ -31,11 +28,11 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.text();
-  const url = new URL(UPSTREAM_CONSULTATION_REQUESTS_PATH, baseUrl);
+  const url = joinUrl(baseUrl, PublicApiRoute.CONSULTATION_REQUESTS_UPSTREAM);
 
   const upstreamResponse = await fetch(url, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
+    method: MethodType.POST,
+    headers: { "content-type": ContentType.JSON },
     body,
     cache: "no-store",
   });
@@ -43,6 +40,6 @@ export async function POST(request: NextRequest) {
   const responseBody = await upstreamResponse.text();
   return new NextResponse(responseBody, {
     status: upstreamResponse.status,
-    headers: { "content-type": "application/json" },
+    headers: { "content-type": ContentType.JSON },
   });
 }
