@@ -1,5 +1,6 @@
 import { Box, Toolbar } from "@mui/material";
 import { Metadata } from "next";
+import { Cairo } from "next/font/google";
 import type { ReactNode } from "react";
 import { Locale } from "../../constant/Locale.enum";
 import { Images } from "../components/constant/images";
@@ -8,7 +9,18 @@ import Navbar from "../components/header/Navbar";
 
 import LanguageProvider from "@/utils/Provider/LanguageProvider";
 import ThemeProvider from "@/utils/Provider/ThemeProvider";
+import "../globals.css";
 import "./global.css";
+
+// Single bilingual family for both locales — see docs/design-system.md
+// ("Typography") for why one typeface covers both Arabic and Latin here
+// instead of pairing two separate fonts.
+const cairo = Cairo({
+  subsets: ["arabic", "latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-cairo",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Dr.Omnia Ahmed",
@@ -35,7 +47,7 @@ const LocaleLayout = ({ children, params }: LocaleLayoutProps) => {
   const { locale } = params;
 
   return (
-    <html lang={locale} dir={locale === Locale.AR ? "rtl" : "ltr"}>
+    <html lang={locale} dir={locale === Locale.AR ? "rtl" : "ltr"} className={cairo.variable}>
       <body>
         <LanguageProvider locale={locale}>
           <ThemeProvider locale={locale}>
