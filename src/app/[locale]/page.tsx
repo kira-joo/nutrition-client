@@ -5,7 +5,7 @@ import { DictionaryFiles } from "@/constant/DictionaryFiles";
 import { reviews } from "@/constant/reviews";
 import { videos } from "@/constant/videos";
 import useI18n from "@/hooks/useI18n";
-import { useRTL } from "@/hooks/useRTL";
+import { useIsRtl } from "@/hooks/useIsRtl";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
@@ -32,7 +32,7 @@ import SendMessage from "./send-message/page";
 
 const HomePage = () => {
   const { t } = useI18n(DictionaryFiles.Home);
-  const { isRTL, getPosition, getOppositePosition } = useRTL();
+  const isRTL = useIsRtl();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const latestReviews = isMobile ? reviews.slice(0, 2) : reviews.slice(0, 3);
@@ -61,7 +61,8 @@ const HomePage = () => {
           sx={{
             position: "absolute",
             top: -100,
-            ...getOppositePosition(-100, "auto"),
+            insetInlineEnd: -100,
+            insetInlineStart: "auto",
             width: 400,
             height: 400,
             borderRadius: "50%",
@@ -77,7 +78,8 @@ const HomePage = () => {
           sx={{
             position: "absolute",
             bottom: -150,
-            ...getPosition(-150, "auto"),
+            insetInlineStart: -150,
+            insetInlineEnd: "auto",
             width: 500,
             height: 500,
             borderRadius: "50%",
@@ -112,9 +114,9 @@ const HomePage = () => {
             >
               <Box
                 sx={{
-                  textAlign: { xs: "center", md: isRTL ? "right" : "left" },
-                  pr: { md: isRTL ? 2 : 4 },
-                  pl: { md: isRTL ? 4 : 2 },
+                  textAlign: { xs: "center", md: "start" },
+                  paddingInlineStart: { md: 2 },
+                  paddingInlineEnd: { md: 4 },
                 }}
               >
                 <Typography
@@ -193,7 +195,8 @@ const HomePage = () => {
                       content: '""',
                       position: "absolute",
                       top: 20,
-                      ...getPosition(-20, "auto"),
+                      insetInlineStart: -20,
+                      insetInlineEnd: "auto",
                       width: "calc(100% + 20px)",
                       height: "100%",
                       borderRadius: 4,
@@ -488,7 +491,7 @@ const HomePage = () => {
                           lineHeight: 1.4,
                         }}
                       >
-                        {t(`videos.${video.id}` as keyof typeof t)}
+                        {t(`videos.${video.id}` as Parameters<typeof t>[0])}
                       </Typography>
                     </CardContent>
                   </Card>
@@ -573,13 +576,12 @@ const HomePage = () => {
                       sx={{
                         width: 80,
                         height: 80,
-                        ...getPosition(2, "auto"),
+                        insetInlineStart: 2,
+                        insetInlineEnd: "auto",
                         border: `3px solid ${alpha("#4db6b2", 0.3)}`,
                       }}
                     />
-                    <Box
-                      sx={{ flexGrow: 1, textAlign: isRTL ? "right" : "left" }}
-                    >
+                    <Box sx={{ flexGrow: 1, textAlign: "start" }}>
                       <Typography
                         variant="subtitle1"
                         sx={{
@@ -604,8 +606,7 @@ const HomePage = () => {
                       display: "-webkit-box",
                       WebkitLineClamp: 4,
                       WebkitBoxOrient: "vertical",
-                      textAlign: isRTL ? "right" : "left",
-                      direction: isRTL ? "rtl" : "ltr",
+                      textAlign: "start",
                     }}
                   >
                     {review.title.length > 100

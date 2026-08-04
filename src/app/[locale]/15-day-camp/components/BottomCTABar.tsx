@@ -2,7 +2,7 @@
 
 import { DictionaryFiles } from "@/constant/DictionaryFiles";
 import useI18n from "@/hooks/useI18n";
-import { useRTL } from "@/hooks/useRTL";
+import { useIsRtl } from "@/hooks/useIsRtl";
 import { alpha, Box, Button, Container, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
@@ -20,7 +20,7 @@ interface TimeLeft {
 
 // Memoized TimeUnit component to prevent unnecessary re-renders
 const TimeUnit = memo(({ value, label }: { value: number; label: string }) => {
-  const { isRTL } = useRTL();
+  const isRTL = useIsRtl();
 
   return (
     <Box
@@ -79,7 +79,7 @@ TimeSeparator.displayName = "TimeSeparator";
 
 export default function BottomCTABar({ endDate }: BottomCTABarProps) {
   const { t } = useI18n(DictionaryFiles._15DayCamp);
-  const { isRTL } = useRTL();
+  const isRTL = useIsRtl();
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({
     days: 0,
     hours: 0,
@@ -176,7 +176,7 @@ export default function BottomCTABar({ endDate }: BottomCTABarProps) {
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            textAlign: isRTL ? "right" : "left",
+            textAlign: "start",
             flexDirection: isRTL ? "row-reverse" : "row",
             gap: { xs: 2, md: 4 },
           }}

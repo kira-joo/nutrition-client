@@ -2,7 +2,7 @@
 
 import { DictionaryFiles } from "@/constant/DictionaryFiles";
 import useI18n from "@/hooks/useI18n";
-import { useRTL } from "@/hooks/useRTL";
+import { useIsRtl } from "@/hooks/useIsRtl";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
@@ -19,7 +19,7 @@ export default function ProgramComparisonSection({
   onProgramSelect,
 }: ProgramComparisonSectionProps) {
   const { t } = useI18n(DictionaryFiles._15DayCamp);
-  const { isRTL } = useRTL();
+  const isRTL = useIsRtl();
 
   const weightLossFeatures = [
     t("customizedMealPlans"),
@@ -131,7 +131,7 @@ export default function ProgramComparisonSection({
                           mb: 2.5,
                           flexDirection: isRTL ? "row-reverse" : "row",
                           gap: 1.5,
-                          textAlign: isRTL ? "right" : "left",
+                          textAlign: "start",
                         }}
                       >
                         <CheckCircleIcon
@@ -147,7 +147,7 @@ export default function ProgramComparisonSection({
                             fontSize: "0.95rem",
                             lineHeight: 1.6,
                             width: "100%",
-                            textAlign: isRTL ? "right" : "left",
+                            textAlign: "start",
                           }}
                         >
                           {item}
@@ -239,7 +239,7 @@ export default function ProgramComparisonSection({
                           mb: 2.5,
                           flexDirection: isRTL ? "row-reverse" : "row",
                           gap: 1.5,
-                          textAlign: isRTL ? "right" : "left",
+                          textAlign: "start",
                         }}
                       >
                         <CheckCircleIcon
@@ -255,7 +255,7 @@ export default function ProgramComparisonSection({
                             fontSize: "0.95rem",
                             lineHeight: 1.6,
                             width: "100%",
-                            textAlign: isRTL ? "right" : "left",
+                            textAlign: "start",
                           }}
                         >
                           {item}

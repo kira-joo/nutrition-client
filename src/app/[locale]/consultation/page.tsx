@@ -89,7 +89,7 @@ const Consultation: React.FC = () => {
       // Get translated package and duration names
       const packageName =
         packagesI18n.t(
-          `packages.${data.package}.category` as keyof typeof packagesI18n.t
+          `packages.${data.package}.category` as Parameters<typeof packagesI18n.t>[0]
         ) || data.package;
       const durationMap: { [key: string]: string } = {
         "1": t("OneMonth"),
@@ -544,17 +544,17 @@ ${data.additionalNotes ? `📝 ملاحظات إضافية:\n${data.additionalNo
                   >
                     <MenuItem value="Basic">
                       {packagesI18n.t(
-                        "packages.Basic.category" as keyof typeof packagesI18n.t
+                        "packages.Basic.category" as Parameters<typeof packagesI18n.t>[0]
                       )}
                     </MenuItem>
                     <MenuItem value="Standard">
                       {packagesI18n.t(
-                        "packages.Standard.category" as keyof typeof packagesI18n.t
+                        "packages.Standard.category" as Parameters<typeof packagesI18n.t>[0]
                       )}
                     </MenuItem>
                     <MenuItem value="Premium">
                       {packagesI18n.t(
-                        "packages.Premium.category" as keyof typeof packagesI18n.t
+                        "packages.Premium.category" as Parameters<typeof packagesI18n.t>[0]
                       )}
                     </MenuItem>
                   </Select>

@@ -68,7 +68,7 @@ const RecipesCard: React.FC<Recipe> = ({
           />
           {category && (
             <Chip
-              label={t(category as keyof typeof t)}
+              label={t(category as Parameters<typeof t>[0])}
               size="small"
               sx={{
                 position: "absolute",
@@ -102,7 +102,7 @@ const RecipesCard: React.FC<Recipe> = ({
               overflow: "hidden",
             }}
           >
-            {t(title)}
+            {t(title as Parameters<typeof t>[0])}
           </Typography>
 
           <Typography
@@ -118,14 +118,14 @@ const RecipesCard: React.FC<Recipe> = ({
               minHeight: "3rem",
             }}
           >
-            {t(description)}
+            {t(description as Parameters<typeof t>[0])}
           </Typography>
 
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mb: 1 }}>
             {foodGroup.map((group, index) => (
               <Chip
                 key={index}
-                label={t(group as keyof typeof t)}
+                label={t(group as Parameters<typeof t>[0])}
                 size="small"
                 sx={{
                   backgroundColor: alpha("#4db6b2", 0.1),

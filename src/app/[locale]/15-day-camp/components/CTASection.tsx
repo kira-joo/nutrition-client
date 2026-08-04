@@ -2,7 +2,6 @@
 
 import { DictionaryFiles } from "@/constant/DictionaryFiles";
 import useI18n from "@/hooks/useI18n";
-import { useRTL } from "@/hooks/useRTL";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import { alpha, Box, Button, Container, Typography } from "@mui/material";
 import { motion } from "framer-motion";
@@ -10,7 +9,6 @@ import AnimatedSection from "./AnimatedSection";
 
 export default function CTASection() {
   const { t } = useI18n(DictionaryFiles._15DayCamp);
-  const { getOppositePosition } = useRTL();
 
   return (
     <AnimatedSection delay={0.2}>
@@ -28,7 +26,8 @@ export default function CTASection() {
             content: '""',
             position: "absolute",
             top: -50,
-            ...getOppositePosition(-50, "auto"),
+            insetInlineEnd: -50,
+            insetInlineStart: "auto",
             width: 400,
             height: 400,
             borderRadius: "50%",

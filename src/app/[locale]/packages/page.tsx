@@ -210,7 +210,7 @@ const Packages = () => {
                 }}
                 onClick={() => setSelectedDuration(duration.id)}
               >
-                {t(`durations.${duration.label}` as keyof typeof t)}
+                {t(`durations.${duration.label}` as Parameters<typeof t>[0])}
               </Button>
             ))}
           </Box>
@@ -237,15 +237,15 @@ const Packages = () => {
                       variant="h5"
                       sx={{ fontWeight: 700, color: "#333333", mb: 1 }}
                     >
-                      {t(`packages.${pkg.category}.category` as keyof typeof t)}
+                      {t(`packages.${pkg.category}.category` as Parameters<typeof t>[0])}
                     </Typography>
 
                     {/* Popular Tag */}
                     {pkg.popular &&
-                      t(`packages.${pkg.category}.tag` as keyof typeof t) && (
+                      t(`packages.${pkg.category}.tag` as Parameters<typeof t>[0]) && (
                         <Chip
                           label={t(
-                            `packages.${pkg.category}.tag` as keyof typeof t
+                            `packages.${pkg.category}.tag` as Parameters<typeof t>[0]
                           )}
                           size="small"
                           sx={{
@@ -270,7 +270,7 @@ const Packages = () => {
                         }}
                       >
                         {t(
-                          `packages.${pkg.category}.originalPrice.${selectedDuration}` as keyof typeof t
+                          `packages.${pkg.category}.originalPrice.${selectedDuration}` as Parameters<typeof t>[0]
                         )}
                       </Typography>
                       <Typography
@@ -285,7 +285,7 @@ const Packages = () => {
                         }}
                       >
                         {t(
-                          `packages.${pkg.category}.price.${selectedDuration}` as keyof typeof t
+                          `packages.${pkg.category}.price.${selectedDuration}` as Parameters<typeof t>[0]
                         )}
                       </Typography>
                     </Box>
@@ -302,7 +302,7 @@ const Packages = () => {
                         }}
                       >
                         {t(
-                          `packages.${pkg.category}.Follow-up` as keyof typeof t
+                          `packages.${pkg.category}.Follow-up` as Parameters<typeof t>[0]
                         )}
                       </Typography>
 
@@ -312,7 +312,7 @@ const Packages = () => {
                             const detailKey = `packages.${pkg.category}.detail${
                               i + 1
                             }`;
-                            const detail = t(detailKey as keyof typeof t);
+                            const detail = t(detailKey as Parameters<typeof t>[0]);
                             if (pkg.numberOfDetails < i) return null;
                             return (
                               <ListItem key={i} sx={{ py: 0.5, px: 0 }}>

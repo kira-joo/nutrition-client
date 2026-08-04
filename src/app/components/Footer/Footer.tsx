@@ -140,7 +140,7 @@ const Footer = () => {
           <Box sx={footerStyles.menuContainer}>
             {FooterMenulist.map(({ icon, label, href }, index) => (
               <AppLinkMUI key={index} href={href} sx={footerStyles.menuLink}>
-                {icon} {t(label as keyof typeof t)}
+                {icon} {t(label as Parameters<typeof t>[0])}
               </AppLinkMUI>
             ))}
           </Box>

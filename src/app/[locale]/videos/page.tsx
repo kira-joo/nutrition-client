@@ -124,7 +124,7 @@ const Videos = () => {
                       lineHeight: 1.4,
                     }}
                   >
-                    {t(`videos.${video.id}` as keyof typeof t)}
+                    {t(`videos.${video.id}` as Parameters<typeof t>[0])}
                   </Typography>
                 </CardContent>
               </Card>

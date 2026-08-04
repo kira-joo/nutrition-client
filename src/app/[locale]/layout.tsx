@@ -1,13 +1,16 @@
 import { Box, Toolbar } from "@mui/material";
 import { Metadata } from "next";
 import { Cairo } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages } from "next-intl/server";
+import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { Locale } from "../../constant/Locale.enum";
+import { routing } from "@/i18n/routing";
 import { Images } from "../components/constant/images";
 import Footer from "../components/Footer/Footer";
 import Navbar from "../components/header/Navbar";
 
-import LanguageProvider from "@/utils/Provider/LanguageProvider";
 import ThemeProvider from "@/utils/Provider/ThemeProvider";
 import "../globals.css";
 import "./global.css";
@@ -39,17 +42,33 @@ export const metadata: Metadata = {
   },
   icons: "./favicon.ico",
 };
+// Deliberately NOT adding generateStaticParams/setRequestLocale here: every
+// route today (before and after this phase) renders fully dynamically —
+// nothing in the app is statically generated yet. Adding static params for
+// the locale segment would make Next try to prerender every page under it,
+// which surfaces "useSearchParams() needs a Suspense boundary" failures in
+// components like LanguageSwitch that were never designed around static
+// generation. Static rendering is a real performance opportunity, but it's
+// a Phase 5/7 (caching/perf) concern once real Suspense boundaries exist
+// where they're needed — not something to force through as a side effect
+// of this i18n-engine swap.
 interface LocaleLayoutProps {
   children: ReactNode;
   params: { locale: Locale };
 }
-const LocaleLayout = ({ children, params }: LocaleLayoutProps) => {
+const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
   const { locale } = params;
+
+  if (!routing.locales.includes(locale)) {
+    notFound();
+  }
+
+  const messages = await getMessages();
 
   return (
     <html lang={locale} dir={locale === Locale.AR ? "rtl" : "ltr"} className={cairo.variable}>
       <body>
-        <LanguageProvider locale={locale}>
+        <NextIntlClientProvider messages={messages}>
           <ThemeProvider locale={locale}>
             <Navbar />
             <Box
@@ -64,7 +83,7 @@ const LocaleLayout = ({ children, params }: LocaleLayoutProps) => {
             </Box>
             <Footer />
           </ThemeProvider>
-        </LanguageProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

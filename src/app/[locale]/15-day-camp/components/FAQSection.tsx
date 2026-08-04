@@ -2,7 +2,7 @@
 
 import { DictionaryFiles } from "@/constant/DictionaryFiles";
 import useI18n from "@/hooks/useI18n";
-import { useRTL } from "@/hooks/useRTL";
+import { useIsRtl } from "@/hooks/useIsRtl";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
   Accordion,
@@ -20,7 +20,7 @@ import AnimatedSection from "./AnimatedSection";
 
 export default function FAQSection() {
   const { t } = useI18n(DictionaryFiles._15DayCamp);
-  const { isRTL } = useRTL();
+  const isRTL = useIsRtl();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -124,8 +124,7 @@ export default function FAQSection() {
                       sx={{
                         lineHeight: 1.8,
                         fontSize: "0.95rem",
-                        textAlign: isRTL ? "right" : "left",
-                        direction: isRTL ? "rtl" : "ltr",
+                        textAlign: "start",
                       }}
                     >
                       {faq.answer}

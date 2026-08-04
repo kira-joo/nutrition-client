@@ -2,7 +2,7 @@
 
 import { DictionaryFiles } from "@/constant/DictionaryFiles";
 import useI18n from "@/hooks/useI18n";
-import { useRTL } from "@/hooks/useRTL";
+import { useIsRtl } from "@/hooks/useIsRtl";
 import {
   alpha,
   Avatar,
@@ -15,7 +15,7 @@ import {
 
 export default function TestimonialsSection() {
   const { t } = useI18n(DictionaryFiles._15DayCamp);
-  const { isRTL } = useRTL();
+  const isRTL = useIsRtl();
 
   return (
     <Container maxWidth="lg" sx={{ py: { xs: 8, md: 12 } }}>
@@ -62,7 +62,7 @@ export default function TestimonialsSection() {
                     width: 64,
                     height: 64,
                     bgcolor: alpha("#4db6b2", 0.2),
-                    ...(isRTL ? { ml: 2 } : { mr: 2 }),
+                    marginInlineEnd: 2,
                     border: `3px solid ${alpha("#4db6b2", 0.3)}`,
                   }}
                 >
@@ -74,7 +74,7 @@ export default function TestimonialsSection() {
                     sx={{
                       fontWeight: 700,
                       color: "#007B7F",
-                      textAlign: isRTL ? "right" : "left",
+                      textAlign: "start",
                     }}
                   >
                     {t("client")} {i}
@@ -83,7 +83,7 @@ export default function TestimonialsSection() {
                     variant="caption"
                     color="text.secondary"
                     sx={{
-                      textAlign: isRTL ? "right" : "left",
+                      textAlign: "start",
                       display: "block",
                     }}
                   >
@@ -98,8 +98,7 @@ export default function TestimonialsSection() {
                   fontStyle: "italic",
                   lineHeight: 1.7,
                   fontSize: "0.95rem",
-                  textAlign: isRTL ? "right" : "left",
-                  direction: isRTL ? "rtl" : "ltr",
+                  textAlign: "start",
                 }}
               >
                 "{t("testimonialText")}"

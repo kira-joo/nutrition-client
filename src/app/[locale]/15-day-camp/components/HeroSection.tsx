@@ -2,7 +2,6 @@
 
 import { DictionaryFiles } from "@/constant/DictionaryFiles";
 import useI18n from "@/hooks/useI18n";
-import { useRTL } from "@/hooks/useRTL";
 import { alpha, Box, Button, Container, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 import AnimatedSection from "./AnimatedSection";
@@ -20,7 +19,6 @@ export default function HeroSection({
   selectedProgram,
 }: HeroSectionProps) {
   const { t } = useI18n(DictionaryFiles._15DayCamp);
-  const { getPosition, getOppositePosition } = useRTL();
 
   return (
     <AnimatedSection variant="zoomIn" delay={0.1}>
@@ -38,7 +36,8 @@ export default function HeroSection({
             content: '""',
             position: "absolute",
             top: -100,
-            ...getOppositePosition(-100, "auto"),
+            insetInlineEnd: -100,
+            insetInlineStart: "auto",
             width: 500,
             height: 500,
             borderRadius: "50%",
@@ -51,7 +50,8 @@ export default function HeroSection({
             content: '""',
             position: "absolute",
             bottom: -150,
-            ...getPosition(-150, "auto"),
+            insetInlineStart: -150,
+            insetInlineEnd: "auto",
             width: 600,
             height: 600,
             borderRadius: "50%",

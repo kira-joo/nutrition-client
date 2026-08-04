@@ -1,14 +1,12 @@
-import type { NextRequest } from "next/server";
-import { NextResponse } from "next/server";
+import createMiddleware from "next-intl/middleware";
+import { routing } from "@/i18n/routing";
 
-export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+// Replaces the old hand-rolled `/` -> `/ar` rewrite with next-intl's
+// routing-aware middleware, driven by the same `routing` config the
+// request/navigation helpers use — one source of truth for locale
+// behavior instead of a separate hardcoded rewrite.
+export default createMiddleware(routing);
 
-  if (pathname === "/") {
-    const url = request.nextUrl.clone();
-    url.pathname = "/ar";
-    return NextResponse.rewrite(url);
-  }
-
-  return NextResponse.next();
-}
+export const config = {
+  matcher: ["/((?!api|trpc|_next|_vercel|.*\\..*).*)"],
+};

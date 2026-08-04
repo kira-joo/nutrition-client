@@ -82,7 +82,7 @@ const MobileNavbar = () => {
                   }}
                 >
                   <ListItemIcon>{page.icon}</ListItemIcon>
-                  {t(page.title as keyof typeof t)}
+                  {t(page.title as Parameters<typeof t>[0])}
                 </AppLink>
               </ListItem>
             ))}

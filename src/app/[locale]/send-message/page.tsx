@@ -2,7 +2,7 @@
 import { WhatsappNumber } from "@/app/components/constant/numbers";
 import { DictionaryFiles } from "@/constant/DictionaryFiles";
 import useI18n from "@/hooks/useI18n";
-import { useRTL } from "@/hooks/useRTL";
+import { useIsRtl } from "@/hooks/useIsRtl";
 import SendIcon from "@mui/icons-material/Send";
 import {
   Box,
@@ -23,7 +23,7 @@ interface FormValues {
 
 const SendMessage: React.FC = () => {
   const { t } = useI18n(DictionaryFiles.SendMessage);
-  const { isRTL } = useRTL();
+  const isRTL = useIsRtl();
   const {
     register,
     handleSubmit,

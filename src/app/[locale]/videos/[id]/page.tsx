@@ -20,7 +20,7 @@ const VideoPage = ({ params }: { params: { id: string } }) => {
   return (
     <Box sx={{ textAlign: "center" }}>
       <Typography sx={{ color: "black", marginBottom: "20px" }} variant="h5">
-        {t(`videos.${video.id}` as keyof typeof t)}
+        {t(`videos.${video.id}` as Parameters<typeof t>[0])}
       </Typography>
       <video
         width="300"

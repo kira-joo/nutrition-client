@@ -3,7 +3,7 @@ import { DictionaryFiles } from "@/constant/DictionaryFiles";
 import { Locale } from "@/constant/Locale.enum";
 import { RecipesList } from "@/constant/recipes";
 import useI18n from "@/hooks/useI18n";
-import i18n from "@/i18n";
+import { useMessages } from "next-intl";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import PeopleIcon from "@mui/icons-material/People";
 import RestaurantIcon from "@mui/icons-material/Restaurant";
@@ -51,6 +51,7 @@ const RecipeDetailPage = () => {
   const recipe = getRecipeById(id as string);
   const { t } = useI18n(DictionaryFiles.Recipes);
   const { locale } = useParams();
+  const messages = useMessages();
 
   if (!recipe) {
     notFound();
@@ -61,20 +62,22 @@ const RecipeDetailPage = () => {
     notFound();
   }
 
-  const recipeTitle = t(`recipes.${recipeKey}.title` as keyof typeof t);
+  const recipeTitle = t(`recipes.${recipeKey}.title` as Parameters<typeof t>[0]);
   const recipeDescription = t(
-    `recipes.${recipeKey}.description` as keyof typeof t
+    `recipes.${recipeKey}.description` as Parameters<typeof t>[0]
   );
-  const prepTime = t(`recipes.${recipeKey}.prepTime` as keyof typeof t);
-  const cookTime = t(`recipes.${recipeKey}.cookTime` as keyof typeof t);
-  const servings = t(`recipes.${recipeKey}.servings` as keyof typeof t);
+  const prepTime = t(`recipes.${recipeKey}.prepTime` as Parameters<typeof t>[0]);
+  const cookTime = t(`recipes.${recipeKey}.cookTime` as Parameters<typeof t>[0]);
+  const servings = t(`recipes.${recipeKey}.servings` as Parameters<typeof t>[0]);
 
-  // Get ingredients and instructions - access them directly from i18n
-  const recipesData = i18n.getResourceBundle(
-    locale as string,
-    DictionaryFiles.Recipes
-  );
-  const recipeData = recipesData?.recipes?.[recipeKey];
+  // Ingredients/instructions aren't looked up through t() (their keys are
+  // built dynamically per recipe) — read them straight from the current
+  // locale's already-loaded messages tree instead, replacing the old
+  // i18next `getResourceBundle` call.
+  const recipesNamespace = messages[DictionaryFiles.Recipes] as {
+    recipes?: Record<string, { ingredients?: string[]; instructions?: string[] }>;
+  };
+  const recipeData = recipesNamespace?.recipes?.[recipeKey];
   const ingredients = recipeData?.ingredients || [];
   const instructions = recipeData?.instructions || [];
   const isRTL = locale === Locale.AR; // Keep for numbered box margin adjustment
@@ -216,7 +219,7 @@ const RecipeDetailPage = () => {
             >
               {recipe.category && (
                 <Chip
-                  label={t(recipe.category as keyof typeof t)}
+                  label={t(recipe.category as Parameters<typeof t>[0])}
                   sx={{
                     backgroundColor: "#4db6b2",
                     color: "white",
@@ -226,7 +229,7 @@ const RecipeDetailPage = () => {
               {recipe.foodGroup.map((group, index) => (
                 <Chip
                   key={index}
-                  label={t(group as keyof typeof t)}
+                  label={t(group as Parameters<typeof t>[0])}
                   sx={{
                     backgroundColor: "#04715d",
                     color: "white",

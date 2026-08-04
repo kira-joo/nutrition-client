@@ -56,7 +56,7 @@ const DesktopNavbar: React.FC<DesktopNavbarProps> = () => {
                   },
                 }}
               >
-                {t(page.title as keyof typeof t)}
+                {t(page.title as Parameters<typeof t>[0])}
               </Button>
             </AppLink>
           );
@@ -112,7 +112,7 @@ const DesktopNavbar: React.FC<DesktopNavbarProps> = () => {
               >
                 {setting.icon}
                 <Typography sx={{ textAlign: "center" }}>
-                  {t(setting.title as keyof typeof t)}
+                  {t(setting.title as Parameters<typeof t>[0])}
                 </Typography>
               </MenuItem>
             </AppLink>
