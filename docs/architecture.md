@@ -344,6 +344,110 @@ functions directly each time, since no real page consumes this layer yet
   instead of nested objects, which next-intl rejects outright
   (`INVALID_KEY`) — restructured into proper nested JSON.
 
+## On-demand cache invalidation
+
+Phase 5's layer. The fallback `revalidate` intervals from "Caching" above
+are a ceiling on staleness, not the primary freshness mechanism — a
+mutating route on nutrition-staff tells this app to bust the relevant
+cache tag immediately after a successful write, so an edit shows up on
+the public site right away instead of waiting out the fallback window.
+
+```
+nutrition-staff mutating route (e.g. PUT /api/recipes/:id)
+  -> write succeeds
+    -> revalidateRecipes(id)  (src/server/core/revalidation/revalidate-entity.ts)
+      -> publishRevalidation([CacheTag.RECIPES, CacheTag.recipe(id)])
+        -> POST <NUTRITION_CLIENT_URL>/api/revalidate  (Bearer REVALIDATE_SECRET)
+          -> this app's src/app/api/revalidate/route.ts
+            -> revalidateTag(tag) for each tag  (next/cache)
+```
+
+### The receiving route (`src/app/api/revalidate/route.ts`)
+
+Authenticates with a constant-time comparison (`crypto.timingSafeEqual`)
+against `Bearer <REVALIDATE_SECRET>` — a plain `===` would leak timing
+information about how many leading characters of the secret matched. Calls
+`revalidateTag()` once per tag in the request body; unknown/malformed
+input (non-array `tags`, non-string entries) is filtered out rather than
+rejected with an error, since a partially-valid request should still bust
+whatever tags it did send correctly. Never called from the browser —
+`REVALIDATE_SECRET` is a server-only env var shared only with
+nutrition-staff.
+
+### The sending side (nutrition-staff)
+
+- `src/server/core/revalidation/cache-tag.ts` — mirrors this app's
+  `CacheTag` string values exactly (see "Caching" above for why this stays
+  a hand-kept-in-sync duplicate, not a shared package).
+- `src/server/core/revalidation/publish-revalidation.ts` —
+  `publishRevalidation(tags)`, the one function that actually POSTs to
+  `<NUTRITION_CLIENT_URL>/api/revalidate`. Awaited, not fire-and-forget
+  (genuine detached fire-and-forget is unsafe on serverless — the function
+  can freeze the instant a response is sent, with no guarantee an
+  unawaited promise ever completes), but bounded by a hard 2.5s
+  `AbortController` timeout, and every failure is swallowed rather than
+  rethrown: a slow or unreachable nutrition-client must never fail the
+  write that triggered it. A no-op when `NUTRITION_CLIENT_URL`/
+  `REVALIDATE_SECRET` aren't configured (e.g. local development with no
+  nutrition-client instance running).
+- `src/server/core/revalidation/revalidate-entity.ts` — one thin function
+  per public-facing entity (`revalidateRecipes`, `revalidateCampaigns`,
+  etc.), each naming exactly the tags that entity's routes need to bust,
+  instead of every route repeating the tag list. `revalidateRecipes(id)`/
+  `revalidateCampaigns(slug)` take an optional detail-page identifier,
+  mirroring this app's multi-tag convention; omitted for a create (no
+  detail page exists yet) or a list-only change.
+- Wired into all 38 mutating routes across the 12 public-facing entities —
+  every `POST`/`PUT`/`DELETE` under `src/app/api/{site-settings,
+  doctor-profile,doctor-profile/gallery,packages-page-settings,packages,
+  recipe-categories,recipe-food-groups,recipes,reviews,videos,
+  faq-sections,faq-items,campaigns}/**` calls its entity's `revalidate*`
+  function immediately after the write succeeds. `faq-sections` and
+  `faq-items` both call `revalidateFaq()` — nutrition-client's composed
+  `GET /api/public/faq` reads from both collections under that one tag.
+  Campaign `PUT`/`DELETE` and every `blocks/**` mutation revalidate the
+  campaign's `slug`-derived tag (read from the mutation's own return value
+  — every block handler already returns the updated campaign document);
+  `PUT` additionally revalidates the *previous* slug unconditionally,
+  since `slug` itself is updatable and an old cached detail page must not
+  linger stale under a slug the campaign no longer uses.
+
+### Verification
+
+Real, not simulated — but scoped to what was reachable without a real
+nutrition-staff admin account (the live database has no seeded/known test
+credentials; guessing or bypassing auth was not attempted). What was
+verified directly, end to end, with both apps actually running:
+- **Cache hit within the fallback window**: a temporary debug page called
+  `getRecipes()` (tagged `CacheTag.RECIPES`). The first request produced a
+  real `GET /api/public/recipes` line in nutrition-staff's dev server log
+  (cache miss); an immediate second request produced *no* new line at all
+  (cache hit, served entirely from Next's Data Cache, zero requests
+  reaching nutrition-staff).
+- **The receiving route**: direct `POST /api/revalidate` calls confirmed
+  200 + `{revalidated:true,tags:[...]}` with the correct
+  `Bearer <REVALIDATE_SECRET>`, and 401 for both a wrong secret and a
+  missing header.
+- **The full on-demand loop**: after calling `/api/revalidate` with tag
+  `"recipes"`, the next request to the debug page produced a **new**
+  `GET /api/public/recipes` line in nutrition-staff's log — proof
+  `revalidateTag()` genuinely evicted the specific Data Cache entry, not
+  just that the endpoint returned 200.
+- **The sending side, independently**: `publishRevalidation` was invoked
+  directly (a real script, real env vars, real running nutrition-client)
+  and confirmed to complete without throwing.
+- **Resilience**: with nutrition-client killed, the same direct
+  `publishRevalidation` call resolved in ~0.1s (immediate `ECONNREFUSED`,
+  well under the 2.5s timeout) and did not throw — a down/unreachable
+  nutrition-client cannot fail or block a nutrition-staff write.
+- **Not independently curled**: an actual authenticated `PUT`/`POST`/
+  `DELETE` through nutrition-staff's real HTTP routes (which would prove
+  the exact wired call site executes at request time, not just that its
+  two halves work correctly in isolation) — this requires real admin
+  credentials this environment doesn't have. Every route's wiring was
+  written directly against, and typechecked/built against, the same
+  `revalidate*`/`publishRevalidation` functions verified above.
+
 ## Localization & RTL
 
 This is the infrastructure Phase 3 replaced wholesale. Nothing here is
