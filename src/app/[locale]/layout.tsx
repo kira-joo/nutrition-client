@@ -11,6 +11,7 @@ import { Images } from "../components/constant/images";
 import Footer from "../components/Footer/Footer";
 import Navbar from "../components/header/Navbar";
 
+import { Providers } from "../providers";
 import ThemeProvider from "@/utils/Provider/ThemeProvider";
 import "../globals.css";
 import "./global.css";
@@ -69,20 +70,22 @@ const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
     <html lang={locale} dir={locale === Locale.AR ? "rtl" : "ltr"} className={cairo.variable}>
       <body>
         <NextIntlClientProvider messages={messages}>
-          <ThemeProvider locale={locale}>
-            <Navbar />
-            <Box
-              display="flex"
-              flexDirection="column"
-              mb={5}
-              minHeight="80vh"
-              sx={{ pt: { xs: 5, md: 3 } }}
-            >
-              <Toolbar />
-              {children}
-            </Box>
-            <Footer />
-          </ThemeProvider>
+          <Providers>
+            <ThemeProvider locale={locale}>
+              <Navbar />
+              <Box
+                display="flex"
+                flexDirection="column"
+                mb={5}
+                minHeight="80vh"
+                sx={{ pt: { xs: 5, md: 3 } }}
+              >
+                <Toolbar />
+                {children}
+              </Box>
+              <Footer />
+            </ThemeProvider>
+          </Providers>
         </NextIntlClientProvider>
       </body>
     </html>
