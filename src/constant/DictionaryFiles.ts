@@ -10,4 +10,6 @@ export enum DictionaryFiles {
   Calculator = "calculator",
   Packages = "packages",
   _15DayCamp = "15-day-camp",
+  /** Global application shell copy (nav, footer, shared CTAs) — Phase 6. */
+  Layout = "layout",
 }

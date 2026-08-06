@@ -18,6 +18,7 @@ const NAMESPACE_FILES = {
   [DictionaryFiles.Packages]: "packages",
   [DictionaryFiles.Faq]: "faq",
   [DictionaryFiles._15DayCamp]: "15-day-camp",
+  [DictionaryFiles.Layout]: "layout",
 } as const;
 
 async function loadMessages(locale: string) {

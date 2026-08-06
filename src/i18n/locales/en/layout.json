@@ -1,0 +1,30 @@
+{
+  "nav": {
+    "home": "Home",
+    "doctor": "Doctor",
+    "packages": "Packages",
+    "recipes": "Recipes",
+    "more": "More",
+    "reviews": "Reviews",
+    "videos": "Videos",
+    "faq": "FAQ",
+    "calculator": "Calculator",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
+  },
+  "cta": {
+    "bookConsultation": "Book a Consultation",
+    "whatsapp": "Chat on WhatsApp",
+    "call": "Call us"
+  },
+  "footer": {
+    "tagline": "Real, personalized nutrition care — not one-size-fits-all diet advice.",
+    "quickLinks": "Quick links",
+    "followUs": "Follow us",
+    "contact": "Contact",
+    "rightsReserved": "All rights reserved."
+  },
+  "language": {
+    "switchTo": "Switch language"
+  }
+}
