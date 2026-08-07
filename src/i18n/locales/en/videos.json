@@ -1,0 +1,21 @@
+{
+  "heading": "Videos",
+  "intro": "Short, real clips from the clinic — recipes in motion, quick tips, and behind-the-scenes moments.",
+  "empty": {
+    "noVideos": "No videos have been published yet. Please check back soon."
+  },
+  "card": {
+    "playsHere": "Plays here",
+    "opensExternally": "Opens externally",
+    "opensInNewTab": "opens in new tab",
+    "viewOriginal": "View original on {host}",
+    "watchExternally": "Watch video",
+    "noPreview": "No preview available"
+  },
+  "pagination": {
+    "label": "Video pages",
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page {page} of {total}"
+  }
+}
