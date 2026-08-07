@@ -1,12 +1,9 @@
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { Skeleton } from "@/components/ui/skeleton";
+import { MediaTilesSkeleton, TextLinesSkeleton } from "@/components/ui/skeleton-blocks";
 
-/**
- * Mirrors the real page's shape — circular portrait, name, tagline, two
- * bio blocks, then a gallery strip — at the same sizes the loaded content
- * uses, so swapping in real data doesn't shift the layout.
- */
+/** Mirrors the doctor page: circular portrait masthead, two-column bio spread, then the gallery. */
 export default function DoctorLoading() {
   return (
     <>
@@ -19,25 +16,18 @@ export default function DoctorLoading() {
       </section>
 
       <Section>
-        <Container width="narrow" className="flex flex-col gap-10">
-          {[0, 1].map((index) => (
-            <div key={index} className="flex flex-col gap-2">
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-3/4" />
-            </div>
-          ))}
+        <Container>
+          <div className="grid gap-10 lg:grid-cols-[1.15fr_1fr] lg:gap-16">
+            <TextLinesSkeleton lines={4} />
+            <TextLinesSkeleton lines={3} />
+          </div>
         </Container>
       </Section>
 
       <Section spacing="sm" className="border-y-hairline border-border bg-surface-muted">
         <Container>
           <Skeleton className="h-8 w-48" />
-          <div className="mt-8 flex gap-4 overflow-hidden lg:grid lg:grid-cols-3">
-            {[0, 1, 2].map((index) => (
-              <Skeleton key={index} className="aspect-[4/3] w-56 shrink-0 sm:w-64 lg:w-full" />
-            ))}
-          </div>
+          <MediaTilesSkeleton count={3} className="mt-8 lg:grid lg:grid-cols-3" tileClassName="w-56 sm:w-64 lg:w-full" />
         </Container>
       </Section>
     </>
