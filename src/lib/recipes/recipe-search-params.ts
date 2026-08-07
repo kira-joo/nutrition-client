@@ -1,4 +1,5 @@
 import type { RecipesListParams } from "@/lib/domain/recipe";
+import { parsePage } from "@/lib/pagination/parse-page";
 
 /** How many recipes a listing page shows. Server-side, so pages are never under-filled by later filtering. */
 export const RECIPES_PER_PAGE = 12;
@@ -20,13 +21,12 @@ export const EMPTY_FILTERS: RecipeFilters = { search: "", category: "", foodGrou
  */
 export function parseRecipeFilters(searchParams: Record<string, string | string[] | undefined>): RecipeFilters {
   const single = (value: string | string[] | undefined) => (Array.isArray(value) ? value[0] : value) ?? "";
-  const page = Number.parseInt(single(searchParams.page), 10);
 
   return {
     search: single(searchParams.search).trim(),
     category: single(searchParams.category),
     foodGroup: single(searchParams.foodGroup),
-    page: Number.isFinite(page) && page > 0 ? page : 1,
+    page: parsePage(searchParams.page),
   };
 }
 

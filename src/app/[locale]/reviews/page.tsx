@@ -1,17 +1,11 @@
 import type { Locale } from "@/constant/Locale.enum";
 import { getReviews } from "@/lib/data";
+import { parsePage } from "@/lib/pagination/parse-page";
 import { ReviewsGrid } from "@/sections/reviews/reviews-grid";
 
 interface ReviewsPageProps {
   params: { locale: Locale };
   searchParams: Record<string, string | string[] | undefined>;
-}
-
-/** A bad/missing `?page=` falls back to 1 rather than erroring — same policy as Recipes' filter parsing. */
-function parsePage(searchParams: ReviewsPageProps["searchParams"]): number {
-  const raw = Array.isArray(searchParams.page) ? searchParams.page[0] : searchParams.page;
-  const page = Number(raw);
-  return Number.isInteger(page) && page > 0 ? page : 1;
 }
 
 /**
@@ -24,7 +18,7 @@ function parsePage(searchParams: ReviewsPageProps["searchParams"]): number {
  * rather than rebuilt.
  */
 export default async function ReviewsPage({ params, searchParams }: ReviewsPageProps) {
-  const page = parsePage(searchParams);
+  const page = parsePage(searchParams.page);
   const result = await getReviews(params.locale, { page });
 
   return <ReviewsGrid result={result} page={page} />;
