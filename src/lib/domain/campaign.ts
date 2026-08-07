@@ -87,3 +87,21 @@ export interface Campaign {
  * rather than hand-written, so the two can't drift.
  */
 export type LocalizedCampaign = LocalizedResult<Campaign>;
+
+/**
+ * One resolved block, as the renderer actually receives it. `LocalizedResult`
+ * distributes over `CampaignBlock`'s union (a bare generic parameter in a
+ * conditional type distributes automatically), so this is still a proper
+ * discriminated union on `type` — a `switch` on `block.type` narrows exactly
+ * as it would on the raw `CampaignBlock`.
+ */
+export type LocalizedCampaignBlock = LocalizedCampaign["blocks"][number];
+
+/** Per-block-type resolved shapes, so each block component's props read as `block: LocalizedHeroBlock` rather than re-deriving the extraction at every call site. */
+export type LocalizedHeroBlock = Extract<LocalizedCampaignBlock, { type: "hero" }>;
+export type LocalizedRichTextBlock = Extract<LocalizedCampaignBlock, { type: "richText" }>;
+export type LocalizedFeatureGridBlock = Extract<LocalizedCampaignBlock, { type: "featureGrid" }>;
+export type LocalizedMediaBlock = Extract<LocalizedCampaignBlock, { type: "media" }>;
+export type LocalizedCtaBlock = Extract<LocalizedCampaignBlock, { type: "cta" }>;
+export type LocalizedFaqRefBlock = Extract<LocalizedCampaignBlock, { type: "faqRef" }>;
+export type LocalizedCountdownBlock = Extract<LocalizedCampaignBlock, { type: "countdown" }>;

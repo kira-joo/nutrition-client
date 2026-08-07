@@ -1,3 +1,4 @@
+import "@/lib/datetime/configure-timezone";
 import { Metadata } from "next";
 import { Cairo } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";

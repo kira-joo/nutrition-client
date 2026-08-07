@@ -30,6 +30,13 @@ export const AppRoute = {
   Recipe: "/recipes/:id",
   Review: "/reviews/:id",
   Video: "/videos/:id",
+  /**
+   * Campaigns have no listing page — a campaign is only ever reached by
+   * its own slug (a homepage banner, or a direct link), matching the CMS
+   * model (`GET /api/public/campaigns/[slug]`, no `/api/public/campaigns`
+   * list endpoint).
+   */
+  Campaign: "/campaigns/:slug",
 } as const;
 
 export type AppRoute = (typeof AppRoute)[keyof typeof AppRoute];
@@ -43,6 +50,7 @@ export const appHref = {
   recipe: (id: string) => AppRoute.Recipe.replace(":id", id),
   review: (id: string) => AppRoute.Review.replace(":id", id),
   video: (id: string) => AppRoute.Video.replace(":id", id),
+  campaign: (slug: string) => AppRoute.Campaign.replace(":slug", slug),
 } as const;
 
 export default AppRoute;

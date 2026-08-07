@@ -39,21 +39,40 @@ type ButtonAsButton = CommonProps &
   Omit<ButtonHTMLAttributes<HTMLButtonElement>, "className" | "children"> & { href?: undefined };
 
 type ButtonAsLink = CommonProps &
-  Omit<ComponentPropsWithoutRef<typeof Link>, "className" | "children"> & { href: ComponentPropsWithoutRef<typeof Link>["href"] };
-
-export type ButtonProps = ButtonAsButton | ButtonAsLink;
+  Omit<ComponentPropsWithoutRef<typeof Link>, "className" | "children"> & { href: ComponentPropsWithoutRef<typeof Link>["href"]; external?: false };
 
 /**
- * Renders a locale-aware `Link` when `href` is given, a native `<button>`
- * otherwise — every CTA/nav action in the app goes through this one
- * component instead of ad hoc `<a>`/`<button>` markup, so the visual
- * language and focus-ring behavior stay consistent everywhere.
+ * A CMS-authored CTA URL (campaigns) can point off-site — routing that
+ * through `Link` would wrongly prepend the locale prefix to a full URL.
+ * `external: true` is the one escape hatch to a real `<a target="_blank">`
+ * with correct `rel`, still styled identically to every other Button.
+ */
+type ButtonAsExternalLink = CommonProps &
+  Omit<ComponentPropsWithoutRef<"a">, "className" | "children" | "href" | "target" | "rel"> & { href: string; external: true };
+
+export type ButtonProps = ButtonAsButton | ButtonAsLink | ButtonAsExternalLink;
+
+/**
+ * Renders a locale-aware `Link` when `href` is given, a real external `<a>`
+ * when `href` is given with `external: true`, a native `<button>` otherwise
+ * — every CTA/nav action in the app goes through this one component instead
+ * of ad hoc `<a>`/`<button>` markup, so the visual language and focus-ring
+ * behavior stay consistent everywhere.
  */
 export function Button({ variant = "primary", size = "md", className, children, ...props }: ButtonProps) {
   const classes = cn(BASE_CLASS, VARIANT_CLASS[variant], SIZE_CLASS[size], className);
 
   if ("href" in props && props.href !== undefined) {
-    const { href, ...linkProps } = props as ButtonAsLink;
+    if ("external" in props && props.external) {
+      const { href, external: _external, ...anchorProps } = props as ButtonAsExternalLink;
+      return (
+        <a href={href} target="_blank" rel="noopener noreferrer" className={classes} {...anchorProps}>
+          {children}
+        </a>
+      );
+    }
+
+    const { href, external: _external, ...linkProps } = props as ButtonAsLink;
     return (
       <Link href={href} className={classes} {...linkProps}>
         {children}

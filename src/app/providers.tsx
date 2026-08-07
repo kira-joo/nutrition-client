@@ -2,6 +2,7 @@
 import { ToolkitProviders, createToolkitQueryClient } from "@kira-joo/frontend-toolkit-core";
 import { useState } from "react";
 import { configureApiClient } from "@/lib/api/api-config";
+import "@/lib/datetime/configure-timezone";
 
 configureApiClient();
 

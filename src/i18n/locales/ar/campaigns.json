@@ -1,0 +1,17 @@
+{
+  "countdown": {
+    "endsOn": "ينتهي {date}",
+    "units": {
+      "days": "يوم",
+      "hours": "ساعة",
+      "minutes": "دقيقة",
+      "seconds": "ثانية"
+    },
+    "expiredFallback": "انتهى هذا العرض"
+  },
+  "notFound": {
+    "heading": "هذه الحملة غير متاحة",
+    "body": "قد تكون انتهت، أو أن الرابط لم يعد صالحًا.",
+    "backHome": "العودة للرئيسية"
+  }
+}

@@ -1,7 +1,17 @@
-import { getDoctorProfile, getFaqSectionsWithItems, getPackages, getPackagesPageSettings, getRecipes, getReviews, getVideos } from "@/lib/data";
+import {
+  getActiveCampaign,
+  getDoctorProfile,
+  getFaqSectionsWithItems,
+  getPackages,
+  getPackagesPageSettings,
+  getRecipes,
+  getReviews,
+  getVideos,
+} from "@/lib/data";
 import { safe } from "@/lib/safe";
 import type { Locale } from "@/constant/Locale.enum";
 import { HeroSection } from "@/sections/home/hero-section";
+import { CampaignBannerSection } from "@/sections/home/campaign-banner-section";
 import { TrustBandSection } from "@/sections/shared/trust-band-section";
 import { ProgramHighlightsSection } from "@/sections/shared/program-highlights-section";
 import { PackagesPreviewSection } from "@/sections/home/packages-preview-section";
@@ -28,19 +38,22 @@ interface HomePageProps {
 export default async function HomePage({ params }: HomePageProps) {
   const { locale } = params;
 
-  const [doctorProfile, packagesPageSettings, packages, reviewsResult, recipesResult, videosResult, faqSections] = await Promise.all([
-    getDoctorProfile(locale),
-    safe(() => getPackagesPageSettings(locale)),
-    safe(() => getPackages(locale)),
-    safe(() => getReviews(locale, { limit: 6 })),
-    safe(() => getRecipes(locale, { limit: 8 })),
-    safe(() => getVideos(locale, { limit: 6 })),
-    safe(() => getFaqSectionsWithItems(locale)),
-  ]);
+  const [doctorProfile, activeCampaign, packagesPageSettings, packages, reviewsResult, recipesResult, videosResult, faqSections] =
+    await Promise.all([
+      getDoctorProfile(locale),
+      safe(() => getActiveCampaign(locale)),
+      safe(() => getPackagesPageSettings(locale)),
+      safe(() => getPackages(locale)),
+      safe(() => getReviews(locale, { limit: 6 })),
+      safe(() => getRecipes(locale, { limit: 8 })),
+      safe(() => getVideos(locale, { limit: 6 })),
+      safe(() => getFaqSectionsWithItems(locale)),
+    ]);
 
   return (
     <>
       <HeroSection doctorProfile={doctorProfile} />
+      <CampaignBannerSection campaign={activeCampaign} />
       <TrustBandSection doctorProfile={doctorProfile} />
       <ProgramHighlightsSection doctorProfile={doctorProfile} />
       {packagesPageSettings && packages && <PackagesPreviewSection packages={packages} packagesPageSettings={packagesPageSettings} />}

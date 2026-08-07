@@ -7,3 +7,9 @@ export const getCampaignEndpoint: Endpoint<{ params: { slug: string }; returnTyp
   url: PublicApiRoute.CAMPAIGN_DETAIL,
   methodType: MethodType.GET,
 };
+
+/** Same 404-equivalent contract as `getCampaignEndpoint`, but resolves `SiteSettings.activeCampaignId` server-side instead of taking a slug — see `PublicApiRoute.ACTIVE_CAMPAIGN`'s doc comment. */
+export const getActiveCampaignEndpoint: Endpoint<{ returnType: Campaign }> = {
+  url: PublicApiRoute.ACTIVE_CAMPAIGN,
+  methodType: MethodType.GET,
+};

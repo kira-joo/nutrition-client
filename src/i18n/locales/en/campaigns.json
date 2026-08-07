@@ -1,0 +1,17 @@
+{
+  "countdown": {
+    "endsOn": "Ends {date}",
+    "units": {
+      "days": "days",
+      "hours": "hrs",
+      "minutes": "min",
+      "seconds": "sec"
+    },
+    "expiredFallback": "This offer has ended"
+  },
+  "notFound": {
+    "heading": "This campaign isn't available",
+    "body": "It may have ended, or the link may be out of date.",
+    "backHome": "Back to home"
+  }
+}

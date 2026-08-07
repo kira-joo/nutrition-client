@@ -10,4 +10,4 @@ export { getRecipes, getRecipe } from "./recipes";
 export { getReviews } from "./reviews";
 export { getVideos } from "./videos";
 export { getFaqSectionsWithItems } from "./faq";
-export { getCampaign } from "./campaigns";
+export { getCampaign, getActiveCampaign } from "./campaigns";

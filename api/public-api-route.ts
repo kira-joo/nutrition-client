@@ -41,6 +41,8 @@ export const PublicApiRoute = {
   FAQ: "/public/faq",
   /** `:slug` placeholder — see RECIPE_DETAIL. */
   CAMPAIGN_DETAIL: "/public/campaigns/:slug",
+  /** Resolves `SiteSettings.activeCampaignId` server-side into the same public `Campaign` shape as CAMPAIGN_DETAIL — 404 if unset or not currently published/in-range. The client never resolves this id itself. */
+  ACTIVE_CAMPAIGN: "/public/active-campaign",
   /** nutrition-staff's route — called only by this app's own consultation-requests proxy Route Handler, never from the browser. */
   CONSULTATION_REQUESTS_UPSTREAM: "/public/consultation-requests",
   /** This app's OWN route — called by the client-side consultation mutation hook. */

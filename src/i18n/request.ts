@@ -17,10 +17,10 @@ const NAMESPACE_FILES = {
   [DictionaryFiles.Calculator]: "calculator",
   [DictionaryFiles.Packages]: "packages",
   [DictionaryFiles.Faq]: "faq",
-  [DictionaryFiles._15DayCamp]: "15-day-camp",
   [DictionaryFiles.Layout]: "layout",
   [DictionaryFiles.Videos]: "videos",
   [DictionaryFiles.Reviews]: "reviews",
+  [DictionaryFiles.Campaigns]: "campaigns",
 } as const;
 
 async function loadMessages(locale: string) {
