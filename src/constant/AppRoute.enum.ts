@@ -18,8 +18,6 @@ export const AppRoute = {
   Faq: "/faq",
   Calculator: "/calculator",
   Consultation: "/consultation",
-  Newsletter: "/newsletter",
-  Resources: "/resources",
 
   /**
    * Express-style templates consumed by the legacy `AppLink`, which
