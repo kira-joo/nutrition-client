@@ -33,6 +33,12 @@ export interface DiscoverySectionProps {
  * it into view for free. That satisfies §19's "never swipe-only" rule
  * without shipping carousel controls this section doesn't need (per the
  * plan, the site's one carousel belongs to /reviews' featured strip).
+ *
+ * The rail's negative-margin bleed makes `document.documentElement.
+ * scrollWidth` read wider than the viewport at 375/768 — a real-browser
+ * check that stops at `scrollWidth` will flag this page every time. See
+ * docs/architecture.md ("Real-browser verification conventions") for the
+ * actual-scroll check that isn't fooled by it.
  */
 export async function DiscoverySection({ recipes, videos }: DiscoverySectionProps) {
   // Rendered only when there's genuinely something to discover — an empty

@@ -680,3 +680,45 @@ Suspense boundaries it requires, correctly, across the whole component
 tree is exactly the kind of work that belongs in the caching/performance
 phase once real Server Components and data-fetching exist — not something
 to force through as an incidental side effect of swapping the i18n engine.
+
+## Real-browser verification conventions
+
+Every phase since Phase 6.1 runs a real Playwright pass (375/768/1440,
+`en`/`ar`) as part of its acceptance criteria. One check has produced the
+same false positive on every one of those passes - worth writing down once
+instead of re-diagnosing it every phase.
+
+### Horizontal overflow: check real scroll, not `scrollWidth`
+
+`document.documentElement.scrollWidth > document.documentElement.clientWidth`
+is **not** sufficient on its own to detect a horizontal-overflow regression
+in this app, and will false-positive at 375/768 on any page rendering
+`DiscoverySection` (`src/sections/home/discovery-section.tsx`). That
+section's recipe/video rails deliberately bleed past the container's
+gutter with negative margins (`-mx-4 ... px-4`) so they read as native
+edge-to-edge swipeable strips - intentional, documented in the component's
+own doc comment, not a bug. `globals.css`'s `html { overflow-x: hidden }`
+genuinely prevents the page from ever scrolling sideways, but the browser
+can still report a wider virtual `scrollWidth` on the document element
+than the viewport, independent of whether a user can actually reach it.
+
+The correct check confirms the overflow is real and user-reachable, not
+just present in `scrollWidth`:
+
+```js
+const scrollWidthFlag = await page.evaluate(
+  () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1
+);
+await page.mouse.wheel(500, 0);            // attempt a real horizontal scroll
+await page.waitForTimeout(100);
+const realScrollX = await page.evaluate(() => window.scrollX);
+// A genuine bug is realScrollX > 1. scrollWidthFlag alone is not a
+// failure - it will be true on any page rendering DiscoverySection, by
+// design.
+```
+
+Only `realScrollX > 1` after an attempted scroll is a real regression. If a
+future page introduces a new intentionally-bleeding horizontal rail,
+extend this note rather than loosening the check - the goal is "no page
+the user can actually scroll sideways on", not "no element wider than the
+viewport".
