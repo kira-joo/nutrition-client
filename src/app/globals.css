@@ -180,8 +180,21 @@ html[lang="ar"] {
   --leading-body-sm: 1.8;
 }
 
-html,
-body {
+/*
+ * Horizontal-overflow guard on the root element ONLY, deliberately not on
+ * `body` as well.
+ *
+ * `overflow-x: hidden` forces the other axis to compute to `auto`, so
+ * declaring it on `body` turned `body` into a scroll container while the
+ * page itself still scrolled on `html`. Two things broke as a result:
+ * `position: sticky` never engaged for any descendant (measured: a sticky
+ * control sat at top: -807px after scrolling), and a `body`-based scroll
+ * lock had no effect on the viewport (see use-dialog-a11y.ts, which locks
+ * `html` for the same reason). Keeping the rule on `html` alone still
+ * prevents horizontal scrolling — it's the element whose overflow
+ * propagates to the viewport — without creating that second scrollport.
+ */
+html {
   overflow-x: hidden;
   max-width: 100vw;
 }

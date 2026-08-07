@@ -1,4 +1,4 @@
-import { cn } from "@kira-joo/frontend-toolkit-tailwind/server";
+import { cn } from "@/lib/cn";
 
 export interface SkeletonProps {
   className?: string;

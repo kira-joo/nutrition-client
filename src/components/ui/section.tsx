@@ -1,5 +1,5 @@
 import type { ElementType, ReactNode } from "react";
-import { cn } from "@kira-joo/frontend-toolkit-tailwind/server";
+import { cn } from "@/lib/cn";
 
 type SectionSpacing = "default" | "sm" | "none";
 

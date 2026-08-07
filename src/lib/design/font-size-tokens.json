@@ -1,0 +1,13 @@
+{
+  "display": "var(--leading-display)",
+  "heading-1": "var(--leading-heading-1)",
+  "heading-2": "var(--leading-heading-2)",
+  "heading-3": "var(--leading-heading-3)",
+  "body-lg": "var(--leading-body-lg)",
+  "body": "var(--leading-body)",
+  "body-sm": "var(--leading-body-sm)",
+  "label": "var(--leading-label)",
+  "caption": "var(--leading-caption)",
+  "button": "1",
+  "stat": "var(--leading-stat)"
+}

@@ -1,7 +1,7 @@
 "use client";
 import { useState, type ReactNode } from "react";
 import { ChevronDown } from "lucide-react";
-import { cn } from "@kira-joo/frontend-toolkit-tailwind/server";
+import { cn } from "@/lib/cn";
 
 export interface AccordionItemData {
   id: string;

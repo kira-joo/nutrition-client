@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { ChevronDown, Menu, MessageCircle, Phone, X } from "lucide-react";
-import { cn } from "@kira-joo/frontend-toolkit-tailwind/server";
+import { cn } from "@/lib/cn";
 import type { ImageAsset } from "@kira-joo/toolkit-common";
 import { Link } from "@/i18n/navigation";
 import { Container } from "@/components/ui/container";

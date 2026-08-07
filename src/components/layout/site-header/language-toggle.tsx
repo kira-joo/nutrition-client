@@ -1,7 +1,7 @@
 "use client";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
-import { cn } from "@kira-joo/frontend-toolkit-tailwind/server";
+import { cn } from "@/lib/cn";
 import { Locale } from "@/constant/Locale.enum";
 import { usePathname, useRouter } from "@/i18n/navigation";
 

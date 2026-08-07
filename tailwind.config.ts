@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import type { Config } from "tailwindcss";
 
 /**
@@ -6,6 +8,29 @@ import type { Config } from "tailwindcss";
  * utility classes, it never introduces a new raw value of its own. See
  * docs/theme.md for the full token reference and usage examples.
  */
+
+/**
+ * Built from the canonical token list rather than hand-written, so the
+ * `text-*` utilities Tailwind generates and the size names `src/lib/cn.ts`
+ * feeds to tailwind-merge can never disagree. See
+ * `src/lib/design/font-size-tokens.ts`.
+ */
+type FontSizeEntry = [fontSize: string, configuration: { lineHeight: string }];
+
+/**
+ * Read via `fs` rather than imported: Tailwind loads this config through
+ * jiti, which does not resolve a JSON module import the way `tsc` and
+ * webpack do. Importing it left `fontSize` undefined, Tailwind fell back to
+ * a themeless config, and the build "succeeded" while emitting nothing but
+ * preflight — every token utility silently absent.
+ */
+const lineHeights: Record<string, string> = JSON.parse(
+  readFileSync(path.join(__dirname, "src/lib/design/font-size-tokens.json"), "utf8")
+);
+
+const fontSize: Record<string, FontSizeEntry> = Object.fromEntries(
+  Object.entries(lineHeights).map(([token, lineHeight]): [string, FontSizeEntry] => [token, [`var(--text-${token})`, { lineHeight }]])
+);
 const config: Config = {
   darkMode: "class",
   content: [
@@ -48,19 +73,7 @@ const config: Config = {
         sans: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
         mono: ["var(--font-mono)", "ui-monospace", "monospace"],
       },
-      fontSize: {
-        display: ["var(--text-display)", { lineHeight: "var(--leading-display)" }],
-        "heading-1": ["var(--text-heading-1)", { lineHeight: "var(--leading-heading-1)" }],
-        "heading-2": ["var(--text-heading-2)", { lineHeight: "var(--leading-heading-2)" }],
-        "heading-3": ["var(--text-heading-3)", { lineHeight: "var(--leading-heading-3)" }],
-        "body-lg": ["var(--text-body-lg)", { lineHeight: "var(--leading-body-lg)" }],
-        body: ["var(--text-body)", { lineHeight: "var(--leading-body)" }],
-        "body-sm": ["var(--text-body-sm)", { lineHeight: "var(--leading-body-sm)" }],
-        label: ["var(--text-label)", { lineHeight: "var(--leading-label)" }],
-        caption: ["var(--text-caption)", { lineHeight: "var(--leading-caption)" }],
-        button: ["var(--text-button)", { lineHeight: "1" }],
-        stat: ["var(--text-stat)", { lineHeight: "var(--leading-stat)" }],
-      },
+      fontSize,
       spacing: {
         "section-y": "var(--space-section-y)",
         "section-y-sm": "var(--space-section-y-sm)",

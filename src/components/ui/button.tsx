@@ -1,5 +1,5 @@
 import type { ButtonHTMLAttributes, ComponentPropsWithoutRef, ReactNode } from "react";
-import { cn } from "@kira-joo/frontend-toolkit-tailwind/server";
+import { cn } from "@/lib/cn";
 import { Link } from "@/i18n/navigation";
 
 export type ButtonVariant = "primary" | "secondary" | "ghost";
