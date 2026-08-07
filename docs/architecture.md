@@ -717,6 +717,124 @@ const realScrollX = await page.evaluate(() => window.scrollX);
 // design.
 ```
 
+## Performance (Phase 7)
+
+### Bundle analysis
+
+`@next/bundle-analyzer` is wired into `next.config.mjs`, gated behind
+`ANALYZE=true` so it costs nothing in a normal build:
+
+```
+ANALYZE=true npm run build
+```
+
+Writes `.next/analyze/{client,nodejs,edge}.html` (gitignored along with the
+rest of `.next/`) — real webpack-bundle-analyzer treemaps, not a guess.
+Before trusting the top-level `next build` route table's "First Load JS"
+column for a layout-level change specifically: it did not reflect the
+GSAP fix below at all (every route's reported total was byte-identical
+before and after) even though the real, measured effect was significant.
+The reliable ground truth for "does route X actually load chunk Y" is
+`.next/app-build-manifest.json`'s `pages` map, cross-referenced against
+which chunk actually contains the library in question (found via the
+analyzer's JSON, not string-grepping minified chunk files — package names
+don't reliably survive minification).
+
+### GSAP was loading on every single page via the header
+
+Measured, not assumed: `SiteHeader` (rendered by the root layout, so
+present on every route) called `useDrawerTransition` unconditionally for
+its mobile drawer, regardless of whether the drawer was ever opened. Cross-
+referencing `app-build-manifest.json` confirmed `/[locale]/layout` itself
+pulled in ~111kB parsed of GSAP+ScrollTrigger — meaning routes with no
+GSAP-driven content of their own (`/reviews`, `/recipes/[id]`,
+`/calculator`) paid that cost anyway, purely through the always-rendered
+header.
+
+Fixed by extracting the drawer panel into `mobile-nav-drawer.tsx`, loaded
+via `next/dynamic(..., { ssr: false })` from `site-header.tsx`, and only
+rendered into the tree from the moment a visitor first taps the hamburger
+button onward (`hasOpenedDrawer` state) — not unconditionally, which would
+have fetched the chunk immediately and defeated the point. Re-checking
+`app-build-manifest.json` after the change confirmed `/[locale]/layout` no
+longer references any GSAP chunk, and the three GSAP-free routes above no
+longer load it via any path. Verified functionally afterward (not just by
+bundle size): open/close/reopen, RTL-mirrored slide direction, focus trap,
+focus restoration, and `prefers-reduced-motion` all still behave
+identically — checked via each transform's real `translateX`, not
+`isVisible()`/`boundingBox()` (see the note below on why those don't work
+here).
+
+**Found along the way, not fixed (out of scope for a performance pass):**
+`SiteHeader`'s drawer panel gets `backdrop-blur` applied to its `<header>`
+parent whenever the drawer is open — `backdrop-filter` on an ancestor
+creates a new containing block for `position: fixed` descendants (same as
+`transform` would), so the panel's `top:0; bottom:0` resolves against the
+header's own ~64px box instead of the viewport. Confirmed this is
+pre-existing (reproduces identically on the unmodified pre-Phase-7 code,
+nothing to do with the dynamic-import change) via `getComputedStyle` — the
+panel's actual GSAP-driven horizontal slide is unaffected (verified via
+its transform matrix), and `overflow: visible` on the header means the
+panel still paints at full height, which is almost certainly why this
+was never caught by a visual check. A real bug, deliberately not fixed
+here — this phase is performance-scoped, not the UI redesign/refinement
+pass.
+
+### Embla is already correctly scoped
+
+`embla-carousel-react` (17.5kB parsed) has exactly one consumer,
+`featured-reviews-carousel.tsx`, and confirmed via the analyzer that it
+never appears in any other route's chunk list. No change needed — Next's
+own per-route code-splitting already does the right thing here without an
+explicit `next/dynamic()`.
+
+### The site logo was serving at 47x its rendered size
+
+Measured via a real Playwright network trace on the homepage:
+`SiteSettings.logo` is a real, unmodified Cloudinary upload at its
+original `1536x1024`. The header renders it at `h-10 lg:h-12`
+(effectively ~50-60px tall) via `<Image width={1536} height={1024} ...>`
+with no `sizes` prop — without one, `next/image` has no way to know the
+image is displayed far smaller than its intrinsic dimensions, and served
+a **109,378-byte** image for a logo. Adding `sizes="96px"` dropped the
+real, measured transfer to **2,338 bytes** (97.9% smaller) for a resource
+loaded on every single page. Re-verified with the same network-trace
+method, not assumed from the code change alone.
+
+### Lighthouse (mobile, simulated throttling), real production build
+
+| Route | Score | LCP | CLS | TBT |
+|---|---|---|---|---|
+| Home | 92 | 3.2s | 0 | 0ms |
+| Packages | 91 | 3.5s | 0 | 10ms |
+| Recipe detail | 85 | 3.6s | 0 | 0ms |
+
+Overall scores clear the plan's 90+ target (home/packages) with recipe
+detail just under it. CLS and TBT are already excellent everywhere — LCP
+is the one metric consistently over the 2.5s sub-budget. The LCP
+breakdown attributes ~86% of the time to "Render Delay" rather than the
+image fetch itself, and recipe detail's own `server-response-time` audit
+flagged a 1.4s root-document time specifically — both consistent with
+**nutrition-staff running in dev mode** (`next dev`, not a production
+build) during this measurement, which is a real confound: a production
+nutrition-staff deployment would not carry dev-mode's compilation/response
+overhead. These numbers are honest and real for the environment they were
+measured in, but likely pessimistic relative to an actual production
+deployment where both apps are built for production.
+
+Also surfaced, not acted on:
+- Recipe detail's hero image has a real but modest (~15KB) responsive-image
+  opportunity — `sizes` is already present and reasoned (100vw on mobile
+  for a full-width hero), so this wasn't a confident, low-risk fix the way
+  the logo was; recorded rather than chased for a single-digit-KB gain.
+- `bf-cache` is blocked by `Cache-Control: no-store` on every dynamic
+  route. This is the direct, already-documented consequence of "Static
+  rendering: not yet, and that's intentional" above — not a new problem,
+  and retrofitting static rendering site-wide already failed once earlier
+  in this project for a documented reason (`useSearchParams()` needing
+  Suspense boundaries it didn't have). Real, but a separate, deliberate,
+  larger undertaking — not a Phase 7 fix.
+
 Only `realScrollX > 1` after an attempted scroll is a real regression. If a
 future page introduces a new intentionally-bleeding horizontal rail,
 extend this note rather than loosening the check - the goal is "no page
