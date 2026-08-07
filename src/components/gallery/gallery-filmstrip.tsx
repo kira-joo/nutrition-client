@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useRef, useState } from "react";
 import Image from "next/image";
-import { AssetLightbox } from "@kira-joo/frontend-toolkit-tailwind";
+import { AssetLightbox } from "@kira-joo/frontend-toolkit-tailwind/asset-viewer";
 
 export interface GalleryFilmstripItem {
   key: string;
