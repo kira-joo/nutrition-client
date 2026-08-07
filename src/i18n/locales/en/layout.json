@@ -36,5 +36,10 @@
     "heading": "This page didn't load",
     "body": "Something went wrong on our side while loading this content. Trying again usually fixes it.",
     "retry": "Try again"
+  },
+  "notFound": {
+    "heading": "We couldn't find that page",
+    "body": "The page may have been moved, or the link may be out of date.",
+    "backHome": "Back to home"
   }
 }

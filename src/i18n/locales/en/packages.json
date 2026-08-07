@@ -1,5 +1,8 @@
 {
   "chooseDuration": "Choose duration",
   "includes": "Includes",
-  "save": "Save"
+  "save": "Save",
+  "empty": {
+    "noPackages": "No packages are available right now. Please check back soon."
+  }
 }

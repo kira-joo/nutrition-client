@@ -840,3 +840,55 @@ future page introduces a new intentionally-bleeding horizontal rail,
 extend this note rather than loosening the check - the goal is "no page
 the user can actually scroll sideways on", not "no element wider than the
 viewport".
+
+## Error/not-found boundary coverage (Phase 8)
+
+Three distinct boundaries exist, each for a genuinely different failure
+shape - not redundant with each other:
+
+- **`src/app/[locale]/error.tsx`** - a thrown error (a failed data fetch,
+  a render-time exception) inside an already-resolved `[locale]/...`
+  route tree. Shared by every route; a route only gets its own copy if it
+  fails in some way this one can't express (none do today).
+- **`src/app/[locale]/not-found.tsx`** - an explicit `notFound()` call
+  from a page/layout inside an already-resolved `[locale]/...` tree that
+  has no more specific `not-found.tsx` of its own (`/recipes/[id]` and
+  `/campaigns/[slug]` both have one and take precedence for their own
+  segments). Locale-aware, uses the real design system, since `params.locale`
+  is available here.
+- **`src/app/global-error.tsx`** - a thrown error the root shell itself
+  can't recover from. This app has no `src/app/layout.tsx` -
+  `src/app/[locale]/layout.tsx` is what renders `<html>`/`<body>` - so a
+  failure there has nowhere else to bubble to. `[locale]/error.tsx`
+  explicitly does not cover this (see its own doc comment); before this
+  phase, nothing did. Necessarily self-contained (no next-intl, no
+  Tailwind theme) since the thing that broke could be exactly what this
+  boundary depends on.
+
+**A real, known, deliberately-unfixed gap**: a completely unmatched path
+(no corresponding route file anywhere, e.g. `/en/some-typo`) never reaches
+`[locale]/not-found.tsx` at all - confirmed by testing, not assumed. Next
+can't resolve which `[locale]` segment tree even applies to a path with no
+matching route, so it falls through to Next's own bare, unstyled default
+404 page instead. The HTTP status is still correctly `404` (verified), so
+nothing is silently broken - only the branding is missing for this one
+case.
+
+The real fix is adding a true root `src/app/not-found.tsx`, but Next
+hard-requires a true root `src/app/layout.tsx` for that file to exist at
+all (confirmed by trying it: `⨯ not-found.tsx doesn't have a root layout`)
+- and adding one would mean moving `<html>`/`<body>` out of
+`[locale]/layout.tsx` and up into the new root layout, since nested
+layouts can't each render their own `<html>` tag. That's a real
+restructuring of the app's most foundational file, not a Phase 8
+empty/error/loading fix - deliberately left as a documented, scoped-out
+finding rather than attempted under this phase's budget.
+
+(Separately, but discovered while testing this: a request with a
+genuinely invalid locale segment, e.g. `/xx/doctor`, never reaches
+`[locale]/layout.tsx`'s own `notFound()` guard for an unrecognized
+locale either - `src/middleware.ts`'s `next-intl` middleware intercepts
+it first and 307-redirects to prepend the default locale, producing
+`/ar/xx/doctor`, which then 404s as its own unmatched path. The guard in
+the layout is real defensive code, just not the code path that actually
+fires for this specific case in the current route set.)
