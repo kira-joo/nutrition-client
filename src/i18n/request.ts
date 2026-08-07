@@ -4,14 +4,14 @@ import { routing } from "./routing";
 import { DictionaryFiles } from "@/constant/DictionaryFiles";
 
 /**
- * Namespace -> JSON file map. This is the direct replacement for the old
- * `src/i18n/index.ts`'s per-locale `resources` object — same 8 namespaces,
- * same files, same copy. Adding a namespace means adding one entry here
- * (and the matching `en`/`ar` JSON files under `./locales`).
+ * Namespace -> JSON file map. Adding a namespace means adding one entry
+ * here, the matching `en`/`ar` JSON files under `./locales`, and the type
+ * in `src/types/next-intl.d.ts` — all three, or `useTranslations` calls
+ * won't type-check. Namespaces are removed the same way, as each legacy
+ * page is rebuilt and its copy stops being referenced.
  */
 const NAMESPACE_FILES = {
   [DictionaryFiles.Home]: "home",
-  [DictionaryFiles.AboutUs]: "about-us",
   [DictionaryFiles.SendMessage]: "send-message",
   [DictionaryFiles.Recipes]: "recipes",
   [DictionaryFiles.Calculator]: "calculator",

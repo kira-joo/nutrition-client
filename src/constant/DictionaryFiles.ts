@@ -3,7 +3,6 @@
 // Home namespace instead); see docs/architecture.md ("Localization & RTL").
 export enum DictionaryFiles {
   Home = "home",
-  AboutUs = "about-us",
   SendMessage = "send-message",
   Recipes = "recipes",
   Faq = "faq",

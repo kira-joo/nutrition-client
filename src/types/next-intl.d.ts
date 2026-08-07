@@ -9,7 +9,6 @@
 // RTL") for why English, not Arabic, is the typing source of truth.
 
 type HomeMessages = typeof import("@/i18n/locales/en/home.json");
-type AboutUsMessages = typeof import("@/i18n/locales/en/about-us.json");
 type SendMessageMessages = typeof import("@/i18n/locales/en/send-message.json");
 type RecipesMessages = typeof import("@/i18n/locales/en/recipes.json");
 type CalculatorMessages = typeof import("@/i18n/locales/en/calculator.json");
@@ -20,7 +19,6 @@ type LayoutMessages = typeof import("@/i18n/locales/en/layout.json");
 
 interface Messages {
   home: HomeMessages;
-  "about-us": AboutUsMessages;
   "send-message": SendMessageMessages;
   recipes: RecipesMessages;
   calculator: CalculatorMessages;

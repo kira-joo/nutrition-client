@@ -3,15 +3,15 @@
  * desktop and mobile, everything else tucked under "More" on desktop
  * (flattened into one list in the mobile drawer, where there's no room
  * for a nested disclosure). `href` values point at this app's CURRENT
- * route paths, not the master plan's final renamed ones (e.g. `/doctor`)
- * — each page keeps its existing path until it's individually rebuilt
- * later in this phase, at which point its route folder gets renamed and
- * this one file is updated. Consultation is deliberately absent from both
- * lists — it's the persistent CTA button, never a nav peer.
+ * route paths: a page keeps its existing path until it's individually
+ * rebuilt, at which point its route folder is renamed to the plan's final
+ * name and this one file is updated (as `/about_us` → `/doctor` already
+ * was). Consultation is deliberately absent from both lists — it's the
+ * persistent CTA button, never a nav peer.
  */
 export const PRIMARY_NAV_ITEMS = [
   { key: "home", href: "/" },
-  { key: "doctor", href: "/about_us" },
+  { key: "doctor", href: "/doctor" },
   { key: "packages", href: "/packages" },
   { key: "recipes", href: "/recipes" },
 ] as const;
