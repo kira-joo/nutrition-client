@@ -4,6 +4,7 @@ import { Check, Diamond, Package as PackageIcon, Sparkles } from "lucide-react";
 import { cn } from "@/lib/cn";
 import type { LocalizedPackage, PackageDuration } from "@/lib/domain/package";
 import { Button } from "@/components/ui/button";
+import AppRoute from "@/constant/AppRoute.enum";
 
 export interface PackagePricingBoardProps {
   /**
@@ -150,7 +151,7 @@ export function PackagePricingBoard({ packages, durations, subscribeLabel, curre
                 )}
 
                 {/* Both CTAs are `primary`: this is a genuine choice between two packages, so giving the non-popular one a weaker button would push visitors rather than inform them. The popular tier is already distinguished four other ways. */}
-                <Button href={`/consultation?package=${pkg.key}`} className="mt-8 w-full">
+                <Button href={`${AppRoute.Consultation}?package=${pkg.key}`} className="mt-8 w-full">
                   {subscribeLabel}
                 </Button>
               </article>

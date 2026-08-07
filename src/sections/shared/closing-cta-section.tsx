@@ -3,6 +3,7 @@ import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
+import AppRoute from "@/constant/AppRoute.enum";
 
 /**
  * The site-wide closing band, shared by every long page rather than
@@ -19,7 +20,7 @@ export async function ClosingCtaSection() {
         <Reveal className="flex flex-col items-center gap-4">
           <h2 className="text-heading-1 font-bold">{t("closingCta.heading")}</h2>
           <p className="max-w-md text-body-lg text-white/85">{t("closingCta.body")}</p>
-          <Button href="/consultation" variant="secondary" size="lg" className="mt-2 border-white bg-white text-primary hover:bg-white/90">
+          <Button href={AppRoute.Consultation} variant="secondary" size="lg" className="mt-2 border-white bg-white text-primary hover:bg-white/90">
             {t("closingCta.cta")}
           </Button>
         </Reveal>

@@ -5,6 +5,7 @@ import { Section } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
 import { Accordion } from "@/components/ui/accordion";
+import AppRoute from "@/constant/AppRoute.enum";
 
 export interface FaqPreviewSectionProps {
   faqSections: LocalizedFaqSectionWithItems[];
@@ -29,7 +30,7 @@ export async function FaqPreviewSection({ faqSections }: FaqPreviewSectionProps)
         </Reveal>
 
         <div className="mt-8 text-center">
-          <Button href="/faq" variant="ghost">
+          <Button href={AppRoute.Faq} variant="ghost">
             {t("faq.viewAll")}
           </Button>
         </div>

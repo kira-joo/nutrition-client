@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import type { LocalizedDoctorProfile } from "@/lib/domain/doctor-profile";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
+import AppRoute from "@/constant/AppRoute.enum";
 
 export interface HeroSectionProps {
   doctorProfile: LocalizedDoctorProfile;
@@ -26,10 +27,10 @@ export async function HeroSection({ doctorProfile }: HeroSectionProps) {
             <p className="text-label font-semibold uppercase tracking-wide text-primary">{name}</p>
             <h1 className="text-display font-extrabold text-text-primary">{tagline}</h1>
             <div className="flex flex-wrap items-center gap-4">
-              <Button href="/consultation" size="lg">
+              <Button href={AppRoute.Consultation} size="lg">
                 {t("hero.primaryCta")}
               </Button>
-              <Button href="/packages" variant="secondary" size="lg">
+              <Button href={AppRoute.Packages} variant="secondary" size="lg">
                 {t("hero.secondaryCta")}
               </Button>
             </div>

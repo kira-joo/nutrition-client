@@ -12,6 +12,7 @@ import { useDrawerTransition } from "@/lib/animation/use-drawer-transition";
 import { useDialogA11y } from "@/lib/a11y/use-dialog-a11y";
 import { LanguageToggle } from "./language-toggle";
 import { MORE_NAV_ITEMS, PRIMARY_NAV_ITEMS } from "./nav-items";
+import AppRoute from "@/constant/AppRoute.enum";
 
 export interface SiteHeaderProps {
   logo: ImageAsset | null;
@@ -57,7 +58,7 @@ export function SiteHeader({ logo, clinicName, whatsappNumber, phone }: SiteHead
     >
       <Container width="wide">
         <div className="flex h-16 items-center justify-between lg:h-20">
-          <Link href="/" className="flex items-center gap-2">
+          <Link href={AppRoute.Home} className="flex items-center gap-2">
             {logo ? (
               <Image src={logo.secureUrl} alt={clinicName} width={logo.width} height={logo.height} className="h-10 w-auto object-contain lg:h-12" priority />
             ) : (
@@ -101,7 +102,7 @@ export function SiteHeader({ logo, clinicName, whatsappNumber, phone }: SiteHead
 
           <div className="hidden items-center gap-6 lg:flex">
             <LanguageToggle />
-            <Button href="/consultation" size="sm">
+            <Button href={AppRoute.Consultation} size="sm">
               {t("cta.bookConsultation")}
             </Button>
           </div>
@@ -153,7 +154,7 @@ export function SiteHeader({ logo, clinicName, whatsappNumber, phone }: SiteHead
 
         <div className="mt-auto flex flex-col gap-4 border-t-hairline border-border pt-6">
           <LanguageToggle />
-          <Button href="/consultation" onClick={() => setIsMobileOpen(false)}>
+          <Button href={AppRoute.Consultation} onClick={() => setIsMobileOpen(false)}>
             {t("cta.bookConsultation")}
           </Button>
           <div className="flex items-center justify-center gap-6">

@@ -5,6 +5,7 @@ import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
+import AppRoute from "@/constant/AppRoute.enum";
 
 export interface ReviewsPreviewSectionProps {
   reviews: LocalizedReview[];
@@ -59,7 +60,7 @@ export async function ReviewsPreviewSection({ reviews }: ReviewsPreviewSectionPr
         </div>
 
         <div className="mt-8 text-center">
-          <Button href="/reviews" variant="ghost">
+          <Button href={AppRoute.Reviews} variant="ghost">
             {t("reviews.viewAll")}
           </Button>
         </div>

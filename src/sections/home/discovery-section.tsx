@@ -8,6 +8,7 @@ import { Section } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
 import { Link } from "@/i18n/navigation";
+import AppRoute, { appHref } from "@/constant/AppRoute.enum";
 
 export interface DiscoverySectionProps {
   recipes: LocalizedRecipe[];
@@ -59,7 +60,7 @@ export async function DiscoverySection({ recipes, videos }: DiscoverySectionProp
           <Reveal direction="left" className="mt-10">
             <div className="flex items-baseline justify-between gap-4">
               <h3 className="text-heading-3 font-bold text-text-primary">{t("discover.recipesHeading")}</h3>
-              <Button href="/recipes" variant="ghost" size="sm">
+              <Button href={AppRoute.Recipes} variant="ghost" size="sm">
                 {t("discover.recipesViewAll")}
               </Button>
             </div>
@@ -69,7 +70,7 @@ export async function DiscoverySection({ recipes, videos }: DiscoverySectionProp
                 <li key={recipe._id} className="w-56 shrink-0 snap-start sm:w-64">
                   {/* Plain path string, matching nav-items.ts's convention — deliberately not the legacy `AppRoute` enum's Express-style `/recipes/:id`, which exists only for the legacy `AppLink` this rebuild replaces. */}
                   <Link
-                    href={`/recipes/${recipe._id}`}
+                    href={appHref.recipe(recipe._id)}
                     className="group flex h-full flex-col overflow-hidden rounded-xl border-hairline border-border bg-surface shadow-sm transition-shadow duration-base ease-standard hover:shadow-md"
                   >
                     <div className="relative aspect-[4/3]">
@@ -98,7 +99,7 @@ export async function DiscoverySection({ recipes, videos }: DiscoverySectionProp
           <Reveal direction="right" className="mt-12">
             <div className="flex items-baseline justify-between gap-4">
               <h3 className="text-heading-3 font-bold text-text-primary">{t("discover.videosHeading")}</h3>
-              <Button href="/videos" variant="ghost" size="sm">
+              <Button href={AppRoute.Videos} variant="ghost" size="sm">
                 {t("discover.videosViewAll")}
               </Button>
             </div>
@@ -153,7 +154,7 @@ export async function DiscoverySection({ recipes, videos }: DiscoverySectionProp
                         </span>
                       </a>
                     ) : (
-                      <Link href="/videos" className="group flex h-full flex-col gap-2">
+                      <Link href={AppRoute.Videos} className="group flex h-full flex-col gap-2">
                         {thumbnail}
                         <span className="text-body-sm font-semibold text-text-primary transition-colors duration-fast group-hover:text-primary">{title}</span>
                       </Link>

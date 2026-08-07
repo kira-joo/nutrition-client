@@ -6,6 +6,7 @@ import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
+import AppRoute from "@/constant/AppRoute.enum";
 
 export interface PackagesPreviewSectionProps {
   packages: LocalizedPackage[];
@@ -63,7 +64,7 @@ export async function PackagesPreviewSection({ packages, packagesPageSettings }:
                     <li key={detailIndex}>{detail}</li>
                   ))}
                 </ul>
-                <Button href={`/consultation?package=${pkg.key}`} variant={pkg.popular ? "secondary" : "primary"} className={pkg.popular ? "mt-6 border-white bg-white text-primary hover:bg-white/90 hover:text-primary" : "mt-6"}>
+                <Button href={`${AppRoute.Consultation}?package=${pkg.key}`} variant={pkg.popular ? "secondary" : "primary"} className={pkg.popular ? "mt-6 border-white bg-white text-primary hover:bg-white/90 hover:text-primary" : "mt-6"}>
                   {packagesPageSettings.subscribeButtonLabel}
                 </Button>
               </Reveal>
@@ -72,7 +73,7 @@ export async function PackagesPreviewSection({ packages, packagesPageSettings }:
         </div>
 
         <div className="mt-8 text-center">
-          <Button href="/packages" variant="ghost">
+          <Button href={AppRoute.Packages} variant="ghost">
             {t("packages.viewAll")}
           </Button>
         </div>
