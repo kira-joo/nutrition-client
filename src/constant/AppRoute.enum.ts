@@ -18,7 +18,6 @@ export const AppRoute = {
   Faq: "/faq",
   Calculator: "/calculator",
   Consultation: "/consultation",
-  SendMessage: "/send-message",
   Newsletter: "/newsletter",
   Resources: "/resources",
 

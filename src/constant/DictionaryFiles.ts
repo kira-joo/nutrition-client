@@ -2,7 +2,10 @@
 // Resources and no call site ever requested it; 15-day-camp's own JSON was
 // deleted along with the page once it was replaced by the generic
 // CMS-driven /campaigns/[slug] system (Phase 6.7) — see docs/architecture.md
-// ("Localization & RTL").
+// ("Localization & RTL"). SendMessage was removed the same way once its
+// page and the legacy /consultation page (which had been borrowing this
+// same namespace) were both replaced by the one real /consultation lead
+// form (Phase 6.8) with its own dedicated `Consultation` namespace below.
 // Videos got its own dedicated namespace once the real /videos rebuild
 // needed copy the Home namespace didn't carry (empty states, per-card
 // affordance labels, pagination) — it no longer borrows Home's strings.
@@ -10,7 +13,6 @@
 // source-link copy, empty state) — it no longer borrows Home's strings either.
 export enum DictionaryFiles {
   Home = "home",
-  SendMessage = "send-message",
   Recipes = "recipes",
   Faq = "faq",
   Calculator = "calculator",
@@ -20,4 +22,5 @@ export enum DictionaryFiles {
   Videos = "videos",
   Reviews = "reviews",
   Campaigns = "campaigns",
+  Consultation = "consultation",
 }

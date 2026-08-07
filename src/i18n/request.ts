@@ -12,7 +12,6 @@ import { DictionaryFiles } from "@/constant/DictionaryFiles";
  */
 const NAMESPACE_FILES = {
   [DictionaryFiles.Home]: "home",
-  [DictionaryFiles.SendMessage]: "send-message",
   [DictionaryFiles.Recipes]: "recipes",
   [DictionaryFiles.Calculator]: "calculator",
   [DictionaryFiles.Packages]: "packages",
@@ -21,6 +20,7 @@ const NAMESPACE_FILES = {
   [DictionaryFiles.Videos]: "videos",
   [DictionaryFiles.Reviews]: "reviews",
   [DictionaryFiles.Campaigns]: "campaigns",
+  [DictionaryFiles.Consultation]: "consultation",
 } as const;
 
 async function loadMessages(locale: string) {

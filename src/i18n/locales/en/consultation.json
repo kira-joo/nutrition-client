@@ -1,0 +1,45 @@
+{
+  "heading": "Book Your Consultation",
+  "intro": "Tell us a little about yourself and {doctorName} will personally follow up to plan your consultation.",
+  "packageContext": "Regarding the {packageName} package",
+  "trust": {
+    "welcomeHeading": "What to expect",
+    "welcomeBody": "This is a real conversation with {doctorName}, not an automated intake — she reviews every request personally before your first session.",
+    "prepHeading": "Before your session",
+    "labTestsNote": "If lab tests are needed, she'll let you know after reviewing your request.",
+    "inbodyNote": "You can get an InBody body-composition scan at most pharmacies if you'd like to bring one."
+  },
+  "form": {
+    "name": "Full name",
+    "namePlaceholder": "Your name",
+    "phone": "Phone number",
+    "phonePlaceholder": "e.g. 01xxxxxxxxx",
+    "email": "Email",
+    "emailOptional": "Email (optional)",
+    "emailPlaceholder": "you@example.com",
+    "message": "What would you like help with?",
+    "messageOptional": "What would you like help with? (optional)",
+    "messagePlaceholder": "Tell us a bit about your goals, or anything you'd like the doctor to know before your session.",
+    "submit": "Send Request",
+    "submitting": "Sending...",
+    "validation": {
+      "nameRequired": "Please enter your name",
+      "nameMinLength": "Name must be at least 2 characters",
+      "phoneRequired": "Please enter your phone number",
+      "phoneInvalid": "Please enter a valid phone number",
+      "emailInvalid": "Please enter a valid email address"
+    }
+  },
+  "success": {
+    "heading": "Request received",
+    "body": "Thank you, {name} — your request has been saved and {doctorName} will personally follow up with you soon.",
+    "whatsappCta": "Continue on WhatsApp",
+    "whatsappHint": "Send a quick message now so the conversation starts right away.",
+    "another": "Send another request"
+  },
+  "error": {
+    "heading": "We couldn't send your request",
+    "body": "Something went wrong on our end. Your information hasn't been lost — please try again.",
+    "retry": "Try again"
+  }
+}
