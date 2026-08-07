@@ -2,13 +2,13 @@ import { getDoctorProfile, getFaqSectionsWithItems, getPackages, getPackagesPage
 import { safe } from "@/lib/safe";
 import type { Locale } from "@/constant/Locale.enum";
 import { HeroSection } from "@/sections/home/hero-section";
-import { TrustBandSection } from "@/sections/home/trust-band-section";
-import { ProgramHighlightsSection } from "@/sections/home/program-highlights-section";
+import { TrustBandSection } from "@/sections/shared/trust-band-section";
+import { ProgramHighlightsSection } from "@/sections/shared/program-highlights-section";
 import { PackagesPreviewSection } from "@/sections/home/packages-preview-section";
 import { ReviewsPreviewSection } from "@/sections/home/reviews-preview-section";
 import { DiscoverySection } from "@/sections/home/discovery-section";
 import { FaqPreviewSection } from "@/sections/home/faq-preview-section";
-import { ClosingCtaSection } from "@/sections/home/closing-cta-section";
+import { ClosingCtaSection } from "@/sections/shared/closing-cta-section";
 
 interface HomePageProps {
   params: { locale: Locale };

@@ -26,5 +26,15 @@
   },
   "language": {
     "switchTo": "Switch language"
+  },
+  "closingCta": {
+    "heading": "Ready to start your journey?",
+    "body": "Book a consultation and get a nutrition plan built around your real life — not a generic template.",
+    "cta": "Book a Consultation"
+  },
+  "error": {
+    "heading": "This page didn't load",
+    "body": "Something went wrong on our side while loading this content. Trying again usually fixes it.",
+    "retry": "Try again"
   }
 }

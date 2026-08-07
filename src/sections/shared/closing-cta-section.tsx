@@ -4,8 +4,14 @@ import { Section } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
 
+/**
+ * The site-wide closing band, shared by every long page rather than
+ * re-authored per route. Reads from the `layout` namespace, not a
+ * page-specific one — a component in `sections/shared` must not depend on
+ * whichever page happens to render it.
+ */
 export async function ClosingCtaSection() {
-  const t = await getTranslations("home");
+  const t = await getTranslations("layout");
 
   return (
     <Section className="bg-cta text-white">
