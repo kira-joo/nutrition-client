@@ -15,6 +15,15 @@ export interface UseDrawerTransitionOptions {
    * both agree on which physical side "end" resolves to.
    */
   fromEdge?: "start" | "end";
+  /**
+   * Set false while the panel isn't in the DOM yet. A portalled drawer
+   * renders nothing until its host has mounted, so this hook's layout
+   * effect would otherwise run once against a null ref, never set the
+   * closed position, and leave the panel sitting on screen swallowing
+   * clicks. Flipping this after mount re-runs the effect with the element
+   * actually present.
+   */
+  ready?: boolean;
 }
 
 /**
@@ -24,12 +33,13 @@ export interface UseDrawerTransitionOptions {
  * not framer-motion or a bare CSS transition, so `prefers-reduced-motion`
  * handling stays centralized in one place — see `gsap-config.ts`).
  */
-export function useDrawerTransition({ isOpen, fromEdge = "end" }: UseDrawerTransitionOptions) {
+export function useDrawerTransition({ isOpen, fromEdge = "end", ready = true }: UseDrawerTransitionOptions) {
   const panelRef = useRef<HTMLDivElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
   const isFirstRun = useRef(true);
 
   useLayoutEffect(() => {
+    if (!ready) return;
     const panel = panelRef.current;
     const backdrop = backdropRef.current;
     if (!panel) return;
@@ -74,7 +84,7 @@ export function useDrawerTransition({ isOpen, fromEdge = "end" }: UseDrawerTrans
     });
 
     return () => ctx.revert();
-  }, [isOpen, fromEdge]);
+  }, [isOpen, fromEdge, ready]);
 
   return { panelRef, backdropRef };
 }

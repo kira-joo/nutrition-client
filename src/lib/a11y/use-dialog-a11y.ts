@@ -99,14 +99,46 @@ export function useDialogA11y({ isOpen, onClose, containerRef }: UseDialogA11yOp
      * hidden — a `display:none` element matches the selector but must
      * never be a Tab stop.
      */
-    const getFocusable = () =>
-      Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)).filter(
+    const getFocusable = () => {
+      const visible = Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)).filter(
         (element) => element.getClientRects().length > 0,
       );
 
+      /**
+       * A named radio group is a single tab stop, not one per option — the
+       * browser tabs to the checked radio (or the first, if none is
+       * checked) and arrow keys move within. Counting every radio made the
+       * computed "last" element wrong, so Tab from the real last stop
+       * escaped the dialog for one keystroke before the guard below pulled
+       * it back. Collapsing each group to its tabbable member keeps the
+       * wrap-around on the element the browser will actually land on.
+       */
+      const seenRadioGroups = new Set<string>();
+      return visible.filter((element) => {
+        const input = element as HTMLInputElement;
+        if (input.type !== "radio" || !input.name) return true;
+        if (seenRadioGroups.has(input.name)) return false;
+
+        const group = visible.filter((other) => (other as HTMLInputElement).name === input.name);
+        const tabbable = group.find((other) => (other as HTMLInputElement).checked) ?? group[0];
+        if (element !== tabbable) return false;
+
+        seenRadioGroups.add(input.name);
+        return true;
+      });
+    };
+
     getFocusable()[0]?.focus();
 
-    const background = Array.from(document.querySelectorAll<HTMLElement>(BACKGROUND_SELECTOR));
+    // Never suppress an ancestor of the dialog itself: a surface rendered
+    // inside <main> would otherwise inert its own subtree, leaving it
+    // visible but unfocusable — which is exactly what happened to the
+    // recipe filter sheet until it was portalled out. Callers should still
+    // portal a modal to the body; this guard just means forgetting to
+    // degrades gracefully instead of silently breaking focus.
+    const background = Array.from(document.querySelectorAll<HTMLElement>(BACKGROUND_SELECTOR)).filter(
+      (element) => !element.contains(container)
+    );
     // `inert` (rather than aria-hidden) suppresses pointer, keyboard, and
     // assistive-tech access in one attribute. Set via setAttribute so an
     // unsupporting browser simply ignores it — the focus trap below, not
