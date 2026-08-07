@@ -1,6 +1,10 @@
-// Resources/Reviews/Videos were removed — no locale JSON files ever backed
-// them and no call site ever requested them (reviews/videos pages use the
-// Home namespace instead); see docs/architecture.md ("Localization & RTL").
+// Resources was removed — no locale JSON file ever backed it and no call
+// site ever requested it; see docs/architecture.md ("Localization & RTL").
+// Videos got its own dedicated namespace once the real /videos rebuild
+// needed copy the Home namespace didn't carry (empty states, per-card
+// affordance labels, pagination) — it no longer borrows Home's strings.
+// Reviews followed the same path for its own rebuild (before/after labels,
+// source-link copy, empty state) — it no longer borrows Home's strings either.
 export enum DictionaryFiles {
   Home = "home",
   SendMessage = "send-message",
@@ -11,4 +15,6 @@ export enum DictionaryFiles {
   _15DayCamp = "15-day-camp",
   /** Global application shell copy (nav, footer, shared CTAs) — Phase 6. */
   Layout = "layout",
+  Videos = "videos",
+  Reviews = "reviews",
 }

@@ -16,6 +16,8 @@ type PackagesMessages = typeof import("@/i18n/locales/en/packages.json");
 type FaqMessages = typeof import("@/i18n/locales/en/faq.json");
 type FifteenDayCampMessages = typeof import("@/i18n/locales/en/15-day-camp.json");
 type LayoutMessages = typeof import("@/i18n/locales/en/layout.json");
+type VideosMessages = typeof import("@/i18n/locales/en/videos.json");
+type ReviewsMessages = typeof import("@/i18n/locales/en/reviews.json");
 
 interface Messages {
   home: HomeMessages;
@@ -26,6 +28,8 @@ interface Messages {
   faq: FaqMessages;
   "15-day-camp": FifteenDayCampMessages;
   layout: LayoutMessages;
+  videos: VideosMessages;
+  reviews: ReviewsMessages;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type -- next-intl's documented augmentation pattern
