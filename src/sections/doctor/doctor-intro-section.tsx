@@ -1,12 +1,9 @@
 import Image from "next/image";
-import { resolveLocalized } from "@kira-joo/toolkit-common";
-import type { DoctorProfile } from "@/lib/domain/doctor-profile";
-import type { Locale } from "@/constant/Locale.enum";
+import type { LocalizedDoctorProfile } from "@/lib/domain/doctor-profile";
 import { Container } from "@/components/ui/container";
 
 export interface DoctorIntroSectionProps {
-  doctorProfile: DoctorProfile;
-  locale: Locale;
+  doctorProfile: LocalizedDoctorProfile;
 }
 
 /**
@@ -17,10 +14,9 @@ export interface DoctorIntroSectionProps {
  * `h1`, and the tagline sits under it as a subtitle rather than as the
  * page's headline.
  */
-export function DoctorIntroSection({ doctorProfile, locale }: DoctorIntroSectionProps) {
-  const name = resolveLocalized(doctorProfile.name, locale);
-  const tagline = resolveLocalized(doctorProfile.tagline, locale);
-  const avatarAlt = resolveLocalized(doctorProfile.avatarAlt, locale) || name;
+export function DoctorIntroSection({ doctorProfile }: DoctorIntroSectionProps) {
+  const { name, tagline } = doctorProfile;
+  const avatarAlt = doctorProfile.avatarAlt || name;
 
   return (
     <section className="bg-hero pb-12 pt-12 lg:pb-16 lg:pt-16">

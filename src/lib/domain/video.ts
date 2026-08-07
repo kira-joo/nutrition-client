@@ -1,4 +1,4 @@
-import type { ImageAsset, LocalizedString, VideoAsset } from "@kira-joo/toolkit-common";
+import type { LocalizedResult, ImageAsset, LocalizedString, VideoAsset } from "@kira-joo/toolkit-common";
 
 /** Mirrors `GET /api/public/videos` (paginated). At least one of `video`/`externalUrl` is present, enforced server-side. */
 export interface Video {
@@ -14,3 +14,10 @@ export interface VideosListParams {
   limit?: number;
   search?: string;
 }
+
+/**
+ * The shape this app actually renders: the raw contract above with every
+ * bilingual field resolved to a plain string. Derived from the raw type
+ * rather than hand-written, so the two can't drift.
+ */
+export type LocalizedVideo = LocalizedResult<Video>;

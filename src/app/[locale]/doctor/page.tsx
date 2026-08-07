@@ -1,11 +1,11 @@
-import { getDoctorProfile } from "@/lib/data";
 import type { Locale } from "@/constant/Locale.enum";
-import { DoctorIntroSection } from "@/sections/doctor/doctor-intro-section";
+import { getDoctorProfile } from "@/lib/data";
 import { DoctorBioSection } from "@/sections/doctor/doctor-bio-section";
 import { DoctorGallerySection } from "@/sections/doctor/doctor-gallery-section";
+import { DoctorIntroSection } from "@/sections/doctor/doctor-intro-section";
+import { ClosingCtaSection } from "@/sections/shared/closing-cta-section";
 import { ProgramHighlightsSection } from "@/sections/shared/program-highlights-section";
 import { TrustBandSection } from "@/sections/shared/trust-band-section";
-import { ClosingCtaSection } from "@/sections/shared/closing-cta-section";
 
 interface DoctorPageProps {
   params: { locale: Locale };
@@ -29,16 +29,15 @@ interface DoctorPageProps {
  * until real data exists for it.
  */
 export default async function DoctorPage({ params }: DoctorPageProps) {
-  const { locale } = params;
-  const doctorProfile = await getDoctorProfile();
+  const doctorProfile = await getDoctorProfile(params.locale);
 
   return (
     <>
-      <DoctorIntroSection doctorProfile={doctorProfile} locale={locale} />
-      <DoctorBioSection doctorProfile={doctorProfile} locale={locale} />
-      <ProgramHighlightsSection doctorProfile={doctorProfile} locale={locale} />
-      <TrustBandSection doctorProfile={doctorProfile} locale={locale} />
-      <DoctorGallerySection doctorProfile={doctorProfile} locale={locale} />
+      <DoctorIntroSection doctorProfile={doctorProfile} />
+      <DoctorBioSection doctorProfile={doctorProfile} />
+      <ProgramHighlightsSection doctorProfile={doctorProfile} />
+      <TrustBandSection doctorProfile={doctorProfile} />
+      <DoctorGallerySection doctorProfile={doctorProfile} />
       <ClosingCtaSection />
     </>
   );

@@ -1,4 +1,4 @@
-import type { ImageAsset, LocalizedString } from "@kira-joo/toolkit-common";
+import type { LocalizedResult, ImageAsset, LocalizedString } from "@kira-joo/toolkit-common";
 
 /**
  * Mirrors `GET /api/public/reviews` (paginated). Business rule enforced
@@ -24,3 +24,10 @@ export interface ReviewsListParams {
   limit?: number;
   search?: string;
 }
+
+/**
+ * The shape this app actually renders: the raw contract above with every
+ * bilingual field resolved to a plain string. Derived from the raw type
+ * rather than hand-written, so the two can't drift.
+ */
+export type LocalizedReview = LocalizedResult<Review>;

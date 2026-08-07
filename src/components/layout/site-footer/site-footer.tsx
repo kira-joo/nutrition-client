@@ -1,13 +1,13 @@
 import { getTranslations } from "next-intl/server";
 import { Mail, Phone } from "lucide-react";
-import type { SiteSettings } from "@/lib/domain/site-settings";
+import type { LocalizedSiteSettings } from "@/lib/domain/site-settings";
 import { Link } from "@/i18n/navigation";
 import { Container } from "@/components/ui/container";
 import { PRIMARY_NAV_ITEMS } from "@/components/layout/site-header/nav-items";
 import { SocialIcon } from "./social-icon";
 
 export interface SiteFooterProps {
-  siteSettings: SiteSettings;
+  siteSettings: LocalizedSiteSettings;
   clinicName: string;
 }
 

@@ -1,4 +1,4 @@
-import type { ImageAsset, LocalizedString, VideoAsset } from "@kira-joo/toolkit-common";
+import type { LocalizedResult, ImageAsset, LocalizedString, VideoAsset } from "@kira-joo/toolkit-common";
 
 interface CampaignBlockBase {
   id: string;
@@ -80,3 +80,10 @@ export interface Campaign {
   endDate: string;
   blocks: CampaignBlock[];
 }
+
+/**
+ * The shape this app actually renders: the raw contract above with every
+ * bilingual field resolved to a plain string. Derived from the raw type
+ * rather than hand-written, so the two can't drift.
+ */
+export type LocalizedCampaign = LocalizedResult<Campaign>;

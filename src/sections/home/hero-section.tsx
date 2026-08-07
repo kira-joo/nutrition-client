@@ -1,14 +1,11 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
-import { resolveLocalized } from "@kira-joo/toolkit-common";
-import type { DoctorProfile } from "@/lib/domain/doctor-profile";
-import type { Locale } from "@/constant/Locale.enum";
+import type { LocalizedDoctorProfile } from "@/lib/domain/doctor-profile";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 
 export interface HeroSectionProps {
-  doctorProfile: DoctorProfile;
-  locale: Locale;
+  doctorProfile: LocalizedDoctorProfile;
 }
 
 /**
@@ -16,11 +13,10 @@ export interface HeroSectionProps {
  * not a centered stack blown up for desktop. Reverses to a stacked layout
  * below `lg`, image first, per the site's mobile-first sequencing.
  */
-export async function HeroSection({ doctorProfile, locale }: HeroSectionProps) {
+export async function HeroSection({ doctorProfile }: HeroSectionProps) {
   const t = await getTranslations("home");
-  const name = resolveLocalized(doctorProfile.name, locale);
-  const tagline = resolveLocalized(doctorProfile.tagline, locale);
-  const avatarAlt = resolveLocalized(doctorProfile.avatarAlt, locale) || name;
+  const { name, tagline } = doctorProfile;
+  const avatarAlt = doctorProfile.avatarAlt || name;
 
   return (
     <section className="relative overflow-hidden bg-hero pb-16 pt-12 lg:pb-24 lg:pt-16">

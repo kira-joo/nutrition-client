@@ -20,30 +20,34 @@ interface HomePageProps {
  * `doctorProfile` is the one exception: without it there's no hero, so a
  * failure there is allowed to propagate to the route's error boundary
  * rather than rendering a heroless homepage.
+ *
+ * `locale` is passed to the data layer, not down into sections: each data
+ * function localizes its payload immediately after fetching, so sections
+ * receive resolved strings and never see `{ ar, en }`.
  */
 export default async function HomePage({ params }: HomePageProps) {
   const { locale } = params;
 
   const [doctorProfile, packagesPageSettings, packages, reviewsResult, recipesResult, videosResult, faqSections] = await Promise.all([
-    getDoctorProfile(),
-    safe(() => getPackagesPageSettings()),
-    safe(() => getPackages()),
-    safe(() => getReviews({ limit: 6 })),
-    safe(() => getRecipes({ limit: 8 })),
-    safe(() => getVideos({ limit: 6 })),
-    safe(() => getFaqSectionsWithItems()),
+    getDoctorProfile(locale),
+    safe(() => getPackagesPageSettings(locale)),
+    safe(() => getPackages(locale)),
+    safe(() => getReviews(locale, { limit: 6 })),
+    safe(() => getRecipes(locale, { limit: 8 })),
+    safe(() => getVideos(locale, { limit: 6 })),
+    safe(() => getFaqSectionsWithItems(locale)),
   ]);
 
   return (
     <>
-      <HeroSection doctorProfile={doctorProfile} locale={locale} />
-      <TrustBandSection doctorProfile={doctorProfile} locale={locale} />
-      <ProgramHighlightsSection doctorProfile={doctorProfile} locale={locale} />
-      {packagesPageSettings && packages && <PackagesPreviewSection packages={packages} packagesPageSettings={packagesPageSettings} locale={locale} />}
-      {reviewsResult && <ReviewsPreviewSection reviews={reviewsResult.data} locale={locale} />}
+      <HeroSection doctorProfile={doctorProfile} />
+      <TrustBandSection doctorProfile={doctorProfile} />
+      <ProgramHighlightsSection doctorProfile={doctorProfile} />
+      {packagesPageSettings && packages && <PackagesPreviewSection packages={packages} packagesPageSettings={packagesPageSettings} />}
+      {reviewsResult && <ReviewsPreviewSection reviews={reviewsResult.data} />}
       {/* One section, not two: an empty recipes rail and an empty videos rail would read as two broken bands, so DiscoverySection renders nothing at all unless at least one of them has content. */}
-      <DiscoverySection recipes={recipesResult?.data ?? []} videos={videosResult?.data ?? []} locale={locale} />
-      {faqSections && <FaqPreviewSection faqSections={faqSections} locale={locale} />}
+      <DiscoverySection recipes={recipesResult?.data ?? []} videos={videosResult?.data ?? []} />
+      {faqSections && <FaqPreviewSection faqSections={faqSections} />}
       <ClosingCtaSection />
     </>
   );

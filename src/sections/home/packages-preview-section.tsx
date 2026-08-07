@@ -1,18 +1,15 @@
 import { getTranslations } from "next-intl/server";
-import { cn } from "@kira-joo/frontend-toolkit-tailwind/server";
-import { resolveLocalized } from "@kira-joo/toolkit-common";
-import type { Package } from "@/lib/domain/package";
-import type { PackagesPageSettings } from "@/lib/domain/packages-page-settings";
-import type { Locale } from "@/constant/Locale.enum";
+import { cn } from "@/lib/cn";
+import type { LocalizedPackage } from "@/lib/domain/package";
+import type { LocalizedPackagesPageSettings } from "@/lib/domain/packages-page-settings";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
 
 export interface PackagesPreviewSectionProps {
-  packages: Package[];
-  packagesPageSettings: PackagesPageSettings;
-  locale: Locale;
+  packages: LocalizedPackage[];
+  packagesPageSettings: LocalizedPackagesPageSettings;
 }
 
 const PREVIEW_DURATION = "month";
@@ -26,7 +23,7 @@ const PREVIEW_DURATION = "month";
  * docs/design-system.md's second card family) and is raised on desktop
  * only — mobile has no side-by-side row to raise it above.
  */
-export async function PackagesPreviewSection({ packages, packagesPageSettings, locale }: PackagesPreviewSectionProps) {
+export async function PackagesPreviewSection({ packages, packagesPageSettings }: PackagesPreviewSectionProps) {
   if (packages.length === 0) return null;
   const t = await getTranslations("home");
 
@@ -34,9 +31,9 @@ export async function PackagesPreviewSection({ packages, packagesPageSettings, l
     <Section className="bg-surface-muted">
       <Container>
         <Reveal className="flex flex-col items-start gap-2">
-          <p className="text-label font-semibold uppercase tracking-wide text-accent">{resolveLocalized(packagesPageSettings.subtitle, locale)}</p>
+          <p className="text-label font-semibold uppercase tracking-wide text-accent">{packagesPageSettings.subtitle}</p>
           <h2 className="text-heading-1 font-bold text-text-primary">
-            {resolveLocalized(packagesPageSettings.title, locale)} <span className="text-primary">{resolveLocalized(packagesPageSettings.titleAccent, locale)}</span>
+            {packagesPageSettings.title} <span className="text-primary">{packagesPageSettings.titleAccent}</span>
           </h2>
         </Reveal>
 
@@ -52,7 +49,7 @@ export async function PackagesPreviewSection({ packages, packagesPageSettings, l
                   pkg.popular ? "bg-cta text-white shadow-raised lg:-translate-y-3" : "border-hairline border-border bg-surface text-text-primary shadow-sm"
                 )}
               >
-                <span className={cn("text-body-sm font-semibold", pkg.popular ? "text-white/80" : "text-text-muted")}>{resolveLocalized(pkg.name, locale)}</span>
+                <span className={cn("text-body-sm font-semibold", pkg.popular ? "text-white/80" : "text-text-muted")}>{pkg.name}</span>
                 {tier && (
                   <div className="mt-3 flex items-baseline gap-2">
                     {tier.originalPrice > tier.price && (
@@ -63,11 +60,11 @@ export async function PackagesPreviewSection({ packages, packagesPageSettings, l
                 )}
                 <ul className={cn("mt-5 flex flex-1 flex-col gap-2 text-body-sm", pkg.popular ? "text-white/90" : "text-text-secondary")}>
                   {pkg.details.slice(0, 4).map((detail, detailIndex) => (
-                    <li key={detailIndex}>{resolveLocalized(detail, locale)}</li>
+                    <li key={detailIndex}>{detail}</li>
                   ))}
                 </ul>
                 <Button href={`/consultation?package=${pkg.key}`} variant={pkg.popular ? "secondary" : "primary"} className={pkg.popular ? "mt-6 border-white bg-white text-primary hover:bg-white/90 hover:text-primary" : "mt-6"}>
-                  {resolveLocalized(packagesPageSettings.subscribeButtonLabel, locale)}
+                  {packagesPageSettings.subscribeButtonLabel}
                 </Button>
               </Reveal>
             );

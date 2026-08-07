@@ -1,13 +1,10 @@
-import { resolveLocalized } from "@kira-joo/toolkit-common";
-import type { DoctorProfile } from "@/lib/domain/doctor-profile";
-import type { Locale } from "@/constant/Locale.enum";
+import type { LocalizedDoctorProfile } from "@/lib/domain/doctor-profile";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { Reveal } from "@/components/ui/reveal";
 
 export interface DoctorBioSectionProps {
-  doctorProfile: DoctorProfile;
-  locale: Locale;
+  doctorProfile: LocalizedDoctorProfile;
 }
 
 /**
@@ -28,13 +25,10 @@ export interface DoctorBioSectionProps {
  * locales, so an unconditional `<h2>` would emit empty headings into the
  * document outline on the real site today.
  */
-export function DoctorBioSection({ doctorProfile, locale }: DoctorBioSectionProps) {
+export function DoctorBioSection({ doctorProfile }: DoctorBioSectionProps) {
   const sections = [...doctorProfile.bioSections]
     .sort((a, b) => a.order - b.order)
-    .map((section) => ({
-      heading: section.heading ? resolveLocalized(section.heading, locale) : "",
-      body: resolveLocalized(section.body, locale),
-    }))
+    .map((section) => ({ heading: section.heading ?? "", body: section.body }))
     .filter((section) => section.body);
 
   if (sections.length === 0) return null;

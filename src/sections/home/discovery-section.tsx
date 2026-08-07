@@ -1,10 +1,8 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { ExternalLink, Play } from "lucide-react";
-import { resolveLocalized } from "@kira-joo/toolkit-common";
-import type { Recipe } from "@/lib/domain/recipe";
-import type { Video } from "@/lib/domain/video";
-import type { Locale } from "@/constant/Locale.enum";
+import type { LocalizedRecipe } from "@/lib/domain/recipe";
+import type { LocalizedVideo } from "@/lib/domain/video";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
@@ -12,9 +10,8 @@ import { Reveal } from "@/components/ui/reveal";
 import { Link } from "@/i18n/navigation";
 
 export interface DiscoverySectionProps {
-  recipes: Recipe[];
-  videos: Video[];
-  locale: Locale;
+  recipes: LocalizedRecipe[];
+  videos: LocalizedVideo[];
 }
 
 /**
@@ -36,7 +33,7 @@ export interface DiscoverySectionProps {
  * without shipping carousel controls this section doesn't need (per the
  * plan, the site's one carousel belongs to /reviews' featured strip).
  */
-export async function DiscoverySection({ recipes, videos, locale }: DiscoverySectionProps) {
+export async function DiscoverySection({ recipes, videos }: DiscoverySectionProps) {
   // Rendered only when there's genuinely something to discover — an empty
   // rail with a heading over it would look broken rather than intentional.
   if (recipes.length === 0 && videos.length === 0) return null;
@@ -78,17 +75,17 @@ export async function DiscoverySection({ recipes, videos, locale }: DiscoverySec
                     <div className="relative aspect-[4/3]">
                       <Image
                         src={recipe.image.secureUrl}
-                        alt={resolveLocalized(recipe.title, locale)}
+                        alt={recipe.title}
                         fill
                         sizes="(min-width: 640px) 16rem, 14rem"
                         className="object-cover"
                       />
                       <span className="absolute bottom-2 start-2 rounded-full bg-surface/90 px-2.5 py-1 text-caption font-semibold text-text-primary backdrop-blur">
-                        {resolveLocalized(recipe.category.title, locale)}
+                        {recipe.category.title}
                       </span>
                     </div>
                     <span className="p-4 text-body-sm font-semibold text-text-primary transition-colors duration-fast group-hover:text-primary">
-                      {resolveLocalized(recipe.title, locale)}
+                      {recipe.title}
                     </span>
                   </Link>
                 </li>
@@ -115,7 +112,7 @@ export async function DiscoverySection({ recipes, videos, locale }: DiscoverySec
                 // `video.posterUrl` is populated, so the fallback is the
                 // real path in practice, not a theoretical one.
                 const posterUrl = video.poster?.secureUrl ?? video.video?.posterUrl ?? null;
-                const title = resolveLocalized(video.title, locale);
+                const title = video.title;
 
                 const thumbnail = (
                   <>

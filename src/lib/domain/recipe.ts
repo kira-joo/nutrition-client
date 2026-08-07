@@ -1,4 +1,4 @@
-import type { ImageAsset, LocalizedString } from "@kira-joo/toolkit-common";
+import type { LocalizedResult, ImageAsset, LocalizedString } from "@kira-joo/toolkit-common";
 import type { RecipeTaxonomyTerm } from "@/lib/domain/recipe-taxonomy";
 
 /**
@@ -35,3 +35,10 @@ export interface RecipesListParams {
    */
   foodGroup?: string;
 }
+
+/**
+ * The shape this app actually renders: the raw contract above with every
+ * bilingual field resolved to a plain string. Derived from the raw type
+ * rather than hand-written, so the two can't drift.
+ */
+export type LocalizedRecipe = LocalizedResult<Recipe>;

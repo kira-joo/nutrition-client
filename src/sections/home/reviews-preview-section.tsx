@@ -1,16 +1,13 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
-import { resolveLocalized } from "@kira-joo/toolkit-common";
-import type { Review } from "@/lib/domain/review";
-import type { Locale } from "@/constant/Locale.enum";
+import type { LocalizedReview } from "@/lib/domain/review";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
 
 export interface ReviewsPreviewSectionProps {
-  reviews: Review[];
-  locale: Locale;
+  reviews: LocalizedReview[];
 }
 
 /**
@@ -22,7 +19,7 @@ export interface ReviewsPreviewSectionProps {
  * `featured` filter param exists — see docs/HANDOFF.md's tech-debt table);
  * this never re-orders across pages, only within what was already fetched.
  */
-export async function ReviewsPreviewSection({ reviews, locale }: ReviewsPreviewSectionProps) {
+export async function ReviewsPreviewSection({ reviews }: ReviewsPreviewSectionProps) {
   if (reviews.length === 0) return null;
   const t = await getTranslations("home");
   const ordered = [...reviews].sort((a, b) => Number(b.featured) - Number(a.featured));
@@ -53,9 +50,9 @@ export async function ReviewsPreviewSection({ reviews, locale }: ReviewsPreviewS
               ) : null}
 
               <div className="flex flex-1 flex-col gap-3 p-5">
-                {review.content && resolveLocalized(review.content, locale) && <p className="text-body text-text-secondary">“{resolveLocalized(review.content, locale)}”</p>}
-                <span className="mt-auto text-body-sm font-semibold text-text-primary">{resolveLocalized(review.authorName, locale)}</span>
-                {resolveLocalized(review.authorLabel, locale) && <span className="text-caption text-text-muted">{resolveLocalized(review.authorLabel, locale)}</span>}
+                {review.content && <p className="text-body text-text-secondary">“{review.content}”</p>}
+                <span className="mt-auto text-body-sm font-semibold text-text-primary">{review.authorName}</span>
+                {review.authorLabel && <span className="text-caption text-text-muted">{review.authorLabel}</span>}
               </div>
             </Reveal>
           ))}

@@ -4,11 +4,10 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
-import { resolveLocalized } from "@kira-joo/toolkit-common";
 import { Locale } from "../../constant/Locale.enum";
 import { routing } from "@/i18n/routing";
 import { getDoctorProfile, getSiteSettings } from "@/lib/data";
-import type { SiteSettings } from "@/lib/domain/site-settings";
+import type { LocalizedSiteSettings } from "@/lib/domain/site-settings";
 import { SiteHeader } from "@/components/layout/site-header/site-header";
 import { SiteFooter } from "@/components/layout/site-footer/site-footer";
 import { Images } from "../components/constant/images";
@@ -66,12 +65,12 @@ interface LocaleLayoutProps {
   params: { locale: Locale };
 }
 
-const FALLBACK_SITE_SETTINGS: SiteSettings = {
+const FALLBACK_SITE_SETTINGS: LocalizedSiteSettings = {
   currencyCode: "EGP",
   socialLinks: [],
   logo: null,
   favicon: null,
-  defaultSeo: { title: { ar: "", en: "" }, description: { ar: "", en: "" } },
+  defaultSeo: { title: "", description: "" },
 };
 
 /**
@@ -85,8 +84,8 @@ const FALLBACK_SITE_SETTINGS: SiteSettings = {
  */
 async function getShellData(locale: Locale) {
   try {
-    const [siteSettings, doctorProfile] = await Promise.all([getSiteSettings(), getDoctorProfile()]);
-    return { siteSettings, clinicName: resolveLocalized(doctorProfile.name, locale) || "Dr. Omnia" };
+    const [siteSettings, doctorProfile] = await Promise.all([getSiteSettings(locale), getDoctorProfile(locale)]);
+    return { siteSettings, clinicName: doctorProfile.name || "Dr. Omnia" };
   } catch {
     return { siteSettings: FALLBACK_SITE_SETTINGS, clinicName: "Dr. Omnia" };
   }

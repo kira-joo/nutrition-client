@@ -1,4 +1,4 @@
-import type { LocalizedString } from "@kira-joo/toolkit-common";
+import type { LocalizedResult, LocalizedString } from "@kira-joo/toolkit-common";
 
 export type PackageDuration = "month" | "quarter" | "half";
 
@@ -22,3 +22,10 @@ export interface Package {
   order: number;
   seoOverride?: { title: LocalizedString; description: LocalizedString };
 }
+
+/**
+ * The shape this app actually renders: the raw contract above with every
+ * bilingual field resolved to a plain string. Derived from the raw type
+ * rather than hand-written, so the two can't drift.
+ */
+export type LocalizedPackage = LocalizedResult<Package>;
