@@ -46,12 +46,16 @@ export interface UseDialogA11yOptions {
  * opened it on close, background content suppressed for keyboard and
  * assistive tech, and body scroll locked without a layout shift.
  *
- * A genuine candidate for extraction into `frontend-toolkit-tailwind`
- * later — that package's `AssetLightbox` documents this exact
- * focus-restoration gap in its own doc comment, and `Modal`/`ConfirmDialog`
- * would benefit identically. Kept app-local for now per the plan's §23
- * "build new, app-local for now" guidance rather than blocking this phase
- * on a package release.
+ * DEFERRED TOOLKIT EXTRACTION (decided, not an open question): this stays
+ * app-local until there are multiple independent consumers. The eventual
+ * home is `frontend-toolkit-tailwind`, whose `AssetLightbox` documents this
+ * exact focus-restoration gap in its own doc comment and whose `Modal` and
+ * `ConfirmDialog` would benefit identically — but one consumer is not
+ * enough signal to fix the API shape in a published package, and extracting
+ * early would freeze it around this drawer's needs. Revisit once the
+ * Drawer, AssetLightbox, Modal, and ConfirmDialog cases can all be weighed
+ * together; until then, prefer duplicating a few lines over a premature
+ * abstraction (plan §23, §24).
  */
 export function useDialogA11y({ isOpen, onClose, containerRef }: UseDialogA11yOptions) {
   const onCloseRef = useRef(onClose);
