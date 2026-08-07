@@ -1,7 +1,6 @@
 const enum AppRoute {
   Home = `/`,
   Calculator = `/calculator`,
-  Faq = `/faq`,
   SendMessage = `/send-message`,
   Newsletter = `/newsletter`,
   Recipes = `/recipes`,

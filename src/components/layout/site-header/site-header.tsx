@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { ChevronDown, Menu, MessageCircle, Phone, X } from "lucide-react";
@@ -22,6 +22,7 @@ export interface SiteHeaderProps {
 
 export function SiteHeader({ logo, clinicName, whatsappNumber, phone }: SiteHeaderProps) {
   const t = useTranslations("layout");
+  const moreMenuId = useId();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isMoreOpen, setIsMoreOpen] = useState(false);
@@ -76,12 +77,13 @@ export function SiteHeader({ logo, clinicName, whatsappNumber, phone }: SiteHead
                 onClick={() => setIsMoreOpen((value) => !value)}
                 className="flex items-center gap-1 text-body font-medium text-text-primary transition-colors duration-fast hover:text-primary"
                 aria-expanded={isMoreOpen}
+                aria-controls={moreMenuId}
               >
                 {t("nav.more")}
-                <ChevronDown className={cn("size-icon-sm transition-transform duration-fast", isMoreOpen && "rotate-180")} aria-hidden="true" />
+                <ChevronDown className={cn("size-icon-sm transition-transform duration-fast motion-reduce:transition-none", isMoreOpen && "rotate-180")} aria-hidden="true" />
               </button>
               {isMoreOpen && (
-                <div className="absolute end-0 top-full mt-2 min-w-40 rounded-lg border-hairline border-border bg-surface p-2 shadow-md">
+                <div id={moreMenuId} className="absolute end-0 top-full mt-2 min-w-40 rounded-lg border-hairline border-border bg-surface p-2 shadow-md">
                   {MORE_NAV_ITEMS.map((item) => (
                     <Link
                       key={item.key}
