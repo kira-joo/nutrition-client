@@ -9,6 +9,7 @@ import { Link } from "@/i18n/navigation";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { useDrawerTransition } from "@/lib/animation/use-drawer-transition";
+import { useDialogA11y } from "@/lib/a11y/use-dialog-a11y";
 import { LanguageToggle } from "./language-toggle";
 import { MORE_NAV_ITEMS, PRIMARY_NAV_ITEMS } from "./nav-items";
 
@@ -25,6 +26,7 @@ export function SiteHeader({ logo, clinicName, whatsappNumber, phone }: SiteHead
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isMoreOpen, setIsMoreOpen] = useState(false);
   const { panelRef, backdropRef } = useDrawerTransition({ isOpen: isMobileOpen });
+  useDialogA11y({ isOpen: isMobileOpen, onClose: () => setIsMobileOpen(false), containerRef: panelRef });
 
   // Transparent-over-hero, solid once scrolled — a plain scroll listener
   // driving a Tailwind color transition, not GSAP: this is a two-state
