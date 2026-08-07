@@ -11,7 +11,9 @@ import { getDoctorProfile, getSiteSettings } from "@/lib/data";
 import type { LocalizedSiteSettings } from "@/lib/domain/site-settings";
 import { SiteHeader } from "@/components/layout/site-header/site-header";
 import { SiteFooter } from "@/components/layout/site-footer/site-footer";
-import { Images } from "../components/constant/images";
+import { siteMetadataBase } from "@/lib/config/site-origin.constant";
+import { buildAlternates, buildOgImage, resolveSeo } from "@/lib/seo/metadata";
+import { buildOrganizationJsonLd, JsonLd } from "@/lib/seo/json-ld";
 
 import { Providers } from "../providers";
 // TODO(tech-debt): ThemeProvider (MUI) stays wrapping `children` only —
@@ -34,23 +36,48 @@ const cairo = Cairo({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "Dr.Omnia Ahmed",
-  description: "A brief description of your website.",
+/**
+ * The site-wide fallback every route's own `generateMetadata` falls back
+ * to when it has nothing more specific to say (§20 of the plan: no route
+ * ever ships with an empty title/description). Pulled from real Site
+ * Settings, not hardcoded copy — the previous static `metadata` export
+ * here hardcoded "Dr.Omnia Ahmed" and a dead, expiring Facebook-CDN image
+ * URL (`Images.Image1`) that had nothing to do with real CMS content.
+ *
+ * `icons` is deliberately absent: `src/app/favicon.ico` already exists as
+ * a real file, and Next's file-based favicon convention picks it up
+ * automatically — an explicit `icons: "./favicon.ico"` here was actually
+ * the root cause of a real bug (a relative URL with no `metadataBase` set
+ * resolves against the *current request path*, so `/ar/doctor` requested
+ * `/ar/favicon.ico` and 404'd). `metadataBase` below fixes relative URLs
+ * generally (OG images, canonical/alternates), but the correct fix for
+ * the favicon specifically is to stop declaring it at all.
+ */
+export async function generateMetadata({ params }: { params: { locale: Locale } }): Promise<Metadata> {
+  const siteSettings = await getSiteSettings(params.locale);
+  const { title, description } = resolveSeo(siteSettings.defaultSeo, {
+    title: "Dr. Omnia Ahmed — Clinical Nutrition",
+    description: "Personalized clinical nutrition consultations and programs with Dr. Omnia Ahmed.",
+  });
 
-  openGraph: {
-    title: "Dr.Omnia Ahmed",
-    description: "د/ أمنية أحمد أخصائية تغذية علاجية وسمنة ونحافة",
-    images: [
-      {
-        url: Images.Image1,
-        alt: "د/ أمنية أحمد أخصائية تغذية علاجية وسمنة ونحافة",
-      },
-    ],
-    url: "./favicon.ico",
-  },
-  icons: "./favicon.ico",
-};
+  return {
+    metadataBase: siteMetadataBase,
+    title: { default: title, template: `%s | ${title}` },
+    description,
+    alternates: buildAlternates("", params.locale),
+    openGraph: {
+      title,
+      description,
+      images: buildOgImage(siteSettings.ogImage),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: buildOgImage(siteSettings.ogImage)?.map((image) => image.url),
+    },
+  };
+}
 // Deliberately NOT adding generateStaticParams/setRequestLocale here: every
 // route today (before and after this phase) renders fully dynamically —
 // nothing in the app is statically generated yet. Adding static params for
@@ -105,6 +132,8 @@ const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
   return (
     <html lang={locale} dir={locale === Locale.AR ? "rtl" : "ltr"} className={cairo.variable}>
       <body>
+        {/* Site-wide MedicalBusiness identity — one Organization-family JSON-LD block for the whole site, never duplicated by a page-level override (see docs/architecture.md's SEO section). */}
+        <JsonLd data={buildOrganizationJsonLd(siteSettings, clinicName)} />
         <NextIntlClientProvider messages={messages}>
           <Providers>
             <SiteHeader logo={siteSettings.logo} clinicName={clinicName} whatsappNumber={siteSettings.whatsappNumber} phone={siteSettings.phone} />
