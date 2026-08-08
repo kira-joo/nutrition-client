@@ -6,6 +6,7 @@ import {
   getPackagesPageSettings,
   getRecipes,
   getReviews,
+  getVideos,
 } from "@/lib/data";
 import { safe } from "@/lib/safe";
 import type { Locale } from "@/constant/Locale.enum";
@@ -17,6 +18,7 @@ import { ProgramHighlightsSection } from "@/sections/shared/program-highlights-s
 import { PackagesPreviewSection } from "@/sections/home/packages-preview-section";
 import { ReviewsPreviewSection } from "@/sections/home/reviews-preview-section";
 import { RecipesPreviewSection } from "@/sections/home/recipes-preview-section";
+import { VideosPreviewSection } from "@/sections/home/videos-preview-section";
 import { FaqPreviewSection } from "@/sections/home/faq-preview-section";
 import { ClosingCtaSection } from "@/sections/shared/closing-cta-section";
 
@@ -38,15 +40,17 @@ interface HomePageProps {
 export default async function HomePage({ params }: HomePageProps) {
   const { locale } = params;
 
-  const [doctorProfile, activeCampaign, packagesPageSettings, packages, reviewsResult, recipesResult, faqSections] = await Promise.all([
-    getDoctorProfile(locale),
-    safe(() => getActiveCampaign(locale)),
-    safe(() => getPackagesPageSettings(locale)),
-    safe(() => getPackages(locale)),
-    safe(() => getReviews(locale, { limit: 6 })),
-    safe(() => getRecipes(locale, { limit: 3 })),
-    safe(() => getFaqSectionsWithItems(locale)),
-  ]);
+  const [doctorProfile, activeCampaign, packagesPageSettings, packages, reviewsResult, recipesResult, videosResult, faqSections] =
+    await Promise.all([
+      getDoctorProfile(locale),
+      safe(() => getActiveCampaign(locale)),
+      safe(() => getPackagesPageSettings(locale)),
+      safe(() => getPackages(locale)),
+      safe(() => getReviews(locale, { limit: 6 })),
+      safe(() => getRecipes(locale, { limit: 3 })),
+      safe(() => getVideos(locale, { limit: 3 })),
+      safe(() => getFaqSectionsWithItems(locale)),
+    ]);
 
   return (
     <>
@@ -58,6 +62,7 @@ export default async function HomePage({ params }: HomePageProps) {
       {packagesPageSettings && packages && <PackagesPreviewSection packages={packages} packagesPageSettings={packagesPageSettings} />}
       {reviewsResult && <ReviewsPreviewSection reviews={reviewsResult.data} />}
       {recipesResult && <RecipesPreviewSection recipes={recipesResult.data} />}
+      {videosResult && <VideosPreviewSection videos={videosResult.data} />}
       {faqSections && <FaqPreviewSection faqSections={faqSections} />}
       <ClosingCtaSection />
     </>

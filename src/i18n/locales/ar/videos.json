@@ -5,12 +5,15 @@
     "noVideos": "لا توجد فيديوهات منشورة حتى الآن. تفقدي الصفحة قريبًا."
   },
   "card": {
-    "playsHere": "يُعرض هنا",
-    "opensExternally": "يفتح خارجيًا",
-    "opensInNewTab": "يفتح في تبويب جديد",
-    "viewOriginal": "عرض الأصل على {host}",
-    "watchExternally": "مشاهدة الفيديو",
-    "noPreview": "لا توجد معاينة متاحة"
+    "watch": "مشاهدة"
+  },
+  "detail": {
+    "back": "كل الفيديوهات",
+    "notFound": "الفيديو غير موجود",
+    "watchExternally": "مشاهدة على {host}",
+    "watchExternallyGeneric": "مشاهدة الفيديو الأصلي",
+    "noPreview": "لا توجد معاينة متاحة",
+    "opensInNewTab": "يفتح في تبويب جديد"
   },
   "pagination": {
     "label": "صفحات الفيديوهات",

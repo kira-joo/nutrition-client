@@ -1,140 +1,91 @@
-"use client";
-import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { ExternalLink, Play, Video as VideoIcon } from "lucide-react";
+import { Play, Video as VideoIcon } from "lucide-react";
 import type { LocalizedVideo } from "@/lib/domain/video";
+import { Link } from "@/i18n/navigation";
+import { appHref } from "@/constant/AppRoute.enum";
 
 export interface VideoCardProps {
   video: LocalizedVideo;
-  /** Whether this card is the one other cards should yield to. */
-  isActive: boolean;
-  /** Tells the grid this card just started playing, so siblings pause. */
-  onActivate: () => void;
-}
-
-/** A bare hostname for the "view original" link — real derived data, never a fabricated provider name. */
-function externalHost(url: string): string | null {
-  try {
-    return new URL(url).hostname.replace(/^www\./, "");
-  } catch {
-    return null;
-  }
+  /** Only the first row of the first page should be eager; everything else stays lazy (§13). */
+  priority?: boolean;
 }
 
 /**
- * One video record, rendered per the actual data on it — never a generic
- * card template:
+ * A substantial landscape media card — real poster/preview, title, and the
+ * real `description` field once staff has authored it — whose whole
+ * surface links through to `/videos/[id]`. Playback and the "opens
+ * externally" distinction both now live on the detail page, not here: with
+ * every card navigating to a real route, there's no more "which of these
+ * cards is currently playing" state to coordinate across siblings (the
+ * portrait tiles this replaces each owned an inline `<video>` and a shared
+ * active-card lock in `VideosGrid` — gone along with the inline players).
  *
- * - An uploaded `video` (regardless of whether `externalUrl` is also set)
- *   gets the real native `<video controls>` player, per the project's
- *   explicit no-custom-controls decision. A visible "plays here" badge
- *   makes that obvious before any interaction, not just after clicking.
- * - `externalUrl` alone (no uploaded asset) gets a real external-link
- *   card — never an embed pretending to be first-party playback — with an
- *   equally obvious "opens externally" badge.
- *
- * Every real record today happens to carry both fields (verified against
- * live data), so the secondary "view original" link under the player is
- * the commonly-exercised path; the externalUrl-only branch below is
- * exercised by the schema's contract, not by any current record.
+ * Matches `RecipeCard`'s content-box structure (fixed image ratio, a
+ * two-line-reserved title, a two-line-clamped description) so the two
+ * media grids read as the same design system rather than two unrelated
+ * card components.
  */
-export function VideoCard({ video, isActive, onActivate }: VideoCardProps) {
+export function VideoCard({ video, priority = false }: VideoCardProps) {
   const t = useTranslations("videos");
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  // No shared player instance exists to control centrally — each card owns
-  // its own <video>, so losing "active" status is this card's own cue to
-  // pause itself rather than leaving two clips playing over each other.
-  useEffect(() => {
-    if (!isActive) videoRef.current?.pause();
-  }, [isActive]);
-
   // Staff-chosen override first, then the poster Cloudinary derives for an
   // uploaded video (VideoAsset.posterUrl) — never a synthesized still frame.
   const posterUrl = video.poster?.secureUrl ?? video.video?.posterUrl ?? undefined;
 
-  if (video.video) {
-    const asset = video.video;
-    const host = video.externalUrl ? externalHost(video.externalUrl) : null;
-
-    return (
-      <li className="flex flex-col gap-2">
-        <div className="relative aspect-[9/16] w-full overflow-hidden rounded-xl bg-black shadow-sm">
-          <span className="pointer-events-none absolute start-2 top-2 z-10 inline-flex items-center gap-1 rounded-full bg-surface/90 px-2.5 py-1 text-caption font-semibold text-primary shadow-sm backdrop-blur">
-            <Play className="size-icon-sm" aria-hidden="true" />
-            {t("card.playsHere")}
-          </span>
-          {/* Native controls only — no custom control surface. Gives
-              fullscreen and Picture-in-Picture for free; neither is
-              suppressed. `muted` is never set, and nothing here ever
-              autoplays: `controls` alone requires an explicit user
-              interaction to start sound or motion. */}
-          <video
-            ref={videoRef}
-            controls
-            preload="metadata"
-            poster={posterUrl}
-            playsInline
-            onPlay={onActivate}
-            className="size-full object-cover"
-          >
-            <source src={asset.secureUrl} type={`video/${asset.format}`} />
-          </video>
-        </div>
-
-        <p className="break-words text-body-sm font-semibold text-text-primary">{video.title}</p>
-
-        {video.externalUrl && (
-          <a
-            href={video.externalUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-caption font-medium text-text-secondary hover:text-primary"
-          >
-            <ExternalLink className="size-icon-sm shrink-0" aria-hidden="true" />
-            <span>{host ? t("card.viewOriginal", { host }) : t("card.watchExternally")}</span>
-            <span className="sr-only">({t("card.opensInNewTab")})</span>
-          </a>
-        )}
-      </li>
-    );
-  }
-
-  // externalUrl-only: there is nothing to host locally, so the whole card
-  // is a real link to the source rather than an embed faking first-party
-  // playback.
   return (
-    <li>
-      <a href={video.externalUrl} target="_blank" rel="noopener noreferrer" className="group flex flex-col gap-2">
-        <div className="relative flex aspect-[9/16] w-full items-center justify-center overflow-hidden rounded-xl border-hairline border-border bg-surface-muted shadow-sm">
+    <li className="flex">
+      <Link
+        href={appHref.video(video._id)}
+        className="group flex h-full w-full flex-col overflow-hidden rounded-xl border-hairline border-border bg-surface shadow-sm transition-shadow duration-base ease-standard hover:shadow-md"
+      >
+        <div className="relative aspect-video bg-surface-muted">
           {posterUrl ? (
             <Image
               src={posterUrl}
               alt=""
               fill
-              sizes="(min-width: 1024px) 18rem, 45vw"
+              sizes="(min-width: 1024px) 26rem, (min-width: 640px) 45vw, 90vw"
               className="object-cover"
+              priority={priority}
               placeholder={video.poster?.placeholderUrl ? "blur" : undefined}
               blurDataURL={video.poster?.placeholderUrl}
             />
           ) : (
-            <span aria-hidden="true" className="flex flex-col items-center gap-2 px-4 text-center text-text-muted">
-              <VideoIcon className="size-icon-xl" />
-              <span className="text-caption">{t("card.noPreview")}</span>
+            <span aria-hidden="true" className="flex h-full items-center justify-center text-text-muted">
+              <VideoIcon className="size-icon-lg" />
             </span>
           )}
-          <span className="absolute end-2 top-2 inline-flex items-center gap-1 rounded-full bg-surface/90 px-2.5 py-1 text-caption font-semibold text-text-primary shadow-sm backdrop-blur">
-            <ExternalLink className="size-icon-sm" aria-hidden="true" />
-            {t("card.opensExternally")}
+          <span
+            aria-hidden="true"
+            className="absolute inset-0 flex items-center justify-center bg-scrim opacity-0 transition-opacity duration-base ease-standard group-hover:opacity-100"
+          >
+            <span className="flex size-icon-xl items-center justify-center rounded-full bg-surface/90 text-primary shadow-md">
+              <Play className="size-icon-md" />
+            </span>
+          </span>
+          <span className="absolute bottom-2 start-2 inline-flex items-center gap-1.5 rounded-full bg-surface/90 px-2.5 py-1 text-caption font-semibold text-text-primary backdrop-blur">
+            <Play className="size-icon-sm" aria-hidden="true" />
+            {t("card.watch")}
           </span>
         </div>
 
-        <span className="inline-flex items-start gap-1.5 break-words text-body-sm font-semibold text-text-primary group-hover:text-primary">
-          {video.title}
-          <span className="sr-only">({t("card.opensInNewTab")})</span>
-        </span>
-      </a>
+        <div className="flex flex-1 flex-col gap-2 p-5">
+          <h3
+            className="min-w-0 break-words text-body-lg font-semibold text-text-primary transition-colors duration-fast group-hover:text-primary"
+            style={{ minHeight: "calc(var(--leading-body-lg) * 2em)" }}
+          >
+            {video.title}
+          </h3>
+          {video.description && (
+            <p
+              className="line-clamp-2 min-w-0 break-words text-body-sm text-text-secondary"
+              style={{ minHeight: "calc(var(--leading-body-sm) * 2em)" }}
+            >
+              {video.description}
+            </p>
+          )}
+        </div>
+      </Link>
     </li>
   );
 }

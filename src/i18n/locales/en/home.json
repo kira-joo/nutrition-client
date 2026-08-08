@@ -25,6 +25,12 @@
     "body": "Real meals from the plans clients actually follow — browse a few before you book anything.",
     "viewAll": "All recipes"
   },
+  "videosPreview": {
+    "label": "Videos",
+    "heading": "See how we work",
+    "body": "Short, real clips from the clinic — practical tips and steps from the same programs clients follow.",
+    "viewAll": "All videos"
+  },
   "faq": {
     "heading": "Frequently asked questions",
     "viewAll": "See all questions"

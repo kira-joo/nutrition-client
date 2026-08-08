@@ -10,16 +10,13 @@ interface VideosPageProps {
   searchParams: Record<string, string | string[] | undefined>;
 }
 
-const VIDEOS_PER_PAGE = 20;
+// Fewer per page than the old dense 9:16 grid used (20): these are large
+// landscape cards now, and each one links through to its own real
+// `/videos/[id]` route (see that route) rather than trying to show
+// everything at once on the listing.
+const VIDEOS_PER_PAGE = 9;
 
 /**
- * No `/videos/[id]` route exists (see that route's removal note): the
- * public API only ever exposes a paginated list — there is no public
- * single-video fetch to back a detail page — and every field a detail page
- * could show is already on each list item, so a second page would just be
- * a slower way to see the same data. The whole feature lives on this one
- * route, gallery-first.
- *
  * The `Suspense` boundary (rather than a sibling `loading.tsx`) replays the
  * skeleton per page number, matching the Recipes page's rationale.
  */

@@ -10,3 +10,8 @@ export const listVideosEndpoint: Endpoint<{
   url: PublicApiRoute.VIDEOS,
   methodType: MethodType.GET,
 };
+
+export const getVideoEndpoint: Endpoint<{ params: { id: string }; returnType: Video }> = {
+  url: PublicApiRoute.VIDEO_DETAIL,
+  methodType: MethodType.GET,
+};

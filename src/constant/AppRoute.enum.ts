@@ -20,12 +20,12 @@ export const AppRoute = {
 
   /**
    * Express-style templates for the dynamic routes, substituted by the
-   * `appHref` builders below. Only routes that actually exist belong here:
-   * reviews and videos are list-plus-lightbox surfaces with no detail page
-   * (the CMS exposes no single-review/single-video endpoint), so they have
-   * no template.
+   * `appHref` builders below. Reviews still have no detail page — the CMS
+   * exposes no single-review endpoint — so only that one stays list-plus-
+   * lightbox with no template.
    */
   Recipe: "/recipes/:id",
+  Video: "/videos/:id",
   /**
    * Campaigns have no listing page — a campaign is only ever reached by
    * its own slug (a homepage banner, or a direct link), matching the CMS
@@ -44,6 +44,7 @@ export type AppRoute = (typeof AppRoute)[keyof typeof AppRoute];
  */
 export const appHref = {
   recipe: (id: string) => AppRoute.Recipe.replace(":id", id),
+  video: (id: string) => AppRoute.Video.replace(":id", id),
   campaign: (slug: string) => AppRoute.Campaign.replace(":slug", slug),
 } as const;
 

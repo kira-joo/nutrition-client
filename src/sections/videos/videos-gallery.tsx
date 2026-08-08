@@ -34,7 +34,7 @@ export async function VideosGallery({ result, page }: VideosGalleryProps) {
         </Reveal>
 
         <div className="mt-10">
-          {result.data.length === 0 ? <EmptyVideos /> : <VideosGrid videos={result.data} />}
+          {result.data.length === 0 ? <EmptyVideos /> : <VideosGrid videos={result.data} isFirstPage={page === 1} />}
         </div>
 
         {totalPages > 1 && <Pagination page={page} totalPages={totalPages} />}

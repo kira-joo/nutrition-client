@@ -37,6 +37,8 @@ export const PublicApiRoute = {
   RECIPE_DETAIL: "/public/recipes/:id",
   REVIEWS: "/public/reviews",
   VIDEOS: "/public/videos",
+  /** `:id` placeholder — see RECIPE_DETAIL. */
+  VIDEO_DETAIL: "/public/videos/:id",
   /** Sections+items already joined, ordered, and published-filtered server-side — see docs/architecture.md ("Public data flow"). */
   FAQ: "/public/faq",
   /** `:slug` placeholder — see RECIPE_DETAIL. */

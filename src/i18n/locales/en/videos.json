@@ -5,12 +5,15 @@
     "noVideos": "No videos have been published yet. Please check back soon."
   },
   "card": {
-    "playsHere": "Plays here",
-    "opensExternally": "Opens externally",
-    "opensInNewTab": "opens in new tab",
-    "viewOriginal": "View original on {host}",
-    "watchExternally": "Watch video",
-    "noPreview": "No preview available"
+    "watch": "Watch"
+  },
+  "detail": {
+    "back": "All videos",
+    "notFound": "Video not found",
+    "watchExternally": "Watch on {host}",
+    "watchExternallyGeneric": "Watch the original video",
+    "noPreview": "No preview available",
+    "opensInNewTab": "opens in new tab"
   },
   "pagination": {
     "label": "Video pages",

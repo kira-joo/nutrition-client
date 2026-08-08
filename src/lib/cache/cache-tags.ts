@@ -26,6 +26,7 @@ export const CacheTag = {
   recipe: (id: string) => `recipe:${id}`,
   REVIEWS: "reviews",
   VIDEOS: "videos",
+  video: (id: string) => `video:${id}`,
   FAQ: "faq",
   CAMPAIGNS: "campaigns",
   campaign: (slug: string) => `campaign:${slug}`,

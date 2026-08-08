@@ -8,6 +8,6 @@ export { getPackages } from "./packages";
 export { getRecipeCategories, getRecipeFoodGroups } from "./recipe-taxonomy";
 export { getRecipes, getRecipe } from "./recipes";
 export { getReviews } from "./reviews";
-export { getVideos } from "./videos";
+export { getVideos, getVideo } from "./videos";
 export { getFaqSectionsWithItems } from "./faq";
 export { getCampaign, getActiveCampaign } from "./campaigns";
