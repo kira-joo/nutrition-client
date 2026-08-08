@@ -1,7 +1,7 @@
 "use client";
-import type { ReactNode } from "react";
 import { useScrollReveal, type UseScrollRevealOptions } from "@/lib/animation/use-scroll-reveal";
 import { useStaggerReveal, type UseStaggerRevealOptions } from "@/lib/animation/use-stagger-reveal";
+import type { ReactNode } from "react";
 
 export interface RevealProps extends UseScrollRevealOptions {
   className?: string;
