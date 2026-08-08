@@ -1,7 +1,12 @@
 {
   "hero": {
     "primaryCta": "Book a Consultation",
-    "secondaryCta": "See Packages"
+    "secondaryCta": "See Packages",
+    "description": "A personalized nutrition plan built around your everyday life, with steady follow-up to help you reach your health goals with confidence.",
+    "values": {
+      "experience": { "value": "6+", "label": "Years Experience" },
+      "clients": { "value": "50+", "label": "Clients" }
+    }
   },
   "packages": {
     "viewAll": "See full pricing"

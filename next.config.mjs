@@ -11,6 +11,10 @@ const nextConfig = {
     // Cloudinary (see @kira-joo/toolkit-common's ImageAsset.secureUrl) —
     // this is the one remote host next/image is ever asked to optimize.
     remotePatterns: [{ protocol: "https", hostname: "res.cloudinary.com" }],
+    // AVIF first, WebP fallback — Next defaults to WebP only. Matters most
+    // for the hero's full-bleed local background (public/images/heroSection.png,
+    // ~1.5MB source), which every visitor loads at `sizes="100vw"`.
+    formats: ["image/avif", "image/webp"],
   },
 };
 

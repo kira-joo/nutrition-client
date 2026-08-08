@@ -1,7 +1,12 @@
 {
   "hero": {
     "primaryCta": "احجزي استشارة",
-    "secondaryCta": "شاهد الباقات"
+    "secondaryCta": "شاهد الباقات",
+    "description": "برنامج غذائي مخصص يناسب حياتك اليومية، مع متابعة مستمرة تساعدك على تحقيق أهدافك الصحية بثقة.",
+    "values": {
+      "experience": { "value": "+٦", "label": "سنوات خبرة" },
+      "clients": { "value": "+٥٠", "label": "عميل راضٍ" }
+    }
   },
   "packages": {
     "viewAll": "شاهد كل الأسعار"
