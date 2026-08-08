@@ -120,14 +120,21 @@ export function ConsultationForm({ doctorName, packageKey, packageName, whatsapp
   if (phase === "success") {
     const whatsappHref = whatsappNumber
       ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-          successValues.message ? `${successValues.name}: ${successValues.message}` : `${successValues.name}`
+          successValues.message ? `${successValues.name}: ${successValues.message}` : `${successValues.name}`,
         )}`
       : undefined;
 
     return (
-      <Reveal className="flex flex-col items-center gap-4 rounded-2xl bg-surface p-8 text-center shadow-md" direction="none">
+      <Reveal
+        className="flex flex-col items-center gap-4 rounded-2xl bg-surface p-8 text-center shadow-md"
+        direction="none"
+      >
         {/* tabIndex so focus can land here programmatically; not a tab stop otherwise. */}
-        <h2 ref={successHeadingRef} tabIndex={-1} className="text-heading-1 font-bold text-text-primary focus:outline-none">
+        <h2
+          ref={successHeadingRef}
+          tabIndex={-1}
+          className="text-heading-1 font-bold text-text-primary focus:outline-none"
+        >
           {t("success.heading")}
         </h2>
         <p className="text-body text-text-secondary">{t("success.body", { name: successValues.name, doctorName })}</p>
@@ -227,13 +234,18 @@ export function ConsultationForm({ doctorName, packageKey, packageName, whatsapp
       />
 
       {/*
-        Honeypot: a real visitor never encounters this field (off-screen,
-        aria-hidden, not a tab stop) — a bot that blindly fills every input
-        it finds in the DOM does, and the backend rejects any submission
-        where this arrives non-empty. Plain `register`, not `FormInput`:
-        it needs no label, no error display, no visible wrapper at all.
+        Honeypot: a real visitor never encounters this field (visually
+        hidden, aria-hidden, not a tab stop) — a bot that blindly fills
+        every input it finds in the DOM does, and the backend rejects any
+        submission where this arrives non-empty. Plain `register`, not
+        `FormInput`: it needs no label, no error display, no visible
+        wrapper at all. `sr-only`, not `absolute -left-[9999px]`: the
+        latter has no positioned ancestor here, so it resolved against the
+        initial containing block and created a real ~9999px scrollable
+        region — worst in RTL, where leftward is the scroll direction.
+        `sr-only` hides the same way without displacing anything.
       */}
-      <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+      <div aria-hidden="true" className="sr-only">
         <label htmlFor="website">Website</label>
         <input id="website" type="text" tabIndex={-1} autoComplete="off" {...register("website")} />
       </div>

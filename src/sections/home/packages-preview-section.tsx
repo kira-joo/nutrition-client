@@ -5,7 +5,7 @@ import type { LocalizedPackagesPageSettings } from "@/lib/domain/packages-page-s
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
-import { Reveal } from "@/components/ui/reveal";
+import { Reveal, RevealGroup } from "@/components/ui/reveal";
 import AppRoute from "@/constant/AppRoute.enum";
 
 export interface PackagesPreviewSectionProps {
@@ -32,47 +32,67 @@ export async function PackagesPreviewSection({ packages, packagesPageSettings }:
     <Section className="bg-surface-muted">
       <Container>
         <Reveal className="flex flex-col items-start gap-2">
-          <p className="text-label font-semibold uppercase tracking-wide text-accent">{packagesPageSettings.subtitle}</p>
+          <p className="text-label font-semibold uppercase tracking-wide text-accent">
+            {packagesPageSettings.subtitle}
+          </p>
           <h2 className="text-heading-1 font-bold text-text-primary">
             {packagesPageSettings.title} <span className="text-primary">{packagesPageSettings.titleAccent}</span>
           </h2>
         </Reveal>
 
-        <div className="mt-heading-gap grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
-          {packages.map((pkg, index) => {
+        <RevealGroup className="mt-heading-gap grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+          {packages.map((pkg) => {
             const tier = pkg.pricingTiers[PREVIEW_DURATION];
             return (
-              <Reveal
+              <div
                 key={pkg._id}
-                delay={index * 0.08}
                 className={cn(
                   "flex flex-col rounded-xl p-8 transition-all duration-base ease-standard",
                   pkg.popular
                     ? "bg-cta text-white shadow-raised lg:-translate-y-3"
-                    : "border-hairline border-border bg-surface text-text-primary shadow-sm pointer:hover:-translate-y-1 pointer:hover:shadow-md"
+                    : "border-hairline border-border bg-surface text-text-primary shadow-sm pointer:hover:-translate-y-1 pointer:hover:shadow-md",
                 )}
               >
-                <span className={cn("text-body-sm font-semibold", pkg.popular ? "text-white/80" : "text-text-muted")}>{pkg.name}</span>
+                <span className={cn("text-body-sm font-semibold", pkg.popular ? "text-white/80" : "text-text-muted")}>
+                  {pkg.name}
+                </span>
                 {tier && (
                   <div className="mt-3 flex items-baseline gap-2">
                     {tier.originalPrice > tier.price && (
-                      <span className={cn("text-body-sm line-through", pkg.popular ? "text-white/60" : "text-text-muted")}>{tier.originalPrice}</span>
+                      <span
+                        className={cn("text-body-sm line-through", pkg.popular ? "text-white/60" : "text-text-muted")}
+                      >
+                        {tier.originalPrice}
+                      </span>
                     )}
                     <span className="text-heading-1 font-extrabold">{tier.price}</span>
                   </div>
                 )}
-                <ul className={cn("mt-5 flex flex-1 flex-col gap-2 text-body-sm", pkg.popular ? "text-white/90" : "text-text-secondary")}>
+                <ul
+                  className={cn(
+                    "mt-5 flex flex-1 flex-col gap-2 text-body-sm",
+                    pkg.popular ? "text-white/90" : "text-text-secondary",
+                  )}
+                >
                   {pkg.details.slice(0, 4).map((detail, detailIndex) => (
                     <li key={detailIndex}>{detail}</li>
                   ))}
                 </ul>
-                <Button href={`${AppRoute.Consultation}?package=${pkg.key}`} variant={pkg.popular ? "secondary" : "primary"} className={pkg.popular ? "mt-6 border-white bg-white text-primary hover:bg-white/90 hover:text-primary" : "mt-6"}>
+                <Button
+                  href={`${AppRoute.Consultation}?package=${pkg.key}`}
+                  variant={pkg.popular ? "secondary" : "primary"}
+                  className={
+                    pkg.popular
+                      ? "mt-6 border-white bg-white text-primary hover:bg-white/90 hover:text-primary"
+                      : "mt-6"
+                  }
+                >
                   {packagesPageSettings.subscribeButtonLabel}
                 </Button>
-              </Reveal>
+              </div>
             );
           })}
-        </div>
+        </RevealGroup>
 
         <div className="mt-8 text-center">
           <Button href={AppRoute.Packages} variant="ghost">

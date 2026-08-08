@@ -1,7 +1,7 @@
 import type { LocalizedDoctorProfile } from "@/lib/domain/doctor-profile";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
-import { Reveal } from "@/components/ui/reveal";
+import { Reveal, RevealGroup } from "@/components/ui/reveal";
 
 export interface ProgramHighlightsSectionProps {
   doctorProfile: LocalizedDoctorProfile;
@@ -30,15 +30,13 @@ export function ProgramHighlightsSection({ doctorProfile }: ProgramHighlightsSec
             <h2 className="max-w-narrow text-heading-1 font-bold text-text-primary">{heading}</h2>
           </Reveal>
         )}
-        <ul className="mt-heading-gap grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <RevealGroup as="ul" className="mt-heading-gap grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {highlights.map((highlight, index) => (
-            <li key={index}>
-              <Reveal delay={index * 0.06} className="h-full rounded-xl bg-surface p-6 shadow-sm">
-                <p className="text-body-lg text-text-primary">{highlight.text}</p>
-              </Reveal>
+            <li key={index} className="h-full rounded-xl bg-surface p-6 shadow-sm">
+              <p className="text-body-lg text-text-primary">{highlight.text}</p>
             </li>
           ))}
-        </ul>
+        </RevealGroup>
       </Container>
     </Section>
   );

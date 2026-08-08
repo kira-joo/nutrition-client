@@ -14,6 +14,14 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
  */
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
+
+  // Cairo loads with `display: "swap"` (see the root layout), which
+  // reflows every line of text on the page once the real font arrives.
+  // Every reveal's ScrollTrigger caches its trigger element's start
+  // position at creation time, and `once: true` means a stale position is
+  // wrong forever, not just until the next scroll — a single refresh once
+  // fonts have actually settled is enough to fix it up.
+  document.fonts?.ready?.then(() => ScrollTrigger.refresh());
 }
 
 /**

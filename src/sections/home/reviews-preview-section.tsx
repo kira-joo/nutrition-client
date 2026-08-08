@@ -4,7 +4,7 @@ import type { LocalizedReview } from "@/lib/domain/review";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
-import { Reveal } from "@/components/ui/reveal";
+import { Reveal, RevealGroup } from "@/components/ui/reveal";
 import AppRoute from "@/constant/AppRoute.enum";
 
 export interface ReviewsPreviewSectionProps {
@@ -32,9 +32,12 @@ export async function ReviewsPreviewSection({ reviews }: ReviewsPreviewSectionPr
           <h2 className="text-heading-1 font-bold text-text-primary">{t("reviews.heading")}</h2>
         </Reveal>
 
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {ordered.map((review, index) => (
-            <Reveal key={review._id} delay={index * 0.08} className="flex flex-col overflow-hidden rounded-xl border-hairline border-border bg-surface shadow-sm">
+        <RevealGroup className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {ordered.map((review) => (
+            <div
+              key={review._id}
+              className="flex flex-col overflow-hidden rounded-xl border-hairline border-border bg-surface shadow-sm"
+            >
               {review.beforeImage && review.afterImage ? (
                 <div className="grid grid-cols-2">
                   <div className="relative aspect-square">
@@ -55,9 +58,9 @@ export async function ReviewsPreviewSection({ reviews }: ReviewsPreviewSectionPr
                 <span className="mt-auto text-body-sm font-semibold text-text-primary">{review.authorName}</span>
                 {review.authorLabel && <span className="text-caption text-text-muted">{review.authorLabel}</span>}
               </div>
-            </Reveal>
+            </div>
           ))}
-        </div>
+        </RevealGroup>
 
         <div className="mt-8 text-center">
           <Button href={AppRoute.Reviews} variant="ghost">

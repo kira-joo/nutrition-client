@@ -1,7 +1,12 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { gsap, prefersReducedMotion } from "./gsap-config";
 import { DURATIONS, EASES, type DurationToken, type EaseToken } from "./motion-tokens";
+import { useIsomorphicLayoutEffect } from "./use-isomorphic-layout-effect";
+
+/** Below this, a reveal runs at this fraction of its configured duration — a full-length tween reads as sluggish on a phone. */
+const MOBILE_BREAKPOINT = "(max-width: 767px)";
+const MOBILE_DURATION_SCALE = 0.75;
 
 /**
  * Describes where the element starts relative to its resting position —
@@ -37,9 +42,16 @@ export interface UseScrollRevealOptions {
  */
 export function useScrollReveal<T extends HTMLElement>(options: UseScrollRevealOptions = {}) {
   const ref = useRef<T>(null);
-  const { direction = "up", distance = 32, duration = "reveal", ease = "emphasized", delay = 0, start = "top 85%" } = options;
+  const {
+    direction = "up",
+    distance = 32,
+    duration = "reveal",
+    ease = "emphasized",
+    delay = 0,
+    start = "top 92%",
+  } = options;
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const element = ref.current;
     if (!element) return;
 
@@ -53,22 +65,23 @@ export function useScrollReveal<T extends HTMLElement>(options: UseScrollRevealO
     const fromOffset = direction === "none" ? 0 : distance * sign;
 
     const ctx = gsap.context(() => {
-      gsap.fromTo(
-        element,
-        { opacity: 0, [axis]: fromOffset },
-        {
-          opacity: 1,
-          [axis]: 0,
-          duration: DURATIONS[duration],
-          ease: EASES[ease],
-          delay,
-          scrollTrigger: {
-            trigger: element,
-            start,
-            once: true,
+      const animate = (durationScale: number) =>
+        gsap.fromTo(
+          element,
+          { opacity: 0, [axis]: fromOffset },
+          {
+            opacity: 1,
+            [axis]: 0,
+            duration: DURATIONS[duration] * durationScale,
+            ease: EASES[ease],
+            delay,
+            scrollTrigger: { trigger: element, start, once: true },
           },
-        }
-      );
+        );
+
+      const mm = gsap.matchMedia();
+      mm.add(MOBILE_BREAKPOINT, () => animate(MOBILE_DURATION_SCALE));
+      mm.add(`(min-width: 768px)`, () => animate(1));
     });
 
     return () => ctx.revert();

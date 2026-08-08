@@ -1,7 +1,7 @@
 import type { LocalizedDoctorProfile } from "@/lib/domain/doctor-profile";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
-import { Reveal } from "@/components/ui/reveal";
+import { Reveal, RevealGroup } from "@/components/ui/reveal";
 
 export interface DoctorBioSectionProps {
   doctorProfile: LocalizedDoctorProfile;
@@ -45,14 +45,16 @@ export function DoctorBioSection({ doctorProfile }: DoctorBioSectionProps) {
           </Reveal>
 
           {rest.length > 0 && (
-            <div className="flex flex-col gap-8">
+            <RevealGroup className="flex flex-col gap-8" delay={0.06}>
               {rest.map((section, index) => (
-                <Reveal key={index} delay={(index + 1) * 0.06}>
-                  {section.heading && <h2 className="mb-3 text-heading-2 font-bold text-text-primary">{section.heading}</h2>}
+                <div key={index}>
+                  {section.heading && (
+                    <h2 className="mb-3 text-heading-2 font-bold text-text-primary">{section.heading}</h2>
+                  )}
                   <p className="text-body text-text-secondary">{section.body}</p>
-                </Reveal>
+                </div>
               ))}
-            </div>
+            </RevealGroup>
           )}
         </div>
       </Container>

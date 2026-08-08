@@ -224,10 +224,18 @@ html[lang="ar"] {
  * `html` for the same reason). Keeping the rule on `html` alone still
  * prevents horizontal scrolling — it's the element whose overflow
  * propagates to the viewport — without creating that second scrollport.
+ *
+ * The two real sources this was masking (the GSAP `x:±32` reveal offset
+ * on the old discovery-section rails, and the consultation form's
+ * `-left-9999px` honeypot) are both fixed at the source now — verified
+ * by disabling this rule entirely and re-testing every route at 375px in
+ * both locales with a real scroll attempt, not just a `scrollWidth`
+ * check. This stays on as defence-in-depth, not as the actual fix.
+ * `max-width: 100vw` is dropped: on desktop it's intrinsically narrower
+ * than the real available width, since `100vw` includes the scrollbar.
  */
 html {
   overflow-x: hidden;
-  max-width: 100vw;
 }
 
 body {

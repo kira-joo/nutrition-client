@@ -3,7 +3,7 @@ import type { LocalizedRecipe } from "@/lib/domain/recipe";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
-import { Reveal } from "@/components/ui/reveal";
+import { Reveal, RevealGroup } from "@/components/ui/reveal";
 import { RecipeCard } from "@/components/recipes/recipe-card";
 import AppRoute from "@/constant/AppRoute.enum";
 
@@ -35,13 +35,11 @@ export async function RecipesPreviewSection({ recipes }: RecipesPreviewSectionPr
           <p className="max-w-narrow text-body text-text-secondary">{t("recipesPreview.body")}</p>
         </Reveal>
 
-        <div className="mt-heading-gap grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
-          {featured.map((recipe, index) => (
-            <Reveal key={recipe._id} delay={index * 0.08}>
-              <RecipeCard recipe={recipe} />
-            </Reveal>
+        <RevealGroup className="mt-heading-gap grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+          {featured.map((recipe) => (
+            <RecipeCard key={recipe._id} recipe={recipe} />
           ))}
-        </div>
+        </RevealGroup>
 
         <div className="mt-10 text-center">
           <Button href={AppRoute.Recipes} variant="ghost">
