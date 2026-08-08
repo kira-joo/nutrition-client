@@ -15,15 +15,11 @@
     "heading": "What clients are saying",
     "viewAll": "See all reviews"
   },
-  "discover": {
-    "label": "Recipes & Reels",
+  "recipesPreview": {
+    "label": "Recipes",
     "heading": "Eating well, made practical",
-    "body": "Real meals and short videos from the plans clients actually follow — browse a few before you book anything.",
-    "recipesHeading": "Recipes",
-    "recipesViewAll": "All recipes",
-    "videosHeading": "Reels",
-    "videosViewAll": "All videos",
-    "opensInNewTab": "opens in a new tab"
+    "body": "Real meals from the plans clients actually follow — browse a few before you book anything.",
+    "viewAll": "All recipes"
   },
   "faq": {
     "heading": "Frequently asked questions",
