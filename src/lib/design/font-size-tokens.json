@@ -3,6 +3,7 @@
   "heading-1": "var(--leading-heading-1)",
   "heading-2": "var(--leading-heading-2)",
   "heading-3": "var(--leading-heading-3)",
+  "body-xl": "var(--leading-body-xl)",
   "body-lg": "var(--leading-body-lg)",
   "body": "var(--leading-body)",
   "body-sm": "var(--leading-body-sm)",

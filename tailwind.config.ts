@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
+import plugin from "tailwindcss/plugin";
 import type { Config } from "tailwindcss";
 
 /**
@@ -68,6 +69,10 @@ const config: Config = {
         "overlay-light": "var(--color-overlay-light)",
         "disabled-bg": "var(--color-disabled-bg)",
         "disabled-text": "var(--color-disabled-text)",
+        "surface-inverse": "var(--color-surface-inverse)",
+        "on-inverse": "var(--color-text-on-inverse)",
+        "on-inverse-muted": "var(--color-text-on-inverse-muted)",
+        "border-inverse": "var(--color-border-on-inverse)",
       },
       fontFamily: {
         sans: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
@@ -78,6 +83,7 @@ const config: Config = {
         "section-y": "var(--space-section-y)",
         "section-y-sm": "var(--space-section-y-sm)",
         "content-gap": "var(--space-content-gap)",
+        "heading-gap": "var(--space-heading-gap)",
         "touch-min": "var(--touch-target-min)",
         "control-sm": "var(--control-height-sm)",
         "control-md": "var(--control-height-md)",
@@ -136,6 +142,15 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    // Bare `hover:` fires on tap on touch devices (the hover state sticks
+    // until the next tap elsewhere) — every "hover elevation" the redesign
+    // adds to cards/packages must be pointer-gated instead, so it never
+    // shows as a stuck highlight after a tap. Not a Tailwind core variant,
+    // so it needs this one-line plugin rather than a new dependency.
+    plugin(({ addVariant }) => {
+      addVariant("pointer", "@media (hover: hover) and (pointer: fine)");
+    }),
+  ],
 };
 export default config;

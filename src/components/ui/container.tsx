@@ -19,5 +19,5 @@ export interface ContainerProps {
 
 /** No component in this app sets its own horizontal max-width/padding directly — every section-level width decision routes through this one component. */
 export function Container({ as: Tag = "div", width = "content", className, children }: ContainerProps) {
-  return <Tag className={cn("mx-auto w-full px-4 sm:px-6 lg:px-8", WIDTH_CLASS[width], className)}>{children}</Tag>;
+  return <Tag className={cn("mx-auto w-full px-4 sm:px-6 lg:px-8 xl:px-12", WIDTH_CLASS[width], className)}>{children}</Tag>;
 }
