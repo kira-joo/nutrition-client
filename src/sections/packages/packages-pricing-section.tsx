@@ -19,11 +19,12 @@ const DURATIONS: PackageDuration[] = ["month", "quarter", "half"];
 /**
  * Desktop puts the heading and the duration control on one row above the
  * cards, which then get the container's full width — rather than a centered
- * stack widened out. With only two packages in the CMS, a three-across grid
- * would leave a hole and a narrow sticky sidebar squeezed the display-size
- * heading into six lines; this composition uses the width without either.
- * Below `lg` it collapses to heading, then a duration control that sticks
- * under the site header, then the cards.
+ * stack widened out, or a narrow sticky sidebar squeezing the display-size
+ * heading into six lines. `PackagePricingBoard` itself decides the column
+ * count from the real package count (2 → two columns, 3+ → three), so this
+ * composition doesn't need to special-case either case. Below `lg` it
+ * collapses to heading, then a duration control that sticks under the site
+ * header, then the cards.
  *
  * Every string here arrives already resolved from the data layer, so this
  * section has no locale to know about.

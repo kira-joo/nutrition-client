@@ -38,7 +38,7 @@ export async function PackagesPreviewSection({ packages, packagesPageSettings }:
           </h2>
         </Reveal>
 
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-heading-gap grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
           {packages.map((pkg, index) => {
             const tier = pkg.pricingTiers[PREVIEW_DURATION];
             return (
@@ -46,8 +46,10 @@ export async function PackagesPreviewSection({ packages, packagesPageSettings }:
                 key={pkg._id}
                 delay={index * 0.08}
                 className={cn(
-                  "flex flex-col rounded-xl p-6",
-                  pkg.popular ? "bg-cta text-white shadow-raised lg:-translate-y-3" : "border-hairline border-border bg-surface text-text-primary shadow-sm"
+                  "flex flex-col rounded-xl p-8 transition-all duration-base ease-standard",
+                  pkg.popular
+                    ? "bg-cta text-white shadow-raised lg:-translate-y-3"
+                    : "border-hairline border-border bg-surface text-text-primary shadow-sm pointer:hover:-translate-y-1 pointer:hover:shadow-md"
                 )}
               >
                 <span className={cn("text-body-sm font-semibold", pkg.popular ? "text-white/80" : "text-text-muted")}>{pkg.name}</span>

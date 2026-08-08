@@ -1,6 +1,6 @@
 "use client";
 import { useId, useState, type ReactNode } from "react";
-import { Check, Diamond, Package as PackageIcon, Sparkles } from "lucide-react";
+import { Check, Diamond, Package as PackageIcon, Sparkles, Zap } from "lucide-react";
 import { cn } from "@/lib/cn";
 import type { LocalizedPackage, PackageDuration } from "@/lib/domain/package";
 import { Button } from "@/components/ui/button";
@@ -24,7 +24,7 @@ export interface PackagePricingBoardProps {
 }
 
 /** CMS `icon` is a free-text field, so an unrecognized value falls back rather than rendering nothing. */
-const ICONS: Record<string, typeof Diamond> = { diamond: Diamond, package: PackageIcon };
+const ICONS: Record<string, typeof Diamond> = { diamond: Diamond, package: PackageIcon, zap: Zap };
 
 export function PackagePricingBoard({ packages, durations, subscribeLabel, currencyCode, labels, header }: PackagePricingBoardProps) {
   const groupName = useId();
@@ -52,6 +52,11 @@ export function PackagePricingBoard({ packages, durations, subscribeLabel, curre
       <fieldset
         className={cn(
           "sticky top-16 z-sticky-cta -mx-4 border-b-hairline border-border bg-background/95 px-4 py-3 backdrop-blur",
+          // Matches Container's own sm:px-6 breakpoint exactly — without
+          // this, the sticky bar sat 0.5rem inset from the page's real
+          // gutter between 640–1023px (the negative margin at that width
+          // still only cancelled the 4px/1rem tier).
+          "sm:-mx-6 sm:px-6",
           "lg:static lg:mx-0 lg:justify-self-end lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none"
         )}
       >
@@ -83,8 +88,8 @@ export function PackagePricingBoard({ packages, durations, subscribeLabel, curre
         </div>
       </fieldset>
 
-      {/* Rendered in the exact order the backend returned — no client-side sort, not even to lead with the popular tier. */}
-      <ul className="grid gap-6 sm:grid-cols-2 lg:col-span-2">
+      {/* Rendered in the exact order the backend returned — no client-side sort, not even to lead with the popular tier. Column count follows the real count: 3+ packages earn a third column instead of forever capping at two and leaving a gap once the CMS grows past it. */}
+      <ul className={cn("grid gap-8 sm:grid-cols-2 lg:col-span-2", packages.length >= 3 && "lg:grid-cols-3")}>
         {packages.map((pkg) => {
           const tier = pkg.pricingTiers[duration];
           const Icon = ICONS[pkg.icon] ?? Sparkles;
@@ -94,7 +99,7 @@ export function PackagePricingBoard({ packages, durations, subscribeLabel, curre
             <li key={pkg._id} className="flex">
               <article
                 className={cn(
-                  "flex w-full min-w-0 flex-col rounded-xl bg-surface p-6 transition-shadow duration-base ease-standard sm:p-8",
+                  "flex w-full min-w-0 flex-col rounded-xl bg-surface p-8 transition-all duration-base ease-standard sm:p-10",
                   // The popular tier is marked by a heavier ring, raised
                   // elevation, an offset position, and the CMS's own tag
                   // text — four redundant cues, none of which is a color
@@ -103,7 +108,7 @@ export function PackagePricingBoard({ packages, durations, subscribeLabel, curre
                   // so contrast is identical either way.
                   pkg.popular
                     ? "ring-2 ring-primary shadow-raised lg:-translate-y-4"
-                    : "border-hairline border-border shadow-sm hover:shadow-md"
+                    : "border-hairline border-border shadow-sm pointer:hover:-translate-y-1 pointer:hover:shadow-md"
                 )}
               >
                 <div className="flex flex-wrap items-center gap-3">
@@ -151,7 +156,7 @@ export function PackagePricingBoard({ packages, durations, subscribeLabel, curre
                 )}
 
                 {/* Both CTAs are `primary`: this is a genuine choice between two packages, so giving the non-popular one a weaker button would push visitors rather than inform them. The popular tier is already distinguished four other ways. */}
-                <Button href={`${AppRoute.Consultation}?package=${pkg.key}`} className="mt-8 w-full">
+                <Button href={`${AppRoute.Consultation}?package=${pkg.key}`} size="lg" className="mt-8 w-full">
                   {subscribeLabel}
                 </Button>
               </article>
