@@ -19,13 +19,13 @@ export async function FaqPreviewSection({ faqSections }: FaqPreviewSectionProps)
   const t = await getTranslations("home");
 
   return (
-    <Section spacing="sm" className="bg-surface-muted">
+    <Section className="bg-surface-muted">
       <Container width="narrow">
-        <Reveal>
+        <Reveal className="text-center">
           <h2 className="text-heading-1 font-bold text-text-primary">{t("faq.heading")}</h2>
         </Reveal>
 
-        <Reveal className="mt-8 rounded-xl bg-surface px-6 shadow-sm sm:px-8">
+        <Reveal className="mt-heading-gap rounded-xl bg-surface px-6 shadow-sm sm:px-8">
           <Accordion items={items.map((item) => ({ id: item._id, question: item.question, answer: item.answer }))} />
         </Reveal>
 
