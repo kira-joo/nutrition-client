@@ -5,8 +5,7 @@
  *
  * A plain `as const` object rather than an enum: the values need to be
  * usable at runtime (see `appHref` below, which derives dynamic paths from
- * these same strings), and the exported union type keeps the legacy
- * `AppLink`'s `href: AppRoute` prop working unchanged.
+ * these same strings).
  */
 export const AppRoute = {
   Home: "/",
@@ -20,13 +19,13 @@ export const AppRoute = {
   Consultation: "/consultation",
 
   /**
-   * Express-style templates consumed by the legacy `AppLink`, which
-   * substitutes `params`. New code should use `appHref` instead — these
-   * disappear with the last legacy page that uses them.
+   * Express-style templates for the dynamic routes, substituted by the
+   * `appHref` builders below. Only routes that actually exist belong here:
+   * reviews and videos are list-plus-lightbox surfaces with no detail page
+   * (the CMS exposes no single-review/single-video endpoint), so they have
+   * no template.
    */
   Recipe: "/recipes/:id",
-  Review: "/reviews/:id",
-  Video: "/videos/:id",
   /**
    * Campaigns have no listing page — a campaign is only ever reached by
    * its own slug (a homepage banner, or a direct link), matching the CMS
@@ -45,8 +44,6 @@ export type AppRoute = (typeof AppRoute)[keyof typeof AppRoute];
  */
 export const appHref = {
   recipe: (id: string) => AppRoute.Recipe.replace(":id", id),
-  review: (id: string) => AppRoute.Review.replace(":id", id),
-  video: (id: string) => AppRoute.Video.replace(":id", id),
   campaign: (slug: string) => AppRoute.Campaign.replace(":slug", slug),
 } as const;
 

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
@@ -29,6 +29,7 @@ export interface SiteHeaderProps {
 export function SiteHeader({ logo, clinicName, whatsappNumber, phone }: SiteHeaderProps) {
   const t = useTranslations("layout");
   const moreMenuId = useId();
+  const mobileDrawerId = useId();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   // Once true, stays true — the drawer stays mounted after its first open
@@ -37,6 +38,8 @@ export function SiteHeader({ logo, clinicName, whatsappNumber, phone }: SiteHead
   // first tap.
   const [hasOpenedDrawer, setHasOpenedDrawer] = useState(false);
   const [isMoreOpen, setIsMoreOpen] = useState(false);
+  const moreContainerRef = useRef<HTMLDivElement>(null);
+  const moreButtonRef = useRef<HTMLButtonElement>(null);
 
   function openMobileDrawer() {
     setHasOpenedDrawer(true);
@@ -61,6 +64,41 @@ export function SiteHeader({ logo, clinicName, whatsappNumber, phone }: SiteHead
   useEffect(() => {
     if (!isMobileOpen) setIsMoreOpen(false);
   }, [isMobileOpen]);
+
+  // The "More" disclosure previously only ever closed via its own toggle
+  // button — verified in a real browser, tabbing past its last link (or
+  // clicking anywhere else on the page) left it visibly open, overlapping
+  // whatever sat beneath it, with `aria-expanded` still (correctly, but
+  // confusingly) reporting `true`. A disclosure needs to close itself once
+  // interaction moves elsewhere, not just on its own explicit toggle.
+  useEffect(() => {
+    if (!isMoreOpen) return;
+
+    function closeIfOutside(target: Node | null) {
+      if (target && moreContainerRef.current?.contains(target)) return;
+      setIsMoreOpen(false);
+    }
+
+    const onPointerDown = (event: MouseEvent) => closeIfOutside(event.target as Node);
+    // `relatedTarget` is the element about to receive focus — null when
+    // focus leaves the document entirely (e.g. Tab to the browser chrome),
+    // which this treats as "left the menu" too.
+    const onFocusOut = (event: FocusEvent) => closeIfOutside(event.relatedTarget as Node | null);
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setIsMoreOpen(false);
+      moreButtonRef.current?.focus();
+    };
+
+    document.addEventListener("mousedown", onPointerDown);
+    document.addEventListener("focusout", onFocusOut);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", onPointerDown);
+      document.removeEventListener("focusout", onFocusOut);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [isMoreOpen]);
 
   return (
     <header
@@ -93,8 +131,9 @@ export function SiteHeader({ logo, clinicName, whatsappNumber, phone }: SiteHead
                 {t(`nav.${item.key}`)}
               </Link>
             ))}
-            <div className="relative">
+            <div ref={moreContainerRef} className="relative">
               <button
+                ref={moreButtonRef}
                 type="button"
                 onClick={() => setIsMoreOpen((value) => !value)}
                 className="flex items-center gap-1 text-body font-medium text-text-primary transition-colors duration-fast hover:text-primary"
@@ -132,6 +171,8 @@ export function SiteHeader({ logo, clinicName, whatsappNumber, phone }: SiteHead
             type="button"
             onClick={openMobileDrawer}
             aria-label={t("nav.openMenu")}
+            aria-expanded={isMobileOpen}
+            aria-controls={mobileDrawerId}
             className="flex size-touch-min items-center justify-center text-text-primary lg:hidden"
           >
             <Menu className="size-icon-lg" aria-hidden="true" />
@@ -140,7 +181,7 @@ export function SiteHeader({ logo, clinicName, whatsappNumber, phone }: SiteHead
       </Container>
 
       {hasOpenedDrawer && (
-        <MobileNavDrawer isOpen={isMobileOpen} onClose={() => setIsMobileOpen(false)} clinicName={clinicName} whatsappNumber={whatsappNumber} phone={phone} />
+        <MobileNavDrawer id={mobileDrawerId} isOpen={isMobileOpen} onClose={() => setIsMobileOpen(false)} clinicName={clinicName} whatsappNumber={whatsappNumber} phone={phone} />
       )}
     </header>
   );

@@ -9,12 +9,10 @@
     "title": "التصفية",
     "open": "التصفية",
     "close": "إغلاق التصفية",
-    "apply": "عرض النتائج",
     "category": "التصنيف",
     "foodGroup": "المجموعة الغذائية",
     "all": "الكل",
-    "clear": "مسح الكل",
-    "activeCount": "{count} مفعّل"
+    "clear": "مسح الكل"
   },
   "results": {
     "count": "{count} من {total} وصفة",

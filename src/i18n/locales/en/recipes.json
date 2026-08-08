@@ -9,12 +9,10 @@
     "title": "Filters",
     "open": "Filters",
     "close": "Close filters",
-    "apply": "Show results",
     "category": "Category",
     "foodGroup": "Food group",
     "all": "All",
-    "clear": "Clear all",
-    "activeCount": "{count} active"
+    "clear": "Clear all"
   },
   "results": {
     "count": "{count} of {total} recipes",

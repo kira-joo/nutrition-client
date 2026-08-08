@@ -2,7 +2,7 @@ import "@/lib/datetime/configure-timezone";
 import { Metadata } from "next";
 import { Cairo } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages } from "next-intl/server";
+import { getMessages, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { Locale } from "../../constant/Locale.enum";
@@ -128,17 +128,34 @@ const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
 
   const messages = await getMessages();
   const { siteSettings, clinicName } = await getShellData(locale);
+  const t = await getTranslations("layout");
 
   return (
     <html lang={locale} dir={locale === Locale.AR ? "rtl" : "ltr"} className={cairo.variable}>
       <body>
         {/* Site-wide MedicalBusiness identity — one Organization-family JSON-LD block for the whole site, never duplicated by a page-level override (see docs/architecture.md's SEO section). */}
         <JsonLd data={buildOrganizationJsonLd(siteSettings, clinicName)} />
+        {/*
+          First focusable element in the DOM, before the header's own nav —
+          invisible until it receives keyboard focus (`sr-only`/`focus:not-sr-only`),
+          at which point it lets a keyboard/screen-reader user jump straight past
+          the header's ~10 nav stops into `<main>`. There was no such link anywhere
+          in the app before this; every page forced a full traversal of the header
+          on every single load.
+        */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-tooltip focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-white"
+        >
+          {t("nav.skipToContent")}
+        </a>
         <NextIntlClientProvider messages={messages}>
           <Providers>
             <SiteHeader logo={siteSettings.logo} clinicName={clinicName} whatsappNumber={siteSettings.whatsappNumber} phone={siteSettings.phone} />
             <ThemeProvider locale={locale}>
-              <main className="flex min-h-[80vh] flex-col pt-16 lg:pt-20">{children}</main>
+              <main id="main-content" className="flex min-h-[80vh] flex-col pt-16 lg:pt-20">
+                {children}
+              </main>
             </ThemeProvider>
             <SiteFooter siteSettings={siteSettings} clinicName={clinicName} />
           </Providers>

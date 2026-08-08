@@ -1,4 +1,5 @@
 "use client";
+import { useId } from "react";
 import { useTranslations } from "next-intl";
 import { MessageCircle, Phone, X } from "lucide-react";
 import { cn } from "@/lib/cn";
@@ -11,6 +12,8 @@ import { MORE_NAV_ITEMS, PRIMARY_NAV_ITEMS } from "./nav-items";
 import AppRoute from "@/constant/AppRoute.enum";
 
 export interface MobileNavDrawerProps {
+  /** Mirrored onto the hamburger trigger's `aria-controls` in `SiteHeader`. */
+  id: string;
   isOpen: boolean;
   onClose: () => void;
   clinicName: string;
@@ -34,10 +37,11 @@ export interface MobileNavDrawerProps {
  * because this never needs to exist in the initial server-rendered HTML —
  * by the time it mounts, it's already responding to a real click.
  */
-export function MobileNavDrawer({ isOpen, onClose, clinicName, whatsappNumber, phone }: MobileNavDrawerProps) {
+export function MobileNavDrawer({ id, isOpen, onClose, clinicName, whatsappNumber, phone }: MobileNavDrawerProps) {
   const t = useTranslations("layout");
   const { panelRef, backdropRef } = useDrawerTransition({ isOpen });
   useDialogA11y({ isOpen, onClose, containerRef: panelRef });
+  const titleId = useId();
 
   return (
     <>
@@ -49,13 +53,17 @@ export function MobileNavDrawer({ isOpen, onClose, clinicName, whatsappNumber, p
       />
       {/* No CSS-authored transform here on purpose: GSAP owns this element's transform exclusively (see useDrawerTransition's doc comment) — a class-based translate-x-full would sit underneath GSAP's own xPercent writes rather than being replaced by them, doubling the offset. useDrawerTransition's useLayoutEffect sets the offscreen position synchronously before paint, so there's no flash despite no CSS default. */}
       <div
+        id={id}
         ref={panelRef}
         role="dialog"
         aria-modal="true"
+        aria-labelledby={titleId}
         className="fixed inset-y-0 end-0 z-drawer flex w-[min(20rem,85vw)] flex-col bg-surface p-6 shadow-lg lg:hidden"
       >
         <div className="flex items-center justify-between">
-          <span className="text-heading-3 font-bold text-primary">{clinicName}</span>
+          <span id={titleId} className="text-heading-3 font-bold text-primary">
+            {clinicName}
+          </span>
           <button type="button" onClick={onClose} aria-label={t("nav.closeMenu")} className="flex size-touch-min items-center justify-center text-text-primary">
             <X className="size-icon-lg" aria-hidden="true" />
           </button>

@@ -1,8 +1,7 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import useEmblaCarousel from "embla-carousel-react";
-import type { EmblaCarouselType } from "embla-carousel";
+import useEmblaCarousel, { type UseEmblaCarouselType } from "embla-carousel-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { LocalizedReview } from "@/lib/domain/review";
 import { useIsRtl } from "@/hooks/useIsRtl";
@@ -12,6 +11,16 @@ export interface FeaturedReviewsCarouselProps {
   /** Already filtered to `featured: true` by the caller — see reviews-grid.tsx for why. */
   reviews: LocalizedReview[];
 }
+
+/**
+ * Derived from the hook's own return type rather than imported from
+ * `embla-carousel`: that package is only a transitive dependency of
+ * `embla-carousel-react`, so importing it directly was a phantom dependency
+ * that happens to resolve under npm's flat hoisting but breaks under strict
+ * resolution (pnpm/Yarn PnP) or if the react wrapper repins it. Deriving it
+ * keeps the type pinned to whatever version is actually installed.
+ */
+type EmblaApi = NonNullable<UseEmblaCarouselType[1]>;
 
 const CONTROL_BUTTON_CLASS =
   "flex h-control-sm w-control-sm items-center justify-center rounded-full border-hairline border-border bg-surface text-text-primary transition-colors duration-base ease-standard hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-40";
@@ -36,7 +45,7 @@ export function FeaturedReviewsCarousel({ reviews }: FeaturedReviewsCarouselProp
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
 
-  const onSelect = useCallback((api: EmblaCarouselType) => {
+  const onSelect = useCallback((api: EmblaApi) => {
     setCanScrollPrev(api.canScrollPrev());
     setCanScrollNext(api.canScrollNext());
   }, []);

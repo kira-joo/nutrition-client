@@ -30,12 +30,12 @@ export const EASES = {
   soft: eases.soft.gsap,
 } as const;
 
-export const CSS_EASES = {
-  standard: eases.standard.cssCubicBezier,
-  emphasized: eases.emphasized.cssCubicBezier,
-  inOut: eases.inOut.cssCubicBezier,
-  soft: eases.soft.cssCubicBezier,
-} as const;
-
+/**
+ * No JS mirror of the CSS easings lives here on purpose: the CSS side is
+ * generated straight from `motion-tokens.json` by
+ * `scripts/generate-motion-css.mjs` into custom properties, so a hand-kept
+ * copy would be a second source of truth with no consumer. This module
+ * exists for the GSAP side only.
+ */
 export type DurationToken = keyof typeof DURATIONS;
 export type EaseToken = keyof typeof EASES;

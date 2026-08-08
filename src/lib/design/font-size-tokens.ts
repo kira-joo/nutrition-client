@@ -20,13 +20,9 @@ import raw from "./font-size-tokens.json";
  * `scripts/verify-design-tokens.mjs`, run from the `predev`/`prebuild` npm
  * lifecycle exactly like the motion-token generator.
  *
- * Values are each token's line-height, since that's the one part of the
- * Tailwind entry that isn't derivable from the name (`button` is unitless
- * `1`, not a `--leading-*` variable).
+ * Only the token *names* are exported. The line-height values live in the
+ * JSON and are read straight from it by `tailwind.config.ts` via `fs` —
+ * jiti can't resolve a JSON import from the config — so re-exporting them
+ * from here would be a second copy with no consumer.
  */
-export const FONT_SIZE_LINE_HEIGHTS: Record<string, string> = raw;
-
-/** Token names only — what `createCn` needs. */
 export const FONT_SIZE_TOKENS = Object.keys(raw) as (keyof typeof raw)[];
-
-export type FontSizeToken = (typeof FONT_SIZE_TOKENS)[number];

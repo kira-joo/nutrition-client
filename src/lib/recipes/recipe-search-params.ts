@@ -11,8 +11,6 @@ export interface RecipeFilters {
   page: number;
 }
 
-export const EMPTY_FILTERS: RecipeFilters = { search: "", category: "", foodGroup: "", page: 1 };
-
 /**
  * Filter state lives in the URL, not component state: the listing stays a
  * Server Component that queries the backend, and a filtered view is
@@ -42,10 +40,15 @@ export function toSearchParamsString(filters: Partial<RecipeFilters>): string {
 }
 
 /**
- * Maps URL state onto the backend's query contract. `foodGroup` is
- * deliberately singular here and maps to the API's `foodGroups` parameter,
- * which takes one id — the public endpoint filters by a single food group,
- * so offering multi-select would promise something the API can't do.
+ * Maps URL state onto `RecipesListParams`. `foodGroup` stays singular and is
+ * NOT a backend query param: the public list endpoint has no food-group
+ * filter (see `RecipesListParams.foodGroup`), so `getRecipes` strips this key
+ * off and post-filters the fetched page itself. Emitting a plural
+ * `foodGroups` here instead silently broke the filter entirely — the key fell
+ * through to the backend as an unrecognized query param while `getRecipes`
+ * saw `foodGroup === undefined` and skipped post-filtering. Object spreads
+ * are exempt from excess-property checking, so the compiler could not catch
+ * it; keep this key spelled exactly as the type declares it.
  */
 export function toListParams(filters: RecipeFilters): RecipesListParams {
   return {
@@ -53,7 +56,7 @@ export function toListParams(filters: RecipeFilters): RecipesListParams {
     limit: RECIPES_PER_PAGE,
     ...(filters.search ? { search: filters.search } : {}),
     ...(filters.category ? { category: filters.category } : {}),
-    ...(filters.foodGroup ? { foodGroups: filters.foodGroup } : {}),
+    ...(filters.foodGroup ? { foodGroup: filters.foodGroup } : {}),
   };
 }
 

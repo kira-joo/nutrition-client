@@ -127,6 +127,7 @@ const NutritionCalculator: React.FC = () => {
           }}
         >
           <Box
+            aria-hidden="true"
             sx={{
               width: "100%",
               height: "100%",
@@ -139,7 +140,11 @@ const NutritionCalculator: React.FC = () => {
         </Grid>
         {/* Left Column: Form and Gender Selector */}
         <Grid item xs={12} md={6} sx={{ textAlign: "left" }}>
-          <Typography variant="h4" align="center" gutterBottom>
+          {/* This is the page's only heading before the "Select Gender"/form
+              content, so it carries the real <h1> — `component="h1"` keeps
+              that semantic element while `variant="h4"` keeps the existing
+              visual size (no visual/redesign change). */}
+          <Typography variant="h4" component="h1" align="center" gutterBottom>
             {t("calculateCalories")}
           </Typography>
 
@@ -302,14 +307,17 @@ const NutritionCalculator: React.FC = () => {
             </Box>
           </Grid>
 
-          {/* Caloric Needs Result */}
-          {caloricNeeds !== null && (
-            <Grid item xs={12}>
-              <Typography variant="h6" align="center" sx={{ mt: 2 }}>
-                {t("dailyCalories", { caloricNeeds })}
-              </Typography>
-            </Grid>
-          )}
+          {/* Caloric Needs Result. The live region is rendered
+              unconditionally and only its *content* is conditional: a screen
+              reader announces mutations inside a region it is already
+              watching, so a region that gets inserted already-populated is
+              frequently missed entirely. Keeping the wrapper mounted is what
+              makes the result actually get announced after submit. */}
+          <Grid item xs={12}>
+            <Typography variant="h6" align="center" sx={{ mt: 2 }} aria-live="polite">
+              {caloricNeeds !== null ? t("dailyCalories", { caloricNeeds }) : null}
+            </Typography>
+          </Grid>
         </Grid>
       </Grid>
     </Container>

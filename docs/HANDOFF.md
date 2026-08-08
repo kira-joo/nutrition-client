@@ -61,11 +61,13 @@ The full original plan lives at `/Users/joe/.claude/plans/nutrition-client-purri
 3. RTL/localization infrastructure (next-intl) — **done**
 4. API and data layer — **done**, then substantially refactored for package-first architecture
 5. Caching layer + on-demand invalidation — **done**, then refactored into a declarative route-factory API
-6. Per-content-type integration (real pages: homepage, doctor, packages, FAQ, recipes, reviews/videos, campaigns, consultation) — **not started**
-7. SEO/perf polish — not started
-8. Empty/error/loading states pass — not started
-9. Accessibility verification pass — not started
-10. Cleanup (delete legacy MUI/mongodb/framer-motion remnants) — partially done in Phase 1, final sweep not done
+6. Per-content-type integration (real pages: homepage, doctor, packages, FAQ, recipes, reviews/videos, campaigns, consultation) — **done**
+7. SEO/perf polish — **done**, but deliberately narrowed: one global metadata setup only (`sitemap.ts`, `robots.ts`, an Organization JSON-LD block, and a single `generateMetadata` in the locale layout). Per-route metadata was explicitly deferred to its own later SEO phase; do not add `generateMetadata()` per page without revisiting that decision.
+8. Empty/error/loading states pass — **done**
+9. Accessibility verification pass — **done** (focused pass; see §"Accessibility deferrals" for what was consciously left to the redesign)
+10. Cleanup and final removal — **done**, except the MUI holdout described below, which is retained deliberately.
+
+**Next up is not a numbered phase**: a full UI redesign (homepage, hero, recipes, videos, packages, footer, responsive behavior, animations, lightbox) for which the user supplies a dedicated brief and assets.
 
 ---
 
@@ -73,7 +75,7 @@ The full original plan lives at `/Users/joe/.claude/plans/nutrition-client-purri
 
 ### Completed
 
-- **Phase 1 (Foundation)** — toolkit packages adopted, MUI/Emotion/i18next/framer-motion/mongodb removed, GSAP added, ESLint configured project-wide, Embla kept as the sole carousel.
+- **Phase 1 (Foundation)** — toolkit packages adopted, framer-motion and mongodb removed, GSAP added, ESLint configured project-wide, Embla kept as the sole carousel. i18next/react-i18next were removed in Phase 10, not here. **MUI/Emotion are still installed** — see "The one MUI holdout" below; this line previously claimed otherwise and was wrong.
 - **Phase 2 (Theme/design tokens)** — full token system (color, type, spacing, containers, radii, shadows, borders, gradients, motion, z-index, focus rings, overlays, icon sizes, control heights, touch targets) in `docs/design-system.md`/`docs/theme.md`. Measured WCAG contrast (not assumed). Dual-layer focus rings for filled controls.
 - **Phase 3 (RTL/localization)** — next-intl replacing i18next. Single `dir` source via the locale route segment. Logical CSS properties instead of manual RTL branching.
 - **Phase 4 (API/data layer)** — built, then **substantially reworked twice**:
@@ -87,7 +89,19 @@ The revalidateTags refactor is code-complete, typechecked, built, and tested (ba
 
 ### Next phase
 
-**Phase 6: per-content-type integration** — building the actual public pages (homepage, doctor profile, packages, recipes, reviews, videos, FAQ, campaigns, consultation form) that consume the data layer built in Phases 4–5. Nothing in `nutrition-client`'s `src/app/[locale]/**` currently renders real CMS data — every page is still the pre-rebuild static/MUI page or a stub. See §4 for the recommended order.
+**A full UI redesign**, driven by a brief and assets the user supplies directly. Phases 1–10 are complete.
+
+Every route under `src/app/[locale]/**` now renders real CMS data through the Phase 4–5 data layer, with one exception:
+
+**The one MUI holdout.** `/calculator` is the last page not rebuilt on the Tailwind/next-intl stack. It still imports `@mui/material`, is the only file in the repo using `sx` props, and is the sole remaining consumer of the `useI18n` shim (`src/hooks/useI18n.ts`). It is **deliberately retained**, not overlooked: rebuilding it is redesign work, not cleanup, and it was explicitly out of scope for Phase 10. It keeps four dependencies alive (`@mui/material`, `@emotion/react`, `@emotion/styled`, plus MUI's global `ThemeProvider`/`CssBaseline` wrapping every page from `src/app/[locale]/layout.tsx`).
+
+The removal chain, when the redesign reaches it, is strictly ordered:
+1. Rebuild `src/app/[locale]/calculator/page.tsx` in Tailwind (it also holds two untranslated English strings and hardcoded hex colors).
+2. Delete `src/hooks/useI18n.ts` and `src/app/[locale]/calculator/Calculate.tsx` (a hardcoded SVG illustration) — both die with it. Keep `src/constant/DictionaryFiles.ts`; `src/i18n/request.ts` keys its namespace map off it.
+3. Drop the `ThemeProvider` import/wrapper from `src/app/[locale]/layout.tsx`, then delete `src/utils/` entirely (`Provider/ThemeProvider.tsx` and `theme/theme.ts`, whose ~165 lines are almost entirely a hand-rolled MUI RTL shim that the app's logical-property convention already replaces).
+4. `npm uninstall @mui/material @emotion/react @emotion/styled`.
+
+Only after step 4 is the "zero MUI references" sweep genuinely satisfiable.
 
 ### Unfinished work (blocking or advisory)
 

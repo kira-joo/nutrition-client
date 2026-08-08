@@ -10,7 +10,8 @@
     "faq": "FAQ",
     "calculator": "Calculator",
     "openMenu": "Open menu",
-    "closeMenu": "Close menu"
+    "closeMenu": "Close menu",
+    "skipToContent": "Skip to main content"
   },
   "cta": {
     "bookConsultation": "Book a Consultation",
