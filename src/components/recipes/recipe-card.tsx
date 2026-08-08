@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ImageOff } from "lucide-react";
+import { Clock, ImageOff, Users as UsersIcon } from "lucide-react";
 import type { LocalizedRecipe } from "@/lib/domain/recipe";
 import { Link } from "@/i18n/navigation";
 import { appHref } from "@/constant/AppRoute.enum";
@@ -18,8 +18,20 @@ export interface RecipeCardProps {
  *
  * The whole card is one link rather than a card with a nested "read more"
  * link: one tab stop per recipe, and the entire target is clickable.
+ *
+ * Title and description each reserve a fixed two-line height (via
+ * `min-height: calc(var(--leading-*) * 2em)`, built from the existing
+ * line-height tokens rather than a guessed pixel value) so a one-line
+ * title and a three-line title produce identical card footprints — a
+ * `line-clamp` alone only caps the maximum, it doesn't reserve a minimum.
+ * The metadata row is real recipe fields only: `prepTime`/`cookTime`/
+ * `servings` are optional free-text bilingual strings on the real Recipe
+ * model (not numbers), rendered only when authored — there is no
+ * calories/difficulty/rating field to show instead.
  */
 export function RecipeCard({ recipe, priority = false }: RecipeCardProps) {
+  const metadata = [recipe.prepTime, recipe.cookTime, recipe.servings].filter(Boolean) as string[];
+
   return (
     <Link
       href={appHref.recipe(recipe._id)}
@@ -51,11 +63,44 @@ export function RecipeCard({ recipe, priority = false }: RecipeCardProps) {
         )}
       </div>
 
-      <div className="flex flex-1 flex-col gap-1.5 p-4">
-        <h3 className="min-w-0 break-words text-body-lg font-semibold text-text-primary transition-colors duration-fast group-hover:text-primary">
+      <div className="flex flex-1 flex-col gap-2 p-5">
+        <h3
+          className="min-w-0 break-words text-body-lg font-semibold text-text-primary transition-colors duration-fast group-hover:text-primary"
+          style={{ minHeight: "calc(var(--leading-body-lg) * 2em)" }}
+        >
           {recipe.title}
         </h3>
-        {recipe.description && <p className="line-clamp-2 min-w-0 break-words text-body-sm text-text-secondary">{recipe.description}</p>}
+        {recipe.description && (
+          <p
+            className="line-clamp-2 min-w-0 break-words text-body-sm text-text-secondary"
+            style={{ minHeight: "calc(var(--leading-body-sm) * 2em)" }}
+          >
+            {recipe.description}
+          </p>
+        )}
+
+        {metadata.length > 0 && (
+          <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-1 pt-3 text-caption text-text-muted">
+            {recipe.prepTime && (
+              <span className="flex items-center gap-1.5">
+                <Clock className="size-icon-sm" aria-hidden="true" />
+                {recipe.prepTime}
+              </span>
+            )}
+            {recipe.cookTime && (
+              <span className="flex items-center gap-1.5">
+                <Clock className="size-icon-sm" aria-hidden="true" />
+                {recipe.cookTime}
+              </span>
+            )}
+            {recipe.servings && (
+              <span className="flex items-center gap-1.5">
+                <UsersIcon className="size-icon-sm" aria-hidden="true" />
+                {recipe.servings}
+              </span>
+            )}
+          </div>
+        )}
       </div>
     </Link>
   );
