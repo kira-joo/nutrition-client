@@ -13,20 +13,13 @@ import type { LocalizedRecipe, Recipe, RecipesListParams } from "@/lib/domain/re
  * request on the already-cached data.
  */
 export async function getRecipes(locale: LocalizedLocale, params: RecipesListParams = {}): Promise<PaginatedResponse<LocalizedRecipe>> {
-  const { foodGroup, ...query } = params;
-
-  const raw: PaginatedResponse<Recipe> = await fetchPublic(listRecipesEndpoint, { query, tags: [CacheTag.RECIPES] });
-  const result = localize(raw, locale);
-
-  // No `foodGroups` query param exists server-side yet (a confirmed
-  // backend gap, not an oversight) — post-filter the already-fetched page.
-  // This can under-fill a page after filtering; see docs/architecture.md.
-  // Filtering here doesn't reorder anything the backend returned, and it
-  // matches on `_id`, which localization leaves untouched.
-  if (!foodGroup) return result;
-
-  const filtered = result.data.filter((recipe) => recipe.foodGroups.some((group) => group._id === foodGroup));
-  return { ...result, data: filtered, total: filtered.length };
+  // Every filter, `foodGroups` included, is now a real backend query param,
+  // so paging and totals stay correct. Food group used to be post-filtered
+  // here because the endpoint didn't support it; that workaround narrowed
+  // only the current page, so a filtered page could come back under-filled
+  // with a `total` that disagreed with the pager.
+  const raw: PaginatedResponse<Recipe> = await fetchPublic(listRecipesEndpoint, { query: params, tags: [CacheTag.RECIPES] });
+  return localize(raw, locale);
 }
 
 /** Returns `null` on a genuine 404 rather than throwing, so the calling page decides whether to call notFound() — a data function shouldn't make that navigation decision itself. */

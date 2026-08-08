@@ -40,15 +40,12 @@ export function toSearchParamsString(filters: Partial<RecipeFilters>): string {
 }
 
 /**
- * Maps URL state onto `RecipesListParams`. `foodGroup` stays singular and is
- * NOT a backend query param: the public list endpoint has no food-group
- * filter (see `RecipesListParams.foodGroup`), so `getRecipes` strips this key
- * off and post-filters the fetched page itself. Emitting a plural
- * `foodGroups` here instead silently broke the filter entirely — the key fell
- * through to the backend as an unrecognized query param while `getRecipes`
- * saw `foodGroup === undefined` and skipped post-filtering. Object spreads
- * are exempt from excess-property checking, so the compiler could not catch
- * it; keep this key spelled exactly as the type declares it.
+ * Maps URL state onto `RecipesListParams`. The URL keeps the singular
+ * `foodGroup` (one selectable group) while the backend's query param is
+ * `foodGroups`, so the rename happens here, once. Object spreads are exempt
+ * from excess-property checking, so a misspelled key here compiles fine and
+ * silently disables the filter — which is exactly what happened before. Keep
+ * these spelled exactly as `RecipesListParams` declares them.
  */
 export function toListParams(filters: RecipeFilters): RecipesListParams {
   return {
@@ -56,7 +53,7 @@ export function toListParams(filters: RecipeFilters): RecipesListParams {
     limit: RECIPES_PER_PAGE,
     ...(filters.search ? { search: filters.search } : {}),
     ...(filters.category ? { category: filters.category } : {}),
-    ...(filters.foodGroup ? { foodGroup: filters.foodGroup } : {}),
+    ...(filters.foodGroup ? { foodGroups: filters.foodGroup } : {}),
   };
 }
 

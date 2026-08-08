@@ -4,7 +4,7 @@ import { PublicApiRoute } from "./public-api-route";
 import type { Recipe } from "../src/lib/domain/recipe";
 
 export const listRecipesEndpoint: Endpoint<{
-  query: { page?: number; limit?: number; search?: string; category?: string };
+  query: { page?: number; limit?: number; search?: string; category?: string; foodGroups?: string };
   returnType: PaginatedResponse<Recipe>;
 }> = {
   url: PublicApiRoute.RECIPES,

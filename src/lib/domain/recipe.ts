@@ -26,14 +26,13 @@ export interface RecipesListParams {
   search?: string;
   category?: string;
   /**
-   * Client-side only — the public list endpoint has no `foodGroups` query
-   * param despite the field being filterable server-side (a confirmed
-   * backend gap, not an oversight here). Filtering by food group means
-   * post-filtering an already-fetched page, which can under-fill a page
-   * after filtering; see docs/architecture.md for the fast-follow this
-   * warrants.
+   * Forwarded to the backend, which filters server-side. This used to be a
+   * documented gap worked around by post-filtering an already-fetched page
+   * (which under-filled pages, since it could only ever narrow the current
+   * page of results); nutrition-staff has since added the query param, so
+   * the workaround is gone and pagination is correct again.
    */
-  foodGroup?: string;
+  foodGroups?: string;
 }
 
 /**
