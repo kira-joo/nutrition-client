@@ -10,7 +10,6 @@
 
 type HomeMessages = typeof import("@/i18n/locales/en/home.json");
 type RecipesMessages = typeof import("@/i18n/locales/en/recipes.json");
-type CalculatorMessages = typeof import("@/i18n/locales/en/calculator.json");
 type PackagesMessages = typeof import("@/i18n/locales/en/packages.json");
 type FaqMessages = typeof import("@/i18n/locales/en/faq.json");
 type LayoutMessages = typeof import("@/i18n/locales/en/layout.json");
@@ -22,7 +21,6 @@ type ConsultationMessages = typeof import("@/i18n/locales/en/consultation.json")
 interface Messages {
   home: HomeMessages;
   recipes: RecipesMessages;
-  calculator: CalculatorMessages;
   packages: PackagesMessages;
   faq: FaqMessages;
   layout: LayoutMessages;

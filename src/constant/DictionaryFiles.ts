@@ -15,7 +15,6 @@ export enum DictionaryFiles {
   Home = "home",
   Recipes = "recipes",
   Faq = "faq",
-  Calculator = "calculator",
   Packages = "packages",
   /** Global application shell copy (nav, footer, shared CTAs) — Phase 6. */
   Layout = "layout",

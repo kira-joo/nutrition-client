@@ -21,7 +21,6 @@ export const MORE_NAV_ITEMS = [
   { key: "reviews", href: AppRoute.Reviews },
   { key: "videos", href: AppRoute.Videos },
   { key: "faq", href: AppRoute.Faq },
-  { key: "calculator", href: AppRoute.Calculator },
 ] as const;
 
 export type NavItemKey = (typeof PRIMARY_NAV_ITEMS)[number]["key"] | (typeof MORE_NAV_ITEMS)[number]["key"];

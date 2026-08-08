@@ -13,7 +13,6 @@ import { DictionaryFiles } from "@/constant/DictionaryFiles";
 const NAMESPACE_FILES = {
   [DictionaryFiles.Home]: "home",
   [DictionaryFiles.Recipes]: "recipes",
-  [DictionaryFiles.Calculator]: "calculator",
   [DictionaryFiles.Packages]: "packages",
   [DictionaryFiles.Faq]: "faq",
   [DictionaryFiles.Layout]: "layout",

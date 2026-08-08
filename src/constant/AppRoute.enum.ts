@@ -15,7 +15,6 @@ export const AppRoute = {
   Reviews: "/reviews",
   Videos: "/videos",
   Faq: "/faq",
-  Calculator: "/calculator",
   Consultation: "/consultation",
 
   /**

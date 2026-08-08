@@ -14,7 +14,7 @@ import type { LocalizedLocale } from "@kira-joo/toolkit-common";
  * engines would be actively counterproductive regardless of whether their
  * removal has happened yet.
  */
-const FIXED_PATHS = ["/", "/doctor", "/packages", "/recipes", "/reviews", "/videos", "/faq", "/calculator", "/consultation"];
+const FIXED_PATHS = ["/", "/doctor", "/packages", "/recipes", "/reviews", "/videos", "/faq", "/consultation"];
 
 function urlFor(locale: string, path: string) {
   return `${SITE_ORIGIN}/${locale}${path === "/" ? "" : path}`;

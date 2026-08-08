@@ -16,14 +16,6 @@ import { buildAlternates, buildOgImage, resolveSeo } from "@/lib/seo/metadata";
 import { buildOrganizationJsonLd, JsonLd } from "@/lib/seo/json-ld";
 
 import { Providers } from "../providers";
-// TODO(tech-debt): ThemeProvider (MUI) stays wrapping `children` only —
-// never the new SiteHeader/SiteFooter above — purely so the pages that
-// haven't been individually rebuilt yet (everything except this shell)
-// don't lose MUI theme context mid-phase. Remove this import and the
-// remaining `@mui/material`/`@emotion/*` dependencies entirely once every
-// page under `[locale]/**` has been rebuilt in Tailwind (the final
-// cleanup sweep — see docs/HANDOFF.md §4, Phase 10).
-import ThemeProvider from "@/utils/Provider/ThemeProvider";
 import "../globals.css";
 
 // Single bilingual family for both locales — see docs/design-system.md
@@ -152,11 +144,9 @@ const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
         <NextIntlClientProvider messages={messages}>
           <Providers>
             <SiteHeader logo={siteSettings.logo} clinicName={clinicName} whatsappNumber={siteSettings.whatsappNumber} phone={siteSettings.phone} />
-            <ThemeProvider locale={locale}>
-              <main id="main-content" className="flex min-h-[80vh] flex-col pt-16 lg:pt-20">
-                {children}
-              </main>
-            </ThemeProvider>
+            <main id="main-content" className="flex min-h-[80vh] flex-col pt-16 lg:pt-20">
+              {children}
+            </main>
             <SiteFooter siteSettings={siteSettings} clinicName={clinicName} doctorTagline={doctorProfile?.tagline} />
           </Providers>
         </NextIntlClientProvider>
