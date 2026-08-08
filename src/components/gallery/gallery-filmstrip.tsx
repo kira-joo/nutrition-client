@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { AssetLightbox } from "@kira-joo/frontend-toolkit-tailwind/asset-viewer";
+import { SiteLightbox } from "@/components/gallery/site-lightbox";
 import { useLightbox } from "@/components/gallery/use-lightbox";
 
 export interface GalleryFilmstripItem {
@@ -19,9 +19,9 @@ export interface GalleryFilmstripProps {
 /**
  * Thumbnail rail + lightbox for a CMS image gallery.
  *
- * Drives `AssetLightbox` directly rather than the higher-level
- * `AssetViewer`; `useLightbox` owns the open index and the focus
- * restoration, and explains why (see that hook).
+ * Drives `SiteLightbox` directly rather than a higher-level gallery
+ * component; `useLightbox` owns the open index and the focus restoration,
+ * and explains why (see that hook).
  *
  * Thumbnails are locked to a single 4:3 ratio even though the sources vary
  * (verified live: 1.25, 1.78, 1.53, and two 1:1) — a rail only scrolls
@@ -59,7 +59,7 @@ export function GalleryFilmstrip({ items }: GalleryFilmstripProps) {
       </ul>
 
       {openIndex !== null && (
-        <AssetLightbox
+        <SiteLightbox
           images={items.map((item) => ({ src: item.src, alt: item.alt, width: item.width, height: item.height }))}
           index={openIndex}
           onIndexChange={setOpenIndex}

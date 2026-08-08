@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { Expand } from "lucide-react";
-import { AssetLightbox } from "@kira-joo/frontend-toolkit-tailwind/asset-viewer";
+import { SiteLightbox } from "@/components/gallery/site-lightbox";
 import { useLightbox } from "@/components/gallery/use-lightbox";
 
 export interface RecipeHeroImageProps {
@@ -51,7 +51,7 @@ export function RecipeHeroImage({ src, alt, width, height, placeholderUrl, viewL
       </button>
 
       {openIndex !== null && (
-        <AssetLightbox images={[{ src, alt, width, height }]} index={0} onIndexChange={setOpenIndex} onClose={close} />
+        <SiteLightbox images={[{ src, alt, width, height }]} index={0} onIndexChange={setOpenIndex} onClose={close} />
       )}
     </>
   );

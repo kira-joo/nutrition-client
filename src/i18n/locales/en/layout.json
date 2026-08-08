@@ -18,6 +18,12 @@
     "whatsapp": "Chat on WhatsApp",
     "call": "Call us"
   },
+  "lightbox": {
+    "label": "Image viewer",
+    "close": "Close",
+    "previous": "Previous image",
+    "next": "Next image"
+  },
   "footer": {
     "tagline": "Real, personalized nutrition care — not one-size-fits-all diet advice.",
     "quickLinks": "Quick links",

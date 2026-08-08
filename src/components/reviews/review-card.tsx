@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { ExternalLink, Expand, Star } from "lucide-react";
 import type { LocalizedReview } from "@/lib/domain/review";
-import { AssetLightbox } from "@kira-joo/frontend-toolkit-tailwind/asset-viewer";
+import { SiteLightbox } from "@/components/gallery/site-lightbox";
 import { useLightbox } from "@/components/gallery/use-lightbox";
 import { cn } from "@/lib/cn";
 
@@ -24,7 +24,7 @@ export interface ReviewCardProps {
  *
  * Before/after is a locked-width side-by-side split, never a slider — an
  * explicit earlier design decision. Both halves and a lone `image` open the
- * same shared lightbox (`useLightbox`/`AssetLightbox`, per
+ * same shared lightbox (`useLightbox`/`SiteLightbox`, per
  * docs/design-system.md) rather than a second image-viewing mechanism.
  */
 export function ReviewCard({ review, className }: ReviewCardProps) {
@@ -141,7 +141,7 @@ export function ReviewCard({ review, className }: ReviewCardProps) {
       </div>
 
       {openIndex !== null && media.length > 0 && (
-        <AssetLightbox images={media} index={openIndex} onIndexChange={setOpenIndex} onClose={close} />
+        <SiteLightbox images={media} index={openIndex} onIndexChange={setOpenIndex} onClose={close} />
       )}
     </article>
   );
