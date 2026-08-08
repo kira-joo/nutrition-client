@@ -113,9 +113,9 @@ const FALLBACK_SITE_SETTINGS: LocalizedSiteSettings = {
 async function getShellData(locale: Locale) {
   try {
     const [siteSettings, doctorProfile] = await Promise.all([getSiteSettings(locale), getDoctorProfile(locale)]);
-    return { siteSettings, clinicName: doctorProfile.name || "Dr. Omnia" };
+    return { siteSettings, doctorProfile, clinicName: doctorProfile.name || "Dr. Omnia" };
   } catch {
-    return { siteSettings: FALLBACK_SITE_SETTINGS, clinicName: "Dr. Omnia" };
+    return { siteSettings: FALLBACK_SITE_SETTINGS, doctorProfile: null, clinicName: "Dr. Omnia" };
   }
 }
 
@@ -127,7 +127,7 @@ const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
   }
 
   const messages = await getMessages();
-  const { siteSettings, clinicName } = await getShellData(locale);
+  const { siteSettings, doctorProfile, clinicName } = await getShellData(locale);
   const t = await getTranslations("layout");
 
   return (
@@ -157,7 +157,7 @@ const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
                 {children}
               </main>
             </ThemeProvider>
-            <SiteFooter siteSettings={siteSettings} clinicName={clinicName} />
+            <SiteFooter siteSettings={siteSettings} clinicName={clinicName} doctorTagline={doctorProfile?.tagline} />
           </Providers>
         </NextIntlClientProvider>
       </body>
