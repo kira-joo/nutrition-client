@@ -1,7 +1,8 @@
 "use client";
-import { useId } from "react";
+import { useEffect, useId, useState } from "react";
 import { useTranslations } from "next-intl";
 import { MessageCircle, Phone, X } from "lucide-react";
+import { Portal } from "@kira-joo/frontend-toolkit-tailwind/primitives";
 import { cn } from "@/lib/cn";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
@@ -36,15 +37,35 @@ export interface MobileNavDrawerProps {
  * can animate every subsequent close, not just opens. `ssr: false` is safe
  * because this never needs to exist in the initial server-rendered HTML —
  * by the time it mounts, it's already responding to a real click.
+ *
+ * Portalled to `document.body` — it used to render as a child of
+ * `<header>`, and the header gets `backdrop-blur` applied to it whenever
+ * `isScrolled || isMobileOpen` (see `SiteHeader`). `backdrop-filter`
+ * creates a containing block for `position: fixed` descendants, so this
+ * panel's `fixed inset-y-0` and the backdrop's `fixed inset-0` resolved
+ * against the header's own `h-16` box instead of the viewport: the panel's
+ * background/padding/shadow painted only 64px tall while its children
+ * overflowed below with nothing behind them, and the scrim dimmed only
+ * that same 64px strip — measured as the reported "transparent drawer".
+ * Portalling escapes that containing block entirely, exactly like
+ * `recipe-filter-sheet.tsx` already does for the same class of bug.
  */
 export function MobileNavDrawer({ id, isOpen, onClose, clinicName, whatsappNumber, phone }: MobileNavDrawerProps) {
   const t = useTranslations("layout");
-  const { panelRef, backdropRef } = useDrawerTransition({ isOpen });
-  useDialogA11y({ isOpen, onClose, containerRef: panelRef });
+  // Portal renders nothing until mounted (it defers to document.body via an
+  // effect), so the panel doesn't exist in the DOM on the first render pass
+  // — the transition has to wait for it, exactly as recipe-filter-sheet.tsx
+  // does, or useDrawerTransition's layout effect runs against a null ref,
+  // never sets the closed position, and the panel flashes open on mount.
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => setIsMounted(true), []);
+
+  const { panelRef, backdropRef } = useDrawerTransition({ isOpen, ready: isMounted });
+  useDialogA11y({ isOpen, onClose, containerRef: panelRef, ready: isMounted });
   const titleId = useId();
 
   return (
-    <>
+    <Portal>
       <div
         ref={backdropRef}
         onClick={onClose}
@@ -58,7 +79,7 @@ export function MobileNavDrawer({ id, isOpen, onClose, clinicName, whatsappNumbe
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="fixed inset-y-0 end-0 z-drawer flex w-[min(20rem,85vw)] flex-col bg-surface p-6 shadow-lg lg:hidden"
+        className="fixed inset-y-0 end-0 z-drawer flex h-dvh w-[min(22rem,85vw)] flex-col bg-surface p-8 shadow-lg sm:w-[min(26rem,80vw)] lg:hidden"
       >
         <div className="flex items-center justify-between">
           <span id={titleId} className="text-heading-3 font-bold text-primary">
@@ -69,7 +90,7 @@ export function MobileNavDrawer({ id, isOpen, onClose, clinicName, whatsappNumbe
           </button>
         </div>
 
-        <nav className="mt-8 flex flex-col gap-1">
+        <nav className="mt-8 flex flex-col gap-2">
           {[...PRIMARY_NAV_ITEMS, ...MORE_NAV_ITEMS].map((item) => (
             <Link
               key={item.key}
@@ -103,6 +124,6 @@ export function MobileNavDrawer({ id, isOpen, onClose, clinicName, whatsappNumbe
           </div>
         </div>
       </div>
-    </>
+    </Portal>
   );
 }

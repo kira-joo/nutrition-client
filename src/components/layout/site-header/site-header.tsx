@@ -121,7 +121,11 @@ export function SiteHeader({ logo, clinicName, whatsappNumber, phone }: SiteHead
                 priority
               />
             ) : (
-              <span className="text-heading-3 font-bold text-primary">{clinicName}</span>
+              // Falls back to the bundled current official mark rather than
+              // re-typesetting the brand name as text — see docs/theme.md's
+              // asset-audit note. `siteSettings.logo` is still the preferred
+              // source; this only covers the CMS-empty case.
+              <Image src="/images/TopLogo.png" alt={clinicName} width={2000} height={550} sizes="140px" className="h-8 w-auto object-contain lg:h-10" priority />
             )}
           </Link>
 

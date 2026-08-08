@@ -17,12 +17,14 @@ const FOCUSABLE_SELECTOR = [
 ].join(",");
 
 /**
- * Elements the drawer/dialog should suppress while open. `<main>` and
- * `<footer>` are the whole page behind the panel; the header's own bar is
- * left alone because the panel itself lives inside `<header>` (marking an
- * ancestor inert would suppress the panel too).
+ * Elements the drawer/dialog should suppress while open — the whole page
+ * behind the panel. `header` is included because every dialog that uses
+ * this hook is now portalled to `document.body` (never rendered as a
+ * descendant of the header), so inerting it can't self-suppress the panel;
+ * the guard just below (`!element.contains(container)`) still protects any
+ * future non-portalled caller that forgets to portal.
  */
-const BACKGROUND_SELECTOR = "main, footer";
+const BACKGROUND_SELECTOR = "main, footer, header";
 
 export interface UseDialogA11yOptions {
   isOpen: boolean;
@@ -30,6 +32,25 @@ export interface UseDialogA11yOptions {
   onClose: () => void;
   /** The dialog surface itself — focus is confined within this element. */
   containerRef: RefObject<HTMLElement | null>;
+  /**
+   * Set false while `containerRef` isn't attached to a real DOM node yet.
+   * A portalled dialog (this hook's only real-world caller) renders its
+   * content one tick after mount (`Portal` defers to `document.body` via
+   * its own `useMounted`), so on the render where `isOpen` first becomes
+   * `true`, `containerRef.current` is still `null` — this hook's effects
+   * see that, bail out via their own `!container` guard, and then never
+   * run again, because neither `isOpen` nor the `containerRef` object
+   * identity changes once the container actually mounts. That silently
+   * skipped focus-move, the background `inert`, the Escape/Tab listener,
+   * and the scroll lock on every affected dialog's first open — measured
+   * on the mobile nav drawer after portalling it (plan §B/§11): closing
+   * via the visible × button still worked (its effect depends on `isOpen`,
+   * which does change), but Escape did nothing and focus never left the
+   * trigger. Flipping this to `true` after mount re-runs both effects with
+   * the container actually present. Defaults to `true` for a
+   * non-portalled/synchronously-mounted container, which never had this gap.
+   */
+  ready?: boolean;
 }
 
 /**
@@ -57,7 +78,7 @@ export interface UseDialogA11yOptions {
  * together; until then, prefer duplicating a few lines over a premature
  * abstraction (plan §23, §24).
  */
-export function useDialogA11y({ isOpen, onClose, containerRef }: UseDialogA11yOptions) {
+export function useDialogA11y({ isOpen, onClose, containerRef, ready = true }: UseDialogA11yOptions) {
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
 
@@ -70,6 +91,7 @@ export function useDialogA11y({ isOpen, onClose, containerRef }: UseDialogA11yOp
    * doesn't type `inert`.
    */
   useEffect(() => {
+    if (!ready) return;
     const container = containerRef.current;
     if (!container) return;
 
@@ -80,10 +102,10 @@ export function useDialogA11y({ isOpen, onClose, containerRef }: UseDialogA11yOp
       container.setAttribute("inert", "");
       container.setAttribute("aria-hidden", "true");
     }
-  }, [isOpen, containerRef]);
+  }, [isOpen, containerRef, ready]);
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || !ready) return;
     const container = containerRef.current;
     if (!container) return;
 
@@ -204,5 +226,5 @@ export function useDialogA11y({ isOpen, onClose, containerRef }: UseDialogA11yOp
       background.forEach((element) => element.removeAttribute("inert"));
       trigger?.focus();
     };
-  }, [isOpen, containerRef]);
+  }, [isOpen, containerRef, ready]);
 }

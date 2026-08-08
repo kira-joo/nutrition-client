@@ -46,7 +46,12 @@ export function RecipeFilterSheet({
   useEffect(() => setIsMounted(true), []);
 
   const { panelRef, backdropRef } = useDrawerTransition({ isOpen, fromEdge: "end", ready: isMounted });
-  useDialogA11y({ isOpen, onClose: () => setIsOpen(false), containerRef: panelRef });
+  // `ready` fixes a real, previously-unnoticed gap: this sheet has been
+  // portalled since it was built, so `panelRef.current` was `null` on the
+  // render where `isOpen` first became `true`, and useDialogA11y's effects
+  // (focus move, background inert, Escape/Tab trap, scroll lock) silently
+  // never ran on open — see use-dialog-a11y.ts's `ready` doc comment.
+  useDialogA11y({ isOpen, onClose: () => setIsOpen(false), containerRef: panelRef, ready: isMounted });
 
   return (
     <>
