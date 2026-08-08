@@ -15,6 +15,10 @@
     "heading": "What clients are saying",
     "viewAll": "See all reviews"
   },
+  "doctorPreview": {
+    "label": "Meet your doctor",
+    "cta": "More about Dr. Omnia"
+  },
   "recipesPreview": {
     "label": "Recipes",
     "heading": "Eating well, made practical",

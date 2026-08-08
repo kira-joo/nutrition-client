@@ -8,10 +8,13 @@ export interface ProgramHighlightsSectionProps {
 }
 
 /**
- * A soft-paper panel (docs/design-system.md's first card family) holding
- * the highlight list — deliberately a different rhythm from the trust
- * band above it (borderless numbered list) so two consecutive sections
- * don't read as the same component reskinned.
+ * A wide feature-row grid — the third distinct shape alongside
+ * `TrustBandSection`'s borderless numbered list and `DoctorIntroSection`'s
+ * media split (docs/design-system.md's anti-repetition rule). Each
+ * highlight's real CMS text already carries its own leading checkmark
+ * (authored content, not markup — verified against live data), so a block
+ * here is plain text in a soft surface, not text plus a second redundant
+ * icon layered on top.
  */
 export function ProgramHighlightsSection({ doctorProfile }: ProgramHighlightsSectionProps) {
   const highlights = [...doctorProfile.programHighlights].sort((a, b) => a.order - b.order);
@@ -21,17 +24,21 @@ export function ProgramHighlightsSection({ doctorProfile }: ProgramHighlightsSec
 
   return (
     <Section>
-      <Container width="narrow">
-        <Reveal className="rounded-xl border-hairline border-border bg-surface p-6 shadow-md sm:p-10">
-          {heading && <h2 className="text-heading-1 font-bold text-text-primary">{heading}</h2>}
-          <ul className="mt-6 flex flex-col gap-4">
-            {highlights.map((highlight, index) => (
-              <li key={index} className="text-body-lg text-text-secondary">
-                {highlight.text}
-              </li>
-            ))}
-          </ul>
-        </Reveal>
+      <Container>
+        {heading && (
+          <Reveal>
+            <h2 className="max-w-narrow text-heading-1 font-bold text-text-primary">{heading}</h2>
+          </Reveal>
+        )}
+        <ul className="mt-heading-gap grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {highlights.map((highlight, index) => (
+            <li key={index}>
+              <Reveal delay={index * 0.06} className="h-full rounded-xl bg-surface p-6 shadow-sm">
+                <p className="text-body-lg text-text-primary">{highlight.text}</p>
+              </Reveal>
+            </li>
+          ))}
+        </ul>
       </Container>
     </Section>
   );

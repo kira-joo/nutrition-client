@@ -11,6 +11,7 @@ import { safe } from "@/lib/safe";
 import type { Locale } from "@/constant/Locale.enum";
 import { HeroSection } from "@/sections/home/hero-section";
 import { CampaignBannerSection } from "@/sections/home/campaign-banner-section";
+import { DoctorPreviewSection } from "@/sections/home/doctor-preview-section";
 import { TrustBandSection } from "@/sections/shared/trust-band-section";
 import { ProgramHighlightsSection } from "@/sections/shared/program-highlights-section";
 import { PackagesPreviewSection } from "@/sections/home/packages-preview-section";
@@ -53,6 +54,7 @@ export default async function HomePage({ params }: HomePageProps) {
       <CampaignBannerSection campaign={activeCampaign} />
       <TrustBandSection doctorProfile={doctorProfile} />
       <ProgramHighlightsSection doctorProfile={doctorProfile} />
+      <DoctorPreviewSection doctorProfile={doctorProfile} />
       {packagesPageSettings && packages && <PackagesPreviewSection packages={packages} packagesPageSettings={packagesPageSettings} />}
       {reviewsResult && <ReviewsPreviewSection reviews={reviewsResult.data} />}
       {recipesResult && <RecipesPreviewSection recipes={recipesResult.data} />}
