@@ -2,8 +2,8 @@ import { getTranslations } from "next-intl/server";
 import type { LocalizedRecipe } from "@/lib/domain/recipe";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
-import { Button } from "@/components/ui/button";
-import { Reveal, RevealGroup } from "@/components/ui/reveal";
+import { SectionHeader } from "@/components/ui/section-header";
+import { RevealGroup } from "@/components/ui/reveal";
 import { RecipeCard } from "@/components/recipes/recipe-card";
 import AppRoute from "@/constant/AppRoute.enum";
 
@@ -29,23 +29,19 @@ export async function RecipesPreviewSection({ recipes }: RecipesPreviewSectionPr
   return (
     <Section className="bg-primary-soft">
       <Container>
-        <Reveal className="flex flex-col items-start gap-2">
-          <p className="text-label font-semibold uppercase tracking-wide text-accent">{t("recipesPreview.label")}</p>
-          <h2 className="text-heading-1 font-bold text-text-primary">{t("recipesPreview.heading")}</h2>
-          <p className="max-w-narrow text-body text-text-secondary">{t("recipesPreview.body")}</p>
-        </Reveal>
+        <SectionHeader
+          eyebrow={t("recipesPreview.label")}
+          title={t("recipesPreview.heading")}
+          description={t("recipesPreview.body")}
+          actionLabel={t("recipesPreview.viewAll")}
+          actionHref={AppRoute.Recipes}
+        />
 
         <RevealGroup className="mt-heading-gap grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
           {featured.map((recipe) => (
             <RecipeCard key={recipe._id} recipe={recipe} />
           ))}
         </RevealGroup>
-
-        <div className="mt-10 text-center">
-          <Button href={AppRoute.Recipes} variant="ghost">
-            {t("recipesPreview.viewAll")}
-          </Button>
-        </div>
       </Container>
     </Section>
   );

@@ -1,10 +1,8 @@
 "use client";
 import { useId, useState, type ReactNode } from "react";
-import { Check, Diamond, Package as PackageIcon, Sparkles, Zap } from "lucide-react";
 import { cn } from "@/lib/cn";
 import type { LocalizedPackage, PackageDuration } from "@/lib/domain/package";
-import { Button } from "@/components/ui/button";
-import AppRoute from "@/constant/AppRoute.enum";
+import { PackageCard } from "@/components/packages/package-card";
 
 export interface PackagePricingBoardProps {
   /**
@@ -22,9 +20,6 @@ export interface PackagePricingBoardProps {
   /** Rendered by the server section; shares the desktop row with the duration control. */
   header: ReactNode;
 }
-
-/** CMS `icon` is a free-text field, so an unrecognized value falls back rather than rendering nothing. */
-const ICONS: Record<string, typeof Diamond> = { diamond: Diamond, package: PackageIcon, zap: Zap };
 
 export function PackagePricingBoard({ packages, durations, subscribeLabel, currencyCode, labels, header }: PackagePricingBoardProps) {
   const groupName = useId();
@@ -90,79 +85,11 @@ export function PackagePricingBoard({ packages, durations, subscribeLabel, curre
 
       {/* Rendered in the exact order the backend returned — no client-side sort, not even to lead with the popular tier. Column count follows the real count: 3+ packages earn a third column instead of forever capping at two and leaving a gap once the CMS grows past it. */}
       <ul className={cn("grid gap-8 sm:grid-cols-2 lg:col-span-2", packages.length >= 3 && "lg:grid-cols-3")}>
-        {packages.map((pkg) => {
-          const tier = pkg.pricingTiers[duration];
-          const Icon = ICONS[pkg.icon] ?? Sparkles;
-          const savings = tier ? tier.originalPrice - tier.price : 0;
-
-          return (
-            <li key={pkg._id} className="flex">
-              <article
-                className={cn(
-                  "flex w-full min-w-0 flex-col rounded-xl bg-surface p-8 transition-all duration-base ease-standard sm:p-10",
-                  // The popular tier is marked by a heavier ring, raised
-                  // elevation, an offset position, and the CMS's own tag
-                  // text — four redundant cues, none of which is a color
-                  // difference a low-vision or color-blind visitor has to
-                  // perceive. Both cards keep dark text on a light surface,
-                  // so contrast is identical either way.
-                  pkg.popular
-                    ? "ring-2 ring-primary shadow-raised lg:-translate-y-4"
-                    : "border-hairline border-border shadow-sm pointer:hover:-translate-y-1 pointer:hover:shadow-md"
-                )}
-              >
-                <div className="flex flex-wrap items-center gap-3">
-                  <span aria-hidden="true" className="flex size-icon-xl items-center justify-center rounded-full bg-primary-soft text-primary">
-                    <Icon className="size-icon-md" />
-                  </span>
-                  <h3 className="min-w-0 break-words text-heading-3 font-bold text-text-primary">{pkg.name}</h3>
-                  {pkg.tag && (
-                    <span className="rounded-full bg-primary px-3 py-1 text-caption font-semibold uppercase tracking-wide text-white">{pkg.tag}</span>
-                  )}
-                </div>
-
-                {pkg.followUpLabel && <p className="mt-3 break-words text-body-sm text-text-secondary">{pkg.followUpLabel}</p>}
-
-                {tier && (
-                  <div className="mt-6 border-t-hairline border-border pt-6">
-                    <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                      {tier.originalPrice > tier.price && (
-                        <span className="text-body-lg text-text-muted line-through">{tier.originalPrice}</span>
-                      )}
-                      <span className="text-stat font-extrabold text-text-primary">{tier.price}</span>
-                      {/* Currency comes from Site Settings, appended as its authored code with no Intl reformatting — locale-aware currency formatting would also convert the digits, and which numeral system Arabic pricing should use is an open product question (plan §29). */}
-                      <span className="text-body-sm font-semibold text-text-secondary">{currencyCode}</span>
-                    </div>
-                    {savings > 0 && (
-                      <p className="mt-2 text-body-sm font-semibold text-success">
-                        {labels.save} {savings} {currencyCode}
-                      </p>
-                    )}
-                  </div>
-                )}
-
-                {pkg.details.length > 0 && (
-                  <>
-                    <p className="mt-6 text-label font-semibold uppercase tracking-wide text-text-muted">{labels.includes}</p>
-                    <ul className="mt-3 flex flex-1 flex-col gap-2.5">
-                      {pkg.details.map((detail, index) => (
-                        <li key={index} className="flex items-start gap-2.5 text-body-sm text-text-secondary">
-                          <Check aria-hidden="true" className="mt-0.5 size-icon-sm shrink-0 text-primary" />
-                          <span className="min-w-0 break-words">{detail}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </>
-                )}
-
-                {/* Both CTAs are `primary`: this is a genuine choice between two packages, so giving the non-popular one a weaker button would push visitors rather than inform them. The popular tier is already distinguished four other ways. */}
-                <Button href={`${AppRoute.Consultation}?package=${pkg.key}`} size="lg" className="mt-8 w-full">
-                  {subscribeLabel}
-                </Button>
-              </article>
-            </li>
-          );
-        })}
+        {packages.map((pkg) => (
+          <li key={pkg._id} className="flex">
+            <PackageCard pkg={pkg} tier={pkg.pricingTiers[duration]} currencyCode={currencyCode} labels={labels} subscribeLabel={subscribeLabel} />
+          </li>
+        ))}
       </ul>
     </div>
   );

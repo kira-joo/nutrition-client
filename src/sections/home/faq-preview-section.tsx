@@ -2,7 +2,7 @@ import { getTranslations } from "next-intl/server";
 import type { LocalizedFaqSectionWithItems } from "@/lib/domain/faq";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
-import { Button } from "@/components/ui/button";
+import { SectionHeader } from "@/components/ui/section-header";
 import { Reveal } from "@/components/ui/reveal";
 import { Accordion } from "@/components/ui/accordion";
 import AppRoute from "@/constant/AppRoute.enum";
@@ -21,19 +21,11 @@ export async function FaqPreviewSection({ faqSections }: FaqPreviewSectionProps)
   return (
     <Section className="bg-surface-muted">
       <Container width="narrow">
-        <Reveal className="text-center">
-          <h2 className="text-heading-1 font-bold text-text-primary">{t("faq.heading")}</h2>
-        </Reveal>
+        <SectionHeader title={t("faq.heading")} actionLabel={t("faq.viewAll")} actionHref={AppRoute.Faq} />
 
         <Reveal className="mt-heading-gap rounded-xl bg-surface px-6 shadow-sm sm:px-8">
           <Accordion items={items.map((item) => ({ id: item._id, question: item.question, answer: item.answer }))} />
         </Reveal>
-
-        <div className="mt-8 text-center">
-          <Button href={AppRoute.Faq} variant="ghost">
-            {t("faq.viewAll")}
-          </Button>
-        </div>
       </Container>
     </Section>
   );

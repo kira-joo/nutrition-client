@@ -24,7 +24,13 @@ export interface VideoCardProps {
  * Matches `RecipeCard`'s content-box structure (fixed image ratio, a
  * two-line-reserved title, a two-line-clamped description) so the two
  * media grids read as the same design system rather than two unrelated
- * card components.
+ * card components — including always rendering the description's
+ * reserved-height container rather than collapsing it when a video has
+ * none: every video today has an empty `description` (the field only
+ * just shipped), so a `{video.description && ...}` conditional here
+ * would look fine now and then silently reproduce RecipeCard's exact
+ * "some rows are shorter than others" bug the moment staff fills in a
+ * description for only some videos.
  */
 export function VideoCard({ video, priority = false }: VideoCardProps) {
   const t = useTranslations("videos");
@@ -76,14 +82,12 @@ export function VideoCard({ video, priority = false }: VideoCardProps) {
           >
             {video.title}
           </h3>
-          {video.description && (
-            <p
-              className="line-clamp-2 min-w-0 break-words text-body-sm text-text-secondary"
-              style={{ minHeight: "calc(var(--leading-body-sm) * 2em)" }}
-            >
-              {video.description}
-            </p>
-          )}
+          <p
+            className="line-clamp-2 min-w-0 break-words text-body-sm text-text-secondary"
+            style={{ minHeight: "calc(var(--leading-body-sm) * 2em)" }}
+          >
+            {video.description}
+          </p>
         </div>
       </Link>
     </li>

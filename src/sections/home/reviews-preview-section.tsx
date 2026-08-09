@@ -1,10 +1,10 @@
-import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import type { LocalizedReview } from "@/lib/domain/review";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
-import { Button } from "@/components/ui/button";
-import { Reveal, RevealGroup } from "@/components/ui/reveal";
+import { SectionHeader } from "@/components/ui/section-header";
+import { RevealGroup } from "@/components/ui/reveal";
+import { ReviewCard } from "@/components/reviews/review-card";
 import AppRoute from "@/constant/AppRoute.enum";
 
 export interface ReviewsPreviewSectionProps {
@@ -12,13 +12,19 @@ export interface ReviewsPreviewSectionProps {
 }
 
 /**
- * One shared "quote" shell, four internal content recipes depending on
- * which fields are actually populated (text-only / image-only /
- * before-after split / text+thumbnail) — per docs/design-system.md, never
- * one canonical review shape assumed. Featured reviews are surfaced first
- * via a stable client-side sort of the already-fetched page (no server
- * `featured` filter param exists — see docs/HANDOFF.md's tech-debt table);
- * this never re-orders across pages, only within what was already fetched.
+ * Renders the exact same `ReviewCard` the `/reviews` page uses — there is
+ * no second, homepage-only review card. The previous inline version here
+ * was a visibly different design (different rounding/border treatment)
+ * and, because it was plain `<Image>` markup with no lightbox wiring, it
+ * silently dropped the before/after and single-photo click-to-enlarge
+ * feature entirely on the homepage. `className="mb-0 h-full"` neutralizes
+ * the card's own default masonry margin (`ReviewCard` is normally used
+ * inside a CSS-columns wall) for this grid layout instead — the same
+ * override `FeaturedReviewsCarousel` already uses for its own flex
+ * layout. Featured reviews are surfaced first via a stable client-side
+ * sort of the already-fetched page (no server `featured` filter param
+ * exists); this never re-orders across pages, only within what was
+ * already fetched.
  */
 export async function ReviewsPreviewSection({ reviews }: ReviewsPreviewSectionProps) {
   if (reviews.length === 0) return null;
@@ -28,45 +34,13 @@ export async function ReviewsPreviewSection({ reviews }: ReviewsPreviewSectionPr
   return (
     <Section>
       <Container>
-        <Reveal>
-          <h2 className="text-heading-1 font-bold text-text-primary">{t("reviews.heading")}</h2>
-        </Reveal>
+        <SectionHeader title={t("reviews.heading")} actionLabel={t("reviews.viewAll")} actionHref={AppRoute.Reviews} />
 
-        <RevealGroup className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <RevealGroup className="mt-heading-gap grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {ordered.map((review) => (
-            <div
-              key={review._id}
-              className="flex flex-col overflow-hidden rounded-xl border-hairline border-border bg-surface shadow-sm"
-            >
-              {review.beforeImage && review.afterImage ? (
-                <div className="grid grid-cols-2">
-                  <div className="relative aspect-square">
-                    <Image src={review.beforeImage.secureUrl} alt="" fill sizes="20rem" className="object-cover" />
-                  </div>
-                  <div className="relative aspect-square">
-                    <Image src={review.afterImage.secureUrl} alt="" fill sizes="20rem" className="object-cover" />
-                  </div>
-                </div>
-              ) : review.image ? (
-                <div className="relative aspect-[4/3]">
-                  <Image src={review.image.secureUrl} alt="" fill sizes="24rem" className="object-cover" />
-                </div>
-              ) : null}
-
-              <div className="flex flex-1 flex-col gap-3 p-5">
-                {review.content && <p className="text-body text-text-secondary">“{review.content}”</p>}
-                <span className="mt-auto text-body-sm font-semibold text-text-primary">{review.authorName}</span>
-                {review.authorLabel && <span className="text-caption text-text-muted">{review.authorLabel}</span>}
-              </div>
-            </div>
+            <ReviewCard key={review._id} review={review} className="mb-0 h-full" />
           ))}
         </RevealGroup>
-
-        <div className="mt-8 text-center">
-          <Button href={AppRoute.Reviews} variant="ghost">
-            {t("reviews.viewAll")}
-          </Button>
-        </div>
       </Container>
     </Section>
   );

@@ -2,20 +2,28 @@ import type { ButtonHTMLAttributes, ComponentPropsWithoutRef, ReactNode } from "
 import { cn } from "@/lib/cn";
 import { Link } from "@/i18n/navigation";
 
-export type ButtonVariant = "primary" | "secondary" | "ghost";
+export type ButtonVariant = "primary" | "secondary" | "soft" | "ghost";
 export type ButtonSize = "sm" | "md" | "lg";
 
 /**
- * The three variants map directly onto docs/design-system.md's card/surface
- * families: `primary` is the deep-filled emphasis treatment (so it always
- * pairs with the dual-layer `.focus-ring-on-dark` rule from globals.css —
- * the default `:focus-visible` ring alone doesn't read against a filled
- * `primary`/`accent` background), `secondary` is soft-paper, `ghost` is
- * borderless.
+ * `primary`/`secondary`/`ghost` map directly onto docs/design-system.md's
+ * card/surface families: `primary` is the deep-filled emphasis treatment
+ * (so it always pairs with the dual-layer `.focus-ring-on-dark` rule from
+ * globals.css — the default `:focus-visible` ring alone doesn't read
+ * against a filled `primary`/`accent` background), `secondary` is
+ * soft-paper, `ghost` is borderless. `soft` is a fourth, deliberately
+ * lighter-weight variant for a secondary navigational action that still
+ * needs real brand-color presence at rest (e.g. a section's "View all")
+ * — an opaque `bg-surface` pill (not `bg-primary-soft`) so it reads
+ * clearly against every section background this sits on, including the
+ * sections that themselves use `bg-primary-soft` or `bg-surface-muted`,
+ * with accent-colored text/border at rest and the same solid fill as
+ * `primary` on hover.
  */
 const VARIANT_CLASS: Record<ButtonVariant, string> = {
   primary: "bg-primary text-white hover:bg-primary-hover shadow-md hover:shadow-raised focus-ring-on-dark",
   secondary: "bg-surface text-text-primary border-hairline border-border hover:border-primary hover:text-primary",
+  soft: "bg-surface text-primary shadow-sm border-hairline border-primary/25 hover:bg-primary hover:text-white hover:border-primary hover:shadow-md",
   ghost: "bg-transparent text-text-primary hover:text-primary",
 };
 

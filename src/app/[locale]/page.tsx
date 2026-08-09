@@ -6,6 +6,7 @@ import {
   getPackagesPageSettings,
   getRecipes,
   getReviews,
+  getSiteSettings,
   getVideos,
 } from "@/lib/data";
 import { safe } from "@/lib/safe";
@@ -40,17 +41,22 @@ interface HomePageProps {
 export default async function HomePage({ params }: HomePageProps) {
   const { locale } = params;
 
-  const [doctorProfile, activeCampaign, packagesPageSettings, packages, reviewsResult, recipesResult, videosResult, faqSections] =
+  const [doctorProfile, activeCampaign, packagesPageSettings, packages, siteSettings, reviewsResult, recipesResult, videosResult, faqSections] =
     await Promise.all([
       getDoctorProfile(locale),
       safe(() => getActiveCampaign(locale)),
       safe(() => getPackagesPageSettings(locale)),
       safe(() => getPackages(locale)),
+      safe(() => getSiteSettings(locale)),
       safe(() => getReviews(locale, { limit: 6 })),
       safe(() => getRecipes(locale, { limit: 3 })),
       safe(() => getVideos(locale, { limit: 3 })),
       safe(() => getFaqSectionsWithItems(locale)),
     ]);
+  // Mirrors the shell's own fallback (layout.tsx) for the same reason: a
+  // packages-specific currency shouldn't be blocked on an unrelated
+  // Site Settings hiccup.
+  const currencyCode = siteSettings?.currencyCode ?? "EGP";
 
   return (
     <>
@@ -59,7 +65,9 @@ export default async function HomePage({ params }: HomePageProps) {
       <TrustBandSection doctorProfile={doctorProfile} />
       <ProgramHighlightsSection doctorProfile={doctorProfile} />
       <DoctorPreviewSection doctorProfile={doctorProfile} />
-      {packagesPageSettings && packages && <PackagesPreviewSection packages={packages} packagesPageSettings={packagesPageSettings} />}
+      {packagesPageSettings && packages && (
+        <PackagesPreviewSection packages={packages} packagesPageSettings={packagesPageSettings} currencyCode={currencyCode} />
+      )}
       {reviewsResult && <ReviewsPreviewSection reviews={reviewsResult.data} />}
       {recipesResult && <RecipesPreviewSection recipes={recipesResult.data} />}
       {videosResult && <VideosPreviewSection videos={videosResult.data} />}

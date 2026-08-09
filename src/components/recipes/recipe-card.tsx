@@ -24,14 +24,21 @@ export interface RecipeCardProps {
  * line-height tokens rather than a guessed pixel value) so a one-line
  * title and a three-line title produce identical card footprints — a
  * `line-clamp` alone only caps the maximum, it doesn't reserve a minimum.
+ *
  * The metadata row is real recipe fields only: `prepTime`/`cookTime`/
  * `servings` are optional free-text bilingual strings on the real Recipe
- * model (not numbers), rendered only when authored — there is no
- * calories/difficulty/rating field to show instead.
+ * model (not numbers), rendered only when authored. Critically, the row
+ * *container* is never conditional on whether any of the three exist —
+ * only its contents are. A recipe with zero authored metadata still gets
+ * the same reserved one-line-tall footer, just empty, via its own
+ * `min-height`. Making the whole row `{metadata.length > 0 && ...}` was
+ * the actual cause of cards ending up visibly different heights: within
+ * a single grid row, `align-items: stretch` equalizes cards against each
+ * other, but a *different* row further down — where none of that row's
+ * cards happen to have any metadata — has nothing forcing it to match an
+ * earlier row's height, so the grid as a whole reads as uneven.
  */
 export function RecipeCard({ recipe, priority = false }: RecipeCardProps) {
-  const metadata = [recipe.prepTime, recipe.cookTime, recipe.servings].filter(Boolean) as string[];
-
   return (
     <Link
       href={appHref.recipe(recipe._id)}
@@ -70,37 +77,34 @@ export function RecipeCard({ recipe, priority = false }: RecipeCardProps) {
         >
           {recipe.title}
         </h3>
-        {recipe.description && (
-          <p
-            className="line-clamp-2 min-w-0 break-words text-body-sm text-text-secondary"
-            style={{ minHeight: "calc(var(--leading-body-sm) * 2em)" }}
-          >
-            {recipe.description}
-          </p>
-        )}
+        <p
+          className="line-clamp-2 min-w-0 break-words text-body-sm text-text-secondary"
+          style={{ minHeight: "calc(var(--leading-body-sm) * 2em)" }}
+        >
+          {recipe.description}
+        </p>
 
-        {metadata.length > 0 && (
-          <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-1 pt-3 text-caption text-text-muted">
-            {recipe.prepTime && (
-              <span className="flex items-center gap-1.5">
-                <Clock className="size-icon-sm" aria-hidden="true" />
-                {recipe.prepTime}
-              </span>
-            )}
-            {recipe.cookTime && (
-              <span className="flex items-center gap-1.5">
-                <Clock className="size-icon-sm" aria-hidden="true" />
-                {recipe.cookTime}
-              </span>
-            )}
-            {recipe.servings && (
-              <span className="flex items-center gap-1.5">
-                <UsersIcon className="size-icon-sm" aria-hidden="true" />
-                {recipe.servings}
-              </span>
-            )}
-          </div>
-        )}
+        {/* Always rendered — see the component doc comment on why this can't be conditional on `metadata.length`. */}
+        <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-1 pt-3 text-caption text-text-muted" style={{ minHeight: "calc(var(--leading-caption) * 1em)" }}>
+          {recipe.prepTime && (
+            <span className="flex items-center gap-1.5">
+              <Clock className="size-icon-sm" aria-hidden="true" />
+              {recipe.prepTime}
+            </span>
+          )}
+          {recipe.cookTime && (
+            <span className="flex items-center gap-1.5">
+              <Clock className="size-icon-sm" aria-hidden="true" />
+              {recipe.cookTime}
+            </span>
+          )}
+          {recipe.servings && (
+            <span className="flex items-center gap-1.5">
+              <UsersIcon className="size-icon-sm" aria-hidden="true" />
+              {recipe.servings}
+            </span>
+          )}
+        </div>
       </div>
     </Link>
   );
