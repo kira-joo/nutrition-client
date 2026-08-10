@@ -1,0 +1,25 @@
+{
+  "heading": "Client stories",
+  "intro": "Real words from real clients — shared with their permission.",
+  "featured": {
+    "heading": "Featured stories"
+  },
+  "card": {
+    "before": "Before",
+    "after": "After",
+    "viewPhoto": "View photo",
+    "photoAlt": "Photo shared by {name}",
+    "featured": "Featured",
+    "sourceLink": "View original post",
+    "opensInNewTab": "opens in a new tab"
+  },
+  "empty": {
+    "noReviews": "No reviews have been published yet. Please check back soon."
+  },
+  "pagination": {
+    "label": "Review pages",
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page {page} of {total}"
+  }
+}

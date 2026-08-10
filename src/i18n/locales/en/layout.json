@@ -1,0 +1,51 @@
+{
+  "nav": {
+    "home": "Home",
+    "doctor": "Doctor",
+    "packages": "Packages",
+    "recipes": "Recipes",
+    "more": "More",
+    "reviews": "Reviews",
+    "videos": "Videos",
+    "faq": "FAQ",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "skipToContent": "Skip to main content"
+  },
+  "cta": {
+    "bookConsultation": "Book a Consultation",
+    "whatsapp": "Chat on WhatsApp",
+    "call": "Call us"
+  },
+  "lightbox": {
+    "label": "Image viewer",
+    "close": "Close",
+    "previous": "Previous image",
+    "next": "Next image"
+  },
+  "footer": {
+    "tagline": "Real, personalized nutrition care — not one-size-fits-all diet advice.",
+    "quickLinks": "Quick links",
+    "followUs": "Follow us",
+    "contact": "Contact",
+    "rightsReserved": "All rights reserved."
+  },
+  "language": {
+    "switchTo": "Switch language"
+  },
+  "closingCta": {
+    "heading": "Ready to start your journey?",
+    "body": "Book a consultation and get a nutrition plan built around your real life — not a generic template.",
+    "cta": "Book a Consultation"
+  },
+  "error": {
+    "heading": "This page didn't load",
+    "body": "Something went wrong on our side while loading this content. Trying again usually fixes it.",
+    "retry": "Try again"
+  },
+  "notFound": {
+    "heading": "We couldn't find that page",
+    "body": "The page may have been moved, or the link may be out of date.",
+    "backHome": "Back to home"
+  }
+}

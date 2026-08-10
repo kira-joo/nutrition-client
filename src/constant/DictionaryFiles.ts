@@ -1,13 +1,25 @@
+// Resources and 15-day-camp were removed — no locale JSON file ever backed
+// Resources and no call site ever requested it; 15-day-camp's own JSON was
+// deleted along with the page once it was replaced by the generic
+// CMS-driven /campaigns/[slug] system (Phase 6.7) — see docs/architecture.md
+// ("Localization & RTL"). SendMessage was removed the same way once its
+// page and the legacy /consultation page (which had been borrowing this
+// same namespace) were both replaced by the one real /consultation lead
+// form (Phase 6.8) with its own dedicated `Consultation` namespace below.
+// Videos got its own dedicated namespace once the real /videos rebuild
+// needed copy the Home namespace didn't carry (empty states, per-card
+// affordance labels, pagination) — it no longer borrows Home's strings.
+// Reviews followed the same path for its own rebuild (before/after labels,
+// source-link copy, empty state) — it no longer borrows Home's strings either.
 export enum DictionaryFiles {
   Home = "home",
-  AboutUs = "about-us",
-  SendMessage = "send-message",
   Recipes = "recipes",
-  Resources = "resources",
-  Reviews = "reviews",
-  Videos = "videos",
   Faq = "faq",
-  Calculator = "calculator",
   Packages = "packages",
-  _15DayCamp = "15-day-camp",
+  /** Global application shell copy (nav, footer, shared CTAs) — Phase 6. */
+  Layout = "layout",
+  Videos = "videos",
+  Reviews = "reviews",
+  Campaigns = "campaigns",
+  Consultation = "consultation",
 }

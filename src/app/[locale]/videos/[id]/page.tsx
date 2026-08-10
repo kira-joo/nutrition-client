@@ -1,48 +1,27 @@
-"use client";
-import { DictionaryFiles } from "@/constant/DictionaryFiles";
-import { videos } from "@/constant/videos";
-import useI18n from "@/hooks/useI18n";
-import { Box, Button, Typography } from "@mui/material";
 import { notFound } from "next/navigation";
+import type { Locale } from "@/constant/Locale.enum";
+import { getVideo } from "@/lib/data";
+import { VideoDetail } from "@/sections/videos/video-detail";
 
-const getVideoById = (id: string) => {
-  return videos.find((video) => video.id.toString() === id);
-};
+interface VideoDetailPageProps {
+  params: { locale: Locale; id: string };
+}
 
-const VideoPage = ({ params }: { params: { id: string } }) => {
-  const videoId = params.id;
-  const video = getVideoById(videoId);
+/** A Mongo ObjectId is exactly 24 hex characters; nothing else can identify a video — mirrors the recipe detail route's guard. */
+const OBJECT_ID = /^[0-9a-f]{24}$/i;
 
-  if (!video) {
-    notFound();
-  }
-  const { t } = useI18n(DictionaryFiles.Home);
-  return (
-    <Box sx={{ textAlign: "center" }}>
-      <Typography sx={{ color: "black", marginBottom: "20px" }} variant="h5">
-        {t(`videos.${video.id}` as keyof typeof t)}
-      </Typography>
-      <video
-        width="300"
-        height="600"
-        controls
-        style={{ borderRadius: "10px", objectFit: "cover" }}
-      >
-        <source src={video.source} type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
-      <Box sx={{ marginTop: "20px" }}>
-        <Button
-          variant="contained"
-          color="primary"
-          href={video.url}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {t("videos.GotoTheReel")}
-        </Button>
-      </Box>
-    </Box>
-  );
-};
-export default VideoPage;
+/**
+ * `getVideo` returns null for a genuine 404 rather than throwing, so an
+ * unknown or unpublished id becomes a real not-found page instead of the
+ * generic error boundary. A malformed id is rejected before the request
+ * (the API would otherwise answer with a 400, surfacing as a 500 "this
+ * page didn't load" for what is really just a mistyped URL).
+ */
+export default async function VideoDetailPage({ params }: VideoDetailPageProps) {
+  if (!OBJECT_ID.test(params.id)) notFound();
+
+  const video = await getVideo(params.id, params.locale);
+  if (!video) notFound();
+
+  return <VideoDetail video={video} />;
+}

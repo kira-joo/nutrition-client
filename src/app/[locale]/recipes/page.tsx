@@ -1,77 +1,48 @@
-"use client";
-import { DictionaryFiles } from "@/constant/DictionaryFiles";
-import { RecipesList } from "@/constant/recipes";
-import useI18n from "@/hooks/useI18n";
-import { Box, Container, Grid, Typography } from "@mui/material";
-import RecipesCard from "./RecipesCard";
+import { Suspense } from "react";
+import type { Locale } from "@/constant/Locale.enum";
+import { getRecipeCategories, getRecipeFoodGroups, getRecipes } from "@/lib/data";
+import { parseRecipeFilters, toListParams, type RecipeFilters } from "@/lib/recipes/recipe-search-params";
+import { RecipesBrowser } from "@/sections/recipes/recipes-browser";
+import { RecipesBrowserSkeleton } from "@/sections/recipes/recipes-browser-skeleton";
 
-const Recipes = () => {
-  const { t } = useI18n(DictionaryFiles.Recipes);
+interface RecipesPageProps {
+  params: { locale: Locale };
+  searchParams: Record<string, string | string[] | undefined>;
+}
 
-  const pageStyles = {
-    container: {
-      backgroundColor: "#ffffff",
-      color: "#333333",
-      minHeight: "100vh",
-      py: { xs: 4, md: 6 },
-      px: { xs: 2, sm: 3, lg: 4 },
-      background:
-        "linear-gradient(135deg, rgba(77, 182, 178, 0.05), rgba(255, 255, 255, 0.1))",
-    },
-    header: {
-      textAlign: "center",
-      mb: { xs: 4, md: 6 },
-    },
-    subtitle: {
-      fontSize: "0.875rem",
-      color: "#666666",
-      mb: 1,
-      letterSpacing: "0.05em",
-      fontWeight: 600,
-      textTransform: "uppercase",
-    },
-    title: {
-      fontSize: { xs: "2rem", sm: "2.5rem", lg: "3.5rem" },
-      fontWeight: 800,
-      lineHeight: 1.1,
-      mb: 2,
-      color: "#333333",
-    },
-    titleAccent: {
-      background: "linear-gradient(45deg, #4db6b2, #04715d)",
-      WebkitBackgroundClip: "text",
-      WebkitTextFillColor: "transparent",
-      backgroundClip: "text",
-    },
-  };
+/**
+ * The skeleton comes from a `Suspense` boundary here rather than a
+ * `loading.tsx`, deliberately. A segment's `loading.tsx` also covers its
+ * child routes, which made `/recipes/[id]` stream — and once the shell has
+ * been flushed, `notFound()` can no longer set a status, so a missing
+ * recipe returned HTTP 200 with not-found content. Measured both ways:
+ * with the loading file, 200; without it, 404. Keeping the boundary inside
+ * this page fixes the status and is better here anyway, because keying it
+ * on the filters replays the skeleton on every filter change instead of
+ * only the first load.
+ */
+export default function RecipesPage({ params, searchParams }: RecipesPageProps) {
+  const filters = parseRecipeFilters(searchParams);
 
   return (
-    <Box sx={pageStyles.container}>
-      <Container maxWidth="xl">
-        <Box sx={pageStyles.header}>
-          <Typography sx={pageStyles.subtitle}>{t("pageSubtitle")}</Typography>
-          <Typography variant="h1" sx={pageStyles.title}>
-            {t("pageTitle")}
-          </Typography>
-        </Box>
-
-        <Grid container spacing={3} justifyContent="center">
-          {RecipesList.map((resource, index) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-              <RecipesCard
-                image={resource.image}
-                title={resource.title}
-                description={resource.description}
-                category={resource.category}
-                foodGroup={resource.foodGroup}
-                id={resource.id}
-              />
-            </Grid>
-          ))}
-        </Grid>
-      </Container>
-    </Box>
+    <Suspense key={JSON.stringify(filters)} fallback={<RecipesBrowserSkeleton />}>
+      <RecipesResults locale={params.locale} filters={filters} />
+    </Suspense>
   );
-};
+}
 
-export default Recipes;
+/**
+ * The three requests run together: the taxonomies don't depend on the
+ * recipe query, so awaiting them in sequence would add a round trip for
+ * nothing. Filtering, searching and paging are all done by the backend —
+ * the full catalogue is never fetched to be narrowed in the browser.
+ */
+async function RecipesResults({ locale, filters }: { locale: Locale; filters: RecipeFilters }) {
+  const [result, categories, foodGroups] = await Promise.all([
+    getRecipes(locale, toListParams(filters)),
+    getRecipeCategories(locale),
+    getRecipeFoodGroups(locale),
+  ]);
+
+  return <RecipesBrowser result={result} categories={categories} foodGroups={foodGroups} filters={filters} />;
+}

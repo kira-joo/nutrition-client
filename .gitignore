@@ -12,6 +12,10 @@
 /.next/
 /out/
 
+# generated — regenerated automatically by predev/prebuild from
+# src/lib/animation/motion-tokens.json, never hand-edited or committed
+/src/app/_generated/
+
 # production
 /build
 
