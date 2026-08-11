@@ -15,6 +15,8 @@ export interface Review {
   image?: ImageAsset | null;
   beforeImage?: ImageAsset | null;
   afterImage?: ImageAsset | null;
+  /** Absent on reviews created before this field existed — render without stars rather than fabricating one. */
+  rating?: number;
   featured: boolean;
   sourceUrl?: string;
 }

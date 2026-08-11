@@ -60,6 +60,7 @@ const config: Config = {
           hover: "var(--color-accent-hover)",
           soft: "var(--color-accent-soft)",
         },
+        rating: "var(--color-rating)",
         success: "var(--color-success)",
         warning: "var(--color-warning)",
         destructive: "var(--color-destructive)",

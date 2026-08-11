@@ -53,6 +53,14 @@
   --color-accent-hover: #714a1a; /* white text on accent-hover: 7.8:1 */
   --color-accent-soft: #f8ecd9; /* text-primary on accent-soft: 13.8:1 */
 
+  /* A dedicated warm gold for star ratings — `accent` reads too muted/brown
+   * for this specific purpose (it was darkened for AA text contrast, not
+   * for looking like a gold star). This value is a genuine warm gold and
+   * still clears the graphical-object 3:1 threshold against `surface`
+   * (~5.0:1), so it stays legible as a decorative (`aria-hidden`) icon
+   * fill without falling back to a muted tone. */
+  --color-rating: #b45309; /* ~5.0:1 vs surface/background */
+
   /* Darkened from #2f9e5c — white text on the original only cleared ~3.4:1 (fails AA). */
   --color-success: #237a47; /* white text on success: 5.3:1 */
   /* Darkened from #b8791c — the original failed AA as both a text color and

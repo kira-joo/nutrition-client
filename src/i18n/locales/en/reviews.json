@@ -10,6 +10,7 @@
     "viewPhoto": "View photo",
     "photoAlt": "Photo shared by {name}",
     "featured": "Featured",
+    "ratingLabel": "{rating} out of 5",
     "sourceLink": "View original post",
     "opensInNewTab": "opens in a new tab"
   },

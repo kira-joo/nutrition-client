@@ -1,10 +1,11 @@
 "use client";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { ExternalLink, Expand, Star } from "lucide-react";
+import { ExternalLink, Expand, Star, UserRound } from "lucide-react";
 import type { LocalizedReview } from "@/lib/domain/review";
 import { SiteLightbox } from "@/components/gallery/site-lightbox";
 import { useLightbox } from "@/components/gallery/use-lightbox";
+import { StarRating } from "@/components/ui/star-rating";
 import { cn } from "@/lib/cn";
 
 export interface ReviewCardProps {
@@ -26,6 +27,18 @@ export interface ReviewCardProps {
  * explicit earlier design decision. Both halves and a lone `image` open the
  * same shared lightbox (`useLightbox`/`SiteLightbox`, per
  * docs/design-system.md) rather than a second image-viewing mechanism.
+ *
+ * `rating` is optional — reviews created before that field existed have
+ * none — so the header row's star display only renders once a real value
+ * is present; there's no fabricated default rating.
+ *
+ * The header row's two groups (identity, rating) are plain DOM order plus
+ * logical `justify-between` — no manual left/right positioning — so the
+ * identity group sits at the row's inline *start* and the rating at its
+ * inline *end* in both directions: physically left→right in `en`, and
+ * mirrored to right→left in `ar` by the inherited `dir="rtl"` alone,
+ * exactly like every other physical-position-free layout in this app (see
+ * `docs/design-system.md`'s RTL conventions).
  */
 export function ReviewCard({ review, className }: ReviewCardProps) {
   const t = useTranslations("reviews");
@@ -42,7 +55,27 @@ export function ReviewCard({ review, className }: ReviewCardProps) {
       : [];
 
   return (
-    <article className={cn("mb-6 flex break-inside-avoid flex-col overflow-hidden rounded-xl border-hairline border-border bg-surface shadow-sm", className)}>
+    <article
+      className={cn(
+        "mb-6 flex break-inside-avoid flex-col overflow-hidden rounded-xl border-hairline border-primary/25 bg-surface shadow-sm transition-shadow duration-base ease-standard hover:shadow-md",
+        className
+      )}
+    >
+      <div className="flex items-center justify-between gap-3 p-5 pb-0">
+        <div className="flex min-w-0 items-center gap-2">
+          <span
+            aria-hidden="true"
+            className="flex size-icon-xl shrink-0 items-center justify-center rounded-full bg-primary-soft text-primary"
+          >
+            <UserRound className="size-icon-md" />
+          </span>
+          <cite className="min-w-0 break-words text-body-lg font-bold not-italic text-text-primary">{review.authorName}</cite>
+        </div>
+        {review.rating ? (
+          <StarRating rating={review.rating} label={t("card.ratingLabel", { rating: review.rating })} className="shrink-0" />
+        ) : null}
+      </div>
+
       {hasBeforeAfter ? (
         <div className="grid grid-cols-2">
           <button
@@ -121,23 +154,24 @@ export function ReviewCard({ review, className }: ReviewCardProps) {
           </blockquote>
         )}
 
-        <footer className="mt-auto flex min-w-0 flex-col gap-1">
-          <cite className="min-w-0 break-words text-body-sm font-semibold not-italic text-text-primary">{review.authorName}</cite>
-          {review.authorLabel && <span className="min-w-0 break-words text-caption text-text-muted">{review.authorLabel}</span>}
-        </footer>
+        <footer className="mt-auto flex min-w-0 flex-col gap-2">
+          {review.authorLabel && (
+            <span className="min-w-0 break-words text-caption text-text-muted">{review.authorLabel}</span>
+          )}
 
-        {review.sourceUrl && (
-          <a
-            href={review.sourceUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex w-fit items-center gap-1.5 text-body-sm font-semibold text-primary hover:underline"
-          >
-            {t("card.sourceLink")}
-            <ExternalLink className="size-icon-sm shrink-0" aria-hidden="true" />
-            <span className="sr-only">({t("card.opensInNewTab")})</span>
-          </a>
-        )}
+          {review.sourceUrl && (
+            <a
+              href={review.sourceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex w-fit items-center gap-1.5 text-body-sm font-semibold text-primary hover:underline"
+            >
+              {t("card.sourceLink")}
+              <ExternalLink className="size-icon-sm shrink-0" aria-hidden="true" />
+              <span className="sr-only">({t("card.opensInNewTab")})</span>
+            </a>
+          )}
+        </footer>
       </div>
 
       {openIndex !== null && media.length > 0 && (

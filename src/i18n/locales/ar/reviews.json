@@ -10,6 +10,7 @@
     "viewPhoto": "عرض الصورة",
     "photoAlt": "صورة شاركتها {name}",
     "featured": "مميز",
+    "ratingLabel": "{rating} من 5",
     "sourceLink": "مشاهدة المنشور الأصلي",
     "opensInNewTab": "يفتح في نافذة جديدة"
   },
