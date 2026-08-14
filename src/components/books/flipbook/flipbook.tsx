@@ -118,7 +118,12 @@ export function Flipbook({ book }: { book: Book }) {
   }
 
   const spread = isMobile ? null : spreadFor(currentPageNumber);
-  const leftPageNumber = spread?.left ?? null;
+  // spread.right is always <= currentPageNumber <= pageCount, but spread.left
+  // (right + 1) can overflow pageCount when the book's total page count is
+  // even — the last page then has no pair and must render alone, exactly
+  // like the cover, rather than showing a folio for a page that was never
+  // generated.
+  const leftPageNumber = spread?.left !== null && spread?.left !== undefined && spread.left <= pageCount ? spread.left : null;
   const rightPageNumber = spread?.left === null || spread === null ? currentPageNumber : spread.right ?? currentPageNumber;
   const showTwoPages = !isMobile && leftPageNumber !== null;
 
