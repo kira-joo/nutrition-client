@@ -15,6 +15,7 @@ import { FlipbookControls } from "./flipbook-controls";
 import { TocDrawer } from "./toc-drawer";
 
 const TURN_DURATION_MS = 550;
+const REDUCED_MOTION_FADE_MS = 180;
 
 interface TurningLeaf {
   side: "left" | "right";
@@ -34,6 +35,12 @@ export function Flipbook({ book }: { book: Book }) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [turningLeaf, setTurningLeaf] = useState<TurningLeaf | null>(null);
   const turnTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Reduced motion never mounts the 3D turning-leaf overlay (see
+  // `onBeforeNavigate` below) — but the requirement is to replace the curl
+  // with "a simple/subtle page transition", not to remove the transition
+  // entirely, so a plain opacity cross-fade stands in for it here.
+  const [isFading, setIsFading] = useState(false);
+  const fadeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const currentPageNumberRef = useRef(1);
 
   const rootRef = useRef<HTMLDivElement>(null);
@@ -54,7 +61,12 @@ export function Flipbook({ book }: { book: Book }) {
     pageCount,
     getStepSize: () => (isMobile ? 1 : 2),
     onBeforeNavigate: (direction) => {
-      if (prefersReducedMotion()) return; // reduced motion: swap instantly, no leaf overlay at all
+      if (prefersReducedMotion()) {
+        setIsFading(true);
+        if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current);
+        fadeTimeoutRef.current = setTimeout(() => setIsFading(false), REDUCED_MOTION_FADE_MS);
+        return;
+      }
       const turningSide: "left" | "right" = direction === "forward" ? "left" : "right";
       const pageNumberOnTurningSide = isMobile ? currentPageNumberRef.current : spreadFor(currentPageNumberRef.current)[turningSide];
       const html = pageNumberOnTurningSide !== null ? pagesByNumber.get(pageNumberOnTurningSide)?.html ?? "" : "";
@@ -70,6 +82,7 @@ export function Flipbook({ book }: { book: Book }) {
   useEffect(
     () => () => {
       if (turnTimeoutRef.current) clearTimeout(turnTimeoutRef.current);
+      if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current);
     },
     []
   );
@@ -147,6 +160,8 @@ export function Flipbook({ book }: { book: Book }) {
               style={{
                 width: showTwoPages ? `${geometry.widthMm * 2}mm` : `${geometry.widthMm}mm`,
                 height: `${geometry.heightMm}mm`,
+                opacity: isFading ? 0.4 : 1,
+                transition: `opacity ${REDUCED_MOTION_FADE_MS}ms ease-in-out`,
                 perspective: "2400px",
               }}
             >
