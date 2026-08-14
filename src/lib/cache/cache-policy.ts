@@ -34,6 +34,8 @@ export const CACHE_POLICY: Record<StaticCacheTagValue, number> = {
   [CacheTag.VIDEOS]: DEFAULT_REVALIDATE_SECONDS,
   [CacheTag.FAQ]: DEFAULT_REVALIDATE_SECONDS,
   [CacheTag.CAMPAIGNS]: 300,
+  /** A published Edition's content is immutable once frozen — the only things that can change without a new Edition are visibility/showOnWebsite/PDF readiness, all covered by on-demand invalidation from nutrition-staff. Same 1-day fallback as every other stable-CMS-content tag, not a special case like CAMPAIGNS. */
+  [CacheTag.BOOKS]: DEFAULT_REVALIDATE_SECONDS,
 };
 
 /**

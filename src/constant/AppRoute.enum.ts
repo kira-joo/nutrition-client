@@ -32,6 +32,16 @@ export const AppRoute = {
    * list endpoint).
    */
   Campaign: "/campaigns/:slug",
+
+  /**
+   * Arabic-only (see docs on `buildArabicOnlyAlternates`/`middleware.ts`)
+   * — `Books` currently has no real listing page (Phase I), but the
+   * constant exists now so `/en/books` still has a defined target for
+   * the middleware's redirect, and so a future listing page needs no
+   * new route constant.
+   */
+  Books: "/books",
+  Book: "/books/:slug",
 } as const;
 
 export type AppRoute = (typeof AppRoute)[keyof typeof AppRoute];
@@ -45,6 +55,7 @@ export const appHref = {
   recipe: (id: string) => AppRoute.Recipe.replace(":id", id),
   video: (id: string) => AppRoute.Video.replace(":id", id),
   campaign: (slug: string) => AppRoute.Campaign.replace(":slug", slug),
+  book: (slug: string) => AppRoute.Book.replace(":slug", slug),
 } as const;
 
 export default AppRoute;

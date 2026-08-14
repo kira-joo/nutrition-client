@@ -48,6 +48,21 @@ export function buildAlternates(path: string, currentLocale: Locale): Metadata["
 }
 
 /**
+ * For Arabic-only routes (Books) — there is only one real URL, so unlike
+ * `buildAlternates`, this emits NO `languages` map at all: advertising an
+ * `en` alternate would point search engines at a URL that only 308s away,
+ * and self-canonicalizing a variant that structurally can't exist (Books
+ * has no English content, ever) is actively wrong, not merely redundant.
+ * `path` is locale-agnostic, always under `/ar` here since that's the
+ * only locale this route ever actually renders.
+ */
+export function buildArabicOnlyAlternates(path: string): Metadata["alternates"] {
+  return {
+    canonical: `${SITE_ORIGIN}/${Locale.AR}${path}`,
+  };
+}
+
+/**
  * Only ever built from a real `ImageAsset` — never a fabricated
  * placeholder. Returns `undefined` when there's no image, so callers spread
  * this into `openGraph.images` and Next simply omits the field rather than

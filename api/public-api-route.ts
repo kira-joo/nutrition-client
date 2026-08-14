@@ -43,6 +43,10 @@ export const PublicApiRoute = {
   FAQ: "/public/faq",
   /** `:slug` placeholder — see RECIPE_DETAIL. */
   CAMPAIGN_DETAIL: "/public/campaigns/:slug",
+  /** Detail only — nutrition-staff's Books listing is Phase I, not consumed yet. Never requires `visibility: PUBLIC`, so an UNLISTED book resolves here by direct slug while staying out of any future listing. */
+  BOOK_DETAIL: "/public/books/:slug",
+  /** nutrition-staff's route — called only by this app's own `/api/books/:slug/pdf` proxy Route Handler, never from the browser (same shape as CONSULTATION_REQUESTS_UPSTREAM). */
+  BOOK_PDF_UPSTREAM: "/public/books/:slug/pdf",
   /** Resolves `SiteSettings.activeCampaignId` server-side into the same public `Campaign` shape as CAMPAIGN_DETAIL — 404 if unset or not currently published/in-range. The client never resolves this id itself. */
   ACTIVE_CAMPAIGN: "/public/active-campaign",
   /** nutrition-staff's route — called only by this app's own consultation-requests proxy Route Handler, never from the browser. */
