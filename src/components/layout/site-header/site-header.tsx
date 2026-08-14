@@ -10,7 +10,7 @@ import { Link } from "@/i18n/navigation";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { LanguageToggle } from "./language-toggle";
-import { MORE_NAV_ITEMS, PRIMARY_NAV_ITEMS } from "./nav-items";
+import { ARABIC_ONLY_NAV_KEYS, MORE_NAV_ITEMS, PRIMARY_NAV_ITEMS } from "./nav-items";
 import AppRoute from "@/constant/AppRoute.enum";
 
 // Deferred until a visitor actually taps the hamburger button (see
@@ -153,6 +153,7 @@ export function SiteHeader({ logo, clinicName, whatsappNumber, phone }: SiteHead
                     <Link
                       key={item.key}
                       href={item.href}
+                      locale={ARABIC_ONLY_NAV_KEYS.has(item.key) ? "ar" : undefined}
                       onClick={() => setIsMoreOpen(false)}
                       className="block rounded-md px-3 py-2 text-body-sm text-text-primary transition-colors duration-fast hover:bg-surface-muted"
                     >

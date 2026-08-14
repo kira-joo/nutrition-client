@@ -43,7 +43,9 @@ export const PublicApiRoute = {
   FAQ: "/public/faq",
   /** `:slug` placeholder — see RECIPE_DETAIL. */
   CAMPAIGN_DETAIL: "/public/campaigns/:slug",
-  /** Detail only — nutrition-staff's Books listing is Phase I, not consumed yet. Never requires `visibility: PUBLIC`, so an UNLISTED book resolves here by direct slug while staying out of any future listing. */
+  /** The Phase I public listing — hardcodes `{status: PUBLISHED, visibility: PUBLIC, showOnWebsite: true}` server-side, never client-controllable (no `status`/`visibility` query param exists). */
+  BOOKS: "/public/books",
+  /** Detail — never requires `visibility: PUBLIC`, so an UNLISTED book resolves here by direct slug while staying out of the listing above. */
   BOOK_DETAIL: "/public/books/:slug",
   /** nutrition-staff's route — called only by this app's own `/api/books/:slug/pdf` proxy Route Handler, never from the browser (same shape as CONSULTATION_REQUESTS_UPSTREAM). */
   BOOK_PDF_UPSTREAM: "/public/books/:slug/pdf",

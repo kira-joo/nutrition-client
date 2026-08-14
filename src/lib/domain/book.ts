@@ -100,3 +100,29 @@ export interface Book {
   allowFlipbook: boolean;
   pdf: BookPdfAvailability;
 }
+
+/**
+ * The exact wire shape of `GET /public/books` (the listing, Phase I) —
+ * mirrors nutrition-staff's `PublicBookListItem` one-for-one. Deliberately
+ * NOT a subset of `Book`: `title`/`subtitle`/`coverImage` here come from
+ * the book's current Edition (frozen at publish time, consistent with the
+ * detail payload), while `shortDescription`/`category` are live Book
+ * fields — nutrition-staff's own handler mixes both sources for exactly
+ * this reason, so this type mixes them too rather than pretending it's a
+ * trimmed-down `Book`.
+ */
+export interface PublicBookListItem {
+  slug: string;
+  title: string;
+  subtitle?: string;
+  coverImage: ImageAsset | null;
+  shortDescription?: string;
+  category?: string;
+  editionCount: number;
+  lastPublishedAt?: string;
+}
+
+export interface BooksListParams {
+  page?: number;
+  limit?: number;
+}

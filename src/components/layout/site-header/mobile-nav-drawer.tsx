@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useDrawerTransition } from "@/lib/animation/use-drawer-transition";
 import { useDialogA11y } from "@/lib/a11y/use-dialog-a11y";
 import { LanguageToggle } from "./language-toggle";
-import { MORE_NAV_ITEMS, PRIMARY_NAV_ITEMS } from "./nav-items";
+import { ARABIC_ONLY_NAV_KEYS, MORE_NAV_ITEMS, PRIMARY_NAV_ITEMS } from "./nav-items";
 import AppRoute from "@/constant/AppRoute.enum";
 
 export interface MobileNavDrawerProps {
@@ -110,6 +110,7 @@ export function MobileNavDrawer({ id, isOpen, onClose, clinicName, whatsappNumbe
               <Link
                 key={item.key}
                 href={item.href}
+                locale={ARABIC_ONLY_NAV_KEYS.has(item.key) ? "ar" : undefined}
                 onClick={onClose}
                 className="rounded-md px-3 py-3 text-body-lg font-medium text-text-primary transition-colors duration-fast hover:bg-surface-muted"
               >

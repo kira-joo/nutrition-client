@@ -1,8 +1,18 @@
+import type { PaginatedResponse } from "@kira-joo/toolkit-common";
 import { nullableOnNotFound } from "@kira-joo/frontend-toolkit-core/server";
-import { getBookEndpoint } from "../../../api/books.endpoints";
+import { getBookEndpoint, listBooksEndpoint } from "../../../api/books.endpoints";
 import { fetchPublic } from "@/lib/api/fetch-public";
 import { CacheTag } from "@/lib/cache/cache-tags";
-import type { Book } from "@/lib/domain/book";
+import type { Book, BooksListParams, PublicBookListItem } from "@/lib/domain/book";
+
+/**
+ * No `localize()` here either (see `getBook`'s doc comment) — the listing
+ * endpoint hardcodes the public visibility rules server-side, so whatever
+ * comes back is already exactly what's safe to show.
+ */
+export async function getBooks(params: BooksListParams = {}): Promise<PaginatedResponse<PublicBookListItem>> {
+  return fetchPublic(listBooksEndpoint, { query: params, tags: [CacheTag.BOOKS] });
+}
 
 /**
  * No `localize()` — Books are Arabic-only from the architecture up (see

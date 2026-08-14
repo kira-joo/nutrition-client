@@ -4,7 +4,7 @@ import { Mail, Phone } from "lucide-react";
 import type { LocalizedSiteSettings } from "@/lib/domain/site-settings";
 import { Link } from "@/i18n/navigation";
 import { Container } from "@/components/ui/container";
-import { PRIMARY_NAV_ITEMS, MORE_NAV_ITEMS } from "@/components/layout/site-header/nav-items";
+import { ARABIC_ONLY_NAV_KEYS, PRIMARY_NAV_ITEMS, MORE_NAV_ITEMS } from "@/components/layout/site-header/nav-items";
 import { SocialIcon } from "./social-icon";
 
 export interface SiteFooterProps {
@@ -84,7 +84,12 @@ export async function SiteFooter({ siteSettings, clinicName, doctorTagline }: Si
             <h3 className="text-label font-semibold uppercase tracking-wide text-on-inverse-muted">{t("nav.more")}</h3>
             <nav className="mt-4 flex flex-col gap-2.5">
               {MORE_NAV_ITEMS.map((item) => (
-                <Link key={item.key} href={item.href} className="text-body-sm text-on-inverse-muted transition-colors duration-fast hover:text-on-inverse">
+                <Link
+                  key={item.key}
+                  href={item.href}
+                  locale={ARABIC_ONLY_NAV_KEYS.has(item.key) ? "ar" : undefined}
+                  className="text-body-sm text-on-inverse-muted transition-colors duration-fast hover:text-on-inverse"
+                >
                   {t(`nav.${item.key}`)}
                 </Link>
               ))}
