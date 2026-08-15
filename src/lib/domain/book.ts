@@ -82,7 +82,9 @@ export interface Book {
 
   title: string;
   subtitle?: string;
+  coverMode: "generated" | "uploaded";
   coverImage: ImageAsset | null;
+  backCoverMode: "generated" | "uploaded";
   backCoverImage: ImageAsset | null;
   resolvedSettings: PublicResolvedIdentity;
   content: {

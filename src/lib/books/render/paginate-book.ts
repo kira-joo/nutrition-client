@@ -1,10 +1,10 @@
 import type { Book } from "@/lib/domain/book";
+import { chapterLabel } from "@/lib/books/chapter-label";
 import { renderBlockToFragment } from "./render-block";
 import {
   renderAboutDoctorPage,
   renderBackCoverPage,
   renderChapterOpenerFragment,
-  renderCopyrightPage,
   renderCoverPage,
   renderReferencesPage,
   renderTitlePage,
@@ -36,9 +36,14 @@ export async function paginateBook(book: Book): Promise<PaginationResult> {
   await ensureFontsReady();
 
   const stream = await buildStream(book);
+  // `chapterNumber` (and therefore `label`) is computed BEFORE filtering
+  // to `includeInToc` — a chapter excluded from the TOC still occupies
+  // its place in the book, so filtering first would shift every later
+  // chapter's printed ordinal off by however many were skipped.
   const tocChapters = book.content.chapters
-    .filter((chapter) => chapter.includeInToc)
-    .map((chapter) => ({ chapterId: chapter.id, title: chapter.tocTitle || chapter.title }));
+    .map((chapter, index) => ({ chapter, chapterNumber: index + 1 }))
+    .filter(({ chapter }) => chapter.includeInToc)
+    .map(({ chapter, chapterNumber }) => ({ chapterId: chapter.id, title: chapter.tocTitle || chapter.title, label: chapterLabel(chapterNumber) }));
 
   const { widthPx: contentBoxWidthPx, heightPx: contentBoxHeightPx } = measureContentBoxPx();
 
@@ -80,19 +85,35 @@ export async function paginateBook(book: Book): Promise<PaginationResult> {
   function layoutPass(tocPageCount: number): { pages: { kind: string; chapterId: string | null; html: string; numbered: boolean }[]; chapterPageIndex: Map<string, number> } {
     const pages: { kind: string; chapterId: string | null; html: string; numbered: boolean }[] = [];
     const chapterPageIndex = new Map<string, number>();
-    let currentPageHtml = "";
+    // Placed fragments for the page currently being packed — kept as
+    // parts (not one flat string) specifically so a PAGE_FOOTER_NOTE
+    // fragment can retract already-placed fragments back onto the queue
+    // when they don't leave enough room for it (see the "pageFooterNote"
+    // branch below). `fragment` is null only for a singlePage's one-shot
+    // HTML, which never needs to be retracted individually.
+    let currentPageParts: { fragment: StreamFragment | null; html: string }[] = [];
     let usedHeight = 0;
     let currentKind = "content";
     let currentChapterId: string | null = null;
 
+    function currentPageHtml(): string {
+      return currentPageParts.map((part) => part.html).join("");
+    }
     function openPage(kind: string, chapterId: string | null): void {
-      currentPageHtml = "";
+      currentPageParts = [];
       usedHeight = 0;
       currentKind = kind;
       currentChapterId = chapterId;
     }
-    function closePage(numbered: boolean): void {
-      pages.push({ kind: currentKind, chapterId: currentChapterId, html: currentPageHtml, numbered });
+    // `footerNoteHtml`, when given, wraps everything placed so far in
+    // `.book-page-content-body` (a flex:1 box) followed by the footer —
+    // the same "flex:1 above absorbs the space, non-growing sibling below
+    // sits flush at the bottom" trick `renderTitlePage`'s legal footer
+    // uses, reserving the footer's real height instead of overlaying it.
+    function closePage(numbered: boolean, footerNoteHtml?: string): void {
+      const bodyHtml = currentPageHtml();
+      const html = footerNoteHtml !== undefined ? `<div class="book-page-content-body">${bodyHtml}</div>${footerNoteHtml}` : bodyHtml;
+      pages.push({ kind: currentKind, chapterId: currentChapterId, html, numbered });
     }
 
     openPage("content", null);
@@ -110,49 +131,89 @@ export async function paginateBook(book: Book): Promise<PaginationResult> {
       const html = fragment.html;
 
       if (fragment.kind === "pageBreakMarker") {
-        if (currentPageHtml !== "") {
+        if (currentPageParts.length > 0) {
           closePage(true);
           openPage("content", currentChapterId);
         }
         continue;
       }
 
-      const forceNewPage = fragment.forceNewPage && currentPageHtml !== "";
+      const forceNewPage = fragment.forceNewPage && currentPageParts.length > 0;
       if (forceNewPage) {
         closePage(true);
-        openPage(fragment.kind === "chapterOpener" ? "chapterOpener" : "content", fragment.chapterId ?? currentChapterId);
+        openPage("content", fragment.chapterId ?? currentChapterId);
       }
 
       if (fragment.kind === "singlePage") {
-        if (currentPageHtml !== "") closePage(fragment.numbered !== false);
+        if (currentPageParts.length > 0) closePage(fragment.numbered !== false);
         openPage(fragment.pageKind ?? "content", fragment.chapterId ?? null);
-        currentPageHtml = html;
+        currentPageParts = [{ fragment: null, html }];
         closePage(fragment.numbered !== false);
+        // Chapter openers are singlePage fragments (a dedicated full-bleed
+        // page), not their own FragmentKind — recorded right after the
+        // page housing them was actually pushed, so `pages.length - 1` is
+        // exactly that page's index regardless of whether a prior close
+        // just happened above.
+        if (fragment.pageKind === "chapterOpener" && fragment.chapterId) {
+          chapterPageIndex.set(fragment.chapterId, pages.length - 1);
+        }
         openPage("content", currentChapterId);
         continue;
       }
 
       if (fragment.kind === "tocReservation") {
         for (let i = 0; i < tocPageCount; i++) {
-          if (currentPageHtml !== "") closePage(true);
+          if (currentPageParts.length > 0) closePage(true);
           openPage("toc", null);
-          currentPageHtml = "";
           closePage(true);
           openPage("content", currentChapterId);
         }
         continue;
       }
 
-      if (fragment.chapterId && fragment.kind === "chapterOpener") {
-        chapterPageIndex.set(fragment.chapterId, pages.length);
+      if (fragment.kind === "pageFooterNote") {
+        // Degenerate case: the note itself doesn't fit even alone on an
+        // empty page (its own region, not the whole book budget, since a
+        // real footer note is a sentence or two — this is a safety valve,
+        // not the common path). Only then does it get a dedicated page,
+        // per spec: never silently create one otherwise.
+        const aloneHeight = measureHtmlHeight(`<div class="book-page-content-body"></div>${html}`);
+        if (aloneHeight > contentBoxHeightPx) {
+          if (currentPageParts.length > 0) {
+            closePage(true);
+            openPage("content", currentChapterId);
+          }
+          closePage(true, html);
+          warnings.push({ code: "FOOTER_NOTE_OVERFLOW", message: `Fragment ${fragment.id} does not fit within a single page even alone — it will overflow visually.` });
+          openPage("content", currentChapterId);
+          continue;
+        }
+
+        // Retract already-placed fragments from THIS page, one at a
+        // time, until what remains plus the footer note fits together —
+        // moving preceding content to the next page rather than letting
+        // it overlap the footer. `aloneHeight <= contentBoxHeightPx` (just
+        // checked above) guarantees this loop always terminates with a
+        // fit once the page is empty.
+        const requeued: StreamFragment[] = [];
+        while (currentPageParts.length > 0 && measureHtmlHeight(`<div class="book-page-content-body">${currentPageHtml()}</div>${html}`) > contentBoxHeightPx) {
+          const popped = currentPageParts.pop()!;
+          if (popped.fragment) requeued.unshift(popped.fragment);
+        }
+        queue.unshift(...requeued);
+
+        if (fragment.chapterId) currentChapterId = fragment.chapterId;
+        closePage(true, html);
+        openPage("content", currentChapterId);
+        continue;
       }
 
       const remaining = contentBoxHeightPx - usedHeight;
       const height = measureHtmlHeight(html);
 
       if (height <= remaining) {
-        currentPageHtml += html;
-        usedHeight = measureHtmlHeight(currentPageHtml);
+        currentPageParts.push({ fragment, html });
+        usedHeight = measureHtmlHeight(currentPageHtml());
         if (fragment.chapterId) currentChapterId = fragment.chapterId;
         continue;
       }
@@ -169,18 +230,18 @@ export async function paginateBook(book: Book): Promise<PaginationResult> {
 
       if (fragment.degrade === "scaleImage") {
         const scaled = scaleImageFragmentToFit(html, contentBoxHeightPx);
-        currentPageHtml += scaled;
-        usedHeight = measureHtmlHeight(currentPageHtml);
+        currentPageParts.push({ fragment, html: scaled });
+        usedHeight = measureHtmlHeight(currentPageHtml());
         warnings.push({ code: "IMAGE_SCALED_DOWN", message: `An oversized image/caption was scaled down to fit the page (fragment ${fragment.id}).` });
         continue;
       }
 
       warnings.push({ code: "BLOCK_OVERFLOW", message: `Fragment ${fragment.id} does not fit on an empty page and could not be split or scaled — it will overflow visually.` });
-      currentPageHtml += html;
-      usedHeight = measureHtmlHeight(currentPageHtml);
+      currentPageParts.push({ fragment, html });
+      usedHeight = measureHtmlHeight(currentPageHtml());
     }
 
-    if (currentPageHtml !== "" || pages.length === 0) closePage(true);
+    if (currentPageParts.length > 0 || pages.length === 0) closePage(true);
     return { pages, chapterPageIndex };
   }
 
@@ -207,7 +268,12 @@ export async function paginateBook(book: Book): Promise<PaginationResult> {
   const toc: TocResultEntry[] = tocChapters.map((chapter) => {
     const pageIndex = lastResult.chapterPageIndex.get(chapter.chapterId);
     const pageNumber = pageIndex !== undefined ? numberedPages[pageIndex]?.pageNumber ?? null : null;
-    return { chapterId: chapter.chapterId, title: chapter.title, pageNumber };
+    // 1-based physical position — `pageIndex` is the 0-based array index
+    // `chapterPageIndex` already stores. Never derive this from `pageNumber`
+    // (the printed folio): any unnumbered page before this chapter (cover,
+    // title, copyright) shifts the two axes apart.
+    const sequencePosition = pageIndex !== undefined ? pageIndex + 1 : null;
+    return { chapterId: chapter.chapterId, title: chapter.title, label: chapter.label, pageNumber, sequencePosition };
   });
 
   fillTocPages(numberedPages, toc);
@@ -266,18 +332,28 @@ async function buildStream(book: Book): Promise<StreamFragment[]> {
   const stream: StreamFragment[] = [];
   const identity = book.resolvedSettings;
 
-  stream.push(renderCoverPage({ title: book.title, subtitle: book.subtitle, coverImage: book.coverImage }, identity));
+  // Front matter order: cover, title (the copyright/disclaimer legal footer
+  // is baked into the title page itself, pinned to its bottom — see
+  // `renderTitlePage`), "About the Book" (frontMatter.aboutBook — real
+  // published content, not a hardcoded page), "About the Doctor" (the
+  // template's own fixed identity page), "Introduction" (frontMatter.introduction),
+  // THEN the reserved TOC pages, then chapters. Hand-synced with
+  // nutrition-staff's identical ordering.
+  stream.push(renderCoverPage({ title: book.title, subtitle: book.subtitle, coverMode: book.coverMode, coverImage: book.coverImage }, identity));
   stream.push(renderTitlePage({ title: book.title, subtitle: book.subtitle }, identity));
-  stream.push(renderCopyrightPage(identity));
+
+  for (const block of book.content.frontMatter.aboutBook.blocks) stream.push(await renderBlockToFragment(block, book.content.references, book.recipeSnapshots));
+
   const aboutDoctor = renderAboutDoctorPage(identity);
   if (aboutDoctor) stream.push(aboutDoctor);
 
-  for (const block of book.content.frontMatter.aboutBook.blocks) stream.push(await renderBlockToFragment(block, book.content.references, book.recipeSnapshots));
-  stream.push(renderTocReservationFragment());
   for (const block of book.content.frontMatter.introduction.blocks) stream.push(await renderBlockToFragment(block, book.content.references, book.recipeSnapshots));
 
-  for (const chapter of book.content.chapters) {
-    stream.push(renderChapterOpenerFragment(chapter));
+  stream.push(renderTocReservationFragment());
+
+  for (let index = 0; index < book.content.chapters.length; index++) {
+    const chapter = book.content.chapters[index];
+    stream.push(renderChapterOpenerFragment(chapter, index + 1, identity));
     for (const block of chapter.blocks) {
       const fragment = await renderBlockToFragment(block, book.content.references, book.recipeSnapshots);
       stream.push({ ...fragment, chapterId: chapter.id });
@@ -286,7 +362,7 @@ async function buildStream(book: Book): Promise<StreamFragment[]> {
 
   for (const block of book.content.backMatter.conclusion.blocks) stream.push(await renderBlockToFragment(block, book.content.references, book.recipeSnapshots));
   for (const fragment of renderReferencesPage(book.content.references)) stream.push(fragment);
-  stream.push(await renderBackCoverPage(identity));
+  stream.push(await renderBackCoverPage({ backCoverMode: book.backCoverMode, backCoverImage: book.backCoverImage }, identity));
 
   return stream;
 }

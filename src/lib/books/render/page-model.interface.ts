@@ -6,7 +6,7 @@
  * field (rather than being removed outright) so the shape stays visibly
  * comparable to the server-side one; it is always `false`.
  */
-export type FragmentKind = "content" | "chapterOpener" | "singlePage" | "tocReservation" | "pageBreakMarker";
+export type FragmentKind = "content" | "chapterOpener" | "singlePage" | "tocReservation" | "pageBreakMarker" | "pageFooterNote";
 
 export interface StreamFragment {
   id: string;
@@ -39,7 +39,12 @@ export interface PaginationWarning {
 export interface TocResultEntry {
   chapterId: string;
   title: string;
+  /** The chapter's dynamic ordinal ("الفصل الأول", ...) — see `chapter-label.ts`. */
+  label: string;
+  /** The PRINTED folio shown in the TOC's own "...... 12" leader — null for a chapter landing on an unnumbered page (shouldn't normally happen, but stays honest if it does). Never use this for navigation; see `sequencePosition`. */
   pageNumber: number | null;
+  /** The chapter opener's 1-based PHYSICAL position in `PaginationResult.pages` — always defined once resolved, unlike `pageNumber`. This is what the reader must navigate to; front-matter pages (cover, title, copyright) are real, reachable physical pages with no printed folio, so folio number and physical position are NOT the same axis once any unnumbered page exists before a chapter. */
+  sequencePosition: number | null;
 }
 
 export interface PaginationResult {

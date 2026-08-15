@@ -2,25 +2,27 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const STORAGE_KEY = "book-reader-sound-enabled";
+const SOUND_URL = "/sounds/flip.mp3";
 
 /**
- * A short, procedurally-generated "page turn" sound via the Web Audio
- * API — deliberately not an MP3/asset file: no licensed page-turn sound
- * ships in this repo, and fabricating one would mean committing binary
- * audio content with no real source. A brief filtered noise burst reads
- * as a paper-like "riffle" and costs zero bytes of asset weight.
- *
- * Defaults OFF (per the approved plan) and persists the visitor's choice
- * across sessions; always paired with a mute control, never autoplaying
- * without one.
+ * The mute toggle exists, persists, and works. `play()` uses a real,
+ * user-provided page-turn recording (`public/sounds/flip.mp3`) — an
+ * earlier version synthesized a noise burst via the Web Audio API, which
+ * read as artificial rather than paper-like and was explicitly rejected;
+ * sourcing a replacement from the internet was also off the table, so
+ * sound shipped disabled-by-default until this real asset was supplied.
+ * One `Audio` element is reused across calls (rather than constructing a
+ * new one per turn) and rewound before each play so rapid page turns
+ * retrigger cleanly instead of queuing.
  */
 export function usePageTurnSound() {
   const [enabled, setEnabled] = useState(false);
-  const audioContextRef = useRef<AudioContext | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     const stored = window.localStorage.getItem(STORAGE_KEY);
     if (stored === "true") setEnabled(true);
+    audioRef.current = new Audio(SOUND_URL);
   }, []);
 
   const toggle = useCallback(() => {
@@ -32,39 +34,13 @@ export function usePageTurnSound() {
   }, []);
 
   const play = useCallback(() => {
-    if (!enabled) return;
-    try {
-      const AudioContextClass = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-      if (!AudioContextClass) return;
-      const context = audioContextRef.current ?? new AudioContextClass();
-      audioContextRef.current = context;
-
-      const duration = 0.18;
-      const bufferSize = Math.floor(context.sampleRate * duration);
-      const buffer = context.createBuffer(1, bufferSize, context.sampleRate);
-      const data = buffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) {
-        const decay = 1 - i / bufferSize;
-        data[i] = (Math.random() * 2 - 1) * decay * decay;
-      }
-
-      const source = context.createBufferSource();
-      source.buffer = buffer;
-
-      const filter = context.createBiquadFilter();
-      filter.type = "highpass";
-      filter.frequency.value = 800;
-
-      const gain = context.createGain();
-      gain.gain.value = 0.25;
-
-      source.connect(filter);
-      filter.connect(gain);
-      gain.connect(context.destination);
-      source.start();
-    } catch {
-      // Audio is a non-essential enhancement — never let a synthesis failure affect navigation.
-    }
+    const audio = audioRef.current;
+    if (!audio || !enabled) return;
+    audio.currentTime = 0;
+    // Browsers reject play() when it can't start immediately (e.g. no
+    // prior user gesture yet on this page) — that's a normal, silent
+    // no-op here, not an error worth surfacing.
+    void audio.play().catch(() => {});
   }, [enabled]);
 
   return { enabled, toggle, play };

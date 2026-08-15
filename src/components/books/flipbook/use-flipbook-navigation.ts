@@ -5,8 +5,20 @@ export interface UseFlipbookNavigationOptions {
   pageCount: number;
   /** 2 on desktop (a "next" advances a whole spread), 1 on mobile (single page at a time). Read fresh on every navigation call, not baked into the hook's own state. */
   getStepSize: () => number;
-  /** Called with the direction just before the page number actually changes, so the caller can trigger the page-turn animation before the new content swaps in. */
-  onBeforeNavigate?: (direction: "forward" | "backward") => void;
+  /**
+   * Called BEFORE `currentPageNumber` changes — the hook's own state does
+   * NOT update until the caller invokes the supplied `commit` callback.
+   * This is what lets the caller show a real page-turn animation with the
+   * OLD spread still on screen and only swap to the new one once the
+   * animation finishes, instead of the state (and therefore the visible
+   * content) changing immediately while an unrelated overlay animates on
+   * top of it — the latter is what reads as "a PDF viewer switching
+   * pages", not a book turning.
+   *
+   * If reduced motion (or any other caller) wants an instant transition,
+   * call `commit()` synchronously inside this callback.
+   */
+  onBeforeNavigate?: (direction: "forward" | "backward", targetPageNumber: number, commit: () => void) => void;
 }
 
 const SWIPE_THRESHOLD_PX = 50;
@@ -14,7 +26,10 @@ const SWIPE_THRESHOLD_PX = 50;
 /**
  * Owns the single source of navigation truth — `currentPageNumber` — and
  * every input method that changes it (keyboard, swipe, programmatic
- * jumps) funnels through the same `goNext`/`goPrev`/`goToPage`.
+ * jumps) funnels through the same `goNext`/`goPrev`/`goToPage`. A
+ * navigation already in flight (its `commit` not yet called) blocks
+ * further input, matching a real book: you can't start a second page
+ * turn while the first is still mid-air.
  *
  * RTL-mirrored by design, per the approved physical model
  * (`book-physical-order.ts`): "forward" (deeper into the book, higher
@@ -24,35 +39,40 @@ const SWIPE_THRESHOLD_PX = 50;
 export function useFlipbookNavigation({ pageCount, getStepSize, onBeforeNavigate }: UseFlipbookNavigationOptions) {
   const [currentPageNumber, setCurrentPageNumber] = useState(1);
   const touchStartX = useRef<number | null>(null);
+  const isNavigatingRef = useRef(false);
+
+  const navigateTo = useCallback(
+    (target: number, direction: "forward" | "backward") => {
+      if (target === currentPageNumber || isNavigatingRef.current) return;
+      if (!onBeforeNavigate) {
+        setCurrentPageNumber(target);
+        return;
+      }
+      isNavigatingRef.current = true;
+      onBeforeNavigate(direction, target, () => {
+        isNavigatingRef.current = false;
+        setCurrentPageNumber(target);
+      });
+    },
+    [currentPageNumber, onBeforeNavigate]
+  );
 
   const goNext = useCallback(() => {
-    setCurrentPageNumber((current) => {
-      const target = Math.min(pageCount, current + getStepSize());
-      if (target === current) return current;
-      onBeforeNavigate?.("forward");
-      return target;
-    });
-  }, [pageCount, getStepSize, onBeforeNavigate]);
+    const target = Math.min(pageCount, currentPageNumber + getStepSize());
+    navigateTo(target, "forward");
+  }, [pageCount, currentPageNumber, getStepSize, navigateTo]);
 
   const goPrev = useCallback(() => {
-    setCurrentPageNumber((current) => {
-      const target = Math.max(1, current - getStepSize());
-      if (target === current) return current;
-      onBeforeNavigate?.("backward");
-      return target;
-    });
-  }, [getStepSize, onBeforeNavigate]);
+    const target = Math.max(1, currentPageNumber - getStepSize());
+    navigateTo(target, "backward");
+  }, [currentPageNumber, getStepSize, navigateTo]);
 
   const goToPage = useCallback(
     (pageNumber: number) => {
       const target = Math.min(pageCount, Math.max(1, Math.round(pageNumber)));
-      setCurrentPageNumber((current) => {
-        if (target === current) return current;
-        onBeforeNavigate?.(target > current ? "forward" : "backward");
-        return target;
-      });
+      navigateTo(target, target > currentPageNumber ? "forward" : "backward");
     },
-    [pageCount, onBeforeNavigate]
+    [pageCount, currentPageNumber, navigateTo]
   );
 
   const goToStart = useCallback(() => goToPage(1), [goToPage]);

@@ -87,6 +87,8 @@ export async function renderBlockToFragment(block: BookBlock, references: BookRe
       const reference = references.find((candidate) => candidate.id === block.referenceId);
       return { ...base, kind: "content", html: reference ? `<p class="book-citation-inline">[${escapeHtml(reference.label)}]</p>` : "", atomic: true, splittable: false };
     }
+    case BookBlockType.PAGE_FOOTER_NOTE:
+      return { ...base, kind: "pageFooterNote", html: `<div class="book-page-footer-note">${renderRichTextToHtml(block.richText)}</div>`, atomic: true, splittable: false };
     default:
       return { ...base, kind: "content", html: "", atomic: true, splittable: false };
   }
