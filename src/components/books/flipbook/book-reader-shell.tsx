@@ -1,20 +1,20 @@
 "use client";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import type { Book } from "@/lib/domain/book";
 import { resolveGeometry } from "@/lib/books/render/geometry";
 import { buildTemplateCss, CHAPTER_BACKGROUND_URL } from "@/lib/books/render/template-css";
 import { prefersReducedMotion } from "@/lib/animation/gsap-config";
 import { useRouter, usePathname } from "@/i18n/navigation";
-import type { RenderedPage } from "@/lib/books/render/page-model.interface";
+import type { FlipEngineHandle } from "@/lib/books/flip-engine/flip-engine.interface";
+import { StPageFlipEngine } from "@/lib/books/flip-engine/stpageflip-engine";
 import { useBookPagination } from "./use-book-pagination";
-import { useFlipbookNavigation } from "./use-flipbook-navigation";
+import { useReaderKeyboard } from "./use-reader-keyboard";
 import { useIsMobileViewport } from "./use-is-mobile-viewport";
 import { usePageTurnSound } from "./use-page-turn-sound";
 import { useShareBook } from "./use-share-book";
 import { useBookBookmark } from "./use-book-bookmark";
 import { useBookSearch } from "./use-book-search";
-import { Flipbook, REDUCED_MOTION_FADE_MS, resolveSlotPageNumber, TURN_DURATION_MS, type TurningLeaf } from "./flipbook";
 import { FlipbookControls } from "./flipbook-controls";
 import { BookImmersiveChrome } from "./book-immersive-chrome";
 import { BookTocPanel } from "./book-toc-panel";
@@ -24,14 +24,21 @@ const IMMERSIVE_MAX_SCALE = 3;
 const IMMERSIVE_FILL_RATIO = 0.94;
 
 /**
- * The reader's one stateful "brain" — pagination, navigation, zoom,
- * sound, the turning-leaf animation, and Book Interaction (immersive)
- * mode all live here. Renders the SAME `Flipbook` surface component
- * twice depending on `isImmersive` (never both at once, so they safely
- * share nothing but the props they're each given fresh); everything that
- * makes the two feel different — chrome, scale, background — is a
- * rendering decision made here and in `book-immersive-chrome.tsx`, never
- * a second copy of the pagination/navigation logic.
+ * The reader's one stateful "brain": pagination, Book Interaction
+ * (immersive) mode, TOC, search, bookmark, share, and sound all live
+ * here. The physical page turn itself lives entirely behind
+ * `FlipEngineProps`/`FlipEngineHandle` — this file never imports
+ * `page-flip`, and swapping the engine would not touch it.
+ *
+ * Division of authority over the current page: while mounted, the engine
+ * owns it (it is mid-animation half the time), and `currentPageNumber`
+ * here is a read-only MIRROR the engine pushes through `onPageChange`,
+ * used only to render chrome. Nothing writes to it directly; every move
+ * goes through `engineRef`, so there is exactly one navigation path.
+ *
+ * The same engine is rendered once for page mode and once inside
+ * `book-immersive-chrome.tsx` — never both at once, so they safely share
+ * one ref.
  */
 export function BookReaderShell({ book }: { book: Book }) {
   const { pagination, status } = useBookPagination(book);
@@ -45,114 +52,50 @@ export function BookReaderShell({ book }: { book: Book }) {
 
   const [tocOpen, setTocOpen] = useState(false);
   const [zoom, setZoom] = useState(1);
-  // "auto" follows the viewport (the existing behavior); an explicit
-  // choice overrides it regardless of width — the toolbar's spread/single
-  // toggle exists specifically so a visitor can choose single-page on a
-  // wide screen or (width permitting) force a spread on a narrower one,
-  // per the approved redesign brief. `isMobile` stays the name used
-  // everywhere downstream (Flipbook, navigation step size) since its real
-  // meaning has always been "show one page, not two" — not literally
-  // "is this a phone".
+  // "auto" follows the viewport; an explicit choice overrides it
+  // regardless of width — the toolbar's spread/single toggle exists
+  // specifically so a visitor can choose single-page on a wide screen or
+  // (width permitting) force a spread on a narrower one. `isMobile` stays
+  // the name used downstream since its real meaning has always been "show
+  // one page, not two", not literally "is this a phone".
   const [viewModeOverride, setViewModeOverride] = useState<"auto" | "single" | "spread">("auto");
   const isMobile = viewModeOverride === "auto" ? isNarrowViewport : viewModeOverride === "single";
-  const [turningLeaf, setTurningLeaf] = useState<TurningLeaf | null>(null);
-  const turnTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  // Reduced motion never mounts the 3D turning-leaf overlay (see
-  // `onBeforeNavigate` below) — but the requirement is to replace the curl
-  // with "a simple/subtle page transition", not to remove the transition
-  // entirely, so a plain opacity cross-fade stands in for it here.
-  const [isFading, setIsFading] = useState(false);
-  const fadeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const currentPageNumberRef = useRef(1);
+
+  // Resolved once on the client (React re-runs lazy initializers during
+  // hydration, so the server's conservative `true` never sticks). It
+  // feeds behaviour, never markup, so it cannot cause a mismatch.
+  const [reducedMotion] = useState(() => prefersReducedMotion());
+
+  const [currentPageNumber, setCurrentPageNumber] = useState(1);
+  const engineRef = useRef<FlipEngineHandle>(null);
 
   const pageCount = pagination?.pageCount ?? 0;
 
-  // Only used by `onBeforeNavigate` below to compute the turning leaf's
-  // content — `Flipbook` derives its own copy of this from the
-  // `pagination` prop it's given, since it needs it for rendering
-  // regardless of which mode mounted it. Keyed by 1-based PHYSICAL
-  // position, never by the printed folio (`page.pageNumber`, `null` for
-  // the cover/title/copyright pages) — see the identical fix and doc
-  // comment on `Flipbook`'s own `pagesByNumber`.
-  const pagesByNumber = useMemo(() => {
-    const map = new Map<number, RenderedPage>();
-    pagination?.pages.forEach((page, index) => {
-      map.set(index + 1, page);
-    });
-    return map;
-  }, [pagination]);
+  const goNext = useCallback(() => engineRef.current?.next(), []);
+  const goPrev = useCallback(() => engineRef.current?.prev(), []);
+  const goToPage = useCallback((pageNumber: number) => engineRef.current?.goTo(pageNumber), []);
+  const goToStart = useCallback(() => engineRef.current?.goTo(1), []);
+  const goToEnd = useCallback(() => engineRef.current?.goTo(pageCount), [pageCount]);
 
-  const { currentPageNumber, goNext, goPrev, goToPage, goToStart, goToEnd, onTouchStart, onTouchEnd } = useFlipbookNavigation({
-    pageCount,
-    getStepSize: () => (isMobile ? 1 : 2),
-    onBeforeNavigate: (direction, targetPageNumber, commit) => {
-      // Reduced motion is the only path allowed to skip the physical 3D
-      // turn entirely — but the hook's `currentPageNumber` still only
-      // changes when `commit()` runs, so this branch must call it too
-      // (from inside the same timeout that clears the fade) or reduced-
-      // motion visitors would never actually advance a page.
-      if (prefersReducedMotion()) {
-        setIsFading(true);
-        if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current);
-        fadeTimeoutRef.current = setTimeout(() => {
-          setIsFading(false);
-          commit();
-        }, REDUCED_MOTION_FADE_MS);
-        return;
-      }
-      // On mobile only one physical slot is ever on screen (`Flipbook`
-      // always renders it as the "right" `PageSlot`, per
-      // `showTwoPages`/single-page layout) — the turning leaf must land in
-      // that same slot regardless of direction, unlike the desktop spread
-      // where "forward" turns the left leaf and "backward" turns the right.
-      const turningSide: "left" | "right" = isMobile ? "right" : direction === "forward" ? "left" : "right";
-      // `fromHtml` is what that slot shows right now (the leaf's front
-      // face); `toHtml` is what that SAME slot will show once `commit()`
-      // fires (the leaf's back face) — resolved via the shared helper so
-      // the cover-alone spread and an unpaired final page are handled
-      // identically to how `Flipbook` itself decides what's on screen.
-      const fromPageNumber = resolveSlotPageNumber(currentPageNumberRef.current, turningSide, pageCount, isMobile);
-      const toPageNumber = resolveSlotPageNumber(targetPageNumber, turningSide, pageCount, isMobile);
-      const fromHtml = fromPageNumber !== null ? pagesByNumber.get(fromPageNumber)?.html ?? "" : "";
-      const toHtml = toPageNumber !== null ? pagesByNumber.get(toPageNumber)?.html ?? "" : "";
-      // Fired before `setTurningLeaf` — `setTurningLeaf` only schedules a
-      // React state update, it doesn't paint synchronously, so calling
-      // `sound.play()` first guarantees nothing about React's own
-      // scheduling can push the audio call later than the visual one.
-      // Audited per explicit report of the sound feeling delayed: this was
-      // already the very first thing done once a turn is confirmed to
-      // start (no earlier hook, no rAF, no setTimeout before it) — if a
-      // perceptible lag remains, it isn't this call site; see
-      // `use-page-turn-sound.ts` for the leading-silence note instead.
-      sound.play();
-      setTurningLeaf({ side: turningSide, fromHtml, toHtml });
-      if (turnTimeoutRef.current) clearTimeout(turnTimeoutRef.current);
-      // The visible spread only swaps to the destination AFTER the turn
-      // finishes animating — `setTurningLeaf(null)` and `commit()` fire
-      // together so the static page slots (already showing the old
-      // content) and the just-committed `currentPageNumber` change in the
-      // same tick, with no frame where either is stale relative to the
-      // other.
-      turnTimeoutRef.current = setTimeout(() => {
-        setTurningLeaf(null);
-        commit();
-      }, TURN_DURATION_MS);
-    },
-  });
-
-  currentPageNumberRef.current = currentPageNumber;
+  useReaderKeyboard({ onNext: goNext, onPrev: goPrev, onGoToStart: goToStart, onGoToEnd: goToEnd });
 
   const bookmark = useBookBookmark(book.slug, currentPageNumber);
 
-  useEffect(
-    () => () => {
-      if (turnTimeoutRef.current) clearTimeout(turnTimeoutRef.current);
-      if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current);
+  // A TOC row rendered inside a page's own HTML. The engine reports the
+  // chapter id and nothing more; resolving it to a physical page is the
+  // reader's job, using the same `sequencePosition` the TOC panel uses —
+  // never `pageNumber` (the printed folio), which is `null` for the
+  // cover/title/copyright pages and diverges from physical position as
+  // soon as any unnumbered page precedes a chapter.
+  const handleTocLinkClick = useCallback(
+    (chapterId: string) => {
+      const entry = pagination?.toc.find((item) => item.chapterId === chapterId);
+      if (entry?.sequencePosition) goToPage(entry.sequencePosition);
     },
-    []
+    [pagination, goToPage]
   );
 
-  // Book Interaction mode, URL-addressable via `?read=1`: Share links land
+  // Book Interaction mode, URL-addressable via `?read=1`: share links land
   // a recipient straight into reading mode, the browser Back button exits
   // it (what a visitor expects, especially on mobile), and a reload keeps
   // it. `router.replace` (not `push`) so entering/exiting doesn't pile up
@@ -187,25 +130,49 @@ export function BookReaderShell({ book }: { book: Book }) {
     exitImmersive();
   }, [tocOpen, exitImmersive]);
 
+  function renderEngine(options: { maxScale: number; fillRatio: number; fillContainer: boolean }) {
+    if (status === "error") {
+      return (
+        <p className="p-8 text-center text-sm text-slate-500" dir="rtl">
+          حدث خطأ أثناء تجهيز الكتاب. يرجى إعادة تحميل الصفحة.
+        </p>
+      );
+    }
+    if (status === "loading" || !pagination) {
+      return (
+        <p className="p-8 text-center text-sm text-slate-500" dir="rtl">
+          جاري تحضير الكتاب…
+        </p>
+      );
+    }
+    return (
+      <StPageFlipEngine
+        ref={engineRef}
+        pages={pagination.pages}
+        geometry={geometry}
+        css={css}
+        // Read once per engine mount — the engine owns the page from then
+        // on. Passing the live mirror back in would put two authorities
+        // on the same number and fight the in-flight animation.
+        initialPageNumber={currentPageNumber}
+        singlePage={isMobile}
+        reducedMotion={reducedMotion}
+        zoom={zoom}
+        maxScale={options.maxScale}
+        fillRatio={options.fillRatio}
+        fillContainer={options.fillContainer}
+        onPageChange={setCurrentPageNumber}
+        onTurnStart={sound.play}
+        onTocLinkClick={handleTocLinkClick}
+      />
+    );
+  }
+
   return (
     <>
       {!isImmersive && (
         <div className="flex flex-col gap-3">
-          <Flipbook
-            pagination={pagination}
-            status={status}
-            css={css}
-            geometry={geometry}
-            isMobile={isMobile}
-            currentPageNumber={currentPageNumber}
-            pageCount={pageCount}
-            goToPage={goToPage}
-            turningLeaf={turningLeaf}
-            isFading={isFading}
-            zoom={zoom}
-            onTouchStart={onTouchStart}
-            onTouchEnd={onTouchEnd}
-          />
+          {renderEngine({ maxScale: 1, fillRatio: 1, fillContainer: false })}
           <FlipbookControls
             currentPageNumber={currentPageNumber}
             pageCount={pageCount}
@@ -251,24 +218,7 @@ export function BookReaderShell({ book }: { book: Book }) {
           searchResults={search.results}
           onSearchSelect={goToPage}
         >
-          <Flipbook
-            pagination={pagination}
-            status={status}
-            css={css}
-            geometry={geometry}
-            isMobile={isMobile}
-            currentPageNumber={currentPageNumber}
-            pageCount={pageCount}
-            goToPage={goToPage}
-            turningLeaf={turningLeaf}
-            isFading={isFading}
-            zoom={zoom}
-            onTouchStart={onTouchStart}
-            onTouchEnd={onTouchEnd}
-            maxScale={IMMERSIVE_MAX_SCALE}
-            fillRatio={IMMERSIVE_FILL_RATIO}
-            fillContainer
-          />
+          {renderEngine({ maxScale: IMMERSIVE_MAX_SCALE, fillRatio: IMMERSIVE_FILL_RATIO, fillContainer: true })}
         </BookImmersiveChrome>
       )}
 

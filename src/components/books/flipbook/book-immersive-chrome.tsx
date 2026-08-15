@@ -76,8 +76,8 @@ export interface BookImmersiveChromeProps {
 /**
  * "Start a presentation" for the book: the whole site chrome disappears
  * behind this, a deep green field replaces it, and the book (passed in as
- * `children` — the same `Flipbook` surface page mode uses) gets as much
- * of the viewport as `use-fit-scale.ts`'s raised `maxScale`/`fillRatio`
+ * `children` — the same flip engine page mode uses) gets as much of the
+ * viewport as the raised `maxScale`/`fillRatio` the shell passes it
  * allow. `useDialogA11y`'s existing `BACKGROUND_SELECTOR` ("main, footer,
  * header") already inerts the real site chrome for keyboard/AT the moment
  * this opens — no separate chrome-suppression mechanism was needed.
@@ -297,8 +297,8 @@ export function BookImmersiveChrome({
             "Next" (forward, deeper into the book) sits on the PHYSICAL
             LEFT edge — matching the established RTL convention (ArrowLeft
             key = forward, ChevronLeft icon = next) documented in
-            `use-flipbook-navigation.ts` and the original
-            `flipbook-controls.tsx`. Under `dir="rtl"`, the CSS logical
+            `use-reader-keyboard.ts` and `flipbook-controls.tsx`.
+            Under `dir="rtl"`, the CSS logical
             `end` maps to the physical left (and `start` to the physical
             right) — the opposite of their LTR meaning — so the "next"
             button uses `end-*` here, not `start-*`.

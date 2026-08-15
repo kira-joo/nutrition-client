@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "predev": "node scripts/verify-design-tokens.mjs && node scripts/generate-motion-css.mjs",
-    "dev": "next dev",
+    "dev": "next dev -p 3001",
     "prebuild": "node scripts/verify-design-tokens.mjs && node scripts/generate-motion-css.mjs",
     "build": "next build",
     "start": "next start",
@@ -22,6 +22,7 @@
     "lucide-react": "^0.505.0",
     "next": "^14.2.35",
     "next-intl": "^3.26.3",
+    "page-flip": "^2.0.7",
     "qrcode": "^1.5.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
