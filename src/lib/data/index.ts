@@ -11,3 +11,4 @@ export { getReviews } from "./reviews";
 export { getVideos, getVideo } from "./videos";
 export { getFaqSectionsWithItems } from "./faq";
 export { getCampaign, getActiveCampaign } from "./campaigns";
+export { getBook, getBooks } from "./books";

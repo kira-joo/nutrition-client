@@ -20,7 +20,11 @@ export const PRIMARY_NAV_ITEMS = [
 export const MORE_NAV_ITEMS = [
   { key: "reviews", href: AppRoute.Reviews },
   { key: "videos", href: AppRoute.Videos },
+  { key: "books", href: AppRoute.Books },
   { key: "faq", href: AppRoute.Faq },
 ] as const;
+
+/** Books is Arabic-only end to end (see `src/middleware.ts`) — every nav link for it should resolve straight to the `/ar` canonical rather than round-tripping through a redirect from whatever locale is currently active. */
+export const ARABIC_ONLY_NAV_KEYS: ReadonlySet<string> = new Set(["books"]);
 
 export type NavItemKey = (typeof PRIMARY_NAV_ITEMS)[number]["key"] | (typeof MORE_NAV_ITEMS)[number]["key"];

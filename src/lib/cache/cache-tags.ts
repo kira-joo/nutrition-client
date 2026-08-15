@@ -30,4 +30,7 @@ export const CacheTag = {
   FAQ: "faq",
   CAMPAIGNS: "campaigns",
   campaign: (slug: string) => `campaign:${slug}`,
+  /** Byte-for-byte the same string values as nutrition-staff's own `CacheTag.BOOKS`/`.book(slug)` (`src/server/core/revalidation/cache-tag.ts`) — `publishRevalidation` sends these exact tag strings, so a mismatch here would mean a publish/visibility change there silently never invalidates anything here. */
+  BOOKS: "books",
+  book: (slug: string) => `book:${slug}`,
 } as const;
