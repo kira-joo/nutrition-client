@@ -150,7 +150,6 @@ export function BookReaderShell({ book }: { book: Book }) {
         ref={engineRef}
         pages={pagination.pages}
         geometry={geometry}
-        css={css}
         // Read once per engine mount — the engine owns the page from then
         // on. Passing the live mirror back in would put two authorities
         // on the same number and fight the in-flight animation.
@@ -170,6 +169,26 @@ export function BookReaderShell({ book }: { book: Book }) {
 
   return (
     <>
+      {/*
+        Mounted UNCONDITIONALLY, and deliberately here rather than inside
+        the flip engine. `paginateBook` is measurement-based: it lays out
+        real DOM against this exact stylesheet, and it runs from
+        `useBookPagination`'s effect one tick after this first render —
+        while `status` is still "loading" and no engine is mounted yet.
+        Injecting it from the engine (as an earlier version did) meant the
+        paginator measured a `.book-page` with no width, height, padding or
+        type at all: `measureContentBoxPx()` returned 0x0, so no fragment
+        ever "fit" and every single one got its own page — a 66-block book
+        exploded to 94 near-empty pages. The `@font-face` rules live here
+        too, so `ensureFontsReady()` is equally dependent on it.
+
+        `dangerouslySetInnerHTML`, not `<style>{css}</style>`: the CSS
+        contains `"` inside its `@font-face` rules, and React escapes text
+        children of a `<style>` differently on the server than the client,
+        which hydration-mismatches the whole reader.
+      */}
+      <style dangerouslySetInnerHTML={{ __html: css }} />
+
       {!isImmersive && (
         <div className="flex flex-col gap-3">
           {renderEngine({ maxScale: 1, fillRatio: 1, fillContainer: false })}

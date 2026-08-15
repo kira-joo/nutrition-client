@@ -17,8 +17,31 @@ const PX_PER_MM = 96 / 25.4;
 
 const FLIPPING_TIME_MS = 800;
 
-/** How long the book slides when it widens from a lone cover to a full spread (and back). */
-const CENTERING_TRANSITION_MS = 240;
+/**
+ * A lone page (the closed cover, or an even book's final page) occupies
+ * only one half of the library's always-two-pages-wide block, so it sits
+ * optically off-centre in the stage with dead space beside it.
+ *
+ * That is deliberately NOT corrected here. An earlier version shifted the
+ * mount by half a page with `position: relative; left`, transitioned so
+ * the book appeared to widen as the cover opened. It broke the hard-cover
+ * turn: the block slid 246px left over 240ms while the 800ms flip was
+ * still running, so the cover board's hinge moved while the destination
+ * page underneath stayed at its final position — the destination page
+ * visibly peeked out from beside the turning board. It also corrupted
+ * drag, because the library recomputes pointer position from
+ * `distElement.getBoundingClientRect()` on every move, and that rect was
+ * sliding underneath the cursor.
+ *
+ * There is no offset that avoids this: the library pins a lone page to
+ * one half of a two-page block, so centring it necessarily moves the very
+ * coordinate frame both the fold geometry and the pointer math are
+ * expressed in. Leaving the block still is what keeps the turn correct,
+ * and a closed book sitting in one half of the spread frame is a fair
+ * physical reading of a book about to be opened. Centring the closed
+ * cover, if wanted, belongs in a separate closed-book presentation
+ * outside the engine — not in a transform on the library's own frame.
+ */
 
 /** Below this, a stage measurement is treated as "not laid out yet" rather than a real size — see `applyLayout`. */
 const MIN_USABLE_STAGE_PX = 40;
@@ -82,19 +105,6 @@ function invertIndex(deckLength: number, value: number): number {
   return deckLength - value;
 }
 
-/**
- * Which physical slot a page occupies when it is the ONLY page of its
- * spread, or `null` when it is part of a normal pair.
- *
- * Only two pages are ever alone: the cover (always — `spreadFor(1)` has
- * no pair) and, when the real page count is even, the final page. The
- * padded blank leaf is also alone but is unreachable.
- */
-function loneSlotOf(pageNumber: number, realPageCount: number): "left" | "right" | null {
-  if (pageNumber <= 1) return "left";
-  if (pageNumber === realPageCount && realPageCount % 2 === 0) return "right";
-  return null;
-}
 
 /**
  * Builds the DOM StPageFlip takes ownership of, reversed per
@@ -202,7 +212,7 @@ const ENGINE_CSS = `
 `;
 
 export const StPageFlipEngine = forwardRef<FlipEngineHandle, FlipEngineProps>(function StPageFlipEngine(
-  { pages, geometry, css, initialPageNumber, singlePage, reducedMotion, zoom, maxScale, fillRatio, fillContainer, onPageChange, onTurnStart, onTocLinkClick },
+  { pages, geometry, initialPageNumber, singlePage, reducedMotion, zoom, maxScale, fillRatio, fillContainer, onPageChange, onTurnStart, onTocLinkClick },
   ref
 ) {
   const stageRef = useRef<HTMLDivElement>(null);
@@ -300,35 +310,6 @@ export const StPageFlipEngine = forwardRef<FlipEngineHandle, FlipEngineProps>(fu
     }
   }, []);
 
-  /**
-   * A lone page (the cover, or an even book's final page) still occupies
-   * only half of the library's full-spread block, which would leave it
-   * visibly off-centre with dead space beside it.
-   *
-   * Corrected with `position: relative; left`, NOT a transform: a
-   * relative offset moves the element and its `getBoundingClientRect()`
-   * together, so the library's pointer math stays self-consistent, while
-   * a transform would not.
-   *
-   * The offset is dropped for the whole duration of a turn and restored
-   * when the book settles, so the block widens INTO a spread as the cover
-   * opens (and narrows back on a snap-back) instead of jumping the
-   * instant the page count changes.
-   */
-  const applyCentering = useCallback(
-    (settled: boolean) => {
-      const mount = mountRef.current;
-      const pageFlip = pageFlipRef.current;
-      if (!mount || !pageFlip) return;
-
-      const slot = layoutRef.current.singlePage || !settled ? null : loneSlotOf(currentPageNumberRef.current, realPageCount);
-      const halfPage = (pageFlip.getBoundsRect()?.pageWidth ?? 0) / 2;
-      // A lone page in the LEFT slot sits half a page left of centre, so
-      // it moves right to centre itself; the right slot mirrors that.
-      mount.style.left = slot === "left" ? `${halfPage}px` : slot === "right" ? `${-halfPage}px` : "0px";
-    },
-    [realPageCount]
-  );
 
   useEffect(() => {
     const stage = stageRef.current;
@@ -352,7 +333,6 @@ export const StPageFlipEngine = forwardRef<FlipEngineHandle, FlipEngineProps>(fu
         // never seen.
         mount = document.createElement("div");
         mount.className = "book-flip-mount";
-        mount.style.transition = reducedMotion ? "none" : `left ${CENTERING_TRANSITION_MS}ms ease-out`;
         stage.appendChild(mount);
         mountRef.current = mount;
 
@@ -419,7 +399,6 @@ export const StPageFlipEngine = forwardRef<FlipEngineHandle, FlipEngineProps>(fu
 
         pageFlip.on("init", () => {
           applyLayout();
-          applyCentering(true);
         });
 
         pageFlip.on("changeState", (event) => {
@@ -433,7 +412,6 @@ export const StPageFlipEngine = forwardRef<FlipEngineHandle, FlipEngineProps>(fu
           if (state === "flipping" && lastState !== "flipping") onTurnStartRef.current();
           lastState = state;
           if (state === "read") repairDensityBleed();
-          applyCentering(state === "read");
         });
 
         pageFlip.on("flip", (event) => {
@@ -444,12 +422,10 @@ export const StPageFlipEngine = forwardRef<FlipEngineHandle, FlipEngineProps>(fu
           // `changeState` handler above cannot see.
           if (lastState === "user_fold") onTurnStartRef.current();
           onPageChangeRef.current(pageNumber);
-          applyCentering(lastState === "read");
         });
 
         pageFlip.loadFromHTML(items);
         applyLayout();
-        applyCentering(true);
       })
       .catch((error) => {
         // eslint-disable-next-line no-console
@@ -476,7 +452,7 @@ export const StPageFlipEngine = forwardRef<FlipEngineHandle, FlipEngineProps>(fu
     // it is currently on, via `initialPageNumberRef`) rather than mutated
     // in place.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [deck, pageWidthPx, pageHeightPx, maxScale, singlePage, reducedMotion, applyLayout, applyCentering, repairDensityBleed]);
+  }, [deck, pageWidthPx, pageHeightPx, maxScale, singlePage, reducedMotion, applyLayout, repairDensityBleed]);
 
   // Keep the reopen point current so a `singlePage`/`reducedMotion`
   // rebuild resumes where the reader actually is.
@@ -485,19 +461,17 @@ export const StPageFlipEngine = forwardRef<FlipEngineHandle, FlipEngineProps>(fu
   // Zoom / stage-size changes only re-measure — they never rebuild.
   useEffect(() => {
     applyLayout();
-    applyCentering(true);
-  }, [zoom, fillRatio, maxScale, fillContainer, applyLayout, applyCentering]);
+  }, [zoom, fillRatio, maxScale, fillContainer, applyLayout]);
 
   useEffect(() => {
     const stage = stageRef.current;
     if (!stage) return;
     const observer = new ResizeObserver(() => {
       applyLayout();
-      applyCentering(true);
     });
     observer.observe(stage);
     return () => observer.disconnect();
-  }, [applyLayout, applyCentering]);
+  }, [applyLayout]);
 
   // TOC rows live inside a rendered page's OWN html (see
   // `paginate-book.ts`'s `fillTocPages`), so they are reachable only by
@@ -572,23 +546,21 @@ export const StPageFlipEngine = forwardRef<FlipEngineHandle, FlipEngineProps>(fu
           // reader would otherwise never learn the page changed.
           currentPageNumberRef.current = invertIndex(deckLength, target);
           onPageChangeRef.current(currentPageNumberRef.current);
-          applyCentering(true);
           return;
         }
         pageFlip.flip(target);
       },
     }),
-    [deckLength, realPageCount, reducedMotion, applyCentering]
+    [deckLength, realPageCount, reducedMotion]
   );
 
   return (
     <div className={fillContainer ? "book-page-scope book-flip-root--fill" : "book-page-scope"} dir="rtl">
-      {/* `dangerouslySetInnerHTML`, not `<style>{css}</style>`: the
-          template CSS contains `"` inside its `@font-face` rules, and
-          React escapes text children of a `<style>` differently on the
-          server than on the client, which hydration-mismatches the whole
-          reader. */}
-      <style dangerouslySetInnerHTML={{ __html: css }} />
+      {/* ONLY the engine's own layout CSS. The print template's stylesheet
+          is mounted by the reader, unconditionally and before pagination
+          runs — injecting it from here would be a correctness bug, not a
+          style choice: the engine does not exist yet while the paginator
+          is measuring against it. */}
       <style dangerouslySetInnerHTML={{ __html: ENGINE_CSS }} />
       <div ref={stageRef} className={`book-flip-stage ${fillContainer ? "book-flip-stage--fill" : "book-flip-stage--page"}`} />
     </div>

@@ -16,6 +16,12 @@ import type { RenderedPage } from "@/lib/books/render/page-model.interface";
  * Replacing `StPageFlipEngine` therefore means writing one new component
  * against this file, with no changes to pagination, content rendering,
  * Edition logic, PDF, or the rest of the reader.
+ *
+ * Note what is deliberately NOT here: the print template's CSS. An engine
+ * never injects it. The measurement-based paginator has to lay pages out
+ * against that exact stylesheet BEFORE any engine exists (see
+ * `use-book-pagination.ts`), so the reader owns mounting it and an engine
+ * may assume it is already in the document.
  */
 export interface FlipEngineProps {
   /**
@@ -28,8 +34,6 @@ export interface FlipEngineProps {
    */
   pages: RenderedPage[];
   geometry: ResolvedGeometry;
-  /** The print template's CSS. The engine injects it so page HTML renders identically to the PDF. */
-  css: string;
   /**
    * Where to open the book. Read ONCE per engine mount and deliberately
    * NOT a controlled prop: while mounted, the engine is the single source
