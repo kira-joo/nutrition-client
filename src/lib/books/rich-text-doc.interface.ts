@@ -4,11 +4,20 @@
  * `book-block-type.enum.ts`'s doc comment for why this is a deliberate
  * per-repo copy, not a shared package.
  */
-export type RichTextMarkType = "bold" | "italic" | "highlight" | "link" | "citation";
+import type { FontSizeToken, HighlightColorToken, TextColorToken } from "@/lib/books/rich-text-tokens";
+
+export type RichTextMarkType = "bold" | "italic" | "highlight" | "link" | "citation" | "fontSize" | "textColor";
 
 export interface RichTextMark {
   type: RichTextMarkType;
-  attrs?: { href?: string; referenceId?: string };
+  attrs?: {
+    href?: string;
+    referenceId?: string;
+    /** "highlight" (optional — absent/null means the historical yellow) and "textColor" (required). Always a token, never CSS. */
+    color?: HighlightColorToken | TextColorToken | null;
+    /** "fontSize". Always a token, never a CSS length. */
+    size?: FontSizeToken | null;
+  };
 }
 
 export interface RichTextNode {

@@ -1,4 +1,5 @@
 import type { RichTextDoc, RichTextMark, RichTextNode } from "@/lib/books/rich-text-doc.interface";
+import { DEFAULT_HIGHLIGHT_COLOR, isFontSizeToken, isHighlightColorToken, isTextColorToken } from "@/lib/books/rich-text-tokens";
 
 /**
  * Hand-synced from nutrition-staff's
@@ -24,8 +25,16 @@ function renderMarksOpen(marks: RichTextMark[]): string {
           return "<strong>";
         case "italic":
           return "<em>";
-        case "highlight":
-          return '<mark class="book-highlight">';
+        case "highlight": {
+          // Absent/unknown colour falls back to the historical yellow, so
+          // Editions published before colours existed render unchanged.
+          const color = isHighlightColorToken(mark.attrs?.color) ? mark.attrs?.color : DEFAULT_HIGHLIGHT_COLOR;
+          return `<mark class="book-highlight book-highlight--${color}">`;
+        }
+        case "fontSize":
+          return isFontSizeToken(mark.attrs?.size) ? `<span class="book-text-${mark.attrs?.size}">` : "<span>";
+        case "textColor":
+          return isTextColorToken(mark.attrs?.color) ? `<span class="book-text-color-${mark.attrs?.color}">` : "<span>";
         case "link": {
           const href = mark.attrs?.href && SAFE_HREF_PATTERN.test(mark.attrs.href) ? mark.attrs.href : "";
           return href ? `<a href="${escapeHtml(href)}">` : "<span>";
@@ -51,6 +60,9 @@ function renderMarksClose(marks: RichTextMark[]): string {
           return "</em>";
         case "highlight":
           return "</mark>";
+        case "fontSize":
+        case "textColor":
+          return "</span>";
         case "link":
           return mark.attrs?.href && SAFE_HREF_PATTERN.test(mark.attrs.href) ? "</a>" : "</span>";
         case "citation":

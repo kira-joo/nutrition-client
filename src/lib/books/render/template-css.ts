@@ -1,4 +1,5 @@
 import { BOOK_TEMPLATE_FONT_FACES, BOOK_BODY_FONT_FAMILY, BOOK_HEADING_FONT_FAMILY } from "./fonts/fonts";
+import { buildRichTextMarkCss } from "@/lib/books/rich-text-tokens";
 import type { ResolvedGeometry } from "./geometry";
 
 /**
@@ -298,7 +299,7 @@ ${leafUrl ? `
 .book-subheading { font-size: 14pt; margin-bottom: 3mm; color: ${BRAND_COLORS.primary}; }
 .book-page-scope p { margin-bottom: 3mm; text-align: justify; text-justify: inter-word; }
 
-.book-highlight { background: ${BRAND_COLORS.highlight}; padding: 0 1mm; }
+${buildRichTextMarkCss()}
 .book-citation { color: ${BRAND_COLORS.primary}; font-size: 0.75em; }
 .book-page-scope a { color: ${BRAND_COLORS.primary}; text-decoration: underline; }
 
