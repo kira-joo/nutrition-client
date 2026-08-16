@@ -401,10 +401,40 @@ export const StPageFlipEngine = forwardRef<FlipEngineHandle, FlipEngineProps>(fu
     const cappedWidth = Math.min(availableWidth, pageWidthPx * currentMaxScale * slots);
     const cappedHeight = Math.min(availableHeight, pageHeightPx * currentMaxScale);
 
-    mount.style.width = `${Math.max(1, Math.round(cappedWidth))}px`;
-    mount.style.height = `${Math.max(1, Math.round(cappedHeight))}px`;
+    mount.style.width = `${Math.max(1, cappedWidth)}px`;
+    mount.style.height = `${Math.max(1, cappedHeight)}px`;
 
     pageFlip.update();
+
+    // Second pass: collapse the block onto the page size the library
+    // actually settled on.
+    //
+    // `calculateBoundsRect` starts from `blockWidth / slots`, then — when
+    // the book is height-constrained, which it is at almost every stage
+    // size — re-derives `pageWidth` from the available HEIGHT. The block
+    // is then wider than `pageWidth * slots`, and the library centres the
+    // book inside it with `rect.left = blockWidth / 2 - pageWidth`. That
+    // leftover is what made a settling page jump: the folding sheet is
+    // positioned through `convertToGlobal`, the settled page through
+    // `simpleDraw`, and the two only agree when there is no leftover to
+    // disagree about. Measured at 66.15625px on a 1119px block whose real
+    // page width was 493.32px.
+    //
+    // Sizing the mount to exactly `pageWidth * slots` drives `rect.left`
+    // to 0, so the animated rectangle and the settled rectangle are the
+    // same rectangle by construction — no transition, no overlap, no
+    // per-slot CSS. It converges in one extra pass: the new block is
+    // already an exact multiple of the height-derived page width, so the
+    // height clamp cannot shrink it again.
+    const settled = pageFlip.getBoundsRect();
+    if (settled?.pageWidth) {
+      const exactWidth = settled.pageWidth * slots;
+      if (Math.abs(exactWidth - parseFloat(mount.style.width)) > 0.5) {
+        mount.style.width = `${exactWidth}px`;
+        mount.style.height = `${settled.height}px`;
+        pageFlip.update();
+      }
+    }
 
     const bounds = pageFlip.getBoundsRect();
     if (bounds?.pageWidth) {
