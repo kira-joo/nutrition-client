@@ -5,12 +5,11 @@ const STORAGE_KEY = "book-reader-sound-enabled";
 const SOUND_URL = "/sounds/flip.mp3";
 
 /**
- * The mute toggle exists, persists, and works. `play()` uses a real,
+ * Enabled by default, with the mute toggle persisting an explicit opt-out. `play()` uses a real,
  * user-provided page-turn recording (`public/sounds/flip.mp3`) — an
  * earlier version synthesized a noise burst via the Web Audio API, which
  * read as artificial rather than paper-like and was explicitly rejected;
- * sourcing a replacement from the internet was also off the table, so
- * sound shipped disabled-by-default until this real asset was supplied.
+ * sourcing a replacement from the internet was also off the table.
  * One `Audio` element is reused across calls (rather than constructing a
  * new one per turn) and rewound before each play so rapid page turns
  * retrigger cleanly instead of queuing.
@@ -20,8 +19,12 @@ export function usePageTurnSound() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
+    // Default ON: only an explicit opt-out turns it off, so a first-time
+    // visitor hears the page turn. Read in an effect (not a lazy
+    // initializer) because localStorage does not exist during SSR, and
+    // `false` stays the pre-mount value so server and client markup match.
     const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (stored === "true") setEnabled(true);
+    setEnabled(stored !== "false");
     audioRef.current = new Audio(SOUND_URL);
   }, []);
 
