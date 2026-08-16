@@ -24,6 +24,18 @@ export interface BookContactBlock {
   address?: string;
 }
 
+/**
+ * Mirrors nutrition-staff's `BookPageWatermark`. `scaleMm` is a physical
+ * tile width so the reader, Staff Preview and the PDF all paint the same
+ * size; `image: null` means the book has no watermark and pages render
+ * exactly as they did before the setting existed.
+ */
+export interface BookPageWatermark {
+  image: ImageAsset | null;
+  opacity: number;
+  scaleMm: number;
+}
+
 export interface BookPrintSettings {
   pageSize: "a5" | "a4";
   marginPreset: "compact" | "standard" | "generous";
@@ -48,6 +60,7 @@ export interface PublicResolvedIdentity {
   backCoverAudienceText: string;
   qrDestination: string | null;
   print: BookPrintSettings;
+  pageWatermark: BookPageWatermark;
   templateVersion: string;
 }
 

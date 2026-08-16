@@ -15,7 +15,38 @@ import type { FlipEngineHandle, FlipEngineProps } from "./flip-engine.interface"
 /** CSS defines 1in = 96px = 25.4mm exactly, so this conversion is lossless rather than an approximation of any device DPI. */
 const PX_PER_MM = 96 / 25.4;
 
-const FLIPPING_TIME_MS = 800;
+/**
+ * The turn duration we want the reader to actually perceive, at any page
+ * size. NOT passed straight to `flippingTime` — see `resolveFlippingTime`.
+ */
+const TARGET_TURN_MS = 800;
+
+/**
+ * StPageFlip derives an animation's frame count from the sweep distance in
+ * PIXELS (`Helper.GetCordsFromTwoPoint` steps one point per pixel), then
+ * does `duration = (frames / 1000) * flippingTime` for anything under 1000
+ * frames. So a physically smaller book turns proportionally faster: a
+ * desktop spread sweeps ~916px and lands near the full 800ms, while a
+ * phone spread sweeps only ~400px and finishes in ~320ms — the "too fast
+ * to read" turn on a phone.
+ *
+ * Solving that back for `flippingTime` keeps the PERCEIVED duration fixed
+ * at `TARGET_TURN_MS` regardless of geometry, so phone and desktop feel
+ * the same instead of being tuned separately.
+ *
+ * This is safe for drag specifically because `flippingTime` is read only
+ * by `Flip.getAnimationDuration`, which only runs from `animateFlippingTo`
+ * — the programmatic turn, the completion after release, and the snap
+ * back. A live drag is not animated at all: `Flip.fold()` recomputes the
+ * crease straight from the pointer every frame. Raising this can therefore
+ * never introduce lag while a finger is down.
+ */
+function resolveFlippingTime(pageWidthPx: number, pageHeightPx: number): number {
+  // Mirrors `Flip.flip()`'s own start/dest points: it sweeps from
+  // `pageWidth - height/10` across to `-pageWidth`.
+  const sweepPx = Math.max(1, 2 * pageWidthPx - pageHeightPx / 10);
+  return (TARGET_TURN_MS * 1000) / Math.min(1000, sweepPx);
+}
 
 /**
  * A lone page (the closed cover, or an even book's final page) occupies
@@ -45,6 +76,76 @@ const FLIPPING_TIME_MS = 800;
 
 /** Below this, a stage measurement is treated as "not laid out yet" rather than a real size — see `applyLayout`. */
 const MIN_USABLE_STAGE_PX = 40;
+
+/**
+ * How far a pointer may travel and still count as a tap. Deliberately
+ * identical to StPageFlip's own `userMove` threshold — see the `userStop`
+ * override for why the two must not drift apart.
+ */
+const TAP_SLOP_PX = 5;
+
+/**
+ * Swipe is detected here rather than by the library, whose `UI.onTouchEnd`
+ * hardcodes `dx > 0 -> flipPrev`. That is our forward only while the deck
+ * is reversed; in portrait's natural order it silently inverts. Owning the
+ * gesture keeps swipe, drag and the toolbar agreeing in both modes. Values
+ * mirror the library's own so the feel is unchanged.
+ */
+const SWIPE_WINDOW_MS = 250;
+const SWIPE_MIN_PX = 30;
+
+/**
+ * Watches a pointer gesture purely to answer "did this move, or was it a
+ * tap?". Listens in the capture phase so it always sees the gesture
+ * before the library's own handlers, and never calls `preventDefault` or
+ * `stopPropagation` — it observes, it does not intercept, so drag,
+ * swipe and scrolling all behave exactly as they did.
+ */
+function trackPointerMovement(
+  stage: HTMLElement,
+  onSwipe: (towards: "forward" | "backward") => void
+): { moved: boolean; dispose: () => void } {
+  const guard = { moved: false, dispose: () => {} };
+  let origin: { x: number; y: number; at: number; touch: boolean } | null = null;
+
+  function onDown(event: PointerEvent): void {
+    origin = { x: event.clientX, y: event.clientY, at: event.timeStamp, touch: event.pointerType === "touch" };
+    guard.moved = false;
+  }
+  function onMove(event: PointerEvent): void {
+    if (!origin) return;
+    if (Math.hypot(event.clientX - origin.x, event.clientY - origin.y) > TAP_SLOP_PX) guard.moved = true;
+  }
+  function onUp(event: PointerEvent): void {
+    const start = origin;
+    origin = null;
+    if (!start || !start.touch) return;
+    const dx = event.clientX - start.x;
+    const dy = event.clientY - start.y;
+    // Same window the library's own swipe used, so this replaces it
+    // exactly rather than overlapping the drag path: for touch the library
+    // defers `startUserTouch` by 250ms, so a gesture shorter than that
+    // never became a fold and there is nothing here to double-fire with.
+    if (event.timeStamp - start.at >= SWIPE_WINDOW_MS) return;
+    if (Math.abs(dx) <= SWIPE_MIN_PX || Math.abs(dy) >= SWIPE_MIN_PX * 2) return;
+    // Rightward matches the drag: you pull the left leaf rightward to go
+    // deeper into an RTL book.
+    onSwipe(dx > 0 ? "forward" : "backward");
+  }
+
+  stage.addEventListener("pointerdown", onDown, true);
+  window.addEventListener("pointermove", onMove, true);
+  window.addEventListener("pointerup", onUp, true);
+  window.addEventListener("pointercancel", onUp, true);
+
+  guard.dispose = () => {
+    stage.removeEventListener("pointerdown", onDown, true);
+    window.removeEventListener("pointermove", onMove, true);
+    window.removeEventListener("pointerup", onUp, true);
+    window.removeEventListener("pointercancel", onUp, true);
+  };
+  return guard;
+}
 
 /**
  * A real blank leaf used only to make the deck's page count even — see
@@ -105,19 +206,38 @@ function invertIndex(deckLength: number, value: number): number {
   return deckLength - value;
 }
 
-
 /**
- * Builds the DOM StPageFlip takes ownership of, reversed per
- * `invertIndex`.
- *
- * Built imperatively rather than rendered by React on purpose: the
- * library MOVES these nodes into its own `.stf__block` and its
- * `destroy()` removes its root outright, so React must never own them.
- * That costs nothing here — `RenderedPage.html` is already a raw HTML
- * string.
+ * The one place that knows which library call means "deeper into the
+ * book", shared by the toolbar handle and by swipe so the two can never
+ * disagree about direction.
  */
+function turnPage(pageFlip: PageFlipInstance, towards: "forward" | "backward", reducedMotion: boolean): void {
+  // Our RTL forward is the library's PREV in BOTH orientations: the deck
+  // is reversed, and BACK is also the direction whose geometry peels
+  // left -> right, which is what a right-bound book does.
+  //
+  // KNOWN LIMITATION, portrait only: the library's BACK pipeline is a
+  // RETURNING-sheet animation, not a mirrored departing one. In portrait it
+  // anchors the whole composition in the off-screen left half of its
+  // two-page-wide coordinate space and animates INTO view, so a forward
+  // turn reads as a sheet arriving on top of the current page rather than
+  // the current page peeling away. It cannot be corrected from out here —
+  // see the notes in the engine's README/handover; it needs either a
+  // vendored change to `Render.convertToGlobal`/`FlipCalculation` or a
+  // different portrait presentation. Landscape is unaffected: both halves
+  // are on screen, so the same geometry reads correctly there.
+  const towardsForward = towards === "forward";
+  if (reducedMotion) {
+    if (towardsForward) pageFlip.turnToPrevPage();
+    else pageFlip.turnToNextPage();
+    return;
+  }
+  if (towardsForward) pageFlip.flipPrev();
+  else pageFlip.flipNext();
+}
+
 function buildPageElements(deck: RenderedPage[]): HTMLElement[] {
-  return deck
+  const elements = deck
     .map((page, index) => {
       const item = document.createElement("div");
       // No inline styles on this element, ever: `HTMLPage.draw()`
@@ -141,13 +261,16 @@ function buildPageElements(deck: RenderedPage[]): HTMLElement[] {
       bookPage.dataset.side = sideOf(index + 1);
       bookPage.innerHTML =
         `<div class="book-page-content">${page.html}</div>` +
-        (page.pageNumber !== null ? `<div class="book-folio">${page.pageNumber}</div>` : "");
+        // Hand-synced with nutrition-staff's `build-book-html.ts`. The inner
+      // span carries the flanking dots; `.book-folio`'s own pseudo-elements
+      // are the thin rules and leaf marks.
+      (page.pageNumber !== null ? `<div class="book-folio"><span class="book-folio-leaf" aria-hidden="true"></span><span class="book-folio-number">${page.pageNumber}</span><span class="book-folio-leaf" aria-hidden="true"></span></div>` : "");
 
       scaler.appendChild(bookPage);
       item.appendChild(scaler);
       return item;
-    })
-    .reverse();
+    });
+  return elements.reverse();
 }
 
 /**
@@ -284,7 +407,15 @@ export const StPageFlipEngine = forwardRef<FlipEngineHandle, FlipEngineProps>(fu
     pageFlip.update();
 
     const bounds = pageFlip.getBoundsRect();
-    if (bounds?.pageWidth) stage.style.setProperty("--book-flip-scale", String(bounds.pageWidth / pageWidthPx));
+    if (bounds?.pageWidth) {
+      stage.style.setProperty("--book-flip-scale", String(bounds.pageWidth / pageWidthPx));
+      // Re-normalised against the size the library actually settled on, so
+      // a turn takes the same perceived time after a resize, a zoom or an
+      // orientation switch. `getSettings()` hands back the live settings
+      // object and `getAnimationDuration` reads `flippingTime` per call, so
+      // this takes effect on the very next turn without a rebuild.
+      pageFlip.getSettings().flippingTime = resolveFlippingTime(bounds.pageWidth, bounds.height);
+    }
   }, [pageWidthPx, pageHeightPx]);
 
   /**
@@ -339,6 +470,11 @@ export const StPageFlipEngine = forwardRef<FlipEngineHandle, FlipEngineProps>(fu
         const items = buildPageElements(deck);
         disposers.push(observeOrientation(items));
 
+        const tapGuard = trackPointerMovement(stage, (towards) => {
+          if (pageFlipRef.current) turnPage(pageFlipRef.current, towards, reducedMotion);
+        });
+        disposers.push(tapGuard.dispose);
+
         pageFlip = new PageFlip(mount, {
           width: pageWidthPx,
           height: pageHeightPx,
@@ -368,32 +504,60 @@ export const StPageFlipEngine = forwardRef<FlipEngineHandle, FlipEngineProps>(fu
           showCover: true,
           drawShadow: true,
           maxShadowOpacity: 0.5,
-          flippingTime: FLIPPING_TIME_MS,
+          flippingTime: resolveFlippingTime(pageWidthPx, pageHeightPx),
           // Reduced motion means no fold at all — and therefore no
           // drag-to-fold either; navigation still works through the
           // toolbar and keyboard.
           useMouseEvents: !reducedMotion,
           showPageCorners: !reducedMotion,
-          // Click-to-flip stays ON — clicking the left page turns
-          // forward under our RTL mapping, which is what a reader
-          // expects. It must NOT be disabled: with `disableFlipByClick`
-          // set, `Flip.flip()` gates on `isPointOnCorners()`, and the
-          // synthetic point `flipNext`/`flipPrev` pass uses an absolute
-          // y of 1 that falls outside the book whenever the block is
-          // taller than the page — which would make every toolbar and
-          // keyboard turn silently do nothing. TOC rows are protected by
-          // `suppressFlipOnInteractiveContent` instead.
+          // Left FALSE deliberately, even though tapping must not
+          // navigate — that rule is enforced by `userStop` below instead.
+          // `disableFlipByClick: true` is the wrong tool twice over:
+          //
+          //  1. It does not actually stop tap-navigation. It only narrows
+          //     `Flip.flip()` to `isPointOnCorners()`, whose region is
+          //     `sqrt(pageWidth^2 + height^2) / 5` on EACH axis — four
+          //     corner squares covering roughly a third of a phone-sized
+          //     page. A third of all taps would still turn the page.
+          //  2. It breaks the paths that SHOULD work. Both the library's
+          //     own swipe detection and our toolbar/keyboard turns reach
+          //     `Flip.flip()` through `flipNext`/`flipPrev`, which pass a
+          //     synthetic point with an absolute `y` of 1; that fails
+          //     `isPointOnCorners`'s `bookPos.y > 0` test whenever the
+          //     block is taller than the page, silently doing nothing.
           disableFlipByClick: false,
           mobileScrollSupport: true,
+          // Disables the library's built-in swipe (it compares
+          // `Math.abs(dx) > swipeDistance`). Ours replaces it — see
+          // SWIPE_WINDOW_MS — because the built-in one hardcodes a
+          // direction that inverts under portrait's natural deck order.
+          swipeDistance: Number.MAX_SAFE_INTEGER,
           startPage: invertIndex(deck.length, initialPageNumberRef.current),
         });
         pageFlipRef.current = pageFlip;
 
-        // The library's own `minWidth`/`minHeight` floors are set on OUR
-        // mount element; `applyLayout` is the single authority on its
-        // size, so they are cleared rather than left to fight it.
-        mount.style.minWidth = "0px";
-        mount.style.minHeight = "0px";
+        // Tap is not navigation; swipe/drag is.
+        //
+        // `PageFlip.userStop` is where the two diverge — it turns the page
+        // on release only when the pointer never moved:
+        //
+        //   if (!isSwipe) { if (!this.isUserMove) flip(pos); else stopMove(); }
+        //
+        // Reporting a motionless release as a swipe takes BOTH branches
+        // out, which is exactly "do nothing": no turn, and nothing to
+        // clean up either, because the library only begins a fold once
+        // movement passes its own 5px threshold. A release that DID move
+        // is delegated untouched, so drag still completes past the
+        // midpoint and snaps back before it.
+        //
+        // TAP_SLOP_PX therefore has to match the library's threshold
+        // exactly. Any larger and a 6-8px drag would start a fold that we
+        // then reported as a tap, skipping `stopMove()` and leaving the
+        // page stranded mid-fold.
+        const originalUserStop = pageFlip.userStop.bind(pageFlip);
+        pageFlip.userStop = (position, isSwipe = false) => {
+          originalUserStop(position, isSwipe || !tapGuard.moved);
+        };
 
         let lastState = "read";
 
@@ -425,6 +589,15 @@ export const StPageFlipEngine = forwardRef<FlipEngineHandle, FlipEngineProps>(fu
         });
 
         pageFlip.loadFromHTML(items);
+        // AFTER loadFromHTML, not after `new PageFlip(...)`: the library
+        // sets these floors in `HTMLUI`'s constructor, which does not run
+        // until `loadFromHTML`. Clearing them earlier was silently undone,
+        // leaving min-width pinned to a full page (559px) while
+        // `applyLayout` sized the mount to the 430px stage — so on a phone
+        // the block overflowed and was clipped by `overflow: hidden`.
+        // `applyLayout` is the single authority on this element's size.
+        mount.style.minWidth = "0px";
+        mount.style.minHeight = "0px";
         applyLayout();
       })
       .catch((error) => {
@@ -515,42 +688,33 @@ export const StPageFlipEngine = forwardRef<FlipEngineHandle, FlipEngineProps>(fu
 
   useImperativeHandle(
     ref,
-    (): FlipEngineHandle => ({
-      // Our RTL "forward" (deeper into the book) is the library's PREV,
-      // because the deck is reversed — see `invertIndex`.
-      next: () => {
-        const pageFlip = pageFlipRef.current;
-        if (!pageFlip) return;
-        if (reducedMotion) {
-          pageFlip.turnToPrevPage();
-          return;
-        }
-        pageFlip.flipPrev();
-      },
-      prev: () => {
-        const pageFlip = pageFlipRef.current;
-        if (!pageFlip) return;
-        if (reducedMotion) {
-          pageFlip.turnToNextPage();
-          return;
-        }
-        pageFlip.flipNext();
-      },
-      goTo: (pageNumber: number) => {
-        const pageFlip = pageFlipRef.current;
-        if (!pageFlip) return;
-        const target = invertIndex(deckLength, Math.min(realPageCount, Math.max(1, Math.round(pageNumber))));
-        if (reducedMotion) {
-          pageFlip.turnToPage(target);
-          // `turnToPage` is instant and fires no `flip` event, so the
-          // reader would otherwise never learn the page changed.
-          currentPageNumberRef.current = invertIndex(deckLength, target);
-          onPageChangeRef.current(currentPageNumberRef.current);
-          return;
-        }
-        pageFlip.flip(target);
-      },
-    }),
+    (): FlipEngineHandle => {
+      return {
+        next: () => {
+          const pageFlip = pageFlipRef.current;
+          if (pageFlip) turnPage(pageFlip, "forward", reducedMotion);
+        },
+        prev: () => {
+          const pageFlip = pageFlipRef.current;
+          if (pageFlip) turnPage(pageFlip, "backward", reducedMotion);
+        },
+        goTo: (pageNumber: number) => {
+          const pageFlip = pageFlipRef.current;
+          if (!pageFlip) return;
+          const clamped = Math.min(realPageCount, Math.max(1, Math.round(pageNumber)));
+          const target = invertIndex(deckLength, clamped);
+          if (reducedMotion) {
+            pageFlip.turnToPage(target);
+            // `turnToPage` is instant and fires no `flip` event, so the
+            // reader would otherwise never learn the page changed.
+            currentPageNumberRef.current = clamped;
+            onPageChangeRef.current(clamped);
+            return;
+          }
+          pageFlip.flip(target);
+        },
+      };
+    },
     [deckLength, realPageCount, reducedMotion]
   );
 

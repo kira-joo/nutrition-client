@@ -3,7 +3,7 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import type { Book } from "@/lib/domain/book";
 import { resolveGeometry } from "@/lib/books/render/geometry";
-import { buildTemplateCss, CHAPTER_BACKGROUND_URL } from "@/lib/books/render/template-css";
+import { buildTemplateCss, CHAPTER_BACKGROUND_URL, FOOTER_LEAF_URL } from "@/lib/books/render/template-css";
 import { prefersReducedMotion } from "@/lib/animation/gsap-config";
 import { useRouter, usePathname } from "@/i18n/navigation";
 import type { FlipEngineHandle } from "@/lib/books/flip-engine/flip-engine.interface";
@@ -43,7 +43,22 @@ const IMMERSIVE_FILL_RATIO = 0.94;
 export function BookReaderShell({ book }: { book: Book }) {
   const { pagination, status } = useBookPagination(book);
   const geometry = useMemo(() => resolveGeometry(book.resolvedSettings.print), [book.resolvedSettings.print]);
-  const css = useMemo(() => buildTemplateCss(geometry, { chapterBackgroundUrl: CHAPTER_BACKGROUND_URL }), [geometry]);
+  // The watermark comes from the Edition's frozen `resolvedSettings`, so a
+  // published book always renders the watermark it was published with —
+  // never today's Book Settings. Same option shape nutrition-staff passes,
+  // so Preview, Flipbook and PDF share one implementation.
+  const watermark = book.resolvedSettings.pageWatermark;
+  const css = useMemo(
+    () =>
+      buildTemplateCss(geometry, {
+        chapterBackgroundUrl: CHAPTER_BACKGROUND_URL,
+        footerLeafUrl: FOOTER_LEAF_URL,
+        pageWatermark: watermark?.image?.secureUrl
+          ? { url: watermark.image.secureUrl, opacity: watermark.opacity, scaleMm: watermark.scaleMm }
+          : undefined,
+      }),
+    [geometry, watermark]
+  );
 
   const isNarrowViewport = useIsMobileViewport();
   const sound = usePageTurnSound();

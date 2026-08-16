@@ -90,11 +90,26 @@ declare module "page-flip" {
     turnToPrevPage(): void;
     turnToPage(page: number): void;
 
+    /**
+     * Called by the library on pointer release. Overridden by
+     * `StPageFlipEngine` so a motionless release never turns the page —
+     * reporting it as a swipe skips both the click-to-flip and the
+     * fold-cleanup branches.
+     */
+    userStop(position: { x: number; y: number }, isSwipe?: boolean): void;
+
     getPageCount(): number;
     getCurrentPageIndex(): number;
     getPage(pageIndex: number): Page;
     getOrientation(): Orientation;
     getBoundsRect(): PageRect;
+    /**
+     * Returns the LIVE settings object, not a copy. `StPageFlipEngine`
+     * writes `flippingTime` on it so a turn keeps a constant perceived
+     * duration as page size changes — `Flip.getAnimationDuration` reads
+     * the field per call, so the next turn picks it up with no rebuild.
+     */
+    getSettings(): FlipSetting;
     getState(): FlippingState;
 
     on(eventName: "flip" | "changeState" | "changeOrientation" | "init" | "update", callback: (e: WidgetEvent) => void): PageFlip;
