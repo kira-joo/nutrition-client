@@ -4,7 +4,7 @@ import { animate, inView } from "motion";
 
 /** `inView`'s options interface isn't itself exported by the `motion` package — derived from the function's own signature instead of hand-duplicating its `margin` shape. */
 type InViewMargin = NonNullable<Parameters<typeof inView>[2]>["margin"];
-import { useReducedMotion } from "motion/react";
+import { usePrefersReducedMotion } from "./use-prefers-reduced-motion";
 import { DURATIONS, MOTION_EASES, type DurationToken, type EaseToken } from "./motion-tokens";
 import { useIsomorphicLayoutEffect } from "./use-isomorphic-layout-effect";
 
@@ -37,8 +37,15 @@ export interface UseScrollRevealOptions {
   ease?: EaseToken;
   /** Seconds, for staggering a group of siblings by hand at the call site. */
   delay?: number;
-  /** An IntersectionObserver `margin` string (see the module doc comment above) — not a GSAP ScrollTrigger `start` value. */
-  start?: string;
+  /**
+   * An IntersectionObserver `margin` value (see the module doc comment
+   * above) — not a GSAP ScrollTrigger `start` string. Genuinely a
+   * different accepted syntax, not just a renamed option, which is why
+   * this is typed to Motion's own shape rather than a bare `string`: a
+   * GSAP-style value like `"top 92%"` would fail this type today, and
+   * would have thrown at runtime under the old looser typing.
+   */
+  start?: InViewMargin;
 }
 
 /**
@@ -48,13 +55,16 @@ export interface UseScrollRevealOptions {
  * re-triggering on every scroll pass in and out (see `inView`'s own docs:
  * only a callback that *returns* a leave-handler keeps observing).
  *
- * Honors `prefers-reduced-motion` via Motion's own `useReducedMotion` hook:
+ * Honors `prefers-reduced-motion` via `usePrefersReducedMotion` (not Motion's
+ * own `useReducedMotion`, which only snapshots the setting once at mount and
+ * never reacts to it changing mid-session — verified against the installed
+ * Motion source, which still carries a TODO about adding that):
  * when set, the element is simply shown at its resting state with no
  * animation or viewport observer registered at all.
  */
 export function useScrollReveal<T extends HTMLElement>(options: UseScrollRevealOptions = {}) {
   const ref = useRef<T>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = usePrefersReducedMotion();
   const {
     direction = "up",
     distance = 32,
@@ -97,7 +107,7 @@ export function useScrollReveal<T extends HTMLElement>(options: UseScrollRevealO
         );
         // No cleanup returned here on purpose — see the doc comment above.
       },
-      { margin: start as InViewMargin },
+      { margin: start },
     );
 
     return () => stop();

@@ -1,9 +1,9 @@
 "use client";
 import { useRef } from "react";
 import { animate } from "motion";
-import { useReducedMotion } from "motion/react";
 import { DURATIONS, MOTION_EASES } from "./motion-tokens";
 import { useIsomorphicLayoutEffect } from "./use-isomorphic-layout-effect";
+import { usePrefersReducedMotion } from "./use-prefers-reduced-motion";
 
 export interface UseDrawerTransitionOptions {
   isOpen: boolean;
@@ -29,6 +29,22 @@ export interface UseDrawerTransitionOptions {
 }
 
 /**
+ * Set `visibility` imperatively (inline style, same as the opacity/x writes
+ * below) rather than leaving it to the consumer's static `!isOpen &&
+ * "invisible opacity-0"` Tailwind classes. Those classes flip the instant
+ * `isOpen` changes, which — verified by an independent review — swallowed
+ * the whole fade-out the moment this hook stopped using GSAP's `autoAlpha`
+ * (opacity-only, no paired visibility write): the class's `visibility:
+ * hidden` won the same tick the close animation started, so the tween ran
+ * against an already-invisible element. An inline style beats a class for
+ * the same property regardless of source order, which is exactly how GSAP's
+ * autoAlpha silently rode over those same classes before.
+ */
+function setVisible(element: HTMLElement, visible: boolean) {
+  element.style.visibility = visible ? "visible" : "hidden";
+}
+
+/**
  * Drives a drawer panel's slide-in/out and its backdrop's fade via Motion's
  * imperative `animate()`, applied straight to the ref'd DOM nodes — the
  * same "own the transform exclusively" contract the GSAP version had (see
@@ -40,7 +56,7 @@ export function useDrawerTransition({ isOpen, fromEdge = "end", ready = true }: 
   const panelRef = useRef<HTMLDivElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
   const isFirstRun = useRef(true);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   useIsomorphicLayoutEffect(() => {
     if (!ready) return;
@@ -52,28 +68,40 @@ export function useDrawerTransition({ isOpen, fromEdge = "end", ready = true }: 
     const edgeSign = fromEdge === "end" ? (isRtl ? -1 : 1) : isRtl ? 1 : -1;
     const offscreenX = `${100 * edgeSign}%`;
 
-    if (prefersReducedMotion) {
+    if (prefersReducedMotion || isFirstRun.current) {
       animate(panel, { x: isOpen ? "0%" : offscreenX }, { duration: 0 });
-      if (backdrop) animate(backdrop, { opacity: isOpen ? 1 : 0 }, { duration: 0 });
+      if (backdrop) {
+        animate(backdrop, { opacity: isOpen ? 1 : 0 }, { duration: 0 });
+        setVisible(backdrop, isOpen);
+      }
       isFirstRun.current = false;
       return;
     }
 
-    if (isFirstRun.current) {
-      animate(panel, { x: isOpen ? "0%" : offscreenX }, { duration: 0 });
-      if (backdrop) animate(backdrop, { opacity: isOpen ? 1 : 0 }, { duration: 0 });
-      isFirstRun.current = false;
-      return;
-    }
-
-    animate(
+    const panelAnimation = animate(
       panel,
       { x: isOpen ? "0%" : offscreenX },
       { duration: DURATIONS.base, ease: isOpen ? MOTION_EASES.emphasized : MOTION_EASES.standard },
     );
+
+    let backdropAnimation: ReturnType<typeof animate> | undefined;
     if (backdrop) {
-      animate(backdrop, { opacity: isOpen ? 1 : 0 }, { duration: DURATIONS.base, ease: MOTION_EASES.standard });
+      // Visible for the whole tween in either direction (fade-in and
+      // fade-out both need to actually be seen) — only hidden once a
+      // close genuinely finishes, mirroring GSAP's `autoAlpha` timing.
+      if (isOpen) setVisible(backdrop, true);
+      backdropAnimation = animate(backdrop, { opacity: isOpen ? 1 : 0 }, { duration: DURATIONS.base, ease: MOTION_EASES.standard });
+      if (!isOpen) backdropAnimation.then(() => setVisible(backdrop, false));
     }
+
+    // Stops both tweens on unmount/re-run rather than leaving them to
+    // finish against a node React may already be about to detach —
+    // `animate()`, unlike GSAP's `gsap.context().revert()`, isn't stopped
+    // automatically just because the effect re-runs.
+    return () => {
+      panelAnimation.stop();
+      backdropAnimation?.stop();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, fromEdge, ready, prefersReducedMotion]);
 

@@ -4,7 +4,7 @@ import { animate, inView, stagger } from "motion";
 
 /** See `use-scroll-reveal.ts`'s matching type — `inView`'s options interface isn't itself exported by the `motion` package. */
 type InViewMargin = NonNullable<Parameters<typeof inView>[2]>["margin"];
-import { useReducedMotion } from "motion/react";
+import { usePrefersReducedMotion } from "./use-prefers-reduced-motion";
 import { DURATIONS, MOTION_EASES, type DurationToken, type EaseToken } from "./motion-tokens";
 import { useIsomorphicLayoutEffect } from "./use-isomorphic-layout-effect";
 import type { RevealDirection } from "./use-scroll-reveal";
@@ -19,8 +19,8 @@ export interface UseStaggerRevealOptions {
   distance?: number;
   duration?: DurationToken;
   ease?: EaseToken;
-  /** An IntersectionObserver `margin` string — see `use-scroll-reveal.ts`. */
-  start?: string;
+  /** An IntersectionObserver `margin` value, typed to Motion's own shape — see `use-scroll-reveal.ts`. */
+  start?: InViewMargin;
   /** Seconds between each child's start — Motion's own `stagger()`, not a per-child delay prop the caller computes by hand. */
   stagger?: number;
   /** Seconds before the *group* starts (e.g. to land after a sibling block's own reveal) — shifts the whole sequence, not spacing within it. */
@@ -45,7 +45,7 @@ export interface UseStaggerRevealOptions {
  */
 export function useStaggerReveal<T extends HTMLElement>(options: UseStaggerRevealOptions = {}) {
   const ref = useRef<T>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = usePrefersReducedMotion();
   const {
     direction = "up",
     distance = 32,
@@ -87,7 +87,7 @@ export function useStaggerReveal<T extends HTMLElement>(options: UseStaggerRevea
           },
         );
       },
-      { margin: start as InViewMargin },
+      { margin: start },
     );
 
     return () => stop();

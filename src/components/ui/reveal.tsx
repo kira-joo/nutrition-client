@@ -27,7 +27,7 @@ export interface RevealGroupProps extends UseStaggerRevealOptions {
 
 /**
  * `Reveal` for a list: wrap the grid/list container itself (not each
- * item) so the whole group shares one ScrollTrigger and staggers in
+ * item) so the whole group shares one viewport observer and staggers in
  * together via `useStaggerReveal`, instead of every item owning an
  * independent trigger plus a hand-computed `delay={index * 0.08}` — see
  * that hook's doc comment for why the per-item version is pure added
