@@ -31,11 +31,25 @@ export const EASES = {
 } as const;
 
 /**
- * No JS mirror of the CSS easings lives here on purpose: the CSS side is
- * generated straight from `motion-tokens.json` by
- * `scripts/generate-motion-css.mjs` into custom properties, so a hand-kept
- * copy would be a second source of truth with no consumer. This module
- * exists for the GSAP side only.
+ * A third reshape lane alongside GSAP's above and the generated CSS custom
+ * properties: Motion's `animate()` takes a cubic-bezier `ease` as a 4-number
+ * array, not a CSS string or a GSAP ease name, so this parses the exact same
+ * `cssCubicBezier` values already in `motion-tokens.json` rather than
+ * hand-copying the numbers a third time. Still one canonical source.
  */
+function parseCubicBezier(css: string): [number, number, number, number] {
+  const match = css.match(/cubic-bezier\(([^)]+)\)/);
+  if (!match) throw new Error(`Not a cubic-bezier() string: ${css}`);
+  const [x1, y1, x2, y2] = match[1].split(",").map(Number);
+  return [x1, y1, x2, y2];
+}
+
+export const MOTION_EASES = {
+  standard: parseCubicBezier(eases.standard.cssCubicBezier),
+  emphasized: parseCubicBezier(eases.emphasized.cssCubicBezier),
+  inOut: parseCubicBezier(eases.inOut.cssCubicBezier),
+  soft: parseCubicBezier(eases.soft.cssCubicBezier),
+} as const;
+
 export type DurationToken = keyof typeof DURATIONS;
 export type EaseToken = keyof typeof EASES;

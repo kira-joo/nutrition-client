@@ -46,12 +46,17 @@
   --color-primary-hover: #0f4e44; /* white text on primary-hover: 9.6:1 */
   --color-primary-soft: #e4f1ec; /* text-primary on primary-soft: 13.9:1 */
 
-  /* Darkened from the original #c98a3e — that value only cleared ~2.9:1
-   * with white text (fails AA) and ~2.8:1 as text-on-background (fails even
-   * the large-text 3:1 threshold). This value passes AA in both roles. */
-  --color-accent: #8f5f22; /* white text on accent: 5.5:1; text-on-background: 5.2:1 */
-  --color-accent-hover: #714a1a; /* white text on accent-hover: 7.8:1 */
-  --color-accent-soft: #f8ecd9; /* text-primary on accent-soft: 13.8:1 */
+  /* Refined to a genuine terracotta for the redesign (2026-08-20) — the
+   * previous brown/gold read as muted rather than as a real secondary
+   * accent distinct from --color-primary's teal. Recomputed, not
+   * eyeballed: white text on accent: 5.35:1; text-accent on background:
+   * 5.08:1; text-accent on surface: 5.35:1. --color-accent-soft's mix
+   * ratio (10%, not the more common 12-15%) is deliberately tuned down
+   * from the first attempt — 14% measured 4.39:1 for text-accent on top
+   * of it, just under the 4.5:1 AA floor for this size of text. */
+  --color-accent: #b24b28; /* white text on accent: 5.35:1 */
+  --color-accent-hover: #8f3b1f; /* white text on accent-hover: 7.47:1 */
+  --color-accent-soft: #f6ece8; /* text-accent on accent-soft: 4.60:1 */
 
   /* A dedicated warm gold for star ratings — `accent` reads too muted/brown
    * for this specific purpose (it was darkened for AA text contrast, not

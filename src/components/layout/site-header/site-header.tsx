@@ -109,25 +109,40 @@ export function SiteHeader({ logo, clinicName, whatsappNumber, phone }: SiteHead
     >
       <Container width="wide">
         <div className="flex h-16 items-center justify-between lg:h-20">
-          <Link href={AppRoute.Home} className="flex items-center gap-2">
-            {logo ? (
-              <Image
-                src={logo.secureUrl}
-                alt={clinicName}
-                width={logo.width}
-                height={logo.height}
-                sizes="96px"
-                className="h-10 w-auto object-contain lg:h-12"
-                priority
-              />
-            ) : (
-              // Falls back to the bundled current official mark rather than
-              // re-typesetting the brand name as text — see docs/theme.md's
-              // asset-audit note. `siteSettings.logo` is still the preferred
-              // source; this only covers the CMS-empty case.
-              <Image src="/images/TopLogo.png" alt={clinicName} width={2000} height={550} sizes="140px" className="h-8 w-auto object-contain lg:h-10" priority />
-            )}
-          </Link>
+          {/*
+            Two mobile-only additions grouped with the logo, not with the
+            hamburger: the mobile CTA lives here (hidden lg:flex has its own
+            desktop copy further down) so the hamburger stays isolated at
+            the opposite edge as its own flex item — the safe pattern for
+            `justify-between` once `nav` disappears below `lg`. Exactly one
+            "Book a consultation" is ever visible/focusable at a given
+            width; the two never coexist since each is gated by the
+            opposite side of the same `lg:` breakpoint.
+          */}
+          <div className="flex items-center gap-3">
+            <Link href={AppRoute.Home} className="flex items-center gap-2">
+              {logo ? (
+                <Image
+                  src={logo.secureUrl}
+                  alt={clinicName}
+                  width={logo.width}
+                  height={logo.height}
+                  sizes="96px"
+                  className="h-10 w-auto object-contain lg:h-12"
+                  priority
+                />
+              ) : (
+                // Falls back to the bundled current official mark rather than
+                // re-typesetting the brand name as text — see docs/theme.md's
+                // asset-audit note. `siteSettings.logo` is still the preferred
+                // source; this only covers the CMS-empty case.
+                <Image src="/images/TopLogo.png" alt={clinicName} width={2000} height={550} sizes="140px" className="h-8 w-auto object-contain lg:h-10" priority />
+              )}
+            </Link>
+            <Button href={AppRoute.Consultation} size="sm" className="lg:hidden">
+              {t("cta.bookConsultation")}
+            </Button>
+          </div>
 
           <nav className="hidden items-center gap-8 lg:flex">
             {PRIMARY_NAV_ITEMS.map((item) => (

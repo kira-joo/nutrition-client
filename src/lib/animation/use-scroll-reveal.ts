@@ -1,12 +1,25 @@
 "use client";
 import { useRef } from "react";
-import { gsap, prefersReducedMotion } from "./gsap-config";
-import { DURATIONS, EASES, type DurationToken, type EaseToken } from "./motion-tokens";
+import { animate, inView } from "motion";
+
+/** `inView`'s options interface isn't itself exported by the `motion` package — derived from the function's own signature instead of hand-duplicating its `margin` shape. */
+type InViewMargin = NonNullable<Parameters<typeof inView>[2]>["margin"];
+import { useReducedMotion } from "motion/react";
+import { DURATIONS, MOTION_EASES, type DurationToken, type EaseToken } from "./motion-tokens";
 import { useIsomorphicLayoutEffect } from "./use-isomorphic-layout-effect";
 
 /** Below this, a reveal runs at this fraction of its configured duration — a full-length tween reads as sluggish on a phone. */
 const MOBILE_BREAKPOINT = "(max-width: 767px)";
 const MOBILE_DURATION_SCALE = 0.75;
+
+/**
+ * Motion's `inView` takes an IntersectionObserver-style `margin`, not GSAP
+ * ScrollTrigger's `"top 92%"` string — this is a close visual equivalent
+ * (fires once the element is within the bottom ~8% of the viewport), not a
+ * pixel-identical port. No call site ever overrode the old `start` value, so
+ * nothing depended on its exact trigger point.
+ */
+const DEFAULT_VIEWPORT_MARGIN = "0px 0px -8% 0px";
 
 /**
  * Describes where the element starts relative to its resting position —
@@ -24,39 +37,39 @@ export interface UseScrollRevealOptions {
   ease?: EaseToken;
   /** Seconds, for staggering a group of siblings by hand at the call site. */
   delay?: number;
-  /** A ScrollTrigger `start` value — how far into the viewport before the reveal fires. */
+  /** An IntersectionObserver `margin` string (see the module doc comment above) — not a GSAP ScrollTrigger `start` value. */
   start?: string;
 }
 
 /**
  * Attach the returned ref to the element that should animate in once it
- * scrolls into view. Fires exactly once per element (`once: true` on the
- * underlying ScrollTrigger) — this project's replacement for the legacy
- * `framer-motion`-based `AnimatedSection`, which re-triggered on every
- * repeat scroll pass; that's a real, deliberately-fixed behavior
- * difference, not an oversight.
+ * scrolls into view. Fires exactly once per element — the `inView` callback
+ * below returns nothing, which is what makes it fire-once rather than
+ * re-triggering on every scroll pass in and out (see `inView`'s own docs:
+ * only a callback that *returns* a leave-handler keeps observing).
  *
- * Honors the shared `prefers-reduced-motion` gate (`gsap-config.ts`): when
- * set, the element is simply shown at its resting state with no animation
- * or ScrollTrigger registered at all.
+ * Honors `prefers-reduced-motion` via Motion's own `useReducedMotion` hook:
+ * when set, the element is simply shown at its resting state with no
+ * animation or viewport observer registered at all.
  */
 export function useScrollReveal<T extends HTMLElement>(options: UseScrollRevealOptions = {}) {
   const ref = useRef<T>(null);
+  const prefersReducedMotion = useReducedMotion();
   const {
     direction = "up",
     distance = 32,
     duration = "reveal",
     ease = "emphasized",
     delay = 0,
-    start = "top 92%",
+    start = DEFAULT_VIEWPORT_MARGIN,
   } = options;
 
   useIsomorphicLayoutEffect(() => {
     const element = ref.current;
     if (!element) return;
 
-    if (prefersReducedMotion()) {
-      gsap.set(element, { opacity: 1, x: 0, y: 0 });
+    if (prefersReducedMotion) {
+      animate(element, { opacity: 1, x: 0, y: 0 }, { duration: 0 });
       return;
     }
 
@@ -64,29 +77,32 @@ export function useScrollReveal<T extends HTMLElement>(options: UseScrollRevealO
     const sign = direction === "up" || direction === "left" ? 1 : -1;
     const fromOffset = direction === "none" ? 0 : distance * sign;
 
-    const ctx = gsap.context(() => {
-      const animate = (durationScale: number) =>
-        gsap.fromTo(
+    // Instant, pre-paint set to the starting offset — mirrors the GSAP
+    // version's synchronous `gsap.set` so there's no flash of the resting
+    // (revealed) state before the viewport observer ever fires.
+    animate(element, { opacity: 0, [axis]: fromOffset }, { duration: 0 });
+
+    const stop = inView(
+      element,
+      () => {
+        const isMobile = window.matchMedia(MOBILE_BREAKPOINT).matches;
+        animate(
           element,
-          { opacity: 0, [axis]: fromOffset },
+          { opacity: 1, [axis]: 0 },
           {
-            opacity: 1,
-            [axis]: 0,
-            duration: DURATIONS[duration] * durationScale,
-            ease: EASES[ease],
+            duration: DURATIONS[duration] * (isMobile ? MOBILE_DURATION_SCALE : 1),
+            ease: MOTION_EASES[ease],
             delay,
-            scrollTrigger: { trigger: element, start, once: true },
           },
         );
+        // No cleanup returned here on purpose — see the doc comment above.
+      },
+      { margin: start as InViewMargin },
+    );
 
-      const mm = gsap.matchMedia();
-      mm.add(MOBILE_BREAKPOINT, () => animate(MOBILE_DURATION_SCALE));
-      mm.add(`(min-width: 768px)`, () => animate(1));
-    });
-
-    return () => ctx.revert();
+    return () => stop();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [direction, distance, duration, ease, delay, start]);
+  }, [direction, distance, duration, ease, delay, start, prefersReducedMotion]);
 
   return ref;
 }

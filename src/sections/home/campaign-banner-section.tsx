@@ -27,7 +27,7 @@ export function CampaignBannerSection({ campaign }: CampaignBannerSectionProps) 
   return (
     <Link
       href={appHref.campaign(campaign.slug)}
-      className="block bg-accent text-white transition-colors duration-fast hover:bg-accent/90"
+      className="focus-ring-on-dark block bg-accent text-white transition-colors duration-fast hover:bg-accent/90"
     >
       <Container className="flex items-center justify-center gap-2 py-3 text-center">
         <Megaphone aria-hidden="true" className="size-icon-sm shrink-0" />
