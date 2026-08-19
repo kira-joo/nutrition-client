@@ -88,6 +88,15 @@ taxonomy — a hand-kept-in-sync duplicate of nutrition-staff's `CacheTag`),
 Convention for multi-tag calls: the **first** tag is the policy/domain tag; any
 further tags are entity-level and participate in invalidation only.
 
+## Branches
+
+Implementation work happens on **`staging`**, branched from `master` (this repo's
+default branch is `master`, not `main`). Commit and push to `staging` freely.
+**Never merge `staging` into `master`** — the user handles that personally.
+
+The older `new-1` working branch is historical; `docs/HANDOFF.md` §9 carries the
+current policy.
+
 ## Verification
 
 Real browser verification is part of this repo's definition of done, at 375/768/
