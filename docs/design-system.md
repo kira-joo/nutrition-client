@@ -227,8 +227,15 @@ color changes, etc). The generator runs automatically via the `predev`/
 with the JSON — there's nothing to hand-edit on the CSS side, and the
 generated file isn't committed to git (see `.gitignore`). See `theme.md` for
 the exact values and when to use each one. No animation code should
-hardcode a duration or ease curve — every GSAP timeline reads from
+hardcode a duration or ease curve — every animation reads from
 `motion-tokens.ts`.
+
+**Direction change (2026-08-19):** Motion is now the animation stack of record
+and GSAP is legacy pending migration — see HANDOFF §9. The token system itself is
+unaffected and stays authoritative; what changes is the consumer. `motion-tokens.ts`
+still reshapes the JSON into GSAP-shaped values today (seconds plus GSAP ease
+strings), and converting that layer to Motion-native easing is part of the planned
+migration rather than something to work around.
 
 ## Correct vs. incorrect token usage
 

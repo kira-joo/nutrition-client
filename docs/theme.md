@@ -123,7 +123,11 @@ already works.
 **Canonical source**: `src/lib/animation/motion-tokens.json`. Everything
 else below is derived from it, not hand-duplicated:
 - `motion-tokens.ts` reshapes it into GSAP-friendly constants (`DURATIONS`
-  in seconds, `EASES` as GSAP ease strings).
+  in seconds, `EASES` as GSAP ease strings). **This reflects the current code,
+  not the current direction:** Motion is now the animation stack of record and
+  GSAP is legacy pending migration (HANDOFF §9). The tokens and the JSON source
+  stay authoritative either way — only this reshaping layer and its consumers
+  change. The GSAP examples below remain accurate for the code as it stands today.
 - `src/app/_generated/motion-tokens.css` (the `--duration-*`/`--ease-*` CSS
   custom properties) is **generated** from the same JSON by
   `scripts/generate-motion-css.mjs`, run automatically by the `predev` and
