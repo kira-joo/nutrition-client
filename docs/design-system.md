@@ -1,5 +1,25 @@
 # nutrition-client design system
 
+> **Status (2026-08-19): current-state and historical reference — not the visual
+> source of truth.**
+>
+> A genuine UI/UX redesign of `nutrition-client` is underway. This document
+> remains valuable and worth reading: it records real brand context, accessibility
+> analysis, RTL decisions, token rationale, and an accurate description of what is
+> implemented today. It is **not** a constraint on the new design.
+>
+> Open to redesign: palette, typography and type scale, spacing and rhythm, the
+> container system, radii, shadows, gradients, card/surface families, page
+> composition, hero structure, section layouts, navigation presentation, component
+> visual language, visual hierarchy, motion patterns, and the design-token
+> vocabulary itself.
+>
+> Still binding: accessibility *requirements* (a new palette must be
+> contrast-verified to the same standard recorded here), RTL *correctness*,
+> responsive *quality requirements*, and every non-visual engineering convention.
+>
+> See `.claude/skills/ui-design-and-redesign/SKILL.md` for the full split.
+
 This document is the "why/what" of the visual language for Dr. Omnia's public
 site — the brand story, palette rationale, typography decisions, and the
 structural rules every page follows. For the raw token API (CSS custom

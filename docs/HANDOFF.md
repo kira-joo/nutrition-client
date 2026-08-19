@@ -216,11 +216,32 @@ Triggered by an explicit instruction: move the repeated `const result = await mu
 
 ## 4. Remaining roadmap
 
+> **Resequenced 2026-08-19 — combined refactor + redesign.** The roadmap below was
+> written assuming Phase 6 would build pages against the *approved existing visual
+> system*, with any redesign as separate later work. That is no longer the plan.
+> The frontend architecture cleanup and the `nutrition-client` UI/UX redesign are
+> now a **single pass**, so we do not perfectly refactor a visual system we
+> already intend to replace. See §15 for the authoritative/open split and the
+> revised workstream order. Phase numbering is kept for continuity with existing
+> references; read it as workstream grouping, not as strict sequence.
+
 ### Phase 6 — Per-content-type integration (next)
 
 **Objective:** build the actual public pages that render real CMS content through the data layer already built in Phases 4–5.
 
-**Recommended implementation order** (per the master plan's dependency ordering): global layout (site settings: header/footer/contact/social) → doctor profile → packages → FAQ → recipes (introduces the filter/pagination pattern) → reviews/videos (introduces the video player + carousel) → campaign block renderer → consultation form wired to the real backend endpoint.
+**Recommended implementation order** (per the master plan's dependency ordering, and unchanged by the resequencing — the *content* dependency order is still correct): global layout (site settings: header/footer/contact/social) → doctor profile → packages → FAQ → recipes (introduces the filter/pagination pattern) → reviews/videos (introduces the video player + carousel) → campaign block renderer → consultation form wired to the real backend endpoint.
+
+**What changed is what happens per item in that order.** Each one is now a combined unit of work rather than "build it to the old design, redesign later":
+
+```
+understand current behaviour   (what it must do, what data it has, what rules apply)
+  → decide shared vs. local    (toolkit primitive? app-level module? feature-local?)
+    → design the improved UI   (new direction; Figma + Motion as active tools)
+      → implement/refactor     (into the target design, not the old markup)
+        → verify in browser    (Playwright, both locales, all three viewports, all states)
+```
+
+The design step is a **prerequisite of** the implementation step for each item, not a follow-up to it. A section is not "done and awaiting redesign" — it is either done to the new direction or not started.
 
 **Expected architecture:** Server Components fetch via the existing `src/lib/data/*.ts` functions (already built, already tagged/cached — nothing new needed there). Presentation split per the master plan's `src/components/ui` (server-renderable, token-driven primitives) vs `src/components/interactive` (`"use client"` leaf components only where truly needed — forms, carousel, video controls, lightbox, drawer) vs `src/sections` (page-level composition, accepts already-fetched data as props, never fetches itself). Reveal/scroll animation hooks need to be built — nothing like this exists yet anywhere in the toolkit ecosystem, and per the master plan these stay app-local for now (not obviously reusable across unrelated projects yet). **Build these on Motion, not GSAP** (see §9); the originally-planned `useGsapReveal`/`useScrollTriggerTimeline` names assumed the superseded GSAP-only decision.
 
@@ -229,31 +250,35 @@ Triggered by an explicit instruction: move the repeated `const result = await mu
 **Risks:**
 - The master plan has a hard design-quality gate: sections must not read as a generic AI-landing-page template (no repeated "hero → three cards → heading → three cards" pattern). This needs active design judgment per section, not just implementation speed.
 - Mobile is designed first, but tablet/desktop must independently pass the same quality bar — not a "collapse in reverse" of the mobile layout. See master plan §6 for the explicit list of disallowed desktop failure modes.
-- GSAP + ScrollTrigker licensing should be reconfirmed at implementation time (the master plan flags this as a known unknown from its own knowledge cutoff).
+- The animation stack is mid-migration: Motion is the target, GSAP is legacy and still installed (§9). Build new animation on Motion; do not add GSAP.
+- **Combined refactor + redesign is the intended efficiency, and also the main risk.** Two failure modes to watch: (a) drifting into a reskin because the old system is the path of least resistance, and (b) redesigning so freely that behaviour, data contracts, accessibility, or RTL correctness regress. Behaviour and requirements are preserved; visuals are not.
+- The token vocabulary is being revised rather than merely consumed, so "no new hardcoded values" needs care: replace tokens deliberately and wholesale, don't erode the system with one-off values mid-flight.
 
-**Acceptance criteria** (per the master plan's phase-completion standard, §27/§28): mobile, tablet, and desktop independently verified; the design-quality repetition check applied section-by-section; no new hardcoded token-system values introduced; verified across the full matrix in master-plan §28 (viewports, locale/RTL, keyboard+touch, `prefers-reduced-motion`, slow network, empty/long/partial-translation/missing-media data conditions, real backend data).
+**Acceptance criteria** (per the master plan's phase-completion standard, §27/§28, plus the redesign gate): mobile, tablet, and desktop independently verified; the design-quality repetition check applied section-by-section; token-system discipline maintained (no one-off values, even while the vocabulary is being revised); verified across the full matrix in master-plan §28 (viewports, locale/RTL, keyboard+touch, `prefers-reduced-motion`, slow network, empty/long/partial-translation/missing-media data conditions, real backend data).
+
+Added by the resequencing: each item is measurably **better than what it replaced** on hierarchy, readability, clarity of action, and state quality — captured as a before/after browser comparison, not asserted. Any new palette or token value is contrast-verified and annotated to the standard already set in `design-system.md`.
 
 ### Phase 7 — SEO/perf polish
 
 `generateMetadata` per route pulling from `site-settings.defaultSeo` with per-entity overrides, dynamic OG images where valuable, canonical URLs + locale alternates, `sitemap.ts`/`robots.ts`, JSON-LD strictly limited to what the data supports (explicitly **no** `Review`/`AggregateRating` — no numeric rating field exists in the CMS). Dynamic-import audit for the animation library/carousel/video-player (never globally bundled). Bundle analysis against the master plan's performance budgets (Lighthouse mobile 90+, LCP <2.5s, CLS <0.05, INP <200ms) — these numbers are targets to measure against, not yet-measured facts.
 
-**Dependency:** Phase 6 must exist first (nothing to measure/optimize yet).
+**Dependency:** Phase 6 must exist first (nothing to measure/optimize yet). Note the resequencing does not move this earlier — measuring a page that is still being redesigned wastes the measurement.
 
 ### Phase 8 — Empty/error/loading states pass
 
 Per-module empty states (recipes/reviews/videos/FAQ/packages/campaigns/doctor-gallery — each with its own copy/illustration, not one generic component reskinned), a real `not-found.tsx` + route-level `error.tsx` boundaries, content-shaped loading skeletons matching real content dimensions (a CLS requirement, not just polish).
 
-**Dependency:** Phase 6.
+**Dependency:** Phase 6 — but **largely absorbed into it** by the resequencing. Empty/loading/error states are part of designing a section properly, so they are designed and built with each item rather than swept up afterwards. What remains as a distinct pass is the cross-cutting work: the root `not-found.tsx`/`error.tsx` boundaries and a consistency review across modules once they all exist.
 
 ### Phase 9 — Accessibility verification pass
 
 Built in during Phase 6 component-by-component per the master plan, but a dedicated final pass against the full WCAG 2.2 AA checklist (keyboard nav, focus trapping + restoration, RTL icon-mirroring rules, `prefers-reduced-motion`, screen-reader labels) is still owed as its own explicit step.
 
-**Dependency:** Phase 6.
+**Dependency:** Phase 6. **Raised in importance by the resequencing:** a redesign that replaces the palette, type scale, and focus-ring treatment invalidates the previously-verified contrast and focus work, so this pass re-establishes accessibility against the *new* system rather than confirming the old one.
 
 ### Phase 10 — Cleanup sweep
 
-Final `grep` sweep confirming zero remaining MUI/mongodb/framer-motion references anywhere in `nutrition-client`. Most of this was already done in Phase 1; this is the final confirmation pass, not new removal work.
+Final `grep` sweep confirming zero remaining MUI/mongodb references anywhere in `nutrition-client`. Most of this was already done in Phase 1; this is the final confirmation pass, not new removal work. **Extended by the resequencing:** also confirm GSAP is fully removed (or that every retained use is a documented exception per §9), and that no superseded token/visual-system remnants survive as dead CSS or unused token declarations.
 
 ---
 
@@ -476,7 +501,7 @@ For a new engineer or a fresh AI session picking this project up cold:
 
 1. **This document, in full**, first. It's written specifically to orient without prior context.
 2. **`nutrition-client/docs/architecture.md`** — the living technical doc for the public site's data/API/caching architecture. More granular and more likely to have been updated since this handoff than the summary in §7 above.
-3. **The master plan** (`/Users/joe/.claude/plans/nutrition-client-purring-toucan.md`) — the full original design brief. Long, but it's the source of nearly every "why" behind a convention in §9. Skim it once fully, then keep it as a reference for whichever Phase 6 section you're building (it's organized by concern: IA/navigation, design system, mobile/tablet/desktop, card system, recipes, reviews, packages, doctor profile, campaigns, image/video delivery, animation, forms, empty states, error states, loading states, accessibility, SEO, performance, code architecture).
+3. **The master plan** (`/Users/joe/.claude/plans/nutrition-client-purring-toucan.md`) — the full original design brief. Long, but it's the source of nearly every "why" behind a convention in §9. Skim it once fully, then keep it as a reference for whichever section you're building (it's organized by concern: IA/navigation, design system, mobile/tablet/desktop, card system, recipes, reviews, packages, doctor profile, campaigns, image/video delivery, animation, forms, empty states, error states, loading states, accessibility, SEO, performance, code architecture). **Its visual composition rules are no longer mandatory** — see §15. Treat it as architectural/product history, requirements context, and rationale for the existing implementation; its *product requirements* and *non-visual architecture* still carry weight, its prescribed card layouts, hero compositions, section structures, visual treatments, and animation patterns may be reconsidered.
 4. **`backend-toolkit-next/src/routes/create-route.ts` and its test file** — the single most-referenced piece of infrastructure in this handoff. Understanding this file's exact 9-step sequence makes every route file in nutrition-staff trivially readable.
 5. **One representative nutrition-staff entity end to end** — e.g. `recipes`: `src/server/recipes/recipes.schema.ts` → `recipes.repository.ts` → `src/app/api/recipes/route.ts` + `[id]/route.ts` → `src/server/core/revalidation/revalidate-entity.ts`'s `RECIPES_TAGS`/`recipeDetailTags`. This one entity is a template for all the others.
 6. **`nutrition-client/src/lib/data/recipes.ts`** and its sibling `api/recipes.endpoints.ts` — the frontend half of the same entity, showing how it's consumed.
@@ -534,7 +559,7 @@ State as of this handoff (2026-08-06):
 
 Context and reasoning that isn't obvious from the code alone:
 
-- **The master plan is unusually load-bearing for this project.** Almost every non-obvious design choice in `nutrition-client`'s Phase 6+ work traces back to a specific numbered section of it. When in doubt about "should this be its own component" or "is this animation excessive," the master plan almost certainly already has an explicit answer — check it before improvising.
+- **The master plan is unusually load-bearing for this project — for requirements and architecture, no longer for visual composition.** Almost every non-obvious choice in `nutrition-client`'s work traces back to a specific numbered section of it, and for product requirements, data expectations, and non-visual architecture it is still the best answer available. For *visual* questions ("what should this card look like", "how should this hero be composed", "is this animation excessive") it now describes the superseded direction — see §15. Check it for context, then decide against the current redesign direction rather than deferring to it.
 - **The barrel-bug story (Phase 4) is worth understanding as a pattern, not just a fixed bug.** The sequence was: hit a real blocker → build a documented, verified-correct temporary local workaround → keep shipping → once the real fix became available (a new toolkit version), delete the workaround completely and consume the fix. This is the template for how *any* future temporary workaround in this project should be handled — never a permanent local fork of toolkit logic.
 - **Two explicit rejections of moving cache tags into `toolkit-common`** happened at different points in the project, worded almost identically both times. This is a strong, considered, repeated signal — not a one-off preference. Don't re-propose it a third time without a materially new argument.
 - **"Ask before publishing" is per-instance, not a standing blanket approval**, even though every publish request so far in this project has been approved. Each of the ~4 publishes in this project (`toolkit-common` 0.3.0, `frontend-toolkit-core` 0.5.0, `backend-toolkit-next` 0.4.0, and the earlier `frontend-toolkit-core`/`toolkit-common` round) was preceded by an explicit `AskUserQuestion` confirmation. Continue asking every time, not just the first time.
@@ -542,3 +567,101 @@ Context and reasoning that isn't obvious from the code alone:
 - **The `revalidateTags` refactor was explicitly framed as "this works, but it's repetitive and easy to forget"** — i.e., the imperative Phase-5-Pass-1 version wasn't *wrong*, it was a real, working, fully-verified feature that got intentionally superseded for maintainability reasons once the pattern proved out across 38 real call sites. This is a useful precedent: a first, simpler implementation that gets replaced once its shape is proven is a legitimate and expected part of this project's process, not a sign the first attempt was a mistake.
 - **This handoff document itself was explicitly requested in place of starting Phase 6** — the instruction was unusually explicit: finish the in-flight refactor, verify it, then stop and write this instead of continuing the roadmap. Whoever picks this project up next should treat Phase 6 as the actual next unit of work, with this document as the entire required context to start it.
 - **Multiple concurrent Claude Code sessions share some of these working trees** (confirmed via `ps aux` showing several resumed sessions with overlapping `--add-dir` scopes, and the presence of `DASHBOARD_PLAN.md`/`CRM_PLAN.md` untracked files in nutrition-staff/frontend-toolkit-core that don't belong to this project's work). Any future session should `git status` before any branch-switching or destructive git operation, and never assume the working tree is in the exact state this document describes without checking first — that's a snapshot-at-write-time guarantee, not a live one.
+
+---
+
+## 15. Redesign direction (2026-08-19) — supersedes the approved visual system
+
+This section is authoritative where it conflicts with anything earlier in this
+document, with `design-system.md`, with `theme.md`, or with the master plan's
+visual sections.
+
+### The old visual system is reference, not law
+
+`design-system.md`, `theme.md`, and the master plan's visual composition rules
+are **current-state and historical reference**. They must still be read — they
+carry real brand context, accessibility analysis, RTL decisions, token rationale,
+and an accurate description of what is implemented today. They are **not** the
+visual source of truth for the work ahead.
+
+The upcoming work is a **genuine UI/UX redesign, not a reskin or a polish pass.**
+Do not preserve a visual decision merely because an earlier phase approved it.
+
+### What remains authoritative
+
+Toolkit/package-first architecture · public/backend boundaries · API, data and
+cache architecture · route conventions · localization and RTL **correctness** ·
+accessibility **requirements** · responsive **quality requirements** ·
+server/client boundaries · verification standards · branch and release rules ·
+business and domain behaviour.
+
+Note the distinction in the middle of that list: the *requirements* bind, the
+*specific values and implementations* currently satisfying them do not. A new
+palette is allowed; an unverified one is not — any replacement is
+contrast-measured and annotated to the standard already set in
+`design-system.md`.
+
+### What is explicitly open to redesign
+
+Palette · typography and font choices · type scale · spacing and rhythm ·
+container system · radii · shadows · gradients · card and surface families · page
+composition · hero structure · section layouts · navigation presentation ·
+component visual language · visual hierarchy · motion and interaction patterns ·
+**the design-token vocabulary itself**.
+
+The token *mechanism* still binds even while the vocabulary changes: tokens are
+declared once and consumed everywhere. Replace the vocabulary deliberately and
+wholesale; do not erode it with one-off values mid-migration.
+
+### Refactor and redesign are one pass
+
+This is deliberately **not** "refactor the old UI faithfully now, redesign it
+later". Perfecting a visual system that is about to be replaced is wasted work.
+
+- Refactoring a client-local component does not mean preserving its current
+  visual design.
+- Extracting or improving a shared primitive means designing its API for the
+  **redesigned** client to consume cleanly — not for today's markup.
+- Migrating duplicated UI means moving to the new design direction, not
+  recreating the old markup and styles.
+- Preserved across the refactor: behaviour, business rules, data contracts,
+  accessibility, RTL, functional requirements. Not obsolete visual decisions.
+
+Per unit of work:
+
+```
+understand current behaviour → decide shared vs. local architecture
+  → design the improved UI → implement/refactor into that target
+    → verify in the real browser
+```
+
+The design step is a prerequisite of implementation, not a follow-up to it.
+
+### Where visual truth comes from now
+
+1. The user's stated redesign direction.
+2. The actual content and functionality the site must support.
+3. **Figma** and the Figma tooling — an active design tool here, not just a
+   reference reader.
+4. **Motion** tooling for interaction and motion design.
+5. Browser inspection and Playwright visual QA against the real implementation.
+6. Current brand assets and real content.
+7. The old `design-system.md` / `theme.md` / master plan — prior research and
+   current-state documentation only.
+
+### Named exceptions
+
+- The **Books Flipbook** is a **preserved successful experience** and is not
+  redesigned as part of the general client redesign. The only condition that
+  justifies touching it is a clear inconsistency created by the new surrounding
+  design that actually requires it — not the mere fact that the rest of the site
+  changed. Its invariants (immutable editions, watermark/pagination independence,
+  full-bleed covers, the flip-engine adapter boundary) hold regardless of visual
+  direction. It is also **not a visual source of truth for the rest of the
+  site**: do not derive the new palette, type scale, or component language from it
+  on the grounds that it is the part that already works.
+- **`nutrition-staff` is outside this redesign's scope** and must not inherit the
+  public site's new visual identity. Its own UI and toolkit cleanup remains a
+  separate concern, handled through the shared-toolkit and refactor work where
+  relevant, and keeps its own conventions.
+- Backend, data, and cache architecture are untouched by this clarification.

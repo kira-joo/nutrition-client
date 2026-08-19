@@ -31,6 +31,8 @@ The project is between Phase 5 and Phase 6. Phases 1 through 5 are complete, app
 
 ## Step 4 — Conventions you must preserve
 
+**Before anything visual:** a genuine UI/UX redesign of this app is underway. `docs/design-system.md`, `docs/theme.md`, and the master plan's visual composition rules are current-state and historical reference — not the visual source of truth — and the frontend refactor and redesign are one combined pass, not two. See HANDOFF §15 and `.claude/skills/ui-design-and-redesign/SKILL.md` for what is open and what stays authoritative. The engineering conventions below are unaffected.
+
 HANDOFF.md §9 documents every engineering convention established so far — package-first, no duplicated generic code, backend owns business logic, route constants (never inline path strings), a base URL owns the shared prefix while a route constant owns only the resource path, endpoint objects (never bare method+URL pairs), mobile-first with an equal quality bar across breakpoints, Motion as the animation stack of record with GSAP as legacy pending migration (this convention was updated 2026-08-19 — HANDOFF §9 has the current wording), Tailwind-only styling, explicit server/client separation, the three-part cache strategy, the branch workflow above, and "verification means real, not code-inspection" wherever practically possible. Follow all of them without being re-told. If a new situation doesn't cleanly fit an existing convention, say so explicitly and ask rather than inventing a new pattern silently.
 
 ## Step 5 — Always ask before

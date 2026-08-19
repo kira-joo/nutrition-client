@@ -6,20 +6,29 @@ repo.
 
 ## Read the right doc before starting
 
-This repo's `docs/` directory is the authority. Do not re-derive from code what
+This repo's `docs/` directory is the primary project reference. Each document has an explicit authority/status below; do not treat every visual document as immutable. Do not re-derive from code what
 is already written down, and do not copy these into context wholesale — open the
 one the task needs:
 
 | Task | Read first |
 |---|---|
 | Anything touching data, API, caching, revalidation, i18n | `docs/architecture.md` |
-| Visual/design work — palette, type, spacing, card families, contrast | `docs/design-system.md` |
-| Writing actual styles — token names, Tailwind mappings, right/wrong usage | `docs/theme.md` |
+| Visual/design work — palette, type, spacing, card families, contrast | `docs/design-system.md` — **current-state reference, not the redesign spec** |
+| Writing actual styles — token names, Tailwind mappings, right/wrong usage | `docs/theme.md` — accurate for today's code; the vocabulary itself is open |
 | Picking up the project cold, or asking "why is it like this" | `docs/HANDOFF.md` |
 
-`docs/HANDOFF.md` is a snapshot, not a live document — its **conventions** are
-authoritative, but its branch names, version numbers, and "current phase" have
-moved on. Re-check facts against the repo.
+`docs/HANDOFF.md` is a snapshot, not a live document — its **non-visual
+conventions** are authoritative, but its branch names, version numbers, and
+"current phase" have moved on. Re-check facts against the repo.
+
+**A genuine UI/UX redesign of this app is underway — not a reskin.** The visual
+system in `design-system.md`/`theme.md` and the master plan's visual composition
+rules are prior research and current-state documentation; they inform the
+redesign rather than constraining it. The engineering architecture below is
+unaffected and stays binding. The refactor and the redesign are **one pass**: do
+not faithfully recreate old markup while cleaning up components. See
+`.claude/skills/ui-design-and-redesign/SKILL.md` for the exact open/authoritative
+split.
 
 ## The hard rules
 
