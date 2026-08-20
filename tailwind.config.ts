@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import plugin from "tailwindcss/plugin";
+import { toolkitContentGlob, toolkitPreset } from "@kira-joo/frontend-toolkit-tailwind/tailwind-preset";
 import type { Config } from "tailwindcss";
 
 /**
@@ -34,11 +35,34 @@ const fontSize: Record<string, FontSizeEntry> = Object.fromEntries(
 );
 const config: Config = {
   darkMode: "class",
+  /*
+    The toolkit preset supplies the semantic role vocabulary its components
+    render (`bg-surface`, `border-border-strong`, …). This app's own
+    `theme.extend.colors` below shadows the roles it already names, which is
+    intentional: those resolve straight to the measured `--color-*` values, and
+    the `--ftk-*` aliases in `globals.css` cover the rest. Renaming ~90
+    variables whose contrast ratios are recorded against those names would have
+    been a far larger and riskier change for no runtime difference.
+  */
+  presets: [toolkitPreset],
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/sections/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    /*
+      Without this the toolkit's components are compiled from classes this app
+      never scans, so whichever ones it happens to use elsewhere survive and the
+      rest are purged. That is not theoretical: it silently removed the entire
+      visible error state from the consultation form — the site's only lead
+      capture — leaving `text-red-600` computing to the body text colour and
+      `border-red-500` to the neutral border, plus a default blue focus ring on
+      a green-branded site. Measured in the browser, not inferred.
+
+      It has to live here rather than in the preset: Tailwind 3 discards
+      `content` declared by a preset.
+    */
+    toolkitContentGlob,
   ],
   theme: {
     extend: {

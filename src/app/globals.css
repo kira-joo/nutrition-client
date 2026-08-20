@@ -209,6 +209,50 @@
   --control-height-md: 2.75rem;
   --control-height-lg: 3.25rem;
 
+  /* ---- Toolkit role aliases ----
+   *
+   * `@kira-joo/frontend-toolkit-tailwind` renders its components through a
+   * semantic role vocabulary, each role reading `var(--ftk-<role>, <stock>)`.
+   * Undefined, a role falls back to the stock slate/red palette the package
+   * used to hardcode — correct for the admin app, wrong inside this warm-paper
+   * palette. Defining a role here is how a toolkit component becomes part of
+   * this brand, with no component-level override anywhere.
+   *
+   * Aliases, not new values: every one points at a token above whose contrast
+   * is already measured and recorded there, so the toolkit cannot introduce an
+   * unverified colour.
+   *
+   * Only the roles the toolkit components rendered in this app actually use are
+   * mapped — the input and textarea on the consultation form. The rest stay on
+   * their stock defaults until a component that needs them is used here, which
+   * keeps this block honest about what has been checked rather than a wall of
+   * guesses.
+   */
+  --ftk-surface: var(--color-surface);
+  --ftk-surface-muted: var(--color-surface-muted);
+  --ftk-text-primary: var(--color-text-primary);
+  --ftk-text-muted: var(--color-text-muted);
+  /* This palette carries no separate placeholder tone; `text-muted` is the
+     lightest text that still measures accessibly on `surface`, and a
+     placeholder must stay readable rather than decorative. */
+  --ftk-text-placeholder: var(--color-text-muted);
+  --ftk-border: var(--color-border);
+  /* One hairline serves both roles here by design: this palette defines a
+     single border tone, and an input outline heavier than a card's edge would
+     read as a mistake in it. */
+  --ftk-border-strong: var(--color-border);
+  --ftk-destructive: var(--color-destructive);
+  --ftk-destructive-border: var(--color-destructive);
+  --ftk-focus: var(--color-focus);
+
+  /* Control metrics. The package defaults to 40px/14px, which is right for a
+     dense admin table and wrong on a phone: 40px is under this app's own
+     --touch-target-min, and anything below 16px makes iOS Safari zoom the page
+     on focus. Both are expressed with existing tokens so the form's controls
+     cannot drift from the ones this app builds itself. */
+  --ftk-control-height: var(--control-height-md);
+  --ftk-control-font-size: 1rem;
+
   /* ---- Touch targets ---- */
   --touch-target-min: 2.75rem;
 }
