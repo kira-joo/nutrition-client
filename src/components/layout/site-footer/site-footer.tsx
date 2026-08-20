@@ -22,7 +22,19 @@ export interface SiteFooterProps {
  * `:focus-visible` ring measures only 2.78:1 against `surface-inverse`
  * (fails the 3:1 non-text/UI-indicator threshold), so every focusable
  * element on this surface needs the white inverse ring instead. */
-const INVERSE_LINK = "text-body-sm text-on-inverse-muted transition-colors duration-fast hover:text-on-inverse focus-ring-inverse";
+const INVERSE_LINK =
+  "text-body-sm text-on-inverse-muted transition-colors duration-fast hover:text-on-inverse focus-ring-inverse " +
+  /* Phones only: each row becomes a real `--touch-target-min` (44px) target
+     centred in its column, rather than a ~34px line of text. Uses the
+     project's own token, not a hand-picked padding, so the footer can never
+     drift from the touch minimum the rest of the app is held to. From `sm`
+     up the compact inline-start rhythm returns unchanged. */
+  "flex min-h-touch-min items-center justify-center sm:min-h-0 sm:justify-start";
+
+/** Column heading: centred on phones with the rest of the composition, and
+ * back to inline-start from `sm` up where the real columns exist. */
+const COLUMN_HEADING =
+  "flex items-center justify-center gap-2 text-label font-semibold uppercase tracking-wide text-on-inverse-muted sm:justify-start";
 
 /**
  * "Botanical Trust" — the footer's dark brand-green surface now does real
@@ -46,6 +58,29 @@ const INVERSE_LINK = "text-body-sm text-on-inverse-muted transition-colors durat
  * Deliberately no newsletter form — that capability doesn't exist
  * server-side (the old dead route was removed on purpose), and a
  * decorative form with nowhere to submit would be worse than no form.
+ *
+ * **Phones get their own composition, not the desktop columns stacked.**
+ * Collapsing four inline-start-aligned columns into one narrow column read
+ * as badly lopsided, and measurably so at 375px in Arabic: the logo chip
+ * left 243px of dead space beside it, and every short nav word ("الكتب",
+ * "المزيد") hugged the right edge of a full-width box, so the whole footer
+ * leaned into one margin. Two things fix it here, and neither is a
+ * text-alignment tweak alone:
+ *
+ *   1. The brand block, its tagline and the social row centre on phones and
+ *      return to inline-start from `sm` up.
+ *   2. The two short nav groups sit side by side in a real two-column grid
+ *      below the brand, with contact spanning both. Eight one-word links in
+ *      a single column was the actual source of the height — pairing them
+ *      fills the width honestly rather than centring a tall thin list, and
+ *      takes the footer from 929px to roughly two thirds of that.
+ *
+ * Centring is a *composition* decision and not an RTL one: Arabic still
+ * reads right-to-left inside every block (`dir` is untouched, logical
+ * properties throughout), so "RTL" never gets misread as "everything hugs
+ * the right edge". Link rows also carry `py-1.5` on phones only, lifting a
+ * 25px text row to a ~37px target with the existing `gap-2.5` between —
+ * the compact desktop rhythm is unchanged.
  */
 export async function SiteFooter({ siteSettings, clinicName, doctorTagline }: SiteFooterProps) {
   const t = await getTranslations("layout");
@@ -62,8 +97,11 @@ export async function SiteFooter({ siteSettings, clinicName, doctorTagline }: Si
             positioned (z-index:auto) botanical layer regardless of DOM
             order, so real content is never visually obscured by it. */}
         <div className="relative z-10">
-          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1fr] lg:gap-12">
-            <div className="sm:col-span-2 lg:col-span-1">
+          {/* Two columns from the very smallest width, so the pair of short
+              nav groups can sit side by side on a phone; brand and contact
+              span both until the real `sm` layout takes over. */}
+          <div className="grid grid-cols-2 gap-x-6 gap-y-9 sm:grid-cols-2 sm:gap-10 lg:grid-cols-[1.3fr_1fr_1fr_1fr] lg:gap-12">
+            <div className="col-span-2 text-center sm:text-start lg:col-span-1">
               {/*
                 A light chip rather than the `brightness-0 invert` treatment
                 the footer used to apply. That filter only works on a flat
@@ -93,9 +131,12 @@ export async function SiteFooter({ siteSettings, clinicName, doctorTagline }: Si
                   <Image src="/images/TopLogo.png" alt={clinicName} width={2000} height={550} sizes="208px" className="h-14 w-auto object-contain" />
                 )}
               </span>
-              <p className="mt-4 max-w-xs text-body-sm text-on-inverse-muted">{doctorTagline || t("footer.tagline")}</p>
+              {/* `mx-auto` keeps the measure limit while centring the block
+                  itself on phones — a centred paragraph that still wraps at
+                  a comfortable line length, not one stretched edge to edge. */}
+              <p className="mx-auto mt-4 max-w-xs text-body-sm text-on-inverse-muted sm:mx-0">{doctorTagline || t("footer.tagline")}</p>
               {sortedSocialLinks.length > 0 && (
-                <div className="mt-6 flex items-center gap-4">
+                <div className="mt-6 flex items-center justify-center gap-4 sm:justify-start">
                   {sortedSocialLinks.map((link) => (
                     <a
                       key={link.platform}
@@ -112,8 +153,12 @@ export async function SiteFooter({ siteSettings, clinicName, doctorTagline }: Si
               )}
             </div>
 
-            <div>
-              <h3 className="flex items-center gap-2 text-label font-semibold uppercase tracking-wide text-on-inverse-muted">
+            {/* The two short nav groups are the pair that sits side by side
+                on a phone. Their links stay full-column-width blocks with
+                centred text rather than text-width inline targets, so the
+                tap area is the whole column, not just the word. */}
+            <div className="text-center sm:text-start">
+              <h3 className={COLUMN_HEADING}>
                 <span aria-hidden="true" className="size-1.5 rounded-full bg-accent-on-inverse" />
                 {t("footer.quickLinks")}
               </h3>
@@ -126,8 +171,8 @@ export async function SiteFooter({ siteSettings, clinicName, doctorTagline }: Si
               </nav>
             </div>
 
-            <div>
-              <h3 className="flex items-center gap-2 text-label font-semibold uppercase tracking-wide text-on-inverse-muted">
+            <div className="text-center sm:text-start">
+              <h3 className={COLUMN_HEADING}>
                 <span aria-hidden="true" className="size-1.5 rounded-full bg-accent-on-inverse" />
                 {t("nav.more")}
               </h3>
@@ -145,8 +190,13 @@ export async function SiteFooter({ siteSettings, clinicName, doctorTagline }: Si
               </nav>
             </div>
 
-            <div>
-              <h3 className="flex items-center gap-2 text-label font-semibold uppercase tracking-wide text-on-inverse-muted">
+            {/* Contact spans both phone columns: a phone number and an email
+                address are far longer than a one-word nav label and would
+                wrap awkwardly in half the width. Each row stays full-width
+                (so the whole strip is tappable) while `INVERSE_LINK`'s
+                `justify-center` centres the icon+text pair as a unit. */}
+            <div className="col-span-2 text-center sm:col-span-1 sm:text-start">
+              <h3 className={COLUMN_HEADING}>
                 <span aria-hidden="true" className="size-1.5 rounded-full bg-accent-on-inverse" />
                 {t("footer.contact")}
               </h3>
