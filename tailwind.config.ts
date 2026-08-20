@@ -67,31 +67,39 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "var(--color-background)",
-        surface: "var(--color-surface)",
+        /*
+          The five `rgb(var(--x-rgb) / <alpha-value>)` entries are the colours
+          that take an `/opacity` modifier somewhere in the app. Tailwind
+          cannot derive alpha from an opaque `var(--x)`, so declaring them the
+          plain way silently emitted no rule at all for `bg-surface/95` and
+          friends. Every other entry stays `var(--color-x)` because nothing
+          applies a modifier to it; `scripts/verify-design-tokens.mjs` fails
+          the build if that stops being true.
+        */
+        background: "rgb(var(--color-background-rgb) / <alpha-value>)",
+        surface: "rgb(var(--color-surface-rgb) / <alpha-value>)",
         "surface-muted": "var(--color-surface-muted)",
         "text-primary": "var(--color-text-primary)",
         "text-secondary": "var(--color-text-secondary)",
         "text-muted": "var(--color-text-muted)",
         border: "var(--color-border)",
         primary: {
-          DEFAULT: "var(--color-primary)",
+          DEFAULT: "rgb(var(--color-primary-rgb) / <alpha-value>)",
           hover: "var(--color-primary-hover)",
           soft: "var(--color-primary-soft)",
         },
         accent: {
-          DEFAULT: "var(--color-accent)",
+          DEFAULT: "rgb(var(--color-accent-rgb) / <alpha-value>)",
           hover: "var(--color-accent-hover)",
           soft: "var(--color-accent-soft)",
         },
         rating: "var(--color-rating)",
         success: "var(--color-success)",
         warning: "var(--color-warning)",
-        destructive: "var(--color-destructive)",
+        destructive: "rgb(var(--color-destructive-rgb) / <alpha-value>)",
         focus: "var(--color-focus)",
         "focus-on-dark": "var(--color-focus-on-dark)",
         overlay: "var(--color-overlay)",
-        "overlay-light": "var(--color-overlay-light)",
         "disabled-bg": "var(--color-disabled-bg)",
         "disabled-text": "var(--color-disabled-text)",
         "surface-inverse": "var(--color-surface-inverse)",

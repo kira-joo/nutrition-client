@@ -30,8 +30,30 @@
  */
 :root {
   /* ---- Semantic colors ---- */
-  --color-background: #fbf9f4;
-  --color-surface: #ffffff;
+  /*
+   * Five colours below are declared as an `R G B` channel triplet with the
+   * usual variable derived from it. That is not decoration: Tailwind cannot
+   * synthesise an alpha channel from an opaque `var(--x)` colour, so every
+   * `/opacity` utility built on one of these was silently dropped — no rule
+   * emitted, no warning. Ten such utilities existed in this app and none of
+   * them worked, the worst being the sticky header's `bg-surface/95`, which
+   * left it fully transparent on every page while its `backdrop-blur` still
+   * applied, so content blurred under nothing.
+   *
+   * The triplet is the single source of truth and `--color-x` is derived from
+   * it, so nothing duplicates a value and every existing `var(--color-x)`
+   * reference is unaffected. `tailwind.config.ts` pairs each one with
+   * `rgb(var(--color-x-rgb) / <alpha-value>)`, which serves opaque and
+   * translucent utilities alike.
+   *
+   * Only the colours that actually take an `/opacity` modifier are declared
+   * this way. `scripts/verify-design-tokens.mjs` fails the build if a new one
+   * appears without it, so this cannot silently regress.
+   */
+  --color-background-rgb: 251 249 244;
+  --color-background: rgb(var(--color-background-rgb));
+  --color-surface-rgb: 255 255 255;
+  --color-surface: rgb(var(--color-surface-rgb));
   --color-surface-muted: #f3f0e8;
   --color-text-primary: #1b231f; /* 15.3:1 on background, 16.1:1 on surface */
   --color-text-secondary: #445048; /* 8.0:1 on background */
@@ -42,7 +64,9 @@
   --color-text-muted: #5c6660;
   --color-border: #e3e0d6;
 
-  --color-primary: #146356; /* white text on primary: 7.1:1 */
+  --color-primary-rgb: 20 99 86;
+
+  --color-primary: rgb(var(--color-primary-rgb)); /* white text on primary: 7.1:1 */
   --color-primary-hover: #0f4e44; /* white text on primary-hover: 9.6:1 */
   --color-primary-soft: #e4f1ec; /* text-primary on primary-soft: 13.9:1 */
 
@@ -54,7 +78,8 @@
    * ratio (10%, not the more common 12-15%) is deliberately tuned down
    * from the first attempt — 14% measured 4.39:1 for text-accent on top
    * of it, just under the 4.5:1 AA floor for this size of text. */
-  --color-accent: #b24b28; /* white text on accent: 5.35:1 */
+  --color-accent-rgb: 178 75 40;
+  --color-accent: rgb(var(--color-accent-rgb)); /* white text on accent: 5.35:1 */
   --color-accent-hover: #8f3b1f; /* white text on accent-hover: 7.47:1 */
   --color-accent-soft: #f6ece8; /* text-accent on accent-soft: 4.60:1 */
 
@@ -71,7 +96,8 @@
   /* Darkened from #b8791c — the original failed AA as both a text color and
    * a white-text fill. This value passes both. */
   --color-warning: #96600f; /* text-on-background: 5.0:1; white text on warning: 5.3:1 */
-  --color-destructive: #c1432e; /* white text on destructive: 5.1:1; text-on-background: 4.9:1 */
+  --color-destructive-rgb: 193 67 46;
+  --color-destructive: rgb(var(--color-destructive-rgb)); /* white text on destructive: 5.1:1; text-on-background: 4.9:1 */
 
   /* Two focus-ring colors, not one — see the note below the :root block.
    * --color-focus is for controls on light (background/surface) fills.
@@ -80,7 +106,6 @@
   --color-focus-on-dark: #ffffff; /* 7.1:1 vs primary, 5.5:1 vs accent */
 
   --color-overlay: rgba(15, 23, 20, 0.55);
-  --color-overlay-light: rgba(27, 35, 31, 0.28);
 
   --color-disabled-bg: var(--color-border);
   /* WCAG explicitly exempts inactive controls from contrast requirements,

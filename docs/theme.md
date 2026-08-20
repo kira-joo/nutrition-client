@@ -53,6 +53,23 @@ duplicate to drift.
 
 ## Colors
 
+**Five of these carry an `/opacity` modifier somewhere in the app**
+(`background`, `surface`, `primary`, `accent`, `destructive`), and those are
+declared differently: an `R G B` channel triplet in `--color-<name>-rgb` is the
+source of truth, the familiar `--color-<name>` is derived from it via `rgb()`,
+and `tailwind.config.ts` maps the utility to
+`rgb(var(--color-<name>-rgb) / <alpha-value>)`.
+
+This is not stylistic. Tailwind cannot synthesise an alpha channel from an
+opaque `var(--x)` colour, so a utility like `bg-surface/95` compiles to
+**nothing at all** — no rule, no warning. Ten such utilities existed here and
+none of them worked; the sticky header was fully transparent on every page while
+its `backdrop-blur` still applied.
+
+Adding an `/opacity` modifier to any colour *not* in that group requires giving
+it the same treatment first. `scripts/verify-design-tokens.mjs` fails the build
+if you forget, naming the file and utility.
+
 | CSS variable | Tailwind class(es) | Value |
 |---|---|---|
 | `--color-background` | `bg-background` | `#fbf9f4` |
@@ -74,7 +91,6 @@ duplicate to drift.
 | `--color-focus` | (see Focus rings below) | `#1d8570` |
 | `--color-focus-on-dark` | `focus-ring-on-dark` utility class | `#ffffff` |
 | `--color-overlay` | `bg-overlay` | `rgba(15,23,20,.55)` |
-| `--color-overlay-light` | `bg-overlay-light` | `rgba(27,35,31,.28)` |
 | `--color-disabled-bg` | `bg-disabled-bg` | `#e3e0d6` (= `border`) |
 | `--color-disabled-text` | `text-disabled-text` | `#5c6660` (= `text-muted`) |
 
