@@ -1,9 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { UtensilsCrossed } from "lucide-react";
 import AppRoute from "@/constant/AppRoute.enum";
-import { Container } from "@/components/ui/container";
-import { Section } from "@/components/ui/section";
-import { Button } from "@/components/ui/button";
+import { NotFoundLayout } from "@/components/ui/not-found-layout";
 
 /**
  * A missing recipe is its own product state, distinct from a failed fetch:
@@ -14,14 +12,10 @@ export default async function RecipeNotFound() {
   const t = await getTranslations("recipes");
 
   return (
-    <Section>
-      <Container width="narrow" className="flex flex-col items-center gap-4 text-center">
-        <UtensilsCrossed aria-hidden="true" className="size-icon-xl text-text-muted" />
-        <h1 className="text-heading-1 font-bold text-text-primary">{t("detail.notFound")}</h1>
-        <Button href={AppRoute.Recipes} variant="secondary" className="mt-2">
-          {t("detail.backToRecipes")}
-        </Button>
-      </Container>
-    </Section>
+    <NotFoundLayout
+      icon={UtensilsCrossed}
+      title={t("detail.notFound")}
+      action={{ href: AppRoute.Recipes, label: t("detail.backToRecipes") }}
+    />
   );
 }
