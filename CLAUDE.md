@@ -48,19 +48,17 @@ split.
   the base's path segment silently.
 - **Tailwind only.** No MUI, no Emotion, no `sx`. All three are fully removed;
   do not reintroduce them.
-- **Motion is the target animation stack; GSAP is legacy.** New animation work
-  uses Motion (`motion/react` — never `framer-motion`), or plain CSS/native
-  transitions where those are sufficient. GSAP is still installed and still
-  drives the existing animation code, so it must keep working until migrated —
-  but do not add new GSAP code, and do not keep both stacks without a concrete,
-  verified technical reason. Where a specific GSAP behaviour genuinely cannot be
-  reproduced safely with Motion or CSS, document the exception.
+- **Motion is the animation stack. GSAP is gone** — the dependency is
+  uninstalled, `gsap-config.ts` is deleted, and no source file imports it. New
+  animation work uses Motion (`motion`, or `motion/react` for React — never
+  `framer-motion`), or plain CSS/native transitions where those are sufficient.
+  Do not reintroduce a second animation engine.
 - **Motion tokens stay the single source of durations and eases**, from
   `src/lib/animation/motion-tokens.json`. Never hardcode either, and never
-  hand-edit the generated `src/app/_generated/motion-tokens.css`. Note the
-  reshaping layer in `motion-tokens.ts` currently emits GSAP-shaped values
-  (seconds + GSAP ease strings) — migrating that is part of the Motion work, not
-  a licence to bypass the tokens.
+  hand-edit the generated `src/app/_generated/motion-tokens.css`. The reshaping
+  layer in `motion-tokens.ts` now emits Motion-shaped values (seconds, and
+  cubic-bezier arrays parsed from the same JSON the CSS is generated from).
+  See `docs/motion-system.md` for which of the six motion layers owns what.
 - Reduced motion, RTL, accessibility, performance, and first-render stability are
   required for any animation, on either stack. Use the `motion` skill.
 - **next-intl for UI copy, `resolveLocalized` for CMS content.** Two separate
