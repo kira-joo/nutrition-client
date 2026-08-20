@@ -8,6 +8,7 @@ import { useLightbox } from "@/components/gallery/use-lightbox";
 import { StarRating } from "@/components/ui/star-rating";
 import { MediaPill } from "@/components/ui/media-pill";
 import { cn } from "@/lib/cn";
+import { SURFACE_HOVER_ELEVATION } from "@/components/ui/surface";
 
 export interface ReviewCardProps {
   review: LocalizedReview;
@@ -58,7 +59,11 @@ export function ReviewCard({ review, className }: ReviewCardProps) {
   return (
     <article
       className={cn(
-        "mb-6 flex break-inside-avoid flex-col overflow-hidden rounded-xl border-hairline border-primary/25 bg-surface shadow-sm transition-shadow duration-base ease-standard hover:shadow-md",
+        /* Keeps its own `border-primary/25` accent rather than the shared
+             `SURFACE_RAISED` border — a review is deliberately tinted, not a
+             neutral card. Only the interactive treatment is shared. */
+          "mb-6 flex break-inside-avoid flex-col overflow-hidden rounded-xl border-hairline border-primary/25 bg-surface",
+          SURFACE_HOVER_ELEVATION,
         className
       )}
     >

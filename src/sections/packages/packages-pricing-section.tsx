@@ -6,6 +6,7 @@ import type { LocalizedPackagesPageSettings } from "@/lib/domain/packages-page-s
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { PackagePricingBoard } from "@/components/packages/package-pricing-board";
+import { EmptyPanel } from "@/components/ui/empty-panel";
 
 export interface PackagesPricingSectionProps {
   packagesPageSettings: LocalizedPackagesPageSettings;
@@ -53,10 +54,7 @@ export async function PackagesPricingSection({ packagesPageSettings, packages, c
           // intro copy remain true even while the CMS has nothing published.
           <div className="flex flex-col gap-8">
             {header}
-            <div className="flex flex-col items-center gap-3 rounded-xl border-hairline border-border bg-surface-muted px-6 py-14 text-center">
-              <PackageX aria-hidden="true" className="size-icon-xl text-text-muted" />
-              <p className="max-w-md break-words text-body-lg font-semibold text-text-primary">{t("empty.noPackages")}</p>
-            </div>
+            <EmptyPanel icon={PackageX} message={t("empty.noPackages")} />
           </div>
         ) : (
           <PackagePricingBoard

@@ -9,6 +9,7 @@ import { Link } from "@/i18n/navigation";
 import { ReviewCard } from "@/components/reviews/review-card";
 import { FeaturedReviewsCarousel } from "@/sections/reviews/featured-reviews-carousel";
 import { PageHeader } from "@/components/ui/page-header";
+import { EmptyPanel } from "@/components/ui/empty-panel";
 
 export interface ReviewsGridProps {
   result: PaginatedResponse<LocalizedReview>;
@@ -71,10 +72,7 @@ async function EmptyReviews() {
   const t = await getTranslations("reviews");
 
   return (
-    <div className="flex flex-col items-center gap-3 rounded-xl border-hairline border-border bg-surface-muted px-6 py-14 text-center">
-      <Quote aria-hidden="true" className="size-icon-xl text-text-muted" />
-      <p className="max-w-md break-words text-body-lg font-semibold text-text-primary">{t("empty.noReviews")}</p>
-    </div>
+    <EmptyPanel icon={Quote} message={t("empty.noReviews")} />
   );
 }
 

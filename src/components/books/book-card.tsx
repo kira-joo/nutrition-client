@@ -4,6 +4,8 @@ import type { PublicBookListItem } from "@/lib/domain/book";
 import { Link } from "@/i18n/navigation";
 import { appHref } from "@/constant/AppRoute.enum";
 import { MediaPill } from "@/components/ui/media-pill";
+import { SURFACE_RAISED, SURFACE_HOVER_ELEVATION } from "@/components/ui/surface";
+import { cn } from "@/lib/cn";
 
 export interface BookCardProps {
   book: PublicBookListItem;
@@ -37,7 +39,7 @@ export function BookCard({ book, priority = false }: BookCardProps) {
     <Link
       href={appHref.book(book.slug)}
       locale="ar"
-      className="group flex h-full flex-col overflow-hidden rounded-xl border-hairline border-border bg-surface shadow-sm transition-shadow duration-base ease-standard hover:shadow-md"
+      className={cn("group flex h-full flex-col overflow-hidden", SURFACE_RAISED, SURFACE_HOVER_ELEVATION)}
     >
       <div className="relative aspect-[5/7] bg-surface-muted">
         {book.coverImage?.secureUrl ? (

@@ -7,6 +7,8 @@ import { Section } from "@/components/ui/section";
 import { Link } from "@/i18n/navigation";
 import { RecipeHeroImage } from "@/components/recipes/recipe-hero-image";
 import { IngredientChecklist } from "@/components/recipes/ingredient-checklist";
+import { SURFACE_RAISED } from "@/components/ui/surface";
+import { cn } from "@/lib/cn";
 
 export interface RecipeDetailProps {
   recipe: LocalizedRecipe;
@@ -59,7 +61,7 @@ export async function RecipeDetail({ recipe }: RecipeDetailProps) {
             )}
 
             {meta.length > 0 && (
-              <dl className="grid grid-cols-2 gap-4 rounded-xl border-hairline border-border bg-surface p-5 sm:grid-cols-3">
+              <dl className={cn("grid grid-cols-2 gap-4 p-5 sm:grid-cols-3", SURFACE_RAISED)}>
                 {meta.map(({ icon: Icon, label, value }) => (
                   <div key={label} className="flex flex-col gap-1">
                     <dt className="flex items-center gap-1.5 text-caption font-semibold uppercase tracking-wide text-text-muted">

@@ -9,6 +9,7 @@ import { Link } from "@/i18n/navigation";
 import { VideosGrid } from "@/components/videos/videos-grid";
 import { PageHeader } from "@/components/ui/page-header";
 import { Reveal } from "@/components/ui/reveal";
+import { EmptyPanel } from "@/components/ui/empty-panel";
 
 export interface VideosGalleryProps {
   result: PaginatedResponse<LocalizedVideo>;
@@ -52,10 +53,7 @@ async function EmptyVideos() {
   const t = await getTranslations("videos");
 
   return (
-    <div className="flex flex-col items-center gap-3 rounded-xl border-hairline border-border bg-surface-muted px-6 py-14 text-center">
-      <Clapperboard aria-hidden="true" className="size-icon-xl text-text-muted" />
-      <p className="max-w-md break-words text-body-lg font-semibold text-text-primary">{t("empty.noVideos")}</p>
-    </div>
+    <EmptyPanel icon={Clapperboard} message={t("empty.noVideos")} />
   );
 }
 

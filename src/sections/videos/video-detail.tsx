@@ -7,6 +7,8 @@ import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
+import { SURFACE_MUTED } from "@/components/ui/surface";
+import { cn } from "@/lib/cn";
 
 export interface VideoDetailProps {
   video: LocalizedVideo;
@@ -61,7 +63,7 @@ export async function VideoDetail({ video }: VideoDetailProps) {
               href={video.externalUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-xl border-hairline border-border bg-surface-muted shadow-sm"
+              className={cn("group relative flex aspect-video w-full items-center justify-center overflow-hidden shadow-sm", SURFACE_MUTED)}
             >
               {posterUrl ? (
                 <Image
@@ -90,7 +92,7 @@ export async function VideoDetail({ video }: VideoDetailProps) {
               <span className="sr-only">({t("detail.opensInNewTab")})</span>
             </a>
           ) : (
-            <div className="flex aspect-video w-full items-center justify-center rounded-xl border-hairline border-border bg-surface-muted text-text-muted">
+            <div className={cn("flex aspect-video w-full items-center justify-center text-text-muted", SURFACE_MUTED)}>
               <VideoIcon className="size-icon-xl" aria-hidden="true" />
             </div>
           )}

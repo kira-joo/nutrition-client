@@ -5,6 +5,8 @@ import type { LocalizedVideo } from "@/lib/domain/video";
 import { Link } from "@/i18n/navigation";
 import { appHref } from "@/constant/AppRoute.enum";
 import { MediaPill } from "@/components/ui/media-pill";
+import { SURFACE_RAISED, SURFACE_HOVER_ELEVATION } from "@/components/ui/surface";
+import { cn } from "@/lib/cn";
 
 export interface VideoCardProps {
   video: LocalizedVideo;
@@ -43,7 +45,7 @@ export function VideoCard({ video, priority = false }: VideoCardProps) {
     <li className="flex">
       <Link
         href={appHref.video(video._id)}
-        className="group flex h-full w-full flex-col overflow-hidden rounded-xl border-hairline border-border bg-surface shadow-sm transition-shadow duration-base ease-standard hover:shadow-md"
+        className={cn("group flex h-full w-full flex-col overflow-hidden", SURFACE_RAISED, SURFACE_HOVER_ELEVATION)}
       >
         <div className="relative aspect-video bg-surface-muted">
           {posterUrl ? (

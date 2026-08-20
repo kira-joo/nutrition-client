@@ -8,6 +8,7 @@ import { Reveal, RevealGroup } from "@/components/ui/reveal";
 import { Link } from "@/i18n/navigation";
 import { BookCard } from "@/components/books/book-card";
 import { PageHeader } from "@/components/ui/page-header";
+import { EmptyPanel } from "@/components/ui/empty-panel";
 
 export interface BooksBrowserProps {
   result: PaginatedResponse<PublicBookListItem>;
@@ -62,10 +63,7 @@ export async function BooksBrowser({ result, page }: BooksBrowserProps) {
 
 function EmptyBooks() {
   return (
-    <div className="flex flex-col items-center gap-3 rounded-xl border-hairline border-border bg-surface-muted px-6 py-14 text-center">
-      <BookOpen aria-hidden="true" className="size-icon-xl text-text-muted" />
-      <p className="max-w-md break-words text-body-lg font-semibold text-text-primary">لا توجد كتب منشورة حتى الآن. تفقدي الصفحة قريبًا.</p>
-    </div>
+    <EmptyPanel icon={BookOpen} message="لا توجد كتب منشورة حتى الآن. تفقدي الصفحة قريبًا." />
   );
 }
 

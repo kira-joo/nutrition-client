@@ -12,6 +12,7 @@ import { RecipeCard } from "@/components/recipes/recipe-card";
 import { RecipeFilterPanel } from "@/components/recipes/recipe-filter-panel";
 import { RecipeFilterSheet } from "@/components/recipes/recipe-filter-sheet";
 import { PageHeader } from "@/components/ui/page-header";
+import { EmptyPanel } from "@/components/ui/empty-panel";
 
 export interface RecipesBrowserProps {
   result: PaginatedResponse<LocalizedRecipe>;
@@ -114,16 +115,22 @@ async function EmptyResults({ filters, activeCount }: { filters: RecipeFilters; 
         : { icon: SearchX, message: t("empty.noResults"), hint: t("empty.noResultsHint") };
 
   return (
-    <div className="flex flex-col items-center gap-3 rounded-xl border-hairline border-border bg-surface-muted px-6 py-14 text-center">
-      <Icon aria-hidden="true" className="size-icon-xl text-text-muted" />
-      <p className="max-w-md break-words text-body-lg font-semibold text-text-primary">{message}</p>
-      {hint && <p className="max-w-md text-body-sm text-text-secondary">{hint}</p>}
+    <EmptyPanel icon={Icon} message={message} hint={hint}>
       {activeCount > 0 && (
-        <Link href={AppRoute.Recipes} className="mt-2 text-body-sm font-semibold text-primary hover:underline">
+        <Link
+          href={AppRoute.Recipes}
+          /* A real touch target: this is the one way out of an empty result, and
+             as a bare text line it measured 25px tall. Relaxed by POINTER
+             capability, not by viewport width — `sm:min-h-0` would have handed a
+             768px tablet the 25px target straight back, since a tablet is wide
+             and still has no mouse. Uses the project's own --touch-target-min
+             rather than a picked padding. */
+          className="mt-2 inline-flex min-h-touch-min items-center text-body-sm font-semibold text-primary hover:underline pointer:min-h-0"
+        >
           {t("filters.clear")}
         </Link>
       )}
-    </div>
+    </EmptyPanel>
   );
 }
 
