@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   Bookmark,
   ChevronLeft,
@@ -21,8 +21,8 @@ import {
   ZoomIn,
   ZoomOut,
 } from "lucide-react";
-import { Portal, useMounted } from "@kira-joo/frontend-toolkit-tailwind/primitives";
-import { useDialogA11y } from "@/lib/a11y/use-dialog-a11y";
+import { Portal } from "@kira-joo/frontend-toolkit-tailwind/primitives";
+import { useDialogLayer } from "@kira-joo/frontend-toolkit-tailwind/dialog";
 import { prefersReducedMotion } from "@/lib/animation/prefers-reduced-motion";
 import { spreadFor } from "@/lib/books/render/book-physical-order";
 import type { BookPdfAvailability } from "@/lib/domain/book";
@@ -78,7 +78,7 @@ export interface BookImmersiveChromeProps {
  * behind this, a deep green field replaces it, and the book (passed in as
  * `children` — the same flip engine page mode uses) gets as much of the
  * viewport as the raised `maxScale`/`fillRatio` the shell passes it
- * allow. `useDialogA11y`'s existing `BACKGROUND_SELECTOR` ("main, footer,
+ * allow. The coordinator's background-inert pass covers body's own top-level
  * header") already inerts the real site chrome for keyboard/AT the moment
  * this opens — no separate chrome-suppression mechanism was needed.
  *
@@ -123,25 +123,32 @@ export function BookImmersiveChrome({
   onSearchSelect,
   children,
 }: BookImmersiveChromeProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const isMounted = useMounted();
-  useDialogA11y({ isOpen: true, onClose: onRequestClose, containerRef, ready: isMounted });
+  /**
+   * An application *mode*, not a component snapshot, so its open state stays
+   * in the URL (`?read=1`, which makes Back close it) and only the layer
+   * mechanics are shared. Fullscreen reads the coordinator's own `panel`
+   * rather than keeping a second ref in sync with it.
+   */
+  const { panelRef, panel } = useDialogLayer({ isOpen: true, onEscape: onRequestClose });
 
   const [isFullscreen, setIsFullscreen] = useState(false);
   useEffect(() => {
     function onFullscreenChange() {
-      setIsFullscreen(document.fullscreenElement === containerRef.current);
+      setIsFullscreen(document.fullscreenElement === panel);
     }
     document.addEventListener("fullscreenchange", onFullscreenChange);
     return () => document.removeEventListener("fullscreenchange", onFullscreenChange);
-  }, []);
+    // `panel` is a real dependency now that the node comes from the
+    // coordinator rather than a ref: the comparison must run against the
+    // attached element, not the null it started as.
+  }, [panel]);
 
   async function toggleFullscreen(): Promise<void> {
     if (document.fullscreenElement) {
       await document.exitFullscreen();
       return;
     }
-    await containerRef.current?.requestFullscreen();
+    await panel?.requestFullscreen();
   }
 
   const [searchOpen, setSearchOpen] = useState(false);
@@ -172,7 +179,7 @@ export function BookImmersiveChrome({
 
   return (
     <Portal>
-      <div ref={containerRef} role="dialog" aria-modal="true" aria-label={bookTitle} dir="rtl" className="fixed inset-0 z-modal flex h-dvh flex-col bg-[#0f3a32]">
+      <div ref={panelRef} role="dialog" aria-modal="true" aria-label={bookTitle} dir="rtl" className="fixed inset-0 z-modal flex h-dvh flex-col bg-[#0f3a32]">
         {/* Top bar — exit / spread-toggle+zoom / centered identity / bookmark+share+search+TOC */}
         <div
           className="grid shrink-0 grid-cols-[auto_1fr_auto] items-center gap-2 px-3 py-2.5 sm:px-6"

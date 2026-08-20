@@ -1,12 +1,12 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { Portal, useMounted } from "@kira-joo/frontend-toolkit-tailwind/primitives";
 import { cn } from "@/lib/cn";
 import { useIsRtl } from "@/hooks/useIsRtl";
-import { useDialogA11y } from "@/lib/a11y/use-dialog-a11y";
+import { useDialogLayer } from "@kira-joo/frontend-toolkit-tailwind/dialog";
 
 export interface SiteLightboxImage {
   src: string;
@@ -49,33 +49,35 @@ const CONTROL_BUTTON_CLASSNAME =
  * reachable area); a raw unoptimized `<img>` loading the full-resolution
  * source; hardcoded `z-50`, colliding with `--z-drawer`; and physical
  * `right-4`/`left-4` plus non-mirrored arrow keys, which is simply wrong
- * under `dir="rtl"`. Built on `use-dialog-a11y` — the same contract the
+ * under `dir="rtl"`. Built on the shared dialog layer coordinator — the same contract the
  * mobile drawer and the recipe filter sheet already use — rather than a
  * third independent dialog implementation.
  *
  * Same prop shape as the `AssetLightbox` it replaces, so every call site
  * only needed an import swap. Focus restoration is still `useLightbox`'s
- * job, not this component's or `use-dialog-a11y`'s default: it targets
+ * job, not this component's or the coordinator's default: it targets
  * whichever image was last *viewed* (arrow-keyed to), not just the one
  * originally clicked, which needs the caller's own index tracking — see
- * that hook's doc comment. `use-dialog-a11y`'s own restore-to-original-
+ * that hook's doc comment. A coordinator-owned restore-to-original-
  * trigger still fires on unmount, but `useLightbox.close()`'s
  * `requestAnimationFrame` call runs a frame later and wins.
  */
 export function SiteLightbox({ images, index, onIndexChange, onClose, loop = true }: SiteLightboxProps) {
   const isMounted = useMounted();
 
-  const containerRef = useRef<HTMLDivElement>(null);
   const isRtl = useIsRtl();
   const t = useTranslations("layout");
 
-  // Always "open" for as long as this component is mounted at all — every
-  // call site only renders <SiteLightbox> while `openIndex !== null` and
-  // stops rendering it entirely on close, rather than keeping it mounted
-  // in a closed state (unlike the drawer, which stays mounted to animate
-  // its close transition). `ready` still gates on Portal's own one-tick
-  // mount delay — see use-dialog-a11y's `ready` doc comment.
-  useDialogA11y({ isOpen: true, onClose, containerRef, ready: isMounted });
+  /**
+   * Always "open" while mounted — call sites render this only while an index
+   * is selected and unmount it on close, so there is no closed state to inert.
+   * Focus restoration deliberately stays OFF here: `useLightbox.close()`
+   * restores focus to the thumbnail of the LAST VIEWED image rather than the
+   * one originally clicked, which is the behaviour this gallery wants and
+   * which only the caller can know. Letting the coordinator also restore
+   * would have two owners racing for the same focus.
+   */
+  const { panelRef } = useDialogLayer({ isOpen: true, onEscape: onClose, restoreFocus: false });
 
   const current = images[index];
   const hasMultiple = images.length > 1;
@@ -98,18 +100,15 @@ export function SiteLightbox({ images, index, onIndexChange, onClose, loop = tru
   const PrevIcon = isRtl ? ChevronRight : ChevronLeft;
   const NextIcon = isRtl ? ChevronLeft : ChevronRight;
 
-  // The container itself always renders once mounted, `current` or not —
-  // `containerRef` must attach to a real node on the very same render
-  // where `isMounted` first flips true, or `use-dialog-a11y`'s effects
-  // (which run right after that render commits) see a still-null ref and
-  // silently skip the focus move, the background `inert`, and the
-  // Escape/Tab trap for good — an early `return null` guarding the whole
+  // The container itself always renders once mounted, `current` or not: the
+  // panel node has to exist for the coordinator to register a layer against
+  // it, so an early `return null` guarding the whole
   // tree on `current` would recreate exactly that gap.
   return (
     <Portal>
       {isMounted && (
         <div
-          ref={containerRef}
+          ref={panelRef}
           role="dialog"
           aria-modal="true"
           aria-label={t("lightbox.label")}

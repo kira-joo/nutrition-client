@@ -133,7 +133,7 @@ export function BookReaderShell({ book }: { book: Book }) {
     router.replace(queryString ? `${pathname}?${queryString}` : pathname, { scroll: false });
   }, [pathname, router, searchParams]);
 
-  // Escape (routed here from `useDialogA11y` via `book-immersive-chrome`'s
+  // Escape (routed here from the dialog coordinator via `book-immersive-chrome`'s
   // `onRequestClose`) closes the TOC first if it's open, matching how a
   // real nested dialog should unwind one layer at a time rather than
   // dropping straight out of Book Interaction mode entirely.

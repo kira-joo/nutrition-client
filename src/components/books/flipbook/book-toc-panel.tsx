@@ -1,8 +1,8 @@
 "use client";
-import { useRef } from "react";
+
 import { X } from "lucide-react";
-import { Portal, useMounted } from "@kira-joo/frontend-toolkit-tailwind/primitives";
-import { useDialogA11y } from "@/lib/a11y/use-dialog-a11y";
+import { Portal } from "@kira-joo/frontend-toolkit-tailwind/primitives";
+import { useDialogLayer } from "@kira-joo/frontend-toolkit-tailwind/dialog";
 import type { TocResultEntry } from "@/lib/books/render/page-model.interface";
 
 export interface BookTocPanelProps {
@@ -12,17 +12,13 @@ export interface BookTocPanelProps {
   /** Called with the target chapter's `sequencePosition` (physical position), never its printed `pageNumber` — see `TocResultEntry`'s own doc comment for why the two diverge. */
   onSelect: (sequencePosition: number | null) => void;
   /**
-   * True when opened from inside Book Interaction mode, which is already
-   * its own modal dialog (`book-immersive-chrome.tsx`). A nested panel
-   * skips its own `useDialogA11y` entirely rather than running a second,
-   * independent focus trap/Escape handler/background-inert alongside the
-   * immersive chrome's — two dialogs each fighting to own Tab/Escape is
-   * exactly the kind of bug that only shows up interactively. The
-   * immersive chrome's own Escape handler already closes the TOC first
-   * (`tocOpen ? setTocOpen(false) : exitImmersive()`), and its focus trap
-   * already spans this panel since both live under the same dialog
-   * surface. In page mode (not nested), this is the only dialog open, so
-   * it manages its own a11y exactly like the panel it replaced.
+   * PRESENTATION ONLY, and deliberately no longer an accessibility switch.
+   * When opened from inside Book Interaction mode the panel sits over the
+   * reader's own dark field, so a second scrim would double-dim it — that is
+   * the whole remaining job of this flag. It used to also disable this
+   * panel's focus trap and Escape handling to stop two independent
+   * implementations fighting; the shared coordinator makes that unnecessary,
+   * because nesting is now just stacking.
    */
   isNested?: boolean;
 }
@@ -37,15 +33,16 @@ export interface BookTocPanelProps {
  * needed.
  */
 export function BookTocPanel({ open, onClose, toc, onSelect, isNested = false }: BookTocPanelProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  // `Portal` defers to `document.body` via its own effect, so on the
-  // render where `open` first becomes true, `containerRef.current` is
-  // still null — `useDialogA11y`'s effects would see that, bail out, and
-  // never run again (neither `isOpen` nor the ref object identity changes
-  // once the container actually mounts). Same gap `mobile-nav-drawer.tsx`
-  // documents and fixes the same way.
-  const isMounted = useMounted();
-  useDialogA11y({ isOpen: open && !isNested, onClose, containerRef, ready: isMounted });
+  /**
+   * Registers as its own layer, even when opened from inside Book Interaction
+   * mode. That replaces the old `isNested` opt-out, which existed because two
+   * surfaces each ran an independent focus trap and Escape handler and fought
+   * over Tab. With one coordinator the nesting is just stacking: this panel is
+   * top-most, so Escape closes it first and the immersive chrome underneath
+   * keeps its own layer for the second press — the same one-layer-at-a-time
+   * unwind, now emergent instead of hand-coded in two places.
+   */
+  const { panelRef } = useDialogLayer({ isOpen: open, onEscape: onClose });
 
   if (!open) return null;
 
@@ -58,9 +55,9 @@ export function BookTocPanel({ open, onClose, toc, onSelect, isNested = false }:
       <div className="fixed inset-0 z-modal flex items-stretch justify-end" onClick={onClose}>
         {!isNested && <div className="absolute inset-0 bg-black/50" aria-hidden="true" />}
         <div
-          ref={containerRef}
-          role={isNested ? undefined : "dialog"}
-          aria-modal={isNested ? undefined : true}
+          ref={panelRef}
+          role="dialog"
+          aria-modal
           aria-label="فهرس المحتويات"
           dir="rtl"
           className="relative z-10 h-full w-full max-w-xs overflow-y-auto bg-white shadow-lg dark:bg-slate-800 sm:max-w-sm"

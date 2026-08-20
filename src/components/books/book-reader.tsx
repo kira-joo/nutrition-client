@@ -26,7 +26,7 @@ import { BookReaderShell } from "./flipbook/book-reader-shell";
  * The "back to books" link lives here, outside the shell's own
  * `.book-page-scope` root — that class resets margin/padding on every
  * descendant to match the print template, which would fight a nav link
- * placed inside it. It sits inside `<main>`, so `useDialogA11y`'s
+ * placed inside it. It sits inside `<main>`, so the dialog coordinator's
  * existing background-suppression already inerts it while Book
  * Interaction mode's dialog is open, with no extra handling needed here.
  * `ArrowRight` (not `ArrowLeft` + an `rtl:` flip like

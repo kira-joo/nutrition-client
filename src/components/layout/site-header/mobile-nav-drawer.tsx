@@ -2,12 +2,12 @@
 import { useId } from "react";
 import { useTranslations } from "next-intl";
 import { MessageCircle, Phone, X } from "lucide-react";
-import { Portal, useMounted } from "@kira-joo/frontend-toolkit-tailwind/primitives";
+import { Portal } from "@kira-joo/frontend-toolkit-tailwind/primitives";
 import { cn } from "@/lib/cn";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { useDrawerTransition } from "@/lib/animation/use-drawer-transition";
-import { useDialogA11y } from "@/lib/a11y/use-dialog-a11y";
+import { useDialogLayer } from "@kira-joo/frontend-toolkit-tailwind/dialog";
 import { LanguageToggle } from "./language-toggle";
 import { ARABIC_ONLY_NAV_KEYS, MORE_NAV_ITEMS, PRIMARY_NAV_ITEMS } from "./nav-items";
 import AppRoute from "@/constant/AppRoute.enum";
@@ -52,15 +52,14 @@ export interface MobileNavDrawerProps {
  */
 export function MobileNavDrawer({ id, isOpen, onClose, clinicName, whatsappNumber, phone }: MobileNavDrawerProps) {
   const t = useTranslations("layout");
-  // Portal renders nothing until mounted (it defers to document.body via an
-  // effect), so the panel doesn't exist in the DOM on the first render pass
-  // — the transition has to wait for it, exactly as recipe-filter-sheet.tsx
-  // does, or useDrawerTransition's layout effect runs against a null ref,
-  // never sets the closed position, and the panel flashes open on mount.
-  const isMounted = useMounted();
 
-  const { panelRef, backdropRef } = useDrawerTransition({ isOpen, ready: isMounted });
-  useDialogA11y({ isOpen, onClose, containerRef: panelRef, ready: isMounted });
+  /**
+   * The coordinator owns the panel node; the transition consumes it. One
+   * owner, so `ref={panelRef}` is all a surface writes — no callback-ref
+   * merge, and no `ready` flag, since a non-null node is readiness.
+   */
+  const { panelRef, panel } = useDialogLayer({ isOpen, onEscape: onClose, inertWhenClosed: true });
+  const { backdropRef } = useDrawerTransition({ isOpen, panel });
   const titleId = useId();
 
   return (

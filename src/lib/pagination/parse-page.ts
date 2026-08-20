@@ -11,7 +11,7 @@
  * (`frontend-toolkit-core`? `frontend-toolkit-tailwind`?) is better made
  * once the eventual toolkit-extraction pass looks at this alongside
  * whatever else has accumulated by then — see the project's established
- * pattern of deferring premature abstraction (e.g. `use-dialog-a11y.ts`'s
+ * pattern of deferring premature abstraction (e.g. the dialog a11y hook's
  * doc comment).
  */
 export function parsePage(value: string | string[] | undefined, fallback = 1): number {

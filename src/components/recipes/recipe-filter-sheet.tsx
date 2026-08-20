@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
 import { SlidersHorizontal, X } from "lucide-react";
-import { Portal, useMounted } from "@kira-joo/frontend-toolkit-tailwind/primitives";
+import { Portal } from "@kira-joo/frontend-toolkit-tailwind/primitives";
 import { cn } from "@/lib/cn";
-import { useDialogA11y } from "@/lib/a11y/use-dialog-a11y";
+import { useDialogLayer } from "@kira-joo/frontend-toolkit-tailwind/dialog";
 import { useDrawerTransition } from "@/lib/animation/use-drawer-transition";
 import { RecipeFilterPanel, type RecipeFilterPanelProps } from "@/components/recipes/recipe-filter-panel";
 
@@ -20,14 +20,15 @@ export interface RecipeFilterSheetProps extends Omit<RecipeFilterPanelProps, "on
  * choose, and get back to results — so they belong behind a trigger that
  * shows how many are active, rather than occupying the top of every scroll.
  *
- * Reuses `useDialogA11y` (Escape, focus trap, focus restoration, background
- * inert, scroll lock) and `useDrawerTransition` (Motion, reduced-motion
- * gated) rather than growing a second, subtly different dialog on the site.
- * The panel stays mounted so the close transition can run, which is exactly
- * why `useDialogA11y` also marks it inert while closed.
+ * Shares the toolkit's dialog layer coordinator (Escape, focus trap, focus
+ * restoration, background inert, scroll lock) and `useDrawerTransition`
+ * (Motion, reduced-motion gated) rather than growing a second, subtly
+ * different dialog on the site. The panel stays mounted so the close
+ * transition can run, which is exactly why the layer is registered with
+ * `inertWhenClosed`.
  *
- * Portalled to the body because this sheet renders inside `<main>`, which
- * `useDialogA11y` marks inert while a dialog is open — in place, the sheet
+ * Portalled to the body because this sheet renders inside `<main>`, which the
+ * coordinator marks inert while a dialog is open — in place, the sheet
  * inerted its own subtree and focus never entered it (measured: it opened
  * visibly with `document.activeElement` still on `<body>`). The site header
  * drawer never hit this only because it happens to live in `<header>`.
@@ -40,17 +41,21 @@ export function RecipeFilterSheet({
   ...panelProps
 }: RecipeFilterSheetProps) {
   const [isOpen, setIsOpen] = useState(false);
-  // Portal renders nothing until mounted, so the panel doesn't exist on the
-  // first pass; the transition has to wait for it (see `ready`).
-  const isMounted = useMounted();
 
-  const { panelRef, backdropRef } = useDrawerTransition({ isOpen, fromEdge: "end", ready: isMounted });
-  // `ready` fixes a real, previously-unnoticed gap: this sheet has been
-  // portalled since it was built, so `panelRef.current` was `null` on the
-  // render where `isOpen` first became `true`, and useDialogA11y's effects
-  // (focus move, background inert, Escape/Tab trap, scroll lock) silently
-  // never ran on open — see use-dialog-a11y.ts's `ready` doc comment.
-  useDialogA11y({ isOpen, onClose: () => setIsOpen(false), containerRef: panelRef, ready: isMounted });
+  /**
+   * Escape, focus containment/restore, background inert and the scroll lock
+   * come from the shared coordinator; this sheet keeps only its own open state
+   * (it closes on each navigation) and its slide transition. One owner of the
+   * panel node means no ref merging, and the old `ready`-flag gap — where a
+   * portalled surface silently skipped focus/inert/Escape/scroll-lock on its
+   * first open — is now unrepresentable rather than guarded against.
+   */
+  const { panelRef, panel } = useDialogLayer({
+    isOpen,
+    onEscape: () => setIsOpen(false),
+    inertWhenClosed: true,
+  });
+  const { backdropRef } = useDrawerTransition({ isOpen, panel, fromEdge: "end" });
 
   return (
     <>

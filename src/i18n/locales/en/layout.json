@@ -48,5 +48,12 @@
     "heading": "We couldn't find that page",
     "body": "The page may have been moved, or the link may be out of date.",
     "backHome": "Back to home"
+  },
+  "dialog": {
+    "close": "Close",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "save": "Save",
+    "fallbackMessage": "Nothing to show"
   }
 }

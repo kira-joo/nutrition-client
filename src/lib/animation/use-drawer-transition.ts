@@ -8,6 +8,15 @@ import { usePrefersReducedMotion } from "./use-prefers-reduced-motion";
 export interface UseDrawerTransitionOptions {
   isOpen: boolean;
   /**
+   * The panel node, owned by whoever registers the surface with the dialog
+   * coordinator — this hook consumes it rather than keeping a second ref in
+   * sync. That single-owner split is what removed the callback-ref merge
+   * every drawer used to hand-write, and it also removes the old `ready`
+   * flag: a non-null node IS readiness, so the effect can no longer run
+   * against a panel that has not mounted yet.
+   */
+  panel: HTMLElement | null;
+  /**
    * Which logical edge the drawer is docked to — mirrors automatically
    * under `dir="rtl"`. A percentage `x` transform animates in the physical
    * (left/right) coordinate space regardless of document direction, so the
@@ -17,15 +26,6 @@ export interface UseDrawerTransitionOptions {
    * both agree on which physical side "end" resolves to.
    */
   fromEdge?: "start" | "end";
-  /**
-   * Set false while the panel isn't in the DOM yet. A portalled drawer
-   * renders nothing until its host has mounted, so this hook's layout
-   * effect would otherwise run once against a null ref, never set the
-   * closed position, and leave the panel sitting on screen swallowing
-   * clicks. Flipping this after mount re-runs the effect with the element
-   * actually present.
-   */
-  ready?: boolean;
 }
 
 /**
@@ -52,15 +52,12 @@ function setVisible(element: HTMLElement, visible: boolean) {
  * transform on the panel, or the very first animated frame would layer a
  * translate on top of one instead of replacing it.
  */
-export function useDrawerTransition({ isOpen, fromEdge = "end", ready = true }: UseDrawerTransitionOptions) {
-  const panelRef = useRef<HTMLDivElement>(null);
-  const backdropRef = useRef<HTMLDivElement>(null);
+export function useDrawerTransition({ isOpen, panel, fromEdge = "end" }: UseDrawerTransitionOptions) {
+  const backdropRef = useRef<HTMLDivElement | null>(null);
   const isFirstRun = useRef(true);
   const prefersReducedMotion = usePrefersReducedMotion();
 
   useIsomorphicLayoutEffect(() => {
-    if (!ready) return;
-    const panel = panelRef.current;
     const backdrop = backdropRef.current;
     if (!panel) return;
 
@@ -103,7 +100,7 @@ export function useDrawerTransition({ isOpen, fromEdge = "end", ready = true }: 
       backdropAnimation?.stop();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, fromEdge, ready, prefersReducedMotion]);
+  }, [isOpen, panel, fromEdge, prefersReducedMotion]);
 
-  return { panelRef, backdropRef };
+  return { backdropRef };
 }
