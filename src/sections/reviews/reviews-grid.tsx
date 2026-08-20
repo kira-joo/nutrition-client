@@ -8,6 +8,7 @@ import { Section } from "@/components/ui/section";
 import { Link } from "@/i18n/navigation";
 import { ReviewCard } from "@/components/reviews/review-card";
 import { FeaturedReviewsCarousel } from "@/sections/reviews/featured-reviews-carousel";
+import { PageHeader } from "@/components/ui/page-header";
 
 export interface ReviewsGridProps {
   result: PaginatedResponse<LocalizedReview>;
@@ -37,10 +38,7 @@ export async function ReviewsGrid({ result, page }: ReviewsGridProps) {
   return (
     <Section>
       <Container>
-        <header className="flex flex-col gap-3">
-          <h1 className="text-display font-extrabold text-text-primary">{t("heading")}</h1>
-          <p className="max-w-narrow text-body text-text-secondary">{t("intro")}</p>
-        </header>
+        <PageHeader title={t("heading")} description={t("intro")} />
 
         {featured.length > 0 && (
           <div className="mt-10">

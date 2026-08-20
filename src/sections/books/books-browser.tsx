@@ -7,6 +7,7 @@ import { Section } from "@/components/ui/section";
 import { Reveal, RevealGroup } from "@/components/ui/reveal";
 import { Link } from "@/i18n/navigation";
 import { BookCard } from "@/components/books/book-card";
+import { PageHeader } from "@/components/ui/page-header";
 
 export interface BooksBrowserProps {
   result: PaginatedResponse<PublicBookListItem>;
@@ -31,11 +32,11 @@ export async function BooksBrowser({ result, page }: BooksBrowserProps) {
     <div dir="rtl">
       <Section>
         <Container>
-          <Reveal className="flex flex-col items-start gap-3">
-            <h1 className="text-display font-extrabold text-text-primary">الكتب</h1>
-            <p className="max-w-narrow text-body text-text-secondary">
-              دليل غذائي وصحي متكامل، مكتوب بعناية ومتاح للقراءة التفاعلية أو التحميل كملف PDF.
-            </p>
+          <Reveal>
+            <PageHeader
+              title="الكتب"
+              description="دليل غذائي وصحي متكامل، مكتوب بعناية ومتاح للقراءة التفاعلية أو التحميل كملف PDF."
+            />
           </Reveal>
 
           <div className="mt-10">

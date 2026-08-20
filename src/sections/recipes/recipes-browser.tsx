@@ -11,6 +11,7 @@ import { Link } from "@/i18n/navigation";
 import { RecipeCard } from "@/components/recipes/recipe-card";
 import { RecipeFilterPanel } from "@/components/recipes/recipe-filter-panel";
 import { RecipeFilterSheet } from "@/components/recipes/recipe-filter-sheet";
+import { PageHeader } from "@/components/ui/page-header";
 
 export interface RecipesBrowserProps {
   result: PaginatedResponse<LocalizedRecipe>;
@@ -47,10 +48,7 @@ export async function RecipesBrowser({ result, categories, foodGroups, filters }
   return (
     <Section>
       <Container>
-        <header className="flex flex-col gap-3">
-          <h1 className="text-display font-extrabold text-text-primary">{t("heading")}</h1>
-          <p className="max-w-narrow text-body text-text-secondary">{t("intro")}</p>
-        </header>
+        <PageHeader title={t("heading")} description={t("intro")} />
 
         <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,16rem)_1fr] lg:gap-12">
           <aside className="hidden lg:block lg:sticky lg:top-28 lg:self-start">

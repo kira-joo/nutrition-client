@@ -3,6 +3,7 @@ import type { LocalizedFaqSectionWithItems } from "@/lib/domain/faq";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { Accordion } from "@/components/ui/accordion";
+import { PageHeader } from "@/components/ui/page-header";
 
 export interface FaqSectionsProps {
   faqSections: LocalizedFaqSectionWithItems[];
@@ -38,9 +39,8 @@ export async function FaqSections({ faqSections }: FaqSectionsProps) {
   if (sections.length === 0) {
     return (
       <Section>
-        <Container width="narrow" className="flex flex-col items-start gap-3">
-          <h1 className="text-display font-extrabold text-text-primary">{t("heading")}</h1>
-          <p className="text-body-lg text-text-secondary">{t("empty")}</p>
+        <Container width="narrow">
+          <PageHeader lead title={t("heading")} description={t("empty")} />
         </Container>
       </Section>
     );
@@ -51,8 +51,7 @@ export async function FaqSections({ faqSections }: FaqSectionsProps) {
       <Container>
         <div className="grid gap-10 lg:grid-cols-[minmax(0,18rem)_1fr] lg:gap-16">
           <div className="lg:sticky lg:top-28 lg:self-start">
-            <h1 className="text-display font-extrabold text-text-primary">{t("heading")}</h1>
-            <p className="mt-3 text-body text-text-secondary">{t("intro")}</p>
+            <PageHeader title={t("heading")} description={t("intro")} />
 
             {/* Only worth showing when there's more than one place to jump to. */}
             {sections.length > 1 && (

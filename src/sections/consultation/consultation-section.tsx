@@ -4,6 +4,7 @@ import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { ConsultationForm } from "@/components/consultation/consultation-form";
 import { ConsultationTrustPanel } from "@/components/consultation/consultation-trust-panel";
+import { PageHeader } from "@/components/ui/page-header";
 
 export interface ConsultationSectionProps {
   doctorProfile: LocalizedDoctorProfile;
@@ -31,10 +32,7 @@ export async function ConsultationSection({ doctorProfile, whatsappNumber, packa
   return (
     <Section>
       <Container width="narrow">
-        <header className="flex flex-col gap-3 text-center">
-          <h1 className="text-display font-extrabold text-text-primary">{t("heading")}</h1>
-          <p className="text-body-lg text-text-secondary">{t("intro", { doctorName: doctorProfile.name })}</p>
-        </header>
+        <PageHeader align="center" lead title={t("heading")} description={t("intro", { doctorName: doctorProfile.name })} />
       </Container>
 
       <Container className="mt-10">

@@ -5,9 +5,10 @@ import type { LocalizedVideo } from "@/lib/domain/video";
 import AppRoute from "@/constant/AppRoute.enum";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
-import { Reveal } from "@/components/ui/reveal";
 import { Link } from "@/i18n/navigation";
 import { VideosGrid } from "@/components/videos/videos-grid";
+import { PageHeader } from "@/components/ui/page-header";
+import { Reveal } from "@/components/ui/reveal";
 
 export interface VideosGalleryProps {
   result: PaginatedResponse<LocalizedVideo>;
@@ -28,9 +29,8 @@ export async function VideosGallery({ result, page }: VideosGalleryProps) {
   return (
     <Section>
       <Container>
-        <Reveal className="flex flex-col items-start gap-3">
-          <h1 className="text-display font-extrabold text-text-primary">{t("heading")}</h1>
-          <p className="max-w-narrow text-body text-text-secondary">{t("intro")}</p>
+        <Reveal>
+          <PageHeader title={t("heading")} description={t("intro")} />
         </Reveal>
 
         <div className="mt-10">
