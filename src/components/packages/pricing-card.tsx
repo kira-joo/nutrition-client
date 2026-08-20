@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/cn";
+import { LABEL_TYPE } from "@/components/ui/typography";
 
 export interface PricingCardPrice {
   current: number;
@@ -70,7 +71,7 @@ export function PricingCard({ isRecommended, title, subtitle, icon, badge, price
 
       {details.length > 0 && (
         <>
-          <p className="mt-6 text-label font-semibold uppercase tracking-wide text-text-muted">{labels.includes}</p>
+          <p className={cn("mt-6", LABEL_TYPE, "text-text-muted")}>{labels.includes}</p>
           <ul className="mt-3 flex flex-1 flex-col gap-2.5">
             {details.map((detail, index) => (
               <li key={index} className="flex items-start gap-2.5 text-body-sm text-text-secondary">

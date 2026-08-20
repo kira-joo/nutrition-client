@@ -6,6 +6,7 @@ import AppRoute from "@/constant/AppRoute.enum";
 import type { LocalizedRecipeTaxonomyTerm } from "@/lib/domain/recipe-taxonomy";
 import { toSearchParamsString, type RecipeFilters } from "@/lib/recipes/recipe-search-params";
 import { usePathname, useRouter } from "@/i18n/navigation";
+import { LABEL_TYPE } from "@/components/ui/typography";
 
 export interface RecipeFilterPanelProps {
   filters: RecipeFilters;
@@ -62,7 +63,7 @@ export function RecipeFilterPanel({ filters, categories, foodGroups, labels, onN
           apply({ search: typeof value === "string" ? value.trim() : "" });
         }}
       >
-        <label htmlFor={searchId} className="text-label font-semibold uppercase tracking-wide text-text-muted">
+        <label htmlFor={searchId} className={cn(LABEL_TYPE, "text-text-muted")}>
           {labels.searchLabel}
         </label>
         <div className="relative mt-2">
@@ -130,7 +131,7 @@ function FilterGroup({ legend, name, allLabel, options, value, onChange }: Filte
 
   return (
     <fieldset>
-      <legend className="text-label font-semibold uppercase tracking-wide text-text-muted">{legend}</legend>
+      <legend className={cn(LABEL_TYPE, "text-text-muted")}>{legend}</legend>
       <div className="mt-3 flex flex-col gap-1">
         {[{ _id: "", title: allLabel }, ...options].map((option) => {
           const isActive = option._id === value;

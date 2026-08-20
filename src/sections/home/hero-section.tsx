@@ -7,6 +7,8 @@ import { Reveal } from "@/components/ui/reveal";
 import { HeroBackground } from "@/sections/home/hero-background";
 import { HERO_VALUE_ITEMS } from "@/constant/hero-values";
 import AppRoute from "@/constant/AppRoute.enum";
+import { LABEL_TYPE } from "@/components/ui/typography";
+import { cn } from "@/lib/cn";
 
 export interface HeroSectionProps {
   doctorProfile: LocalizedDoctorProfile;
@@ -49,7 +51,7 @@ export async function HeroSection({ doctorProfile }: HeroSectionProps) {
         <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
           <div className="order-2 flex flex-col items-start gap-6 lg:order-1">
             <Reveal direction="up" distance={16} duration="reveal" ease="emphasized">
-              <p className="text-label font-semibold uppercase tracking-wide text-primary">{name}</p>
+              <p className={cn(LABEL_TYPE, "text-primary")}>{name}</p>
             </Reveal>
             <Reveal direction="up" distance={24} duration="reveal" ease="emphasized" delay={0.08}>
               <h1 className="text-display font-extrabold text-text-primary">{tagline}</h1>

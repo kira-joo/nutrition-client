@@ -6,6 +6,8 @@ import { Section } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
 import AppRoute from "@/constant/AppRoute.enum";
+import { LABEL_TYPE } from "@/components/ui/typography";
+import { cn } from "@/lib/cn";
 
 export interface DoctorPreviewSectionProps {
   doctorProfile: LocalizedDoctorProfile;
@@ -58,7 +60,7 @@ async function DoctorPreviewContent({ doctorProfile, body }: { doctorProfile: Lo
           </Reveal>
 
           <Reveal direction="up" className="order-1 flex flex-col items-start gap-4 lg:order-2">
-            <p className="text-label font-semibold uppercase tracking-wide text-primary">{t("doctorPreview.label")}</p>
+            <p className={cn(LABEL_TYPE, "text-primary")}>{t("doctorPreview.label")}</p>
             <h2 className="text-heading-1 font-bold text-text-primary">{doctorProfile.name}</h2>
             <p className="text-body-lg text-text-secondary">{body}</p>
             <Button href={AppRoute.Doctor} variant="secondary" className="mt-2">

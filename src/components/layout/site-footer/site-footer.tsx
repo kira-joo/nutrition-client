@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import { Container } from "@/components/ui/container";
 import { cn } from "@/lib/cn";
 import { ARABIC_ONLY_NAV_KEYS, PRIMARY_NAV_ITEMS, MORE_NAV_ITEMS } from "@/components/layout/site-header/nav-items";
+import { LABEL_TYPE } from "@/components/ui/typography";
 import { SocialIcon } from "./social-icon";
 import { FooterBotanical } from "./footer-botanical";
 
@@ -24,17 +25,20 @@ export interface SiteFooterProps {
  * element on this surface needs the white inverse ring instead. */
 const INVERSE_LINK =
   "text-body-sm text-on-inverse-muted transition-colors duration-fast hover:text-on-inverse focus-ring-inverse " +
-  /* Phones only: each row becomes a real `--touch-target-min` (44px) target
-     centred in its column, rather than a ~34px line of text. Uses the
-     project's own token, not a hand-picked padding, so the footer can never
-     drift from the touch minimum the rest of the app is held to. From `sm`
-     up the compact inline-start rhythm returns unchanged. */
-  "flex min-h-touch-min items-center justify-center sm:min-h-0 sm:justify-start";
+  /* Each row is a real `--touch-target-min` (44px) target rather than a ~34px
+     line of text, using the project's own token so the footer cannot drift from
+     the minimum the rest of the app is held to.
+
+     Relaxed by POINTER CAPABILITY, not viewport width. `sm:min-h-0` was wrong
+     and shipped that way once: a 768px tablet is wide enough to pass an `sm`
+     breakpoint and still has no mouse, so it got the 34px rows straight back.
+     Centring is still a phone-composition decision, so that one stays on `sm`. */
+  "flex min-h-touch-min items-center justify-center pointer:min-h-0 sm:justify-start";
 
 /** Column heading: centred on phones with the rest of the composition, and
  * back to inline-start from `sm` up where the real columns exist. */
 const COLUMN_HEADING =
-  "flex items-center justify-center gap-2 text-label font-semibold uppercase tracking-wide text-on-inverse-muted sm:justify-start";
+  `flex items-center justify-center gap-2 ${LABEL_TYPE} text-on-inverse-muted sm:justify-start`;
 
 /**
  * "Botanical Trust" — the footer's dark brand-green surface now does real
@@ -78,9 +82,9 @@ const COLUMN_HEADING =
  * Centring is a *composition* decision and not an RTL one: Arabic still
  * reads right-to-left inside every block (`dir` is untouched, logical
  * properties throughout), so "RTL" never gets misread as "everything hugs
- * the right edge". Link rows also carry `py-1.5` on phones only, lifting a
- * 25px text row to a ~37px target with the existing `gap-2.5` between —
- * the compact desktop rhythm is unchanged.
+ * the right edge". Link rows are also real 44px touch targets, from the
+ * project's own `--touch-target-min` and relaxed by pointer capability rather
+ * than by viewport width, so a touch tablet keeps them.
  */
 export async function SiteFooter({ siteSettings, clinicName, doctorTagline }: SiteFooterProps) {
   const t = await getTranslations("layout");

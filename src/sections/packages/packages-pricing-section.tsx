@@ -7,6 +7,8 @@ import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { PackagePricingBoard } from "@/components/packages/package-pricing-board";
 import { EmptyPanel } from "@/components/ui/empty-panel";
+import { LABEL_TYPE } from "@/components/ui/typography";
+import { cn } from "@/lib/cn";
 
 export interface PackagesPricingSectionProps {
   packagesPageSettings: LocalizedPackagesPageSettings;
@@ -36,7 +38,7 @@ export async function PackagesPricingSection({ packagesPageSettings, packages, c
   const header = (
     <header className="flex flex-col items-start gap-3">
       {packagesPageSettings.subtitle && (
-        <p className="text-label font-semibold uppercase tracking-wide text-accent">{packagesPageSettings.subtitle}</p>
+        <p className={cn(LABEL_TYPE, "text-accent")}>{packagesPageSettings.subtitle}</p>
       )}
       <h1 className="max-w-narrow text-display font-extrabold text-text-primary">
         {packagesPageSettings.title}{" "}

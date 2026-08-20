@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/button";
+import { LABEL_TYPE } from "@/components/ui/typography";
 
 export interface PageHeaderProps {
   title: ReactNode;
@@ -100,7 +101,7 @@ export function PageHeader({
           centred ? "items-center text-center" : "items-start"
         )}
       >
-        {eyebrow ? <p className="text-label font-semibold uppercase tracking-wide text-accent">{eyebrow}</p> : null}
+        {eyebrow ? <p className={cn(LABEL_TYPE, "text-accent")}>{eyebrow}</p> : null}
         <Heading
           className={cn(
             "text-text-primary",
