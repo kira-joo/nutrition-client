@@ -29,6 +29,15 @@ const PARALLAX_TRAVEL_PERCENT = 6;
  * `+2` the remaining cover measured only ~11px at the end of the range —
  * correct, but close enough to zero that any future change to either value
  * would silently reopen the bug.
+ *
+ * KNOWN TRADE-OFF, measured in docs/asset-specs.md: this grows the layer at
+ * every breakpoint, while the parallax that needs it is desktop-only — so
+ * mobile renders a 20%-taller box for no visual benefit, and since
+ * `object-cover` here is always height-bound, that directly raises the source
+ * resolution mobile needs. Gating the overscan to `lg` would recover it, but
+ * that changes the geometry the edge-exposure fix depends on and needs its own
+ * verification pass across the breakpoint boundary; not folded into the same
+ * change that introduced the fix.
  */
 const PARALLAX_OVERSCAN_PERCENT = PARALLAX_TRAVEL_PERCENT + 4;
 
