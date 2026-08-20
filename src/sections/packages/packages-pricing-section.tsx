@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { PackageX } from "lucide-react";
-import type { PackageDuration } from "@/lib/domain/package";
+import { PACKAGE_DURATIONS } from "@/lib/domain/package";
 import type { LocalizedPackage } from "@/lib/domain/package";
 import type { LocalizedPackagesPageSettings } from "@/lib/domain/packages-page-settings";
 import { Container } from "@/components/ui/container";
@@ -12,9 +12,6 @@ export interface PackagesPricingSectionProps {
   packages: LocalizedPackage[];
   currencyCode: string;
 }
-
-/** Fixed set the CMS's `durationLabels` is keyed by; a duration with no authored label is dropped rather than shown with a raw key. */
-const DURATIONS: PackageDuration[] = ["month", "quarter", "half"];
 
 /**
  * Desktop puts the heading and the duration control on one row above the
@@ -32,7 +29,8 @@ const DURATIONS: PackageDuration[] = ["month", "quarter", "half"];
 export async function PackagesPricingSection({ packagesPageSettings, packages, currencyCode }: PackagesPricingSectionProps) {
   const t = await getTranslations("packages");
 
-  const durations = DURATIONS.map((value) => ({ value, label: packagesPageSettings.durationLabels[value] })).filter((option) => option.label);
+  // A duration with no authored label is dropped rather than shown with a raw key.
+  const durations = PACKAGE_DURATIONS.map((value) => ({ value, label: packagesPageSettings.durationLabels[value] })).filter((option) => option.label);
 
   const header = (
     <header className="flex flex-col items-start gap-3">

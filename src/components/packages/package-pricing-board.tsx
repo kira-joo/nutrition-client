@@ -1,8 +1,11 @@
 "use client";
-import { useId, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import type { LocalizedPackage, PackageDuration } from "@/lib/domain/package";
-import { PackageCard } from "@/components/packages/package-card";
+import { PACKAGE_DURATIONS } from "@/lib/domain/package";
+import { PricingCard } from "@/components/packages/pricing-card";
+import { SegmentedControl } from "@/components/packages/segmented-control";
+import { toPricingCardProps } from "@/components/packages/package-card";
 
 export interface PackagePricingBoardProps {
   /**
@@ -22,8 +25,7 @@ export interface PackagePricingBoardProps {
 }
 
 export function PackagePricingBoard({ packages, durations, subscribeLabel, currencyCode, labels, header }: PackagePricingBoardProps) {
-  const groupName = useId();
-  const [duration, setDuration] = useState<PackageDuration>(durations[0]?.value ?? "month");
+  const [duration, setDuration] = useState<PackageDuration>(durations[0]?.value ?? PACKAGE_DURATIONS[0]);
 
   return (
     /*
@@ -38,13 +40,17 @@ export function PackagePricingBoard({ packages, durations, subscribeLabel, curre
     */
     <div className="grid gap-8 lg:grid-cols-2 lg:items-end">
       {header}
-      {/*
-        Native radios rather than buttons with aria-pressed: a duration is a
-        single choice from a set, so a radio group is the correct semantic
-        and brings arrow-key navigation and one-Tab-stop behavior for free
-        instead of reimplementing both.
-      */}
-      <fieldset
+      {/* No control when the CMS has labelled no durations at all: the board
+          still prices every card off the fallback duration, but an empty
+          sticky fieldset would be a labelled group with nothing in it —
+          announced to a screen reader as an empty control, and visually just
+          a stray bar. */}
+      {durations.length > 0 && (
+      <SegmentedControl
+        legend={labels.chooseDuration}
+        options={durations}
+        value={duration}
+        onChange={setDuration}
         className={cn(
           "sticky top-16 z-sticky-cta -mx-4 border-b-hairline border-border bg-background/95 px-4 py-3 backdrop-blur",
           // Matches Container's own sm:px-6 breakpoint exactly — without
@@ -54,40 +60,14 @@ export function PackagePricingBoard({ packages, durations, subscribeLabel, curre
           "sm:-mx-6 sm:px-6",
           "lg:static lg:mx-0 lg:justify-self-end lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none"
         )}
-      >
-        <legend className="sr-only">{labels.chooseDuration}</legend>
-        <div className="flex flex-wrap gap-2 rounded-full border-hairline border-border bg-surface p-1 lg:inline-flex">
-          {durations.map((option) => {
-            const isActive = option.value === duration;
-            return (
-              <label
-                key={option.value}
-                className={cn(
-                  "flex-1 cursor-pointer rounded-full px-4 py-2 text-center text-body-sm font-semibold transition-colors duration-base ease-standard lg:flex-none",
-                  "focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-focus",
-                  isActive ? "bg-primary text-white" : "text-text-secondary hover:text-text-primary"
-                )}
-              >
-                <input
-                  type="radio"
-                  name={groupName}
-                  value={option.value}
-                  checked={isActive}
-                  onChange={() => setDuration(option.value)}
-                  className="sr-only"
-                />
-                {option.label}
-              </label>
-            );
-          })}
-        </div>
-      </fieldset>
+      />
+      )}
 
       {/* Rendered in the exact order the backend returned — no client-side sort, not even to lead with the popular tier. Column count follows the real count: 3+ packages earn a third column instead of forever capping at two and leaving a gap once the CMS grows past it. */}
       <ul className={cn("grid gap-8 sm:grid-cols-2 lg:col-span-2", packages.length >= 3 && "lg:grid-cols-3")}>
         {packages.map((pkg) => (
           <li key={pkg._id} className="flex">
-            <PackageCard pkg={pkg} tier={pkg.pricingTiers[duration]} currencyCode={currencyCode} labels={labels} subscribeLabel={subscribeLabel} />
+            <PricingCard {...toPricingCardProps(pkg, pkg.pricingTiers[duration], currencyCode, { ...labels, subscribe: subscribeLabel })} />
           </li>
         ))}
       </ul>

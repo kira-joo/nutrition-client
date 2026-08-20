@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Expand } from "lucide-react";
 import { SiteLightbox } from "@/components/gallery/site-lightbox";
 import { useLightbox } from "@/components/gallery/use-lightbox";
+import { MediaPill } from "@/components/ui/media-pill";
 
 export interface RecipeHeroImageProps {
   src: string;
@@ -44,10 +45,9 @@ export function RecipeHeroImage({ src, alt, width, height, placeholderUrl, viewL
           placeholder={placeholderUrl ? "blur" : undefined}
           blurDataURL={placeholderUrl}
         />
-        <span className="absolute bottom-3 end-3 flex items-center gap-1.5 rounded-full bg-surface/90 px-3 py-1.5 text-caption font-semibold text-text-primary opacity-0 backdrop-blur transition-opacity duration-base ease-standard group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none">
-          <Expand className="size-icon-sm" aria-hidden="true" />
+        <MediaPill position="bottom-end" revealOnHover icon={<Expand className="size-icon-sm" aria-hidden="true" />}>
           {viewLabel}
-        </span>
+        </MediaPill>
       </button>
 
       {openIndex !== null && (

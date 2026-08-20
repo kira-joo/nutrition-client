@@ -1,7 +1,7 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { SlidersHorizontal, X } from "lucide-react";
-import { Portal } from "@kira-joo/frontend-toolkit-tailwind/primitives";
+import { Portal, useMounted } from "@kira-joo/frontend-toolkit-tailwind/primitives";
 import { cn } from "@/lib/cn";
 import { useDialogA11y } from "@/lib/a11y/use-dialog-a11y";
 import { useDrawerTransition } from "@/lib/animation/use-drawer-transition";
@@ -21,7 +21,7 @@ export interface RecipeFilterSheetProps extends Omit<RecipeFilterPanelProps, "on
  * shows how many are active, rather than occupying the top of every scroll.
  *
  * Reuses `useDialogA11y` (Escape, focus trap, focus restoration, background
- * inert, scroll lock) and `useDrawerTransition` (GSAP, reduced-motion
+ * inert, scroll lock) and `useDrawerTransition` (Motion, reduced-motion
  * gated) rather than growing a second, subtly different dialog on the site.
  * The panel stays mounted so the close transition can run, which is exactly
  * why `useDialogA11y` also marks it inert while closed.
@@ -42,8 +42,7 @@ export function RecipeFilterSheet({
   const [isOpen, setIsOpen] = useState(false);
   // Portal renders nothing until mounted, so the panel doesn't exist on the
   // first pass; the transition has to wait for it (see `ready`).
-  const [isMounted, setIsMounted] = useState(false);
-  useEffect(() => setIsMounted(true), []);
+  const isMounted = useMounted();
 
   const { panelRef, backdropRef } = useDrawerTransition({ isOpen, fromEdge: "end", ready: isMounted });
   // `ready` fixes a real, previously-unnoticed gap: this sheet has been
@@ -77,7 +76,7 @@ export function RecipeFilterSheet({
           className={cn("fixed inset-0 z-drawer bg-overlay lg:hidden", !isOpen && "invisible opacity-0")}
         />
 
-        {/* No CSS transform here: GSAP owns this element's transform exclusively (see useDrawerTransition). */}
+        {/* No CSS transform here: useDrawerTransition owns this element's transform exclusively. */}
         <div
           ref={panelRef}
           role="dialog"

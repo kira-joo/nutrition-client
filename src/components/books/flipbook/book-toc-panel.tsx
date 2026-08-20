@@ -1,7 +1,7 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { X } from "lucide-react";
-import { Portal } from "@kira-joo/frontend-toolkit-tailwind/primitives";
+import { Portal, useMounted } from "@kira-joo/frontend-toolkit-tailwind/primitives";
 import { useDialogA11y } from "@/lib/a11y/use-dialog-a11y";
 import type { TocResultEntry } from "@/lib/books/render/page-model.interface";
 
@@ -44,8 +44,7 @@ export function BookTocPanel({ open, onClose, toc, onSelect, isNested = false }:
   // never run again (neither `isOpen` nor the ref object identity changes
   // once the container actually mounts). Same gap `mobile-nav-drawer.tsx`
   // documents and fixes the same way.
-  const [isMounted, setIsMounted] = useState(false);
-  useEffect(() => setIsMounted(true), []);
+  const isMounted = useMounted();
   useDialogA11y({ isOpen: open && !isNested, onClose, containerRef, ready: isMounted });
 
   if (!open) return null;

@@ -14,9 +14,12 @@ import { ARABIC_ONLY_NAV_KEYS, MORE_NAV_ITEMS, PRIMARY_NAV_ITEMS } from "./nav-i
 import AppRoute from "@/constant/AppRoute.enum";
 
 // Deferred until a visitor actually taps the hamburger button (see
-// `hasOpenedDrawer` below) — this is the one part of the always-rendered
-// header that needs GSAP (`useDrawerTransition`), measured at ~110kB
-// parsed. `ssr: false` since it never needs to exist in the initial HTML.
+// `hasOpenedDrawer` below): this is the one part of the always-rendered
+// header that pulls in the animation runtime (`useDrawerTransition`), and
+// the header is global, so an eager import would put it on every route —
+// the reason this boundary exists (it was ~110kB parsed under GSAP; Motion
+// is smaller, but the always-global argument is unchanged).
+// `ssr: false` since it never needs to exist in the initial HTML.
 const MobileNavDrawer = dynamic(() => import("./mobile-nav-drawer").then((mod) => mod.MobileNavDrawer), { ssr: false });
 
 export interface SiteHeaderProps {
@@ -34,7 +37,7 @@ export function SiteHeader({ logo, clinicName, whatsappNumber, phone }: SiteHead
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   // Once true, stays true — the drawer stays mounted after its first open
   // so its close transition can animate (matching the original design),
-  // but nothing about it (including its GSAP dependency) loads before that
+  // but nothing about it (including the animation runtime) loads before that
   // first tap.
   const [hasOpenedDrawer, setHasOpenedDrawer] = useState(false);
   const [isMoreOpen, setIsMoreOpen] = useState(false);
@@ -47,9 +50,9 @@ export function SiteHeader({ logo, clinicName, whatsappNumber, phone }: SiteHead
   }
 
   // Transparent-over-hero, solid once scrolled — a plain scroll listener
-  // driving a Tailwind color transition, not GSAP: this is a two-state
+  // driving a Tailwind color transition, not a JS animation: a two-state
   // boolean toggle, not a sequenced animation, so a CSS transition is the
-  // right-sized tool (GSAP is reserved for the drawer's slide/fade and for
+  // right-sized tool (Motion is reserved for the drawer's slide/fade and for
   // scroll-triggered content reveals elsewhere on the page).
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 8);

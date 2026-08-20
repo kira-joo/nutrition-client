@@ -21,9 +21,9 @@ import {
   ZoomIn,
   ZoomOut,
 } from "lucide-react";
-import { Portal } from "@kira-joo/frontend-toolkit-tailwind/primitives";
+import { Portal, useMounted } from "@kira-joo/frontend-toolkit-tailwind/primitives";
 import { useDialogA11y } from "@/lib/a11y/use-dialog-a11y";
-import { prefersReducedMotion } from "@/lib/animation/gsap-config";
+import { prefersReducedMotion } from "@/lib/animation/prefers-reduced-motion";
 import { spreadFor } from "@/lib/books/render/book-physical-order";
 import type { BookPdfAvailability } from "@/lib/domain/book";
 import { useIdleVisibility } from "./use-idle-visibility";
@@ -124,8 +124,7 @@ export function BookImmersiveChrome({
   children,
 }: BookImmersiveChromeProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isMounted, setIsMounted] = useState(false);
-  useEffect(() => setIsMounted(true), []);
+  const isMounted = useMounted();
   useDialogA11y({ isOpen: true, onClose: onRequestClose, containerRef, ready: isMounted });
 
   const [isFullscreen, setIsFullscreen] = useState(false);

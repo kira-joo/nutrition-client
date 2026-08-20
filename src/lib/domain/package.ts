@@ -2,6 +2,9 @@ import type { LocalizedResult, LocalizedString } from "@kira-joo/toolkit-common"
 
 export type PackageDuration = "month" | "quarter" | "half";
 
+/** The one ordered list of duration keys — `PackagesPageSettings.durationLabels` is keyed by it, and the pricing board's default duration falls back to its first entry, so the set can't drift between the two call sites. */
+export const PACKAGE_DURATIONS: readonly PackageDuration[] = ["month", "quarter", "half"];
+
 export interface PricingTier {
   originalPrice: number;
   price: number;

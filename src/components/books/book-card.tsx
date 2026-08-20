@@ -3,6 +3,7 @@ import { ArrowLeft, BookOpen } from "lucide-react";
 import type { PublicBookListItem } from "@/lib/domain/book";
 import { Link } from "@/i18n/navigation";
 import { appHref } from "@/constant/AppRoute.enum";
+import { MediaPill } from "@/components/ui/media-pill";
 
 export interface BookCardProps {
   book: PublicBookListItem;
@@ -56,11 +57,7 @@ export function BookCard({ book, priority = false }: BookCardProps) {
           </span>
         )}
 
-        {book.category && (
-          <span className="absolute bottom-2 start-2 rounded-full bg-surface/90 px-2.5 py-1 text-caption font-semibold text-text-primary backdrop-blur">
-            {book.category}
-          </span>
-        )}
+        {book.category && <MediaPill position="bottom-start">{book.category}</MediaPill>}
       </div>
 
       <div className="flex flex-1 flex-col gap-2 p-5">

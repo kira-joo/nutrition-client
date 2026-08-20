@@ -78,7 +78,7 @@ export function Accordion({ items, className, allowMultiple = false, headingLeve
                   state, not content), so it needs no RTL mirroring — it
                   rotates in place rather than pointing start/end.
                   `motion-reduce:transition-none` keeps this inside the same
-                  reduced-motion contract the GSAP layer honors; a CSS
+                  reduced-motion contract the JS animation layer honors; a CSS
                   transition would otherwise bypass that gate entirely.
                 */}
                 <ChevronDown

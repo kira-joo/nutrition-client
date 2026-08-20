@@ -5,10 +5,14 @@
     "slow": 500,
     "reveal": 600
   },
+  "ambientMs": {
+    "drift": 24000
+  },
   "eases": {
-    "standard": { "gsap": "power2.out", "cssCubicBezier": "cubic-bezier(0.16, 1, 0.3, 1)" },
-    "emphasized": { "gsap": "power3.out", "cssCubicBezier": "cubic-bezier(0.19, 1, 0.22, 1)" },
-    "inOut": { "gsap": "power2.inOut", "cssCubicBezier": "cubic-bezier(0.65, 0, 0.35, 1)" },
-    "soft": { "gsap": "power1.out", "cssCubicBezier": "cubic-bezier(0.33, 1, 0.68, 1)" }
+    "standard": { "cssCubicBezier": "cubic-bezier(0.16, 1, 0.3, 1)" },
+    "emphasized": { "cssCubicBezier": "cubic-bezier(0.19, 1, 0.22, 1)" },
+    "inOut": { "cssCubicBezier": "cubic-bezier(0.65, 0, 0.35, 1)" },
+    "soft": { "cssCubicBezier": "cubic-bezier(0.33, 1, 0.68, 1)" },
+    "ambient": { "cssCubicBezier": "cubic-bezier(0.37, 0, 0.63, 1)" }
   }
 }

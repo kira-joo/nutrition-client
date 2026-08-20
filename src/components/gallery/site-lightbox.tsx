@@ -1,9 +1,9 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import { Portal } from "@kira-joo/frontend-toolkit-tailwind/primitives";
+import { Portal, useMounted } from "@kira-joo/frontend-toolkit-tailwind/primitives";
 import { cn } from "@/lib/cn";
 import { useIsRtl } from "@/hooks/useIsRtl";
 import { useDialogA11y } from "@/lib/a11y/use-dialog-a11y";
@@ -63,8 +63,7 @@ const CONTROL_BUTTON_CLASSNAME =
  * `requestAnimationFrame` call runs a frame later and wins.
  */
 export function SiteLightbox({ images, index, onIndexChange, onClose, loop = true }: SiteLightboxProps) {
-  const [isMounted, setIsMounted] = useState(false);
-  useEffect(() => setIsMounted(true), []);
+  const isMounted = useMounted();
 
   const containerRef = useRef<HTMLDivElement>(null);
   const isRtl = useIsRtl();

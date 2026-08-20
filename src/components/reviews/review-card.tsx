@@ -6,6 +6,7 @@ import type { LocalizedReview } from "@/lib/domain/review";
 import { SiteLightbox } from "@/components/gallery/site-lightbox";
 import { useLightbox } from "@/components/gallery/use-lightbox";
 import { StarRating } from "@/components/ui/star-rating";
+import { MediaPill } from "@/components/ui/media-pill";
 import { cn } from "@/lib/cn";
 
 export interface ReviewCardProps {
@@ -93,9 +94,7 @@ export function ReviewCard({ review, className }: ReviewCardProps) {
               placeholder={review.beforeImage!.placeholderUrl ? "blur" : undefined}
               blurDataURL={review.beforeImage!.placeholderUrl}
             />
-            <span className="absolute top-2 start-2 rounded-full bg-surface/90 px-2.5 py-1 text-caption font-semibold text-text-primary backdrop-blur">
-              {t("card.before")}
-            </span>
+            <MediaPill position="top-start">{t("card.before")}</MediaPill>
           </button>
           <button
             ref={registerTrigger(1)}
@@ -112,9 +111,7 @@ export function ReviewCard({ review, className }: ReviewCardProps) {
               placeholder={review.afterImage!.placeholderUrl ? "blur" : undefined}
               blurDataURL={review.afterImage!.placeholderUrl}
             />
-            <span className="absolute top-2 start-2 rounded-full bg-surface/90 px-2.5 py-1 text-caption font-semibold text-text-primary backdrop-blur">
-              {t("card.after")}
-            </span>
+            <MediaPill position="top-start">{t("card.after")}</MediaPill>
           </button>
         </div>
       ) : review.image ? (
@@ -133,10 +130,9 @@ export function ReviewCard({ review, className }: ReviewCardProps) {
             placeholder={review.image.placeholderUrl ? "blur" : undefined}
             blurDataURL={review.image.placeholderUrl}
           />
-          <span className="absolute bottom-3 end-3 flex items-center gap-1.5 rounded-full bg-surface/90 px-3 py-1.5 text-caption font-semibold text-text-primary opacity-0 backdrop-blur transition-opacity duration-base ease-standard group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none">
-            <Expand className="size-icon-sm" aria-hidden="true" />
+          <MediaPill position="bottom-end" revealOnHover icon={<Expand className="size-icon-sm" aria-hidden="true" />}>
             {t("card.viewPhoto")}
-          </span>
+          </MediaPill>
         </button>
       ) : null}
 

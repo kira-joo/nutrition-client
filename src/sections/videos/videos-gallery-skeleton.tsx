@@ -2,6 +2,7 @@ import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageHeadingSkeleton } from "@/components/ui/skeleton-blocks";
+import { ContentGrid } from "@/components/ui/content-grid";
 
 /**
  * Mirrors VideosGallery's real layout at the sizes the loaded content uses
@@ -13,7 +14,7 @@ export function VideosGallerySkeleton() {
     <Section>
       <Container>
         <PageHeadingSkeleton withIntro />
-        <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+        <ContentGrid className="mt-10">
           {Array.from({ length: 6 }, (_, index) => (
             <div key={index} className="flex flex-col gap-2">
               <Skeleton className="aspect-video w-full" />
@@ -21,7 +22,7 @@ export function VideosGallerySkeleton() {
               <Skeleton className="h-4 w-1/2" />
             </div>
           ))}
-        </div>
+        </ContentGrid>
       </Container>
     </Section>
   );

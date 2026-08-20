@@ -4,8 +4,10 @@ import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { SectionHeader } from "@/components/ui/section-header";
 import { RevealGroup } from "@/components/ui/reveal";
+import { CONTENT_GRID_CLASSNAME } from "@/components/ui/content-grid";
 import { VideoCard } from "@/components/videos/video-card";
 import AppRoute from "@/constant/AppRoute.enum";
+import { cn } from "@/lib/cn";
 
 export interface VideosPreviewSectionProps {
   videos: LocalizedVideo[];
@@ -43,7 +45,7 @@ export async function VideosPreviewSection({ videos }: VideosPreviewSectionProps
           actionHref={AppRoute.Videos}
         />
 
-        <RevealGroup as="ul" className="mt-heading-gap grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+        <RevealGroup as="ul" className={cn("mt-heading-gap", CONTENT_GRID_CLASSNAME)}>
           {featured.map((video, index) => (
             <VideoCard key={video._id} video={video} priority={index < 3} />
           ))}

@@ -1,8 +1,8 @@
 "use client";
-import { useEffect, useId, useState } from "react";
+import { useId } from "react";
 import { useTranslations } from "next-intl";
 import { MessageCircle, Phone, X } from "lucide-react";
-import { Portal } from "@kira-joo/frontend-toolkit-tailwind/primitives";
+import { Portal, useMounted } from "@kira-joo/frontend-toolkit-tailwind/primitives";
 import { cn } from "@/lib/cn";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
@@ -26,7 +26,7 @@ export interface MobileNavDrawerProps {
  * Split out of `SiteHeader` and loaded via `next/dynamic(..., { ssr: false })`
  * there, mounted only from the moment a visitor first taps the hamburger
  * button onward (see `SiteHeader`'s `hasOpenedDrawer` state) — this is the
- * one piece of the always-rendered global header that actually needs GSAP
+ * one piece of the always-rendered global header that actually needs the
  * (`useDrawerTransition`), which measured out to ~110kB parsed pulled into
  * every single page's bundle by way of the header being unavoidably
  * global. The top bar (logo/nav/hamburger button) needs none of that and
@@ -57,8 +57,7 @@ export function MobileNavDrawer({ id, isOpen, onClose, clinicName, whatsappNumbe
   // — the transition has to wait for it, exactly as recipe-filter-sheet.tsx
   // does, or useDrawerTransition's layout effect runs against a null ref,
   // never sets the closed position, and the panel flashes open on mount.
-  const [isMounted, setIsMounted] = useState(false);
-  useEffect(() => setIsMounted(true), []);
+  const isMounted = useMounted();
 
   const { panelRef, backdropRef } = useDrawerTransition({ isOpen, ready: isMounted });
   useDialogA11y({ isOpen, onClose, containerRef: panelRef, ready: isMounted });
@@ -72,7 +71,7 @@ export function MobileNavDrawer({ id, isOpen, onClose, clinicName, whatsappNumbe
         aria-hidden="true"
         className={cn("fixed inset-0 z-drawer bg-overlay lg:hidden", !isOpen && "invisible opacity-0")}
       />
-      {/* No CSS-authored transform here on purpose: GSAP owns this element's transform exclusively (see useDrawerTransition's doc comment) — a class-based translate-x-full would sit underneath GSAP's own xPercent writes rather than being replaced by them, doubling the offset. useDrawerTransition's useLayoutEffect sets the offscreen position synchronously before paint, so there's no flash despite no CSS default. */}
+      {/* No CSS-authored transform here on purpose: useDrawerTransition owns this element's transform exclusively — a class-based translate-x-full would sit underneath the animated writes rather than being replaced by them, doubling the offset. Its layout effect sets the offscreen position before paint, so there's no flash despite no CSS default. */}
       {/*
         Three-region flex column, not one padded box: `h-dvh` bounds the
         panel to the *usable* viewport height (a plain `h-screen`/`100vh`

@@ -11,8 +11,8 @@ export interface SkeletonProps {
  * what replaces it causes exactly the layout shift it was meant to avoid.
  *
  * `motion-reduce:animate-none` keeps the pulse inside the same
- * reduced-motion contract the GSAP layer honors; a CSS animation would
- * otherwise bypass the shared gate in `gsap-config.ts` entirely.
+ * reduced-motion contract the JS animation layer honors; a CSS animation
+ * would otherwise bypass `usePrefersReducedMotion` entirely.
  */
 export function Skeleton({ className }: SkeletonProps) {
   return <div aria-hidden="true" className={cn("animate-pulse rounded-md bg-surface-muted motion-reduce:animate-none", className)} />;

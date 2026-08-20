@@ -19,7 +19,7 @@ const sourcePath = path.join(projectRoot, "src/lib/animation/motion-tokens.json"
 const outDir = path.join(projectRoot, "src/app/_generated");
 const outPath = path.join(outDir, "motion-tokens.css");
 
-const { durationsMs, eases } = JSON.parse(readFileSync(sourcePath, "utf8"));
+const { durationsMs, ambientMs, eases } = JSON.parse(readFileSync(sourcePath, "utf8"));
 
 const lines = [
   "/**",
@@ -29,6 +29,7 @@ const lines = [
   " */",
   ":root {",
   ...Object.entries(durationsMs).map(([name, ms]) => `  --duration-${name}: ${ms}ms;`),
+  ...Object.entries(ambientMs).map(([name, ms]) => `  --duration-ambient-${name}: ${ms}ms;`),
   ...Object.entries(eases).map(([name, { cssCubicBezier }]) => {
     const cssName = name === "inOut" ? "in-out" : name;
     return `  --ease-${cssName}: ${cssCubicBezier};`;

@@ -5,7 +5,8 @@ import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { SectionHeader } from "@/components/ui/section-header";
 import { RevealGroup } from "@/components/ui/reveal";
-import { PackageCard } from "@/components/packages/package-card";
+import { PricingCard } from "@/components/packages/pricing-card";
+import { toPricingCardProps } from "@/components/packages/package-card";
 import AppRoute from "@/constant/AppRoute.enum";
 
 export interface PackagesPreviewSectionProps {
@@ -19,7 +20,7 @@ const PREVIEW_DURATION = "month";
 const PREVIEW_MAX_DETAILS = 4;
 
 /**
- * Renders the exact same `PackageCard` the full `/packages` page uses —
+ * Renders the exact same `PricingCard` the full `/packages` page uses —
  * there is no second, homepage-only package card. Only what a *section*
  * should own differs from the board: a single duration (the shortest —
  * the full duration toggle belongs to `/packages`, not this preview),
@@ -45,13 +46,14 @@ export async function PackagesPreviewSection({ packages, packagesPageSettings, c
         <RevealGroup className="mt-heading-gap grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
           {packages.map((pkg) => (
             <div key={pkg._id} className="flex">
-              <PackageCard
-                pkg={pkg}
-                tier={pkg.pricingTiers[PREVIEW_DURATION]}
-                currencyCode={currencyCode}
-                labels={{ save: tPackages("save"), includes: tPackages("includes") }}
-                subscribeLabel={packagesPageSettings.subscribeButtonLabel}
-                maxDetails={PREVIEW_MAX_DETAILS}
+              <PricingCard
+                {...toPricingCardProps(
+                  pkg,
+                  pkg.pricingTiers[PREVIEW_DURATION],
+                  currencyCode,
+                  { save: tPackages("save"), includes: tPackages("includes"), subscribe: packagesPageSettings.subscribeButtonLabel },
+                  PREVIEW_MAX_DETAILS
+                )}
               />
             </div>
           ))}

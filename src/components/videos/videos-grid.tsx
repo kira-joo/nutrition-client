@@ -1,4 +1,5 @@
 import type { LocalizedVideo } from "@/lib/domain/video";
+import { ContentGrid } from "@/components/ui/content-grid";
 import { VideoCard } from "./video-card";
 
 export interface VideosGridProps {
@@ -15,10 +16,10 @@ export interface VideosGridProps {
  */
 export function VideosGrid({ videos, isFirstPage = false }: VideosGridProps) {
   return (
-    <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+    <ContentGrid as="ul">
       {videos.map((video, index) => (
         <VideoCard key={video._id} video={video} priority={isFirstPage && index < 3} />
       ))}
-    </ul>
+    </ContentGrid>
   );
 }

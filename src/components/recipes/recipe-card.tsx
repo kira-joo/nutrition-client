@@ -3,6 +3,7 @@ import { Clock, ImageOff, Users as UsersIcon } from "lucide-react";
 import type { LocalizedRecipe } from "@/lib/domain/recipe";
 import { Link } from "@/i18n/navigation";
 import { appHref } from "@/constant/AppRoute.enum";
+import { MediaPill } from "@/components/ui/media-pill";
 
 export interface RecipeCardProps {
   recipe: LocalizedRecipe;
@@ -63,11 +64,7 @@ export function RecipeCard({ recipe, priority = false }: RecipeCardProps) {
           </span>
         )}
 
-        {recipe.category?.title && (
-          <span className="absolute bottom-2 start-2 rounded-full bg-surface/90 px-2.5 py-1 text-caption font-semibold text-text-primary backdrop-blur">
-            {recipe.category.title}
-          </span>
-        )}
+        {recipe.category?.title && <MediaPill position="bottom-start">{recipe.category.title}</MediaPill>}
       </div>
 
       <div className="flex flex-1 flex-col gap-2 p-5">

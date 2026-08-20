@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 import type { Book } from "@/lib/domain/book";
 import { resolveGeometry } from "@/lib/books/render/geometry";
 import { buildTemplateCss, CHAPTER_BACKGROUND_URL, FOOTER_LEAF_URL } from "@/lib/books/render/template-css";
-import { prefersReducedMotion } from "@/lib/animation/gsap-config";
+import { prefersReducedMotion } from "@/lib/animation/prefers-reduced-motion";
 import { useRouter, usePathname } from "@/i18n/navigation";
 import type { FlipEngineHandle } from "@/lib/books/flip-engine/flip-engine.interface";
 import { StPageFlipEngine } from "@/lib/books/flip-engine/stpageflip-engine";

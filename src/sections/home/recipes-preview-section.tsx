@@ -4,8 +4,10 @@ import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { SectionHeader } from "@/components/ui/section-header";
 import { RevealGroup } from "@/components/ui/reveal";
+import { CONTENT_GRID_CLASSNAME } from "@/components/ui/content-grid";
 import { RecipeCard } from "@/components/recipes/recipe-card";
 import AppRoute from "@/constant/AppRoute.enum";
+import { cn } from "@/lib/cn";
 
 export interface RecipesPreviewSectionProps {
   recipes: LocalizedRecipe[];
@@ -37,7 +39,7 @@ export async function RecipesPreviewSection({ recipes }: RecipesPreviewSectionPr
           actionHref={AppRoute.Recipes}
         />
 
-        <RevealGroup className="mt-heading-gap grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+        <RevealGroup className={cn("mt-heading-gap", CONTENT_GRID_CLASSNAME)}>
           {featured.map((recipe) => (
             <RecipeCard key={recipe._id} recipe={recipe} />
           ))}

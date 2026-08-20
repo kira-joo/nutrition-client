@@ -74,6 +74,7 @@ const config: Config = {
         "on-inverse": "var(--color-text-on-inverse)",
         "on-inverse-muted": "var(--color-text-on-inverse-muted)",
         "border-inverse": "var(--color-border-on-inverse)",
+        "accent-on-inverse": "var(--color-accent-on-inverse)",
       },
       fontFamily: {
         sans: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],

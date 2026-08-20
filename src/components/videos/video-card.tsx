@@ -4,6 +4,7 @@ import { Play, Video as VideoIcon } from "lucide-react";
 import type { LocalizedVideo } from "@/lib/domain/video";
 import { Link } from "@/i18n/navigation";
 import { appHref } from "@/constant/AppRoute.enum";
+import { MediaPill } from "@/components/ui/media-pill";
 
 export interface VideoCardProps {
   video: LocalizedVideo;
@@ -69,10 +70,9 @@ export function VideoCard({ video, priority = false }: VideoCardProps) {
               <Play className="size-icon-md" />
             </span>
           </span>
-          <span className="absolute bottom-2 start-2 inline-flex items-center gap-1.5 rounded-full bg-surface/90 px-2.5 py-1 text-caption font-semibold text-text-primary backdrop-blur">
-            <Play className="size-icon-sm" aria-hidden="true" />
+          <MediaPill position="bottom-start" icon={<Play className="size-icon-sm" aria-hidden="true" />}>
             {t("card.watch")}
-          </span>
+          </MediaPill>
         </div>
 
         <div className="flex flex-1 flex-col gap-2 p-5">
