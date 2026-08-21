@@ -5,7 +5,7 @@ import type { LocalizedVideo } from "@/lib/domain/video";
 import { Link } from "@/i18n/navigation";
 import { appHref } from "@/constant/AppRoute.enum";
 import { MediaPill } from "@/components/ui/media-pill";
-import { SURFACE_RAISED, SURFACE_HOVER_ELEVATION } from "@/components/ui/surface";
+import { SURFACE_HOVER_ELEVATION, SURFACE_MEDIA_ZOOM, SURFACE_RAISED } from "@/components/ui/surface";
 import { cn } from "@/lib/cn";
 import { PlayOverlay } from "@/components/videos/play-overlay";
 
@@ -63,7 +63,7 @@ export function VideoCard({ headingLevel: Heading = "h3", video, priority = fals
               alt=""
               fill
               sizes="(min-width: 1024px) 26rem, (min-width: 640px) 45vw, 90vw"
-              className="object-cover"
+              className={cn("object-cover", SURFACE_MEDIA_ZOOM)}
               priority={priority}
               placeholder={video.poster?.placeholderUrl ? "blur" : undefined}
               blurDataURL={video.poster?.placeholderUrl}

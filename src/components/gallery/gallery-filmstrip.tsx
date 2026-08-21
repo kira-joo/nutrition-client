@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { SiteLightbox } from "@/components/gallery/site-lightbox";
 import { useLightbox } from "@/components/gallery/use-lightbox";
-import { SURFACE_HOVER_ELEVATION, SURFACE_MUTED } from "@/components/ui/surface";
+import { SURFACE_HOVER_ELEVATION, SURFACE_MEDIA_ZOOM, SURFACE_MUTED } from "@/components/ui/surface";
 import { cn } from "@/lib/cn";
 
 export interface GalleryFilmstripItem {
@@ -51,7 +51,7 @@ export function GalleryFilmstrip({ items }: GalleryFilmstripProps) {
                 alt={item.alt}
                 fill
                 sizes="(min-width: 1024px) 22rem, 16rem"
-                className="object-cover transition-transform duration-base ease-standard group-hover:scale-105"
+                className={cn("object-cover", SURFACE_MEDIA_ZOOM)}
                 placeholder={item.placeholderUrl ? "blur" : undefined}
                 blurDataURL={item.placeholderUrl}
               />

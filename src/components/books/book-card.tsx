@@ -4,7 +4,7 @@ import type { PublicBookListItem } from "@/lib/domain/book";
 import { Link } from "@/i18n/navigation";
 import { appHref } from "@/constant/AppRoute.enum";
 import { MediaPill } from "@/components/ui/media-pill";
-import { SURFACE_RAISED, SURFACE_HOVER_ELEVATION } from "@/components/ui/surface";
+import { SURFACE_HOVER_ELEVATION, SURFACE_MEDIA_ZOOM, SURFACE_RAISED } from "@/components/ui/surface";
 import { cn } from "@/lib/cn";
 
 export interface BookCardProps {
@@ -56,7 +56,7 @@ export function BookCard({ headingLevel: Heading = "h3", book, priority = false 
             alt={book.title}
             fill
             sizes="(min-width: 1024px) 18rem, (min-width: 640px) 30vw, 45vw"
-            className="object-cover"
+            className={cn("object-cover", SURFACE_MEDIA_ZOOM)}
             priority={priority}
             placeholder={book.coverImage.placeholderUrl ? "blur" : undefined}
             blurDataURL={book.coverImage.placeholderUrl}
@@ -88,7 +88,7 @@ export function BookCard({ headingLevel: Heading = "h3", book, priority = false 
           اقرأ الآن
           <ArrowLeft
             aria-hidden="true"
-            className="size-icon-sm motion-safe:transition-transform motion-safe:duration-base motion-safe:ease-standard motion-safe:group-hover:-translate-x-1"
+            className="size-icon-sm motion-safe:transition-transform motion-safe:duration-base motion-safe:ease-standard pointer:group-hover:-translate-x-1"
           />
         </span>
       </div>

@@ -14,6 +14,7 @@ import raw from "./motion-tokens.json";
 
 const durationsMs = raw.durationsMs;
 const ambientMs = raw.ambientMs;
+const intervalsMs = raw.intervalsMs;
 const eases = raw.eases;
 
 export const DURATIONS = {
@@ -52,6 +53,21 @@ export const MOTION_EASES = {
   inOut: parseCubicBezier(eases.inOut.cssCubicBezier),
   soft: parseCubicBezier(eases.soft.cssCubicBezier),
   ambient: parseCubicBezier(eases.ambient.cssCubicBezier),
+} as const;
+
+/**
+ * Cadences, not animations — how long a thing *rests* before the next one, as
+ * opposed to how long a transition takes. Kept in milliseconds because their
+ * only consumers are timer APIs, and deliberately separate from `DURATIONS`
+ * (sub-second transitions) and `AMBIENT` (tens-of-seconds decorative loops),
+ * which is the distinction `docs/motion-system.md` draws between layers.
+ *
+ * `slideDwell` is how long the featured-reviews carousel holds a slide. Six
+ * seconds is long enough to read a short testimonial without re-reading, and
+ * short enough that the strip reads as alive.
+ */
+export const INTERVALS_MS = {
+  slideDwell: intervalsMs.slideDwell,
 } as const;
 
 export type DurationToken = keyof typeof DURATIONS;

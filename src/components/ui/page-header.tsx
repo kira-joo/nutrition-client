@@ -125,7 +125,7 @@ export function PageHeader({
               check, matching how every other directional icon here works. */}
           <ArrowRight
             aria-hidden="true"
-            className="size-icon-sm shrink-0 rtl:-scale-x-100 motion-safe:transition-transform motion-safe:duration-base motion-safe:ease-standard motion-safe:group-hover:translate-x-1 rtl:motion-safe:group-hover:-translate-x-1"
+            className="size-icon-sm shrink-0 rtl:-scale-x-100 motion-safe:transition-transform motion-safe:duration-base motion-safe:ease-standard pointer:group-hover:translate-x-1 rtl:pointer:group-hover:-translate-x-1"
           />
         </Button>
       ) : null}

@@ -2,7 +2,10 @@
   "heading": "Client stories",
   "intro": "Real words from real clients — shared with their permission.",
   "featured": {
-    "heading": "Featured stories"
+    "heading": "Featured stories",
+    "pauseAutoplay": "Pause automatic scrolling",
+    "playAutoplay": "Resume automatic scrolling",
+    "restartAutoplay": "Restart automatic scrolling"
   },
   "card": {
     "before": "Before",
