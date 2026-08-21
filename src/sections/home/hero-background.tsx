@@ -6,7 +6,14 @@ import { AMBIENT, MOTION_EASES } from "@/lib/animation/motion-tokens";
 import { useIsomorphicLayoutEffect } from "@/lib/animation/use-isomorphic-layout-effect";
 import { usePrefersReducedMotion } from "@/lib/animation/use-prefers-reduced-motion";
 
-const DESKTOP_QUERY = "(min-width: 1024px)";
+/**
+ * 1280, not 1024. Measured: the hero's own box is still portrait at `lg` — 0.79:1
+ * at 1024 and 0.92:1 at 1120 — and only turns landscape at 1280 (1.23:1). A
+ * landscape master covering a portrait box is the crop this whole recomposition
+ * exists to remove, so the full-bleed layer starts where the box can actually
+ * hold it and the bounded panel covers everything below.
+ */
+const DESKTOP_QUERY = "(min-width: 1280px)";
 /** Ambient breathe amplitude — small enough that it reads as "alive" rather than as a tracked movement (see docs/motion-system.md, layer 2). */
 const DRIFT_SCALE = 1.045;
 /** Scroll-linked travel, as a share of the element's own height. */
@@ -30,14 +37,12 @@ const PARALLAX_TRAVEL_PERCENT = 6;
  * correct, but close enough to zero that any future change to either value
  * would silently reopen the bug.
  *
- * KNOWN TRADE-OFF, measured in docs/asset-specs.md: this grows the layer at
- * every breakpoint, while the parallax that needs it is desktop-only — so
- * mobile renders a 20%-taller box for no visual benefit, and since
- * `object-cover` here is always height-bound, that directly raises the source
- * resolution mobile needs. Gating the overscan to `lg` would recover it, but
- * that changes the geometry the edge-exposure fix depends on and needs its own
- * verification pass across the breakpoint boundary; not folded into the same
- * change that introduced the fix.
+ * The trade-off this used to carry — that the overscan grew the layer at every
+ * breakpoint while only desktop had the parallax needing it — is gone, because
+ * the whole background is now `xl`-only. Below `xl` the hero uses a bounded
+ * artwork panel instead (see `HeroSection`), so there is no full-bleed layer to
+ * overscan and no height-bound `object-cover` inflating what the phone has to
+ * download.
  */
 const PARALLAX_OVERSCAN_PERCENT = PARALLAX_TRAVEL_PERCENT + 4;
 
@@ -64,7 +69,12 @@ const PARALLAX_OVERSCAN_PERCENT = PARALLAX_TRAVEL_PERCENT + 4;
  * a narrow viewport instead gets a top-anchored crop that keeps the top
  * leaf clusters and the artwork's plain center band as its backdrop.
  */
-export function HeroBackground() {
+export interface HeroBackgroundProps {
+  /** The locale's landscape master — see `constant/hero-artwork.ts`. */
+  src: string;
+}
+
+export function HeroBackground({ src }: HeroBackgroundProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const parallaxRef = useRef<HTMLDivElement>(null);
   const driftRef = useRef<HTMLDivElement>(null);
@@ -78,34 +88,36 @@ export function HeroBackground() {
 
     if (prefersReducedMotion) return;
 
-    const drift = animate(
-      driftElement,
-      { scale: [1, DRIFT_SCALE] },
-      { duration: AMBIENT.drift, ease: MOTION_EASES.ambient, repeat: Infinity, repeatType: "reverse" },
-    );
-
-    // Desktop-only: the effect depends on viewport height the phone layout
-    // doesn't have. Subscribed rather than read once, so crossing the
-    // breakpoint (or rotating a tablet) starts/stops it instead of leaving
-    // a stale decision in place -- this is what gsap.matchMedia did for us.
-    let cancelParallax: (() => void) | undefined;
+    // Both motions are desktop-only now, because the element they animate is
+    // `hidden` below `lg` — an infinite drift loop on a `display: none` layer is
+    // pure wasted frames. Subscribed rather than read once, so crossing the
+    // breakpoint (or rotating a tablet) starts/stops them instead of leaving a
+    // stale decision in place -- this is what gsap.matchMedia did for us.
+    let cancelDesktopMotion: (() => void) | undefined;
     const desktop = window.matchMedia(DESKTOP_QUERY);
 
     const syncParallax = () => {
-      if (desktop.matches && !cancelParallax) {
+      if (desktop.matches && !cancelDesktopMotion) {
+        const drift = animate(
+          driftElement,
+          { scale: [1, DRIFT_SCALE] },
+          { duration: AMBIENT.drift, ease: MOTION_EASES.ambient, repeat: Infinity, repeatType: "reverse" },
+        );
         const parallax = animate(parallaxElement, { y: ["0%", `${PARALLAX_TRAVEL_PERCENT}%`] }, { ease: "linear" });
         // Matches the retired ScrollTrigger range exactly: `start: "top bottom"`
         // is the target's start meeting the container's end, and
         // `end: "bottom top"` is its end meeting the container's start.
         const cancelScroll = scroll(parallax, { target: wrapper, offset: ["start end", "end start"] });
-        cancelParallax = () => {
+        cancelDesktopMotion = () => {
           cancelScroll();
           parallax.stop();
+          drift.stop();
           parallaxElement.style.transform = "";
+          driftElement.style.transform = "";
         };
-      } else if (!desktop.matches && cancelParallax) {
-        cancelParallax();
-        cancelParallax = undefined;
+      } else if (!desktop.matches && cancelDesktopMotion) {
+        cancelDesktopMotion();
+        cancelDesktopMotion = undefined;
       }
     };
 
@@ -114,21 +126,19 @@ export function HeroBackground() {
 
     return () => {
       desktop.removeEventListener("change", syncParallax);
-      cancelParallax?.();
-      drift.stop();
-      driftElement.style.transform = "";
+      cancelDesktopMotion?.();
     };
   }, [prefersReducedMotion]);
 
   return (
-    <div ref={wrapperRef} className="absolute inset-0 overflow-hidden">
+    <div ref={wrapperRef} className="absolute inset-0 hidden overflow-hidden xl:block">
       <div
         ref={parallaxRef}
         className="absolute inset-x-0"
         style={{ top: `-${PARALLAX_OVERSCAN_PERCENT}%`, bottom: `-${PARALLAX_OVERSCAN_PERCENT}%` }}
       >
         <div ref={driftRef} className="absolute inset-0">
-          <Image src="/images/heroSection.png" alt="" fill priority sizes="100vw" className="object-cover object-top lg:object-center" />
+          <Image src={src} alt="" fill priority sizes="100vw" className="object-cover object-center" />
         </div>
       </div>
     </div>

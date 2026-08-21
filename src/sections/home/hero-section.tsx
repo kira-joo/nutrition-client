@@ -1,11 +1,13 @@
 import Image from "next/image";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import type { LocalizedDoctorProfile } from "@/lib/domain/doctor-profile";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
 import { HeroBackground } from "@/sections/home/hero-background";
 import { HERO_VALUE_ITEMS } from "@/constant/hero-values";
+import { HERO_ARTWORK } from "@/constant/hero-artwork";
+import type { Locale } from "@/constant/Locale.enum";
 import AppRoute from "@/constant/AppRoute.enum";
 import { LABEL_TYPE } from "@/components/ui/typography";
 import { cn } from "@/lib/cn";
@@ -29,23 +31,32 @@ export interface HeroSectionProps {
  * isn't one fixed composition mirrored badly, it's the same source order
  * reading correctly (and landing correctly) in either direction.
  *
- * Recomposed (not shrunk) below `lg`: doctor stacks above copy, and
- * `HeroBackground` swaps to a top-anchored crop rather than trying to land
- * the doctor inside the artwork's oval at a width the two-zone layout was
- * never built for.
+ * Recomposed (not shrunk) below `xl`: the doctor stacks above the copy below
+ * `lg`, and the
+ * artwork stops being a full-bleed background entirely — it becomes a bounded
+ * panel behind the portrait, at the same 4:5 ratio the portrait already uses.
+ * The two-zone landscape composition has nowhere to land at phone widths, and
+ * stretching it behind the whole stacked hero meant covering a 0.26:1 box from a
+ * 2.26:1 source. A bounded panel frames the artwork at a ratio a real source
+ * asset can be composed for, and leaves the copy on the plain page ground.
+ *
+ * Artwork comes from `HERO_ARTWORK` per locale: `/ar` and `/en` are separately
+ * composed rather than one image mirrored, because the copy's quiet zone sits on
+ * opposite physical sides in the two directions.
  *
  * Stays an async Server Component — only `HeroBackground` (the ambient
  * drift/parallax) and `Reveal` (the entrance animation) are Client
  * Components; the doctor's name/tagline/photo render as real server HTML.
  */
 export async function HeroSection({ doctorProfile }: HeroSectionProps) {
-  const t = await getTranslations("home");
+  const [t, locale] = await Promise.all([getTranslations("home"), getLocale()]);
+  const artwork = HERO_ARTWORK[locale as Locale];
   const { name, tagline } = doctorProfile;
   const avatarAlt = doctorProfile.avatarAlt || name;
 
   return (
     <section className="relative isolate overflow-hidden">
-      <HeroBackground />
+      <HeroBackground src={artwork.desktop} />
 
       <Container width="wide" className="relative py-16 lg:py-28">
         <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
@@ -86,8 +97,50 @@ export async function HeroSection({ doctorProfile }: HeroSectionProps) {
           </div>
 
           <div className="order-1 lg:order-2">
+            {/* Sized to the portrait rather than to the grid column, so the
+                bounded panel keeps the portrait's 4:5 ratio at every mobile
+                width. Anchored to the column instead, it measured 1.40:1 at
+                768px — landscape again, and back to cropping a portrait master. */}
+            <div className="relative mx-auto w-full max-w-sm lg:mx-0 lg:ms-auto lg:max-w-lg">
+            {/*
+              Below `xl` the artwork is a bounded panel behind the portrait
+              rather than a full-bleed section background. `xl`, not `lg`: the
+              hero's box is still portrait at 1024 (0.79:1) and 1120 (0.92:1) and
+              only turns landscape at 1280, so the full-bleed landscape layer
+              would crop just as badly through that range.
+
+              The background it replaces had to cover a 375x1458 box — a 0.26:1
+              sliver — from a 2.26:1 landscape source, which meant scaling the
+              artwork about 8.8x and showing roughly the middle 11% of the frame.
+              Measured, not estimated. This panel is sized to the portrait block,
+              which is already `aspect-[4/5]`, so the artwork is framed at the
+              ratio its own master is composed for and the copy below sits on the
+              plain page ground where it is easiest to read.
+
+              Inset negatively so it reads as a panel the portrait sits *in*
+              rather than a border around it. Decorative, so empty `alt` and
+              `aria-hidden`, and `pointer-events-none` because it overlaps a
+              region that contains a real image.
+            */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-x-[-1.25rem] -inset-y-8 overflow-hidden rounded-[2.5rem] xl:hidden"
+            >
+              <Image
+                src={artwork.mobile}
+                alt=""
+                fill
+                /* Measured widths: 383 at 375px, 424 at 768, 477 at 1024, 552 at
+                   1279 — it never fills the viewport, so `100vw` would fetch
+                   roughly twice the pixels needed at the top of the range. */
+                sizes="(min-width: 1024px) 36rem, (min-width: 640px) 27rem, 100vw"
+                className="object-cover object-center"
+                priority
+              />
+            </div>
+
             {doctorProfile.avatar ? (
-              <Reveal direction="none" duration="slow" ease="soft" delay={0.1} className="mx-auto w-full max-w-sm lg:mx-0 lg:ms-auto lg:max-w-lg">
+              <Reveal direction="none" duration="slow" ease="soft" delay={0.1} className="w-full">
                 <div className="relative aspect-[4/5] w-full overflow-hidden rounded-full shadow-raised">
                   <Image
                     src={doctorProfile.avatar.secureUrl}
@@ -102,8 +155,9 @@ export async function HeroSection({ doctorProfile }: HeroSectionProps) {
                 </div>
               </Reveal>
             ) : (
-              <div aria-hidden="true" className="mx-auto aspect-[4/5] w-full max-w-sm rounded-full bg-primary-soft lg:ms-auto lg:max-w-lg" />
+              <div aria-hidden="true" className="aspect-[4/5] w-full rounded-full bg-primary-soft" />
             )}
+            </div>
           </div>
         </div>
       </Container>
