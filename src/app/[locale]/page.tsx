@@ -15,6 +15,7 @@ import { HeroSection } from "@/sections/home/hero-section";
 import { CampaignBannerSection } from "@/sections/home/campaign-banner-section";
 import { DoctorPreviewSection } from "@/sections/home/doctor-preview-section";
 import { TrustBandSection } from "@/sections/shared/trust-band-section";
+import { StatsBandSection } from "@/sections/shared/stats-band-section";
 import { ProgramHighlightsSection } from "@/sections/shared/program-highlights-section";
 import { PackagesPreviewSection } from "@/sections/home/packages-preview-section";
 import { ReviewsPreviewSection } from "@/sections/home/reviews-preview-section";
@@ -63,6 +64,7 @@ export default async function HomePage({ params }: HomePageProps) {
       <HeroSection doctorProfile={doctorProfile} />
       <CampaignBannerSection campaign={activeCampaign} />
       <TrustBandSection doctorProfile={doctorProfile} />
+      <StatsBandSection doctorProfile={doctorProfile} locale={locale} />
       <ProgramHighlightsSection doctorProfile={doctorProfile} />
       <DoctorPreviewSection doctorProfile={doctorProfile} />
       {packagesPageSettings && packages && (

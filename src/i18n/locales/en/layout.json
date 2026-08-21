@@ -55,5 +55,8 @@
     "cancel": "Cancel",
     "save": "Save",
     "fallbackMessage": "Nothing to show"
+  },
+  "stats": {
+    "label": "Clinic in numbers"
   }
 }

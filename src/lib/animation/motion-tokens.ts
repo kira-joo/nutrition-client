@@ -22,6 +22,12 @@ export const DURATIONS = {
   base: durationsMs.base / 1000,
   slow: durationsMs.slow / 1000,
   reveal: durationsMs.reveal / 1000,
+  /**
+   * Layer 6 (Data). Deliberately far slower than any interactive token: a
+   * figure needs long enough to read as *counting* rather than flickering, and
+   * `docs/motion-system.md` fixes that at ~1.4s.
+   */
+  count: durationsMs.count / 1000,
 } as const;
 
 /**

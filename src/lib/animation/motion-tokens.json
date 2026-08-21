@@ -3,7 +3,8 @@
     "fast": 150,
     "base": 300,
     "slow": 500,
-    "reveal": 600
+    "reveal": 600,
+    "count": 1400
   },
   "ambientMs": {
     "drift": 24000

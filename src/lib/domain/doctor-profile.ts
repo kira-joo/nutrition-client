@@ -12,6 +12,14 @@ export interface DoctorProfile {
   whyChooseHeading: LocalizedString;
   whyChooseReasons: { text: LocalizedString; order: number }[];
   featuredInLabel: LocalizedString;
+  /**
+   * The stats band. CMS-owned, so the figures are never hardcoded here — the
+   * section renders nothing until an editor enables at least one.
+   *
+   * `enabled` arrives rather than being filtered server-side because this
+   * endpoint returns the whole singleton; the section filters and sorts.
+   */
+  stats: { label: LocalizedString; value: number; suffix?: string; order: number; enabled: boolean }[];
   gallery: { id: string; image: ImageAsset; altText: LocalizedString; order: number }[];
 }
 
