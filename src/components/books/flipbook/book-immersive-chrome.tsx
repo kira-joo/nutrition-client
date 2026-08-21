@@ -167,7 +167,7 @@ export function BookImmersiveChrome({
 
   const canDownloadPdf = pdf.downloadAllowed && pdf.ready;
   const iconButtonClass =
-    "flex size-touch-min items-center justify-center rounded-full text-white/90 transition-colors hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:hover:bg-transparent";
+    "flex size-touch-min items-center justify-center rounded-full text-white/90 transition-colors pointer:hover:bg-white/10 pointer:hover:text-white disabled:opacity-30 disabled:pointer:hover:bg-transparent";
   const activeIconButtonClass = "flex size-touch-min items-center justify-center rounded-full bg-white/20 text-white";
 
   // Same "...... 12" range the print/PDF spread pairing already uses —
@@ -191,7 +191,7 @@ export function BookImmersiveChrome({
             <button
               type="button"
               onClick={onRequestClose}
-              className="flex items-center gap-2 rounded-full px-2.5 py-2 text-sm font-medium text-white/90 transition-colors hover:bg-white/10 hover:text-white sm:px-3"
+              className="flex items-center gap-2 rounded-full px-2.5 py-2 text-sm font-medium text-white/90 transition-colors pointer:hover:bg-white/10 pointer:hover:text-white sm:px-3"
             >
               <X className="h-4 w-4" aria-hidden="true" />
               <span className="hidden sm:inline">إنهاء وضع القراءة التفاعلية</span>
@@ -284,7 +284,7 @@ export function BookImmersiveChrome({
                             onSearchSelect(result.sequencePosition);
                             setSearchOpen(false);
                           }}
-                          className="w-full px-3 py-2 text-right text-sm text-white/90 hover:bg-white/10"
+                          className="w-full px-3 py-2 text-right text-sm text-white/90 pointer:hover:bg-white/10"
                         >
                           {result.snippet}
                         </button>
@@ -408,7 +408,7 @@ export function BookImmersiveChrome({
                 download
                 aria-label="تنزيل الكتاب PDF"
                 title="تنزيل الكتاب PDF"
-                className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-2 text-sm text-white hover:bg-white/20"
+                className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-2 text-sm text-white pointer:hover:bg-white/20"
               >
                 <Download className="h-4 w-4" aria-hidden="true" />
                 <span className="hidden sm:inline">تنزيل PDF</span>

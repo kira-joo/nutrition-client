@@ -38,7 +38,7 @@ export function PlayOverlay({ restingScrim = "hidden", className }: PlayOverlayP
     <span
       aria-hidden="true"
       className={cn(
-        "absolute inset-0 flex items-center justify-center bg-scrim transition-opacity duration-base ease-standard group-hover:opacity-100",
+        "absolute inset-0 flex items-center justify-center bg-scrim transition-opacity duration-base ease-standard pointer:group-hover:opacity-100",
         restingScrim === "hidden" ? "opacity-0" : "opacity-90",
         className
       )}

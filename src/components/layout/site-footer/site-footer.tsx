@@ -24,7 +24,7 @@ export interface SiteFooterProps {
  * (fails the 3:1 non-text/UI-indicator threshold), so every focusable
  * element on this surface needs the white inverse ring instead. */
 const INVERSE_LINK =
-  "text-body-sm text-on-inverse-muted transition-colors duration-fast hover:text-on-inverse focus-ring-inverse " +
+  "text-body-sm text-on-inverse-muted transition-colors duration-fast pointer:hover:text-on-inverse focus-ring-inverse " +
   /* Each row is a real `--touch-target-min` (44px) target rather than a ~34px
      line of text, using the project's own token so the footer cannot drift from
      the minimum the rest of the app is held to.
@@ -37,8 +37,17 @@ const INVERSE_LINK =
      decision, so that one stays on `sm`. */
   "flex items-center justify-center touch:min-h-touch-min sm:justify-start";
 
-/** Column heading: centred on phones with the rest of the composition, and
- * back to inline-start from `sm` up where the real columns exist. */
+/**
+ * Column heading: centred on phones with the rest of the composition, and back
+ * to inline-start from `sm` up where the real columns exist.
+ *
+ * Rendered as `h2`, not `h3`. These are top-level sections of the footer
+ * landmark — siblings of each other, subordinate to nothing but the page `h1` —
+ * so `h3` was a skipped level. It only *showed* on `/reviews`, the one page whose
+ * own content has no `h2`: everywhere else a content heading happened to bridge
+ * the gap, which is exactly why an outline bug like this survives a page-by-page
+ * look. The visual size is unchanged; it comes from `LABEL_TYPE`, not the tag.
+ */
 const COLUMN_HEADING =
   `flex items-center justify-center gap-2 ${LABEL_TYPE} text-on-inverse-muted sm:justify-start`;
 
@@ -150,7 +159,7 @@ export async function SiteFooter({ siteSettings, clinicName, doctorTagline }: Si
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={link.platform}
-                      className="flex size-touch-min items-center justify-center rounded-full text-on-inverse-muted transition-colors duration-fast hover:bg-white/10 hover:text-on-inverse focus-ring-inverse"
+                      className="flex size-touch-min items-center justify-center rounded-full text-on-inverse-muted transition-colors duration-fast pointer:hover:bg-white/10 pointer:hover:text-on-inverse focus-ring-inverse"
                     >
                       <SocialIcon platform={link.platform} className="size-icon-md" />
                     </a>
@@ -164,10 +173,10 @@ export async function SiteFooter({ siteSettings, clinicName, doctorTagline }: Si
                 centred text rather than text-width inline targets, so the
                 tap area is the whole column, not just the word. */}
             <div className="text-center sm:text-start">
-              <h3 className={COLUMN_HEADING}>
+              <h2 className={COLUMN_HEADING}>
                 <span aria-hidden="true" className="size-1.5 rounded-full bg-accent-on-inverse" />
                 {t("footer.quickLinks")}
-              </h3>
+              </h2>
               <nav className="mt-4 flex flex-col gap-2.5">
                 {PRIMARY_NAV_ITEMS.map((item) => (
                   <Link key={item.key} href={item.href} className={INVERSE_LINK}>
@@ -178,10 +187,10 @@ export async function SiteFooter({ siteSettings, clinicName, doctorTagline }: Si
             </div>
 
             <div className="text-center sm:text-start">
-              <h3 className={COLUMN_HEADING}>
+              <h2 className={COLUMN_HEADING}>
                 <span aria-hidden="true" className="size-1.5 rounded-full bg-accent-on-inverse" />
                 {t("nav.more")}
-              </h3>
+              </h2>
               <nav className="mt-4 flex flex-col gap-2.5">
                 {MORE_NAV_ITEMS.map((item) => (
                   <Link
@@ -202,10 +211,10 @@ export async function SiteFooter({ siteSettings, clinicName, doctorTagline }: Si
                 (so the whole strip is tappable) while `INVERSE_LINK`'s
                 `justify-center` centres the icon+text pair as a unit. */}
             <div className="col-span-2 text-center sm:col-span-1 sm:text-start">
-              <h3 className={COLUMN_HEADING}>
+              <h2 className={COLUMN_HEADING}>
                 <span aria-hidden="true" className="size-1.5 rounded-full bg-accent-on-inverse" />
                 {t("footer.contact")}
-              </h3>
+              </h2>
               <div className="mt-4 flex flex-col gap-2.5">
                 {siteSettings.phone && (
                   <a href={`tel:${siteSettings.phone}`} className={cn("flex items-center gap-2", INVERSE_LINK)}>

@@ -101,7 +101,7 @@ export function RecipeFilterPanel({ filters, categories, foodGroups, labels, onN
         <button
           type="button"
           onClick={() => apply({ search: "", category: "", foodGroup: "" })}
-          className="inline-flex items-center gap-1.5 self-start text-body-sm font-semibold text-primary hover:underline"
+          className="inline-flex items-center gap-1.5 self-start text-body-sm font-semibold text-primary pointer:hover:underline"
         >
           <X className="size-icon-sm" aria-hidden="true" />
           {labels.clear}
@@ -145,7 +145,7 @@ function FilterGroup({ legend, name, allLabel, options, value, onChange }: Filte
                    the compact rhythm back wherever a fine pointer exists. */
                 "flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-body-sm transition-colors duration-fast motion-reduce:transition-none touch:min-h-touch-min",
                 "focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-focus",
-                isActive ? "bg-primary-soft font-semibold text-primary" : "text-text-secondary hover:bg-surface-muted"
+                isActive ? "bg-primary-soft font-semibold text-primary" : "text-text-secondary pointer:hover:bg-surface-muted"
               )}
             >
               <input

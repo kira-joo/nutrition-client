@@ -40,7 +40,7 @@ export function FlipbookControls({ currentPageNumber, pageCount, onNext, onPrev,
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 rounded-md bg-white/90 p-2 shadow-sm dark:bg-slate-800/90" dir="rtl">
       <div className="flex flex-wrap items-center gap-2">
-        <button type="button" aria-label="الصفحة السابقة" title="الصفحة السابقة" onClick={onPrev} className="rounded p-2 hover:bg-slate-100 dark:hover:bg-slate-700">
+        <button type="button" aria-label="الصفحة السابقة" title="الصفحة السابقة" onClick={onPrev} className="rounded p-2 pointer:hover:bg-slate-100 dark:pointer:hover:bg-slate-700">
           <ChevronRight className="h-5 w-5" aria-hidden="true" />
         </button>
 
@@ -48,7 +48,7 @@ export function FlipbookControls({ currentPageNumber, pageCount, onNext, onPrev,
           {currentPageNumber} / {pageCount || "—"}
         </span>
 
-        <button type="button" aria-label="الصفحة التالية" title="الصفحة التالية" onClick={onNext} className="rounded p-2 hover:bg-slate-100 dark:hover:bg-slate-700">
+        <button type="button" aria-label="الصفحة التالية" title="الصفحة التالية" onClick={onNext} className="rounded p-2 pointer:hover:bg-slate-100 dark:pointer:hover:bg-slate-700">
           <ChevronLeft className="h-5 w-5" aria-hidden="true" />
         </button>
 
@@ -71,7 +71,7 @@ export function FlipbookControls({ currentPageNumber, pageCount, onNext, onPrev,
           />
         </form>
 
-        <button type="button" aria-label="فهرس المحتويات" title="فهرس المحتويات" onClick={onOpenToc} className="rounded p-2 hover:bg-slate-100 dark:hover:bg-slate-700">
+        <button type="button" aria-label="فهرس المحتويات" title="فهرس المحتويات" onClick={onOpenToc} className="rounded p-2 pointer:hover:bg-slate-100 dark:pointer:hover:bg-slate-700">
           <List className="h-5 w-5" aria-hidden="true" />
         </button>
 
@@ -82,7 +82,7 @@ export function FlipbookControls({ currentPageNumber, pageCount, onNext, onPrev,
               download
               aria-label="تنزيل الكتاب PDF"
               title="تنزيل الكتاب PDF"
-              className="flex items-center gap-1 rounded bg-emerald-700 px-3 py-2 text-sm text-white hover:bg-emerald-800"
+              className="flex items-center gap-1 rounded bg-emerald-700 px-3 py-2 text-sm text-white pointer:hover:bg-emerald-800"
             >
               <Download className="h-4 w-4" aria-hidden="true" />
               تنزيل PDF
@@ -98,7 +98,7 @@ export function FlipbookControls({ currentPageNumber, pageCount, onNext, onPrev,
       <button
         type="button"
         onClick={onEnterImmersive}
-        className="flex items-center gap-2 rounded-full bg-[#0f3a32] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#0c2e28]"
+        className="flex items-center gap-2 rounded-full bg-[#0f3a32] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors pointer:hover:bg-[#0c2e28]"
       >
         <BookOpen className="h-4 w-4" aria-hidden="true" />
         وضع القراءة التفاعلية

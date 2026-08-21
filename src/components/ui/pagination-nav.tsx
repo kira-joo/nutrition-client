@@ -86,7 +86,7 @@ export function PaginationNav({
 }: PaginationNavProps) {
   const pagerBase =
     "inline-flex h-control-sm items-center justify-center rounded-full border-hairline px-4 text-body-sm font-semibold touch:h-control-md touch:min-w-[6rem]";
-  const linkClass = cn(pagerBase, "border-border bg-surface text-text-primary hover:border-primary hover:text-primary");
+  const linkClass = cn(pagerBase, "border-border bg-surface text-text-primary pointer:hover:border-primary pointer:hover:text-primary");
   const disabledClass = cn(pagerBase, "border-border text-text-muted opacity-60");
 
   return (

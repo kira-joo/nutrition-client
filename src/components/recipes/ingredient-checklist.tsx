@@ -35,7 +35,7 @@ export function IngredientChecklist({ ingredients, label }: IngredientChecklistP
         const isChecked = checked.has(index);
         return (
           <li key={index}>
-            <label className="flex cursor-pointer items-start gap-3 rounded-md py-2 transition-colors duration-fast hover:bg-surface-muted motion-reduce:transition-none">
+            <label className="flex cursor-pointer items-start gap-3 rounded-md py-2 transition-colors duration-fast pointer:hover:bg-surface-muted motion-reduce:transition-none">
               <input
                 type="checkbox"
                 checked={isChecked}

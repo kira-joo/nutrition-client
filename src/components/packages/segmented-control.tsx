@@ -39,7 +39,7 @@ export function SegmentedControl<T extends string>({ legend, options, value, onC
               className={cn(
                 "flex-1 cursor-pointer rounded-full px-4 py-2 text-center text-body-sm font-semibold transition-colors duration-base ease-standard lg:flex-none",
                 "focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-focus",
-                isActive ? "bg-primary text-white" : "text-text-secondary hover:text-text-primary"
+                isActive ? "bg-primary text-white" : "text-text-secondary pointer:hover:text-text-primary"
               )}
             >
               <input type="radio" name={groupName} value={option.value} checked={isActive} onChange={() => onChange(option.value)} className="sr-only" />

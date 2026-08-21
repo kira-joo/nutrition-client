@@ -27,7 +27,7 @@ export function MediaPill({ position, icon, children, revealOnHover = false, cla
         POSITION_CLASSES[position],
         icon && "inline-flex items-center gap-1.5",
         revealOnHover
-          ? "px-3 py-1.5 opacity-0 transition-opacity duration-base ease-standard group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none"
+          ? "px-3 py-1.5 opacity-0 transition-opacity duration-base ease-standard pointer:group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none"
           : "px-2.5 py-1",
         className,
       )}

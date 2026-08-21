@@ -33,7 +33,7 @@ type EmblaApi = NonNullable<UseEmblaCarouselType[1]>;
  * rather than a magic number.
  */
 const CONTROL_BUTTON_CLASS =
-  "flex h-control-sm w-control-sm items-center justify-center rounded-full border-hairline border-border bg-surface text-text-primary transition-colors duration-base ease-standard hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-40 touch:h-control-md touch:w-control-md";
+  "flex h-control-sm w-control-sm items-center justify-center rounded-full border-hairline border-border bg-surface text-text-primary transition-colors duration-base ease-standard pointer:hover:border-primary pointer:hover:text-primary disabled:cursor-not-allowed disabled:opacity-40 touch:h-control-md touch:w-control-md";
 
 /**
  * The control says what pressing it does, so the label follows the action.

@@ -31,7 +31,7 @@ export function LanguageToggle() {
         type="button"
         onClick={() => switchTo(Locale.EN)}
         aria-current={locale === Locale.EN}
-        className={cn("transition-colors duration-fast", locale === Locale.EN ? "text-primary" : "text-text-muted hover:text-text-primary")}
+        className={cn("transition-colors duration-fast", locale === Locale.EN ? "text-primary" : "text-text-muted pointer:hover:text-text-primary")}
       >
         EN
       </button>
@@ -42,7 +42,7 @@ export function LanguageToggle() {
         type="button"
         onClick={() => switchTo(Locale.AR)}
         aria-current={locale === Locale.AR}
-        className={cn("transition-colors duration-fast", locale === Locale.AR ? "text-primary" : "text-text-muted hover:text-text-primary")}
+        className={cn("transition-colors duration-fast", locale === Locale.AR ? "text-primary" : "text-text-muted pointer:hover:text-text-primary")}
       >
         AR
       </button>

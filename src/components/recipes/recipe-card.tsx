@@ -79,7 +79,7 @@ export function RecipeCard({ headingLevel: Heading = "h3", recipe, priority = fa
 
       <div className="flex flex-1 flex-col gap-2 p-5">
         <Heading
-          className="min-w-0 break-words text-body-lg font-semibold text-text-primary transition-colors duration-fast group-hover:text-primary"
+          className="min-w-0 break-words text-body-lg font-semibold text-text-primary transition-colors duration-fast pointer:group-hover:text-primary"
           style={{ minHeight: "calc(var(--leading-body-lg) * 2em)" }}
         >
           {recipe.title}

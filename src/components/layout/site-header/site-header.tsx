@@ -123,7 +123,15 @@ export function SiteHeader({ logo, clinicName, whatsappNumber, phone }: SiteHead
             opposite side of the same `lg:` breakpoint.
           */}
           <div className="flex items-center gap-3">
-            <Link href={AppRoute.Home} className="flex items-center gap-2">
+            {/*
+              `touch:min-h-touch-min` because the home link measured 40px tall on
+              a coarse pointer — a real control 4px under this app's own minimum,
+              on every page. It grows inside the 64px header row rather than
+              needing the CTA's `::after` treatment, so there is no layout shift
+              and the mark stays vertically centred; gated on pointer capability
+              rather than a breakpoint, since a touch tablet needs it too.
+            */}
+            <Link href={AppRoute.Home} className="flex items-center gap-2 touch:min-h-touch-min">
               {logo ? (
                 <Image
                   src={logo.secureUrl}
@@ -176,7 +184,7 @@ export function SiteHeader({ logo, clinicName, whatsappNumber, phone }: SiteHead
 
           <nav className="hidden items-center gap-8 lg:flex">
             {PRIMARY_NAV_ITEMS.map((item) => (
-              <Link key={item.key} href={item.href} className="text-body font-medium text-text-primary transition-colors duration-fast hover:text-primary">
+              <Link key={item.key} href={item.href} className="text-body font-medium text-text-primary transition-colors duration-fast pointer:hover:text-primary">
                 {t(`nav.${item.key}`)}
               </Link>
             ))}
@@ -185,7 +193,7 @@ export function SiteHeader({ logo, clinicName, whatsappNumber, phone }: SiteHead
                 ref={moreButtonRef}
                 type="button"
                 onClick={() => setIsMoreOpen((value) => !value)}
-                className="flex items-center gap-1 text-body font-medium text-text-primary transition-colors duration-fast hover:text-primary"
+                className="flex items-center gap-1 text-body font-medium text-text-primary transition-colors duration-fast pointer:hover:text-primary"
                 aria-expanded={isMoreOpen}
                 aria-controls={moreMenuId}
               >
@@ -200,7 +208,7 @@ export function SiteHeader({ logo, clinicName, whatsappNumber, phone }: SiteHead
                       href={item.href}
                       locale={ARABIC_ONLY_NAV_KEYS.has(item.key) ? "ar" : undefined}
                       onClick={() => setIsMoreOpen(false)}
-                      className="block rounded-md px-3 py-2 text-body-sm text-text-primary transition-colors duration-fast hover:bg-surface-muted"
+                      className="block rounded-md px-3 py-2 text-body-sm text-text-primary transition-colors duration-fast pointer:hover:bg-surface-muted"
                     >
                       {t(`nav.${item.key}`)}
                     </Link>

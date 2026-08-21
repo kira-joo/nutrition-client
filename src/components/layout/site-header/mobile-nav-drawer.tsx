@@ -110,7 +110,7 @@ export function MobileNavDrawer({ id, isOpen, onClose, clinicName, whatsappNumbe
                 href={item.href}
                 locale={ARABIC_ONLY_NAV_KEYS.has(item.key) ? "ar" : undefined}
                 onClick={onClose}
-                className="rounded-md px-3 py-3 text-body-lg font-medium text-text-primary transition-colors duration-fast hover:bg-surface-muted"
+                className="rounded-md px-3 py-3 text-body-lg font-medium text-text-primary transition-colors duration-fast pointer:hover:bg-surface-muted"
               >
                 {t(`nav.${item.key}`)}
               </Link>

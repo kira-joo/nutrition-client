@@ -24,7 +24,7 @@ export interface SiteLightboxProps {
 }
 
 const CONTROL_BUTTON_CLASSNAME =
-  "flex size-touch-min items-center justify-center rounded-full bg-black/50 text-white transition-colors duration-fast hover:bg-black/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-black/50";
+  "flex size-touch-min items-center justify-center rounded-full bg-black/50 text-white transition-colors duration-fast pointer:hover:bg-black/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:cursor-not-allowed disabled:opacity-30 disabled:pointer:hover:bg-black/50";
 
 /**
  * The app's own image viewer, replacing the toolkit's `AssetLightbox` at

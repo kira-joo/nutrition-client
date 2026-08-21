@@ -61,7 +61,7 @@ export async function FaqSections({ faqSections }: FaqSectionsProps) {
                     <li key={section._id}>
                       <a
                         href={`#${sectionAnchor(section._id)}`}
-                        className="-ms-px block border-s-2 border-transparent py-1.5 ps-4 text-body-sm text-text-secondary transition-colors duration-fast hover:border-primary hover:text-primary"
+                        className="-ms-px block border-s-2 border-transparent py-1.5 ps-4 text-body-sm text-text-secondary transition-colors duration-fast pointer:hover:border-primary pointer:hover:text-primary"
                       >
                         {section.title}
                       </a>

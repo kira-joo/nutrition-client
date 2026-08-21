@@ -42,7 +42,7 @@ export function BookReader({ book }: { book: Book }) {
           <Link
             href={AppRoute.Books}
             locale="ar"
-            className="inline-flex items-center gap-2 text-body-sm font-semibold text-text-secondary transition-colors duration-fast hover:text-primary"
+            className="inline-flex items-center gap-2 text-body-sm font-semibold text-text-secondary transition-colors duration-fast pointer:hover:text-primary"
           >
             <ArrowRight className="size-icon-sm" aria-hidden="true" />
             كل الكتب

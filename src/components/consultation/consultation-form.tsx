@@ -154,7 +154,7 @@ export function ConsultationForm({ doctorName, packageKey, packageName, whatsapp
             setPhase("form");
             setSuccessValues(EMPTY_VALUES);
           }}
-          className="mt-2 text-body-sm font-semibold text-primary hover:underline"
+          className="mt-2 text-body-sm font-semibold text-primary pointer:hover:underline"
         >
           {t("success.another")}
         </button>

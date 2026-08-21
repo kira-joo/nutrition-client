@@ -126,7 +126,7 @@ async function EmptyResults({ filters, activeCount }: { filters: RecipeFilters; 
              768px tablet the 25px target straight back, since a tablet is wide
              and still has no mouse. Uses the project's own --touch-target-min
              rather than a picked padding. */
-          className="mt-2 inline-flex items-center text-body-sm font-semibold text-primary hover:underline touch:min-h-touch-min"
+          className="mt-2 inline-flex items-center text-body-sm font-semibold text-primary pointer:hover:underline touch:min-h-touch-min"
         >
           {t("filters.clear")}
         </Link>

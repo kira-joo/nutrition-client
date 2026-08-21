@@ -43,7 +43,7 @@ export async function VideoDetail({ video }: VideoDetailProps) {
       <Container width="narrow">
         <Link
           href={AppRoute.Videos}
-          className="inline-flex items-center gap-2 text-body-sm font-semibold text-text-secondary transition-colors duration-fast hover:text-primary"
+          className="inline-flex items-center gap-2 text-body-sm font-semibold text-text-secondary transition-colors duration-fast pointer:hover:text-primary"
         >
           <ArrowLeft className="size-icon-sm rtl:-scale-x-100" aria-hidden="true" />
           {t("detail.back")}

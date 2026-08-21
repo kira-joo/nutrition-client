@@ -40,7 +40,7 @@ export async function RecipeDetail({ recipe }: RecipeDetailProps) {
       <Container>
         <Link
           href={AppRoute.Recipes}
-          className="inline-flex items-center gap-2 text-body-sm font-semibold text-text-secondary transition-colors duration-fast hover:text-primary"
+          className="inline-flex items-center gap-2 text-body-sm font-semibold text-text-secondary transition-colors duration-fast pointer:hover:text-primary"
         >
           {/* Directional icon: mirrored under RTL, unlike the content icons above. */}
           <ArrowLeft className="size-icon-sm rtl:-scale-x-100" aria-hidden="true" />
