@@ -13,6 +13,7 @@ import { RecipeFilterPanel } from "@/components/recipes/recipe-filter-panel";
 import { RecipeFilterSheet } from "@/components/recipes/recipe-filter-sheet";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyPanel } from "@/components/ui/empty-panel";
+import { PaginationNav } from "@/components/ui/pagination-nav";
 
 export interface RecipesBrowserProps {
   result: PaginatedResponse<LocalizedRecipe>;
@@ -137,44 +138,27 @@ async function EmptyResults({ filters, activeCount }: { filters: RecipeFilters; 
 /**
  * Real links, not buttons: a page is a distinct URL, so it should be
  * shareable, openable in a new tab, and reachable without JavaScript.
+ *
+ * The touch-target sizing this used to carry locally (`touch:h-control-md
+ * touch:min-w-[6rem]` plus `justify-center`) now lives in `PaginationNav`
+ * itself — Books/Videos/Reviews had the same 36px target with no touch
+ * compensation, so the fix applies to all four instead of staying a
+ * recipes-only prop.
  */
 async function Pagination({ filters, totalPages }: { filters: RecipeFilters; totalPages: number }) {
   const t = await getTranslations("recipes");
   const { page } = filters;
 
-  /* `h-control-md` (44px) on touch rather than `h-control-sm` (36px), and a
-     `min-w` so "next"/"previous" are not 65px-wide slivers — these are the only
-     way through a paginated list on a phone. Relaxed to the compact size only
-     where a fine pointer exists, so a touch tablet keeps the larger target.
-     The disabled twin matches it exactly, or the row would jump height as soon
-     as a visitor reaches the first or last page. */
-  const pagerBase = "inline-flex h-control-sm items-center justify-center rounded-full border-hairline px-4 text-body-sm font-semibold touch:h-control-md touch:min-w-[6rem]";
-  const linkClass = `${pagerBase} border-border bg-surface text-text-primary hover:border-primary hover:text-primary`;
-  const disabledClass = `${pagerBase} border-border text-text-muted opacity-60`;
-
   return (
-    <nav aria-label={t("pagination.label")} className="flex items-center justify-between gap-4 pt-2">
-      {page > 1 ? (
-        <Link href={`${AppRoute.Recipes}${toSearchParamsString({ ...filters, page: page - 1 })}`} className={linkClass} rel="prev">
-          {t("pagination.previous")}
-        </Link>
-      ) : (
-        <span className={disabledClass} aria-disabled="true">
-          {t("pagination.previous")}
-        </span>
-      )}
-
-      <span className="text-body-sm text-text-secondary">{t("pagination.page", { page, total: totalPages })}</span>
-
-      {page < totalPages ? (
-        <Link href={`${AppRoute.Recipes}${toSearchParamsString({ ...filters, page: page + 1 })}`} className={linkClass} rel="next">
-          {t("pagination.next")}
-        </Link>
-      ) : (
-        <span className={disabledClass} aria-disabled="true">
-          {t("pagination.next")}
-        </span>
-      )}
-    </nav>
+    <PaginationNav
+      page={page}
+      totalPages={totalPages}
+      buildHref={(target) => `${AppRoute.Recipes}${toSearchParamsString({ ...filters, page: target })}`}
+      ariaLabel={t("pagination.label")}
+      previousLabel={t("pagination.previous")}
+      nextLabel={t("pagination.next")}
+      pageLabel={t("pagination.page", { page, total: totalPages })}
+      className="pt-2"
+    />
   );
 }

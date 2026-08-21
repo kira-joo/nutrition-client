@@ -5,10 +5,10 @@ import AppRoute from "@/constant/AppRoute.enum";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { Reveal, RevealGroup } from "@/components/ui/reveal";
-import { Link } from "@/i18n/navigation";
 import { BookCard } from "@/components/books/book-card";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyPanel } from "@/components/ui/empty-panel";
+import { PaginationNav } from "@/components/ui/pagination-nav";
 
 export interface BooksBrowserProps {
   result: PaginatedResponse<PublicBookListItem>;
@@ -69,36 +69,17 @@ function EmptyBooks() {
 
 /** Real links, not buttons — a page is a distinct, shareable URL (mirrors Recipes'/Videos' pagination). Always the Arabic canonical, per `BookCard`'s own reasoning. */
 function Pagination({ page, totalPages }: { page: number; totalPages: number }) {
-  const linkClass =
-    "inline-flex h-control-sm items-center rounded-full border-hairline border-border bg-surface px-4 text-body-sm font-semibold text-text-primary hover:border-primary hover:text-primary";
-  const disabledClass =
-    "inline-flex h-control-sm items-center rounded-full border-hairline border-border px-4 text-body-sm font-semibold text-text-muted opacity-60";
-
   return (
-    <nav aria-label="صفحات الكتب" className="mt-10 flex items-center justify-between gap-4">
-      {page > 1 ? (
-        <Link href={`${AppRoute.Books}?page=${page - 1}`} locale="ar" className={linkClass} rel="prev">
-          السابق
-        </Link>
-      ) : (
-        <span className={disabledClass} aria-disabled="true">
-          السابق
-        </span>
-      )}
-
-      <span className="text-body-sm text-text-secondary">
-        صفحة {page} من {totalPages}
-      </span>
-
-      {page < totalPages ? (
-        <Link href={`${AppRoute.Books}?page=${page + 1}`} locale="ar" className={linkClass} rel="next">
-          التالي
-        </Link>
-      ) : (
-        <span className={disabledClass} aria-disabled="true">
-          التالي
-        </span>
-      )}
-    </nav>
+    <PaginationNav
+      page={page}
+      totalPages={totalPages}
+      buildHref={(target) => `${AppRoute.Books}?page=${target}`}
+      ariaLabel="صفحات الكتب"
+      previousLabel="السابق"
+      nextLabel="التالي"
+      pageLabel={`صفحة ${page} من ${totalPages}`}
+      locale="ar"
+      className="mt-10"
+    />
   );
 }

@@ -5,11 +5,11 @@ import type { LocalizedVideo } from "@/lib/domain/video";
 import AppRoute from "@/constant/AppRoute.enum";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
-import { Link } from "@/i18n/navigation";
 import { VideosGrid } from "@/components/videos/videos-grid";
 import { PageHeader } from "@/components/ui/page-header";
 import { Reveal } from "@/components/ui/reveal";
 import { EmptyPanel } from "@/components/ui/empty-panel";
+import { PaginationNav } from "@/components/ui/pagination-nav";
 
 export interface VideosGalleryProps {
   result: PaginatedResponse<LocalizedVideo>;
@@ -61,34 +61,16 @@ async function EmptyVideos() {
 async function Pagination({ page, totalPages }: { page: number; totalPages: number }) {
   const t = await getTranslations("videos");
 
-  const linkClass =
-    "inline-flex h-control-sm items-center rounded-full border-hairline border-border bg-surface px-4 text-body-sm font-semibold text-text-primary hover:border-primary hover:text-primary";
-  const disabledClass =
-    "inline-flex h-control-sm items-center rounded-full border-hairline border-border px-4 text-body-sm font-semibold text-text-muted opacity-60";
-
   return (
-    <nav aria-label={t("pagination.label")} className="mt-10 flex items-center justify-between gap-4">
-      {page > 1 ? (
-        <Link href={`${AppRoute.Videos}?page=${page - 1}`} className={linkClass} rel="prev">
-          {t("pagination.previous")}
-        </Link>
-      ) : (
-        <span className={disabledClass} aria-disabled="true">
-          {t("pagination.previous")}
-        </span>
-      )}
-
-      <span className="text-body-sm text-text-secondary">{t("pagination.page", { page, total: totalPages })}</span>
-
-      {page < totalPages ? (
-        <Link href={`${AppRoute.Videos}?page=${page + 1}`} className={linkClass} rel="next">
-          {t("pagination.next")}
-        </Link>
-      ) : (
-        <span className={disabledClass} aria-disabled="true">
-          {t("pagination.next")}
-        </span>
-      )}
-    </nav>
+    <PaginationNav
+      page={page}
+      totalPages={totalPages}
+      buildHref={(target) => `${AppRoute.Videos}?page=${target}`}
+      ariaLabel={t("pagination.label")}
+      previousLabel={t("pagination.previous")}
+      nextLabel={t("pagination.next")}
+      pageLabel={t("pagination.page", { page, total: totalPages })}
+      className="mt-10"
+    />
   );
 }
