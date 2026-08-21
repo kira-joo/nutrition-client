@@ -123,3 +123,53 @@ never updates, which silently broke mid-session toggling.
 - **Verify in a browser, at 375/768/1440, in `/ar` and `/en`, with reduced
   motion both off and on.** Measure geometry; do not judge motion from a static
   screenshot.
+
+## Implementation status (2026-08-21)
+
+| Layer | State |
+|---|---|
+| 1 Entrance | Implemented — `useScrollReveal` / `useStaggerReveal` |
+| 2 Ambient | Implemented — `hero-background` |
+| 3 Scroll-linked | Implemented — `hero-background` |
+| 4 Interaction | Implemented for cards — `SURFACE_HOVER_ELEVATION` + `SURFACE_MEDIA_ZOOM`, CSS only, which this document prefers where CSS suffices |
+| 5 State | Implemented — `useDrawerTransition` |
+| 6 **Data** | **Not built, and blocked on content rather than code** |
+
+### Why layer 6 has not been built
+
+There is no numeric stat anywhere in this app to count. Verified across the CMS
+domain model (`doctorProfile` carries `programHighlights` and `whyChooseReasons`
+as text, with no counts), every translation namespace, and every section — there
+is no stats surface and no field that would feed one. Building a count-up would
+mean inventing the stats themselves: deciding which numbers to show, adding a
+backend field to source them, and placing them on a page. That is product content
+plus a schema change, not motion work, so the `count` token this document
+specifies has deliberately not been added either — a token with nothing to
+animate is a claim the code cannot honour.
+
+### Layer 4's reduced-motion rule is the easy one to get backwards
+
+Worth restating, because it was implemented wrongly first: under `reduce`, layer 4
+keeps its **outcome** and loses only its **transition**. A hover lift is feedback
+that a control responded, so it must still happen — instantly. Gating the
+transform itself removes the feedback, which is a different thing from removing
+the movement. In practice: the transform is ungated, `pointer:`-scoped, and only
+`transition-*` sits behind `motion-safe:`.
+
+Two mechanical traps found while doing it:
+
+- **A second `transition-*` utility on one element resets the duration.** Every
+  Tailwind transition utility also writes its own 150ms default, so
+  `transition-shadow duration-base motion-safe:transition-[box-shadow,transform]`
+  silently transitioned at 0.15s. The duration and ease have to be restated under
+  the same variant. Measured, not guessed.
+- **Headless Chrome defaults to `prefers-reduced-motion: reduce`.** Any browser
+  check of an animation must set the preference explicitly in both directions, or
+  everything reads as correctly gated when it may not be gated at all.
+
+### The featured-reviews strip is currently unreachable
+
+Autoplay is implemented and verified, but the carousel renders `null` unless at
+least three reviews carry `featured: true`, and the database has **zero**. It was
+verified through a temporary harness route with real review data, since the real
+`/reviews` page cannot exercise it. Feature it in the CMS to see it.
