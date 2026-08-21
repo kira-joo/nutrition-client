@@ -7,6 +7,7 @@ import { appHref } from "@/constant/AppRoute.enum";
 import { MediaPill } from "@/components/ui/media-pill";
 import { SURFACE_RAISED, SURFACE_HOVER_ELEVATION } from "@/components/ui/surface";
 import { cn } from "@/lib/cn";
+import { PlayOverlay } from "@/components/videos/play-overlay";
 
 export interface VideoCardProps {
   video: LocalizedVideo;
@@ -64,14 +65,7 @@ export function VideoCard({ video, priority = false }: VideoCardProps) {
               <VideoIcon className="size-icon-lg" />
             </span>
           )}
-          <span
-            aria-hidden="true"
-            className="absolute inset-0 flex items-center justify-center bg-scrim opacity-0 transition-opacity duration-base ease-standard group-hover:opacity-100"
-          >
-            <span className="flex size-icon-xl items-center justify-center rounded-full bg-surface/90 text-primary shadow-md">
-              <Play className="size-icon-md" />
-            </span>
-          </span>
+          <PlayOverlay />
           <MediaPill position="bottom-start" icon={<Play className="size-icon-sm" aria-hidden="true" />}>
             {t("card.watch")}
           </MediaPill>

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
-import { ArrowLeft, ExternalLink, Play, Video as VideoIcon } from "lucide-react";
+import { ArrowLeft, ExternalLink, Video as VideoIcon } from "lucide-react";
 import type { LocalizedVideo } from "@/lib/domain/video";
 import AppRoute from "@/constant/AppRoute.enum";
 import { Container } from "@/components/ui/container";
@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { SURFACE_MUTED } from "@/components/ui/surface";
 import { cn } from "@/lib/cn";
+import { PlayOverlay } from "@/components/videos/play-overlay";
 
 export interface VideoDetailProps {
   video: LocalizedVideo;
@@ -63,6 +64,15 @@ export async function VideoDetail({ video }: VideoDetailProps) {
               href={video.externalUrl}
               target="_blank"
               rel="noopener noreferrer"
+              /*
+                The name has to carry the title. Everything inside this link is
+                either decorative or generic — the poster has an empty `alt`, the
+                play overlay is `aria-hidden`, and the only other text is
+                "(opens in a new tab)" — so without this the link announced as
+                nothing but its own target behaviour, which tells a screen-reader
+                user what will happen but never what they are opening.
+              */
+              aria-label={`${t("detail.watchExternallyGeneric")}: ${video.title}`}
               className={cn("group relative flex aspect-video w-full items-center justify-center overflow-hidden shadow-sm", SURFACE_MUTED)}
             >
               {posterUrl ? (
@@ -81,14 +91,7 @@ export async function VideoDetail({ video }: VideoDetailProps) {
                   <span className="text-caption">{t("detail.noPreview")}</span>
                 </span>
               )}
-              <span
-                aria-hidden="true"
-                className="absolute inset-0 flex items-center justify-center bg-scrim opacity-90 transition-opacity duration-base ease-standard group-hover:opacity-100"
-              >
-                <span className="flex size-icon-xl items-center justify-center rounded-full bg-surface/90 text-primary shadow-md">
-                  <Play className="size-icon-md" />
-                </span>
-              </span>
+              <PlayOverlay restingScrim="visible" />
               <span className="sr-only">({t("detail.opensInNewTab")})</span>
             </a>
           ) : (

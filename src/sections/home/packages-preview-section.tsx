@@ -8,6 +8,8 @@ import { RevealGroup } from "@/components/ui/reveal";
 import { PricingCard } from "@/components/packages/pricing-card";
 import { toPricingCardProps } from "@/components/packages/package-card";
 import AppRoute from "@/constant/AppRoute.enum";
+import { CONTENT_GRID_CLASSNAME } from "@/components/ui/content-grid";
+import { cn } from "@/lib/cn";
 
 export interface PackagesPreviewSectionProps {
   packages: LocalizedPackage[];
@@ -43,7 +45,7 @@ export async function PackagesPreviewSection({ packages, packagesPageSettings, c
           actionHref={AppRoute.Packages}
         />
 
-        <RevealGroup className="mt-heading-gap grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+        <RevealGroup className={cn("mt-heading-gap", CONTENT_GRID_CLASSNAME)}>
           {packages.map((pkg) => (
             <div key={pkg._id} className="flex">
               <PricingCard

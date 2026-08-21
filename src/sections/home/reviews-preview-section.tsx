@@ -6,6 +6,8 @@ import { SectionHeader } from "@/components/ui/section-header";
 import { RevealGroup } from "@/components/ui/reveal";
 import { ReviewCard } from "@/components/reviews/review-card";
 import AppRoute from "@/constant/AppRoute.enum";
+import { CONTENT_GRID_CLASSNAME } from "@/components/ui/content-grid";
+import { cn } from "@/lib/cn";
 
 export interface ReviewsPreviewSectionProps {
   reviews: LocalizedReview[];
@@ -36,7 +38,7 @@ export async function ReviewsPreviewSection({ reviews }: ReviewsPreviewSectionPr
       <Container>
         <SectionHeader title={t("reviews.heading")} actionLabel={t("reviews.viewAll")} actionHref={AppRoute.Reviews} />
 
-        <RevealGroup className="mt-heading-gap grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <RevealGroup className={cn("mt-heading-gap", CONTENT_GRID_CLASSNAME)}>
           {ordered.map((review) => (
             <ReviewCard key={review._id} review={review} className="mb-0 h-full" />
           ))}

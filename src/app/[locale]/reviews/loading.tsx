@@ -12,18 +12,34 @@ import { PageHeadingSkeleton, TextLinesSkeleton } from "@/components/ui/skeleton
  * that component's own doc comment), so this can't be pixel-exact for
  * every card the way a fixed-ratio grid can; it approximates the common,
  * image-plus-quote case, which is far closer than a card with no image at
- * all. The masonry columns aren't replicated here (they reflow around real
- * content anyway); a plain grid of the same card shape is enough to avoid
- * the large mismatch the generic primitive produced.
+ * all.
+ *
+ * The masonry columns ARE replicated, having previously not been: this used a
+ * plain grid while the real page is a `columns-*` wall, so the whole layout
+ * re-flowed from equal-height rows into masonry the moment content arrived.
+ * Matching the container's layout mode removes that avoidable reflow. It cannot
+ * make the swap pixel-perfect — real card heights vary, which is the point of a
+ * masonry wall — but the structural jump is gone.
  */
 export default function ReviewsLoading() {
   return (
     <Section>
       <Container>
         <PageHeadingSkeleton withIntro />
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {/*
+          `columns-*`, deliberately not `grid-cols-*`, because that is what the
+          real page uses — reviews are a masonry wall of variable-height cards
+          (see `reviews-grid.tsx`). This skeleton previously used an equal-height
+          grid, so the whole wall re-flowed the moment real content replaced it:
+          a layout jump caused by the placeholder disagreeing with the thing it
+          was standing in for. Matching the real layout is the point of a
+          skeleton, and here it is also what removes the shift.
+        */}
+        <div className="mt-10 columns-1 gap-6 sm:columns-2 lg:columns-3">
           {Array.from({ length: 6 }, (_, index) => (
-            <ReviewCardSkeleton key={index} />
+            <div key={index} className="mb-6 break-inside-avoid">
+              <ReviewCardSkeleton />
+            </div>
           ))}
         </div>
       </Container>
