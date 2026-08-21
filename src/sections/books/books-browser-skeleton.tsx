@@ -1,6 +1,6 @@
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@kira-joo/frontend-toolkit-tailwind/primitives";
 import { PageHeadingSkeleton } from "@/components/ui/skeleton-blocks";
 
 /** Mirrors `BooksBrowser`'s real layout and the `aspect-[5/7]` cover ratio `BookCard` uses — a CLS requirement, matching `VideosGallerySkeleton`'s own rationale. */

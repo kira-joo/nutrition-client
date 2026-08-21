@@ -1,6 +1,6 @@
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@kira-joo/frontend-toolkit-tailwind/primitives";
 import { CardGridSkeleton, PageHeadingSkeleton } from "@/components/ui/skeleton-blocks";
 
 /** Mirrors PackagesPricingSection: heading and duration control on one row, then the card grid at the board's own breakpoints and gap. */

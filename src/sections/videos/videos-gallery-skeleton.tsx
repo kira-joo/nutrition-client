@@ -1,6 +1,6 @@
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@kira-joo/frontend-toolkit-tailwind/primitives";
 import { PageHeadingSkeleton } from "@/components/ui/skeleton-blocks";
 import { ContentGrid } from "@/components/ui/content-grid";
 

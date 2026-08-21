@@ -1,6 +1,6 @@
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@kira-joo/frontend-toolkit-tailwind/primitives";
 import { MediaTilesSkeleton, TextLinesSkeleton } from "@/components/ui/skeleton-blocks";
 
 /** Mirrors the doctor page: circular portrait masthead, two-column bio spread, then the gallery. */

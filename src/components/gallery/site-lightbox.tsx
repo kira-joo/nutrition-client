@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import { Portal, useMounted } from "@kira-joo/frontend-toolkit-tailwind/primitives";
+import { Portal, stepIndex, useMounted } from "@kira-joo/frontend-toolkit-tailwind/primitives";
 import { cn } from "@/lib/cn";
 import { useIsRtl } from "@/hooks/useIsRtl";
 import { useDialogLayer } from "@kira-joo/frontend-toolkit-tailwind/dialog";
@@ -21,12 +21,6 @@ export interface SiteLightboxProps {
   onIndexChange: (index: number) => void;
   onClose: () => void;
   loop?: boolean;
-}
-
-function step(current: number, delta: number, length: number, loop: boolean): number {
-  const next = current + delta;
-  if (loop) return (next + length) % length;
-  return Math.min(Math.max(next, 0), length - 1);
 }
 
 const CONTROL_BUTTON_CLASSNAME =
@@ -89,8 +83,8 @@ export function SiteLightbox({ images, index, onIndexChange, onClose, loop = tru
       if (!hasMultiple) return;
       const isPrevKey = isRtl ? event.key === "ArrowRight" : event.key === "ArrowLeft";
       const isNextKey = isRtl ? event.key === "ArrowLeft" : event.key === "ArrowRight";
-      if (isPrevKey && !isAtStart) onIndexChange(step(index, -1, images.length, loop));
-      else if (isNextKey && !isAtEnd) onIndexChange(step(index, 1, images.length, loop));
+      if (isPrevKey && !isAtStart) onIndexChange(stepIndex(index, -1, images.length, loop));
+      else if (isNextKey && !isAtEnd) onIndexChange(stepIndex(index, 1, images.length, loop));
     }
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
@@ -140,7 +134,7 @@ export function SiteLightbox({ images, index, onIndexChange, onClose, loop = tru
                   <button
                     type="button"
                     disabled={isAtStart}
-                    onClick={() => onIndexChange(step(index, -1, images.length, loop))}
+                    onClick={() => onIndexChange(stepIndex(index, -1, images.length, loop))}
                     aria-label={t("lightbox.previous")}
                     className={cn("absolute start-4 top-1/2 z-20 -translate-y-1/2", CONTROL_BUTTON_CLASSNAME)}
                   >
@@ -149,7 +143,7 @@ export function SiteLightbox({ images, index, onIndexChange, onClose, loop = tru
                   <button
                     type="button"
                     disabled={isAtEnd}
-                    onClick={() => onIndexChange(step(index, 1, images.length, loop))}
+                    onClick={() => onIndexChange(stepIndex(index, 1, images.length, loop))}
                     aria-label={t("lightbox.next")}
                     className={cn("absolute end-4 top-1/2 z-20 -translate-y-1/2", CONTROL_BUTTON_CLASSNAME)}
                   >

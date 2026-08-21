@@ -255,6 +255,12 @@
    */
   --ftk-surface: var(--color-surface);
   --ftk-surface-muted: var(--color-surface-muted);
+  /* One step deeper than `surface-muted`, and the role the shared `Skeleton`
+     uses. Mapped to this palette's border tone rather than its muted surface
+     because a placeholder has to be *visible*: the muted surface measures
+     1.14:1 against `surface` and this measures 1.32:1. Slightly clearer than the
+     local skeleton this replaced, deliberately. */
+  --ftk-surface-sunken: var(--color-border);
   --ftk-text-primary: var(--color-text-primary);
   --ftk-text-muted: var(--color-text-muted);
   /* This palette carries no separate placeholder tone; `text-muted` is the

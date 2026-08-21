@@ -1,5 +1,5 @@
 import { cn } from "@/lib/cn";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@kira-joo/frontend-toolkit-tailwind/primitives";
 
 /**
  * Composed skeleton shapes shared by every route's `loading.tsx`, so those
