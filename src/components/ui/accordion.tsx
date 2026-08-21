@@ -69,7 +69,11 @@ export function Accordion({ items, className, allowMultiple = false, headingLeve
                 onClick={() => toggle(item.id)}
                 aria-expanded={isOpen}
                 aria-controls={panelId}
-                className="flex w-full items-center justify-between gap-4 rounded-sm text-start"
+                /* A real 44px row on touch: the whole row is the control, and it measured
+                   33px — a question is comfortable to read at this size and
+                   uncomfortable to hit. Enlarged wherever a coarse pointer exists (`any-pointer: coarse`),
+                   which covers phones, tablets and touchscreen laptops alike. */
+                className="flex w-full items-center justify-between gap-4 rounded-sm text-start touch:min-h-touch-min"
               >
                 {/* min-w-0 + break-words so a long unbroken question wraps instead of pushing the chevron out of the row. */}
                 <span className="min-w-0 break-words">{item.question}</span>

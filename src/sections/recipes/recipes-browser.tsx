@@ -125,7 +125,7 @@ async function EmptyResults({ filters, activeCount }: { filters: RecipeFilters; 
              768px tablet the 25px target straight back, since a tablet is wide
              and still has no mouse. Uses the project's own --touch-target-min
              rather than a picked padding. */
-          className="mt-2 inline-flex min-h-touch-min items-center text-body-sm font-semibold text-primary hover:underline pointer:min-h-0"
+          className="mt-2 inline-flex items-center text-body-sm font-semibold text-primary hover:underline touch:min-h-touch-min"
         >
           {t("filters.clear")}
         </Link>
@@ -142,8 +142,15 @@ async function Pagination({ filters, totalPages }: { filters: RecipeFilters; tot
   const t = await getTranslations("recipes");
   const { page } = filters;
 
-  const linkClass = "inline-flex h-control-sm items-center rounded-full border-hairline border-border bg-surface px-4 text-body-sm font-semibold text-text-primary hover:border-primary hover:text-primary";
-  const disabledClass = "inline-flex h-control-sm items-center rounded-full border-hairline border-border px-4 text-body-sm font-semibold text-text-muted opacity-60";
+  /* `h-control-md` (44px) on touch rather than `h-control-sm` (36px), and a
+     `min-w` so "next"/"previous" are not 65px-wide slivers — these are the only
+     way through a paginated list on a phone. Relaxed to the compact size only
+     where a fine pointer exists, so a touch tablet keeps the larger target.
+     The disabled twin matches it exactly, or the row would jump height as soon
+     as a visitor reaches the first or last page. */
+  const pagerBase = "inline-flex h-control-sm items-center justify-center rounded-full border-hairline px-4 text-body-sm font-semibold touch:h-control-md touch:min-w-[6rem]";
+  const linkClass = `${pagerBase} border-border bg-surface text-text-primary hover:border-primary hover:text-primary`;
+  const disabledClass = `${pagerBase} border-border text-text-muted opacity-60`;
 
   return (
     <nav aria-label={t("pagination.label")} className="flex items-center justify-between gap-4 pt-2">

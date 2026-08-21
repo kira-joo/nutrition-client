@@ -139,7 +139,11 @@ function FilterGroup({ legend, name, allLabel, options, value, onChange }: Filte
             <label
               key={option._id || "all"}
               className={cn(
-                "flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-body-sm transition-colors duration-fast motion-reduce:transition-none",
+                /* The label is the hit area, not the 16px radio — verified with
+                   the mobile filter sheet open, where it owns its own centre. It
+                   measured 37px though, so it gets a real 44px row on touch and
+                   the compact rhythm back wherever a fine pointer exists. */
+                "flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-body-sm transition-colors duration-fast motion-reduce:transition-none touch:min-h-touch-min",
                 "focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-focus",
                 isActive ? "bg-primary-soft font-semibold text-primary" : "text-text-secondary hover:bg-surface-muted"
               )}

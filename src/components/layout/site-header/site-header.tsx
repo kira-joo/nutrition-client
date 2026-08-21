@@ -142,7 +142,34 @@ export function SiteHeader({ logo, clinicName, whatsappNumber, phone }: SiteHead
                 <Image src="/images/TopLogo.png" alt={clinicName} width={2000} height={550} sizes="140px" className="h-8 w-auto object-contain lg:h-10" priority />
               )}
             </Link>
-            <Button href={AppRoute.Consultation} size="sm" className="lg:hidden">
+            {/*
+              The painted pill stays exactly 36px — the approved composition —
+              while the *touch* target reaches at least 44px through an `::after` overlay
+              extended 6px above and below — nominally 48px, measured 47. 6 rather than
+              the 4 that would arithmetically reach 44: the pill sits on a
+              fractional offset, so a 4px extension measured 43px. Verified in a
+              browser, not computed. A pseudo-element is what makes that
+              possible without a trade-off: it is absolutely positioned so it
+              adds nothing to layout, it paints nothing, and a tap landing on it
+              still targets this link because a pseudo-element's hits resolve to
+              its originating element.
+
+              Deliberately not `py-1 -my-1`: padding would grow the pill's own
+              painted background to 44px, which is the visual change this is
+              avoiding. And deliberately not applied to the focus ring — that
+              stays drawn on the 36px pill, so the visible focus indicator keeps
+              matching the visible control rather than outlining empty space.
+
+              6px is the whole extension and it is vertical only, so it cannot
+              reach the logo (12px away horizontally via `gap-3`) or the
+              hamburger at the opposite edge of the row, and it stays inside the
+              64px header.
+            */}
+            <Button
+              href={AppRoute.Consultation}
+              size="sm"
+              className="relative lg:hidden after:absolute after:inset-x-0 after:-inset-y-1.5 after:content-['']"
+            >
               {t("cta.bookConsultation")}
             </Button>
           </div>

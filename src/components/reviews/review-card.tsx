@@ -165,7 +165,8 @@ export function ReviewCard({ review, className }: ReviewCardProps) {
               href={review.sourceUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex w-fit items-center gap-1.5 text-body-sm font-semibold text-primary hover:underline"
+              /* 25px as a bare text line, the smallest real target on the site. */
+              className="inline-flex w-fit items-center gap-1.5 text-body-sm font-semibold text-primary hover:underline touch:min-h-touch-min"
             >
               {t("card.sourceLink")}
               <ExternalLink className="size-icon-sm shrink-0" aria-hidden="true" />

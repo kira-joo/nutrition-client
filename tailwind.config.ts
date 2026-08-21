@@ -184,6 +184,16 @@ const config: Config = {
     // so it needs this one-line plugin rather than a new dependency.
     plugin(({ addVariant }) => {
       addVariant("pointer", "@media (hover: hover) and (pointer: fine)");
+      /*
+        `touch:` for TARGET SIZING, which is a different question from hover and
+        needs a different query. `pointer: fine` describes the *primary* pointer,
+        so a touchscreen laptop whose primary pointer is its trackpad matches it —
+        and would have been handed compact 33px rows while still being operated by
+        finger. `any-pointer: coarse` asks whether a coarse pointer is available
+        at all, which is the question that actually decides how big a target must
+        be. Sizing therefore stays compact by default and grows under `touch:`.
+      */
+      addVariant("touch", "@media (any-pointer: coarse)");
     }),
   ],
 };

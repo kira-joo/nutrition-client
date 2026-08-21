@@ -29,11 +29,13 @@ const INVERSE_LINK =
      line of text, using the project's own token so the footer cannot drift from
      the minimum the rest of the app is held to.
 
-     Relaxed by POINTER CAPABILITY, not viewport width. `sm:min-h-0` was wrong
+     Enlarged by POINTER CAPABILITY, not viewport width. `sm:min-h-0` was wrong
      and shipped that way once: a 768px tablet is wide enough to pass an `sm`
      breakpoint and still has no mouse, so it got the 34px rows straight back.
-     Centring is still a phone-composition decision, so that one stays on `sm`. */
-  "flex min-h-touch-min items-center justify-center pointer:min-h-0 sm:justify-start";
+     `touch:` asks `any-pointer: coarse`, which also covers a touchscreen laptop
+     whose primary pointer is a trackpad. Centring is still a phone-composition
+     decision, so that one stays on `sm`. */
+  "flex items-center justify-center touch:min-h-touch-min sm:justify-start";
 
 /** Column heading: centred on phones with the rest of the composition, and
  * back to inline-start from `sm` up where the real columns exist. */
