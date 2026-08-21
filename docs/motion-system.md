@@ -173,3 +173,17 @@ Autoplay is implemented and verified, but the carousel renders `null` unless at
 least three reviews carry `featured: true`, and the database has **zero**. It was
 verified through a temporary harness route with real review data, since the real
 `/reviews` page cannot exercise it. Feature it in the CMS to see it.
+
+### Autoplay coverage, and the precondition that still hides it
+
+The autoplay state machine is covered by 24 tests
+(`use-carousel-autoplay.test.tsx` for the state, `featured-reviews-carousel.test.tsx`
+for the wiring), every guard mutation-tested. The split matters: the
+resume-with-focus bug lived in *which element carried the pause handlers*, and no
+hook test can reproduce that — it fires focus events by hand, so the control is
+never actually inside the paused region.
+
+**The strip is still hidden by data, not by code.** It renders only when at least
+three reviews carry `featured: true`, and the database has zero. Nothing about
+that is a bug to fix in this app; feature three reviews in the CMS and the
+carousel appears with autoplay already working.
