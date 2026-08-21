@@ -47,7 +47,7 @@ export async function BooksBrowser({ result, page }: BooksBrowserProps) {
               <RevealGroup as="ul" className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4 lg:gap-8">
                 {result.data.map((book, index) => (
                   <li key={book.slug} className="flex">
-                    <BookCard book={book} priority={page === 1 && index < 4} />
+                    <BookCard headingLevel="h2" book={book} priority={page === 1 && index < 4} />
                   </li>
                 ))}
               </RevealGroup>

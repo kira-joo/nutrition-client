@@ -18,7 +18,7 @@ export function VideosGrid({ videos, isFirstPage = false }: VideosGridProps) {
   return (
     <ContentGrid as="ul">
       {videos.map((video, index) => (
-        <VideoCard key={video._id} video={video} priority={isFirstPage && index < 3} />
+        <VideoCard headingLevel="h2" key={video._id} video={video} priority={isFirstPage && index < 3} />
       ))}
     </ContentGrid>
   );

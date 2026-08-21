@@ -6,7 +6,7 @@ import { Section } from "@/components/ui/section";
 import { SectionHeader } from "@/components/ui/section-header";
 import { RevealGroup } from "@/components/ui/reveal";
 import { PricingCard } from "@/components/packages/pricing-card";
-import { toPricingCardProps } from "@/components/packages/package-card";
+import { toPricingCardProps } from "@/components/packages/pricing-card-adapter";
 import AppRoute from "@/constant/AppRoute.enum";
 import { CONTENT_GRID_CLASSNAME } from "@/components/ui/content-grid";
 import { cn } from "@/lib/cn";

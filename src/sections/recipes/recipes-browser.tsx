@@ -83,7 +83,7 @@ export async function RecipesBrowser({ result, categories, foodGroups, filters }
                 {result.data.map((recipe, index) => (
                   <li key={recipe._id} className="flex">
                     {/* Only the first row of the first page is eager (§13). */}
-                    <RecipeCard recipe={recipe} priority={filters.page === 1 && index < 3} />
+                    <RecipeCard headingLevel="h2" recipe={recipe} priority={filters.page === 1 && index < 3} />
                   </li>
                 ))}
               </ul>

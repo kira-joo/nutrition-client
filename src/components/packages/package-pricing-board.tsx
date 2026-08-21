@@ -5,7 +5,7 @@ import type { LocalizedPackage, PackageDuration } from "@/lib/domain/package";
 import { PACKAGE_DURATIONS } from "@/lib/domain/package";
 import { PricingCard } from "@/components/packages/pricing-card";
 import { SegmentedControl } from "@/components/packages/segmented-control";
-import { toPricingCardProps } from "@/components/packages/package-card";
+import { toPricingCardProps } from "@/components/packages/pricing-card-adapter";
 
 export interface PackagePricingBoardProps {
   /**
@@ -67,7 +67,7 @@ export function PackagePricingBoard({ packages, durations, subscribeLabel, curre
       <ul className={cn("grid gap-8 sm:grid-cols-2 lg:col-span-2", packages.length >= 3 && "lg:grid-cols-3")}>
         {packages.map((pkg) => (
           <li key={pkg._id} className="flex">
-            <PricingCard {...toPricingCardProps(pkg, pkg.pricingTiers[duration], currencyCode, { ...labels, subscribe: subscribeLabel })} />
+            <PricingCard {...toPricingCardProps(pkg, pkg.pricingTiers[duration], currencyCode, { ...labels, subscribe: subscribeLabel })} headingLevel="h2" />
           </li>
         ))}
       </ul>

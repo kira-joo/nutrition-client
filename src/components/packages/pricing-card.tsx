@@ -11,6 +11,14 @@ export interface PricingCardPrice {
 }
 
 export interface PricingCardProps {
+  /**
+   * Semantic depth only — the heading's visual size is the card's design and does
+   * not move with it. `h3` is right under a section heading, as on the homepage
+   * previews; a browse page whose own `h1` is the nearest heading above the grid
+   * passes `h2`, because skipping a level makes the document outline claim a
+   * nesting that isn't there.
+   */
+  headingLevel?: "h2" | "h3";
   isRecommended: boolean;
   title: string;
   subtitle?: string;
@@ -27,12 +35,12 @@ export interface PricingCardProps {
 /**
  * Package-*shaped* but package-agnostic: every prop is a plain value or
  * `ReactNode`, so this renders any priced, featured, optionally-recommended
- * tier — the adapter in `package-card.tsx` is what actually knows about
+ * tier — the adapter in `pricing-card-adapter.tsx` is what actually knows about
  * `LocalizedPackage`. Used by both `PackagePricingBoard` (the full
  * `/packages` page) and `PackagesPreviewSection` (the homepage); there is no
  * second, smaller "preview" card.
  */
-export function PricingCard({ isRecommended, title, subtitle, icon, badge, price, features, featureLimit, action, labels, className }: PricingCardProps) {
+export function PricingCard({ headingLevel: Heading = "h3", isRecommended, title, subtitle, icon, badge, price, features, featureLimit, action, labels, className }: PricingCardProps) {
   const details = featureLimit ? features.slice(0, featureLimit) : features;
 
   return (
@@ -52,7 +60,7 @@ export function PricingCard({ isRecommended, title, subtitle, icon, badge, price
     >
       <div className="flex flex-wrap items-center gap-3">
         {icon && <span aria-hidden="true" className="flex size-icon-xl items-center justify-center rounded-full bg-primary-soft text-primary">{icon}</span>}
-        <h3 className="min-w-0 break-words text-heading-3 font-bold text-text-primary">{title}</h3>
+        <Heading className="min-w-0 break-words text-heading-3 font-bold text-text-primary">{title}</Heading>
         {badge && <span className="rounded-full bg-primary px-3 py-1 text-caption font-semibold uppercase tracking-wide text-white">{badge}</span>}
       </div>
 

@@ -10,6 +10,14 @@ import { cn } from "@/lib/cn";
 import { PlayOverlay } from "@/components/videos/play-overlay";
 
 export interface VideoCardProps {
+  /**
+   * Semantic depth only — the heading's visual size is the card's design and does
+   * not move with it. `h3` is right under a section heading, as on the homepage
+   * previews; a browse page whose own `h1` is the nearest heading above the grid
+   * passes `h2`, because skipping a level makes the document outline claim a
+   * nesting that isn't there.
+   */
+  headingLevel?: "h2" | "h3";
   video: LocalizedVideo;
   /** Only the first row of the first page should be eager; everything else stays lazy (§13). */
   priority?: boolean;
@@ -36,7 +44,7 @@ export interface VideoCardProps {
  * "some rows are shorter than others" bug the moment staff fills in a
  * description for only some videos.
  */
-export function VideoCard({ video, priority = false }: VideoCardProps) {
+export function VideoCard({ headingLevel: Heading = "h3", video, priority = false }: VideoCardProps) {
   const t = useTranslations("videos");
   // Staff-chosen override first, then the poster Cloudinary derives for an
   // uploaded video (VideoAsset.posterUrl) — never a synthesized still frame.
@@ -72,12 +80,12 @@ export function VideoCard({ video, priority = false }: VideoCardProps) {
         </div>
 
         <div className="flex flex-1 flex-col gap-2 p-5">
-          <h3
+          <Heading
             className="min-w-0 break-words text-body-lg font-semibold text-text-primary transition-colors duration-fast group-hover:text-primary"
             style={{ minHeight: "calc(var(--leading-body-lg) * 2em)" }}
           >
             {video.title}
-          </h3>
+          </Heading>
           <p
             className="line-clamp-2 min-w-0 break-words text-body-sm text-text-secondary"
             style={{ minHeight: "calc(var(--leading-body-sm) * 2em)" }}

@@ -7,8 +7,7 @@ import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { PackagePricingBoard } from "@/components/packages/package-pricing-board";
 import { EmptyPanel } from "@/components/ui/empty-panel";
-import { LABEL_TYPE } from "@/components/ui/typography";
-import { cn } from "@/lib/cn";
+import { PageHeader } from "@/components/ui/page-header";
 
 export interface PackagesPricingSectionProps {
   packagesPageSettings: LocalizedPackagesPageSettings;
@@ -35,16 +34,17 @@ export async function PackagesPricingSection({ packagesPageSettings, packages, c
   // A duration with no authored label is dropped rather than shown with a raw key.
   const durations = PACKAGE_DURATIONS.map((value) => ({ value, label: packagesPageSettings.durationLabels[value] })).filter((option) => option.label);
 
+  /* `max-w-narrow` on the block rather than on the heading, which is where the
+     hand-rolled copy had it. With no action in this header the two constrain the
+     same thing, and the eyebrow above it is a short label that the narrower box
+     does not rewrap. */
   const header = (
-    <header className="flex flex-col items-start gap-3">
-      {packagesPageSettings.subtitle && (
-        <p className={cn(LABEL_TYPE, "text-accent")}>{packagesPageSettings.subtitle}</p>
-      )}
-      <h1 className="max-w-narrow text-display font-extrabold text-text-primary">
-        {packagesPageSettings.title}{" "}
-        {packagesPageSettings.titleAccent && <span className="text-primary">{packagesPageSettings.titleAccent}</span>}
-      </h1>
-    </header>
+    <PageHeader
+      className="max-w-narrow"
+      eyebrow={packagesPageSettings.subtitle || undefined}
+      title={packagesPageSettings.title}
+      titleAccent={packagesPageSettings.titleAccent || undefined}
+    />
   );
 
   return (

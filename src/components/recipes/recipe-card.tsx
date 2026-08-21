@@ -8,6 +8,14 @@ import { SURFACE_RAISED, SURFACE_HOVER_ELEVATION } from "@/components/ui/surface
 import { cn } from "@/lib/cn";
 
 export interface RecipeCardProps {
+  /**
+   * Semantic depth only — the heading's visual size is the card's design and does
+   * not move with it. `h3` is right under a section heading, as on the homepage
+   * previews; a browse page whose own `h1` is the nearest heading above the grid
+   * passes `h2`, because skipping a level makes the document outline claim a
+   * nesting that isn't there.
+   */
+  headingLevel?: "h2" | "h3";
   recipe: LocalizedRecipe;
   /** Only the first row of the first page should be eager; everything else stays lazy (§13). */
   priority?: boolean;
@@ -41,7 +49,7 @@ export interface RecipeCardProps {
  * cards happen to have any metadata — has nothing forcing it to match an
  * earlier row's height, so the grid as a whole reads as uneven.
  */
-export function RecipeCard({ recipe, priority = false }: RecipeCardProps) {
+export function RecipeCard({ headingLevel: Heading = "h3", recipe, priority = false }: RecipeCardProps) {
   return (
     <Link
       href={appHref.recipe(recipe._id)}
@@ -70,12 +78,12 @@ export function RecipeCard({ recipe, priority = false }: RecipeCardProps) {
       </div>
 
       <div className="flex flex-1 flex-col gap-2 p-5">
-        <h3
+        <Heading
           className="min-w-0 break-words text-body-lg font-semibold text-text-primary transition-colors duration-fast group-hover:text-primary"
           style={{ minHeight: "calc(var(--leading-body-lg) * 2em)" }}
         >
           {recipe.title}
-        </h3>
+        </Heading>
         <p
           className="line-clamp-2 min-w-0 break-words text-body-sm text-text-secondary"
           style={{ minHeight: "calc(var(--leading-body-sm) * 2em)" }}
