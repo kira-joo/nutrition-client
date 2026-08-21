@@ -20,11 +20,29 @@ export type ButtonSize = "sm" | "md" | "lg";
  * with accent-colored text/border at rest and the same solid fill as
  * `primary` on hover.
  */
+/**
+ * Every hover state is `pointer:hover:`, never bare `hover:`.
+ *
+ * A bare `:hover` latches on a touch device: it applies on tap and stays until
+ * something else is tapped, so a visitor who taps a CTA and scrolls on leaves a
+ * button behind that looks permanently hovered. `pointer:` scopes it to
+ * `(hover: hover) and (pointer: fine)`. This was a recorded defect on `primary`
+ * and `soft`; `secondary` and `ghost` had it too, since a latched colour change
+ * is the same bug as a latched elevation.
+ *
+ * `primary` also lifts, which is the closing CTA's attention cue and the same
+ * layer-4 gesture the cards use — deliberately not a continuous pulse, because
+ * `docs/motion-system.md` restricts ambient motion to decorative surfaces and a
+ * CTA carries information.
+ */
 const VARIANT_CLASS: Record<ButtonVariant, string> = {
-  primary: "bg-primary text-white hover:bg-primary-hover shadow-md hover:shadow-raised focus-ring-on-dark",
-  secondary: "bg-surface text-text-primary border-hairline border-border hover:border-primary hover:text-primary",
-  soft: "bg-surface text-primary shadow-sm border-hairline border-primary/25 hover:bg-primary hover:text-white hover:border-primary hover:shadow-md",
-  ghost: "bg-transparent text-text-primary hover:text-primary",
+  primary:
+    "bg-primary text-white shadow-md focus-ring-on-dark pointer:hover:bg-primary-hover pointer:hover:shadow-raised pointer:hover:-translate-y-0.5",
+  secondary:
+    "bg-surface text-text-primary border-hairline border-border pointer:hover:border-primary pointer:hover:text-primary",
+  soft:
+    "bg-surface text-primary shadow-sm border-hairline border-primary/25 pointer:hover:bg-primary pointer:hover:text-white pointer:hover:border-primary pointer:hover:shadow-md",
+  ghost: "bg-transparent text-text-primary pointer:hover:text-primary",
 };
 
 const SIZE_CLASS: Record<ButtonSize, string> = {
@@ -33,8 +51,27 @@ const SIZE_CLASS: Record<ButtonSize, string> = {
   lg: "h-control-lg px-8 text-button",
 };
 
+/**
+ * `active:scale-[0.98]` is not decoration — it is the only press feedback a
+ * touch device gets once hover is correctly scoped to fine pointers. Before
+ * this, a latched `:hover` was accidentally standing in for "pressed", badly:
+ * it arrived on tap and then never left. `:active` is the state that actually
+ * means pressed, and it works for a mouse too.
+ *
+ * The transition names its properties explicitly because `transition-colors`
+ * alone left `primary`'s shadow change snapping instantly. The transform is
+ * ungated with only its transition behind `motion-safe:` — layer 4 "keeps its
+ * outcome but loses its transition", so under `reduce` a press still registers,
+ * it just arrives immediately. The duration and ease are restated under the same
+ * variant because every Tailwind `transition-*` utility rewrites both with its
+ * own 150ms default.
+ */
 const BASE_CLASS =
-  "inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-colors duration-base ease-standard disabled:cursor-not-allowed disabled:bg-disabled-bg disabled:text-disabled-text disabled:shadow-none disabled:border-transparent";
+  "inline-flex items-center justify-center gap-2 rounded-full font-semibold " +
+  "transition-[color,background-color,border-color,box-shadow] duration-base ease-standard " +
+  "motion-safe:transition-[color,background-color,border-color,box-shadow,transform] motion-safe:duration-base motion-safe:ease-standard " +
+  "active:scale-[0.98] " +
+  "disabled:cursor-not-allowed disabled:bg-disabled-bg disabled:text-disabled-text disabled:shadow-none disabled:border-transparent";
 
 interface CommonProps {
   variant?: ButtonVariant;

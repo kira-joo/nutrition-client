@@ -247,11 +247,14 @@
    * is already measured and recorded there, so the toolkit cannot introduce an
    * unverified colour.
    *
-   * Only the roles the toolkit components rendered in this app actually use are
-   * mapped — the input and textarea on the consultation form. The rest stay on
-   * their stock defaults until a component that needs them is used here, which
-   * keeps this block honest about what has been checked rather than a wall of
-   * guesses.
+   * Two kinds of entry live here. Most map the roles the toolkit components
+   * rendered in this app actually use — the input and textarea on the
+   * consultation form. The `primary-*` trio at the end is different: those
+   * exist because the preset's role names collide with this app's own colour
+   * scale and silently win, so they must be defined even though no toolkit
+   * component is involved. Everything else stays on its stock default until a
+   * component that needs it is used here, which keeps this block honest about
+   * what has been checked rather than a wall of guesses.
    */
   --ftk-surface: var(--color-surface);
   --ftk-surface-muted: var(--color-surface-muted);
@@ -275,6 +278,28 @@
   --ftk-destructive: var(--color-destructive);
   --ftk-destructive-border: var(--color-destructive);
   --ftk-focus: var(--color-focus);
+
+  /* These two are NOT here because a toolkit component needs them — they are
+     here because the preset's role names collide with this app's own `primary`
+     colour scale, and the preset wins.
+     
+     Tailwind turns a nested `primary: { hover, soft }` into the utilities
+     `bg-primary-hover` and `bg-primary-soft`, which are exactly the names the
+     preset's flat `primary-hover` / `primary-soft` roles produce. On merge the
+     preset's definition is the one that survives, so those two utilities read
+     `var(--ftk-primary-*, <stock>)` rather than this palette's values — while
+     `bg-primary` itself is fine, because `primary.DEFAULT` has no flat rival.
+     
+     Measured, not theorised: 14 elements on the home page were rendering
+     `bg-primary-soft` as rgb(241,245,249) — slate-100, a blue-grey — where this
+     palette says #e4f1ec, a pale mint. The primary button's hover was slate
+     #1d283a instead of #0f4e44, i.e. the site's main CTA turned blue-grey on a
+     green-branded page. Defining the variables fixes it regardless of which
+     definition wins the merge, which is why this is the fix rather than renaming
+     one side. */
+  --ftk-primary: var(--color-primary);
+  --ftk-primary-hover: var(--color-primary-hover);
+  --ftk-primary-soft: var(--color-primary-soft);
 
   /* Control metrics. The package defaults to 40px/14px, which is right for a
      dense admin table and wrong on a phone: 40px is under this app's own
