@@ -187,3 +187,43 @@ never actually inside the paused region.
 three reviews carry `featured: true`, and the database has zero. Nothing about
 that is a bug to fix in this app; feature three reviews in the CMS and the
 carousel appears with autoplay already working.
+
+### Botanical line animations: blocked on an asset, not on code
+
+A line-draw animation needs paths to draw. This app ships **zero SVG assets** —
+verified across `public/` and the whole of `src/`, which contains no inline
+`<svg>` either — and the only botanical artwork is `footer-leaf.png`, a raster
+image. Authoring the botanical as vector paths is brand illustration, so this sits
+with the header-logo item: blocked on an asset, and not something to unblock by
+inventing artwork.
+
+If the asset arrives, the layer-2 rules already constrain the work: decorative
+surfaces only, ≤5% scale or ≤8px translate, one ambient element per viewport, a
+genuinely continuous loop, and never on anything carrying information.
+
+### Section transitions are already layer 1, with one gap
+
+`Reveal` / `useScrollReveal` / `useStaggerReveal` cover 22 files. Of the home
+sections only two lack a reveal, and one of those is correct: `hero-background`
+*is* the ambient/parallax layer and sits above the fold, where a reveal would
+delay the first thing a visitor sees. That leaves `campaign-banner-section` as the
+single genuine gap.
+
+### CTA cues are layer 4, deliberately not layer 2
+
+An attention cue on a CTA must not be a continuous pulse: layer 2 is for
+decorative surfaces only and explicitly "never on anything carrying
+information". So the cue is the hover/press depth gesture the cards already use —
+lift plus shadow on hover, `active:scale-[0.98]` on press. The press state matters
+more than it looks: once hover is correctly scoped to fine pointers, `:active` is
+the *only* feedback a touch device gets.
+
+### Two measurement traps, both cost real time
+
+- **CDP `forcePseudoState` does not recompute Tailwind's `--tw-*` transform
+  composition.** A forced `:hover` reports `transform: none` while a real pointer
+  hover on the same element measures the correct matrix. Use real input whenever
+  the assertion is about a transform.
+- **A synthetic tap on a link navigates**, which invalidates the element handle
+  and makes the follow-up read look like a latched state. Hold a press, or test
+  on something that does not navigate.
