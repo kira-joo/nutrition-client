@@ -47,9 +47,10 @@ const PARALLAX_TRAVEL_PERCENT = 6;
 const PARALLAX_OVERSCAN_PERCENT = PARALLAX_TRAVEL_PERCENT + 4;
 
 /**
- * The real `heroSection.png` artwork as the hero's actual background —
- * never recreated with CSS gradients/shapes. Split out of `HeroSection`
- * (an async Server Component) because both motions need refs + effects.
+ * The real supplied artwork (`constant/hero-artwork.ts`) as the hero's
+ * actual background — never recreated with CSS gradients/shapes. Split out
+ * of `HeroSection` (an async Server Component) because both motions need
+ * refs + effects.
  *
  * Two motions from two different layers of the motion system, and they are
  * deliberately on **two separate elements**: the ambient breathe owns the
@@ -64,10 +65,11 @@ const PARALLAX_OVERSCAN_PERCENT = PARALLAX_TRAVEL_PERCENT + 4;
  * geometry — not because scroll progress is immune to transforms in
  * general. Keep the target itself untransformed if this is restructured.
  *
- * `object-position` is cropped differently per breakpoint: the artwork's
- * two empty content zones sit side by side (built for a wide viewport), so
- * a narrow viewport instead gets a top-anchored crop that keeps the top
- * leaf clusters and the artwork's plain center band as its backdrop.
+ * `object-center`, not a directional crop: this layer only renders from
+ * `xl` up (the bounded panel below that has its own `HeroSection` markup),
+ * and the supplied artwork is a symmetric botanical border around a quiet
+ * centre — see `constant/hero-artwork.ts` for the measurement — so a single
+ * centred crop is correct at every desktop width this layer is visible at.
  */
 export interface HeroBackgroundProps {
   /** The locale's landscape master — see `constant/hero-artwork.ts`. */
@@ -89,7 +91,7 @@ export function HeroBackground({ src }: HeroBackgroundProps) {
     if (prefersReducedMotion) return;
 
     // Both motions are desktop-only now, because the element they animate is
-    // `hidden` below `lg` — an infinite drift loop on a `display: none` layer is
+    // `hidden` below `xl` — an infinite drift loop on a `display: none` layer is
     // pure wasted frames. Subscribed rather than read once, so crossing the
     // breakpoint (or rotating a tablet) starts/stops them instead of leaving a
     // stale decision in place -- this is what gsap.matchMedia did for us.

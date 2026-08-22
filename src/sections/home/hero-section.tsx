@@ -7,6 +7,7 @@ import { Reveal } from "@/components/ui/reveal";
 import { HeroBackground } from "@/sections/home/hero-background";
 import { HERO_VALUE_ITEMS } from "@/constant/hero-values";
 import { HERO_ARTWORK } from "@/constant/hero-artwork";
+import { HERO_PORTRAIT_SRC } from "@/constant/hero-portrait";
 import type { Locale } from "@/constant/Locale.enum";
 import AppRoute from "@/constant/AppRoute.enum";
 import { LABEL_TYPE } from "@/components/ui/typography";
@@ -17,32 +18,34 @@ export interface HeroSectionProps {
 }
 
 /**
- * The site's main visual statement, built around the real `heroSection.png`
- * artwork (never a CSS gradient/shape stand-in): decorative food framing at
- * both edges, the doctor's real photo in one of the artwork's two empty
- * zones, copy + CTAs + values in the other. Markup order is copy-first,
+ * The site's main visual statement, built around the real supplied artwork
+ * (never a CSS gradient/shape stand-in): a botanical border framing a quiet
+ * centre where copy and portrait sit. Markup order is copy-first,
  * doctor-second; no explicit LTR/RTL override sits on top of that, so CSS
- * Grid's own direction-aware column order does the rest. In English that
- * renders as the ordinary text-left/photo-right hero, landing the doctor
- * in the artwork's right-hand oval zone. Under `dir="rtl"` the same two
- * columns swap physical sides on their own — text-right/photo-left —
- * which lands the doctor in the artwork's *left*-hand rounded zone
- * instead. Both outcomes line up with a real zone in the artwork; this
- * isn't one fixed composition mirrored badly, it's the same source order
- * reading correctly (and landing correctly) in either direction.
+ * Grid's own direction-aware column order does the rest — text and portrait
+ * swap physical sides between `/en` and `/ar` on their own.
+ *
+ * **One artwork pair, not four.** Measured column-density symmetry (left
+ * half vs right half within 1-3%) showed the supplied border has no
+ * directional bias, so `HERO_ARTWORK` serves both locales from the same
+ * desktop/mobile pair rather than needing separately composed masters — see
+ * that file for the measurement. `HeroArtwork` still keys by locale so a
+ * future directional asset can be dropped in per locale without touching
+ * this component.
+ *
+ * The portrait is `HERO_PORTRAIT_SRC` — a dedicated transparent cutout
+ * supplied for this composition, not `doctorProfile.avatar` (the CMS photo
+ * used everywhere else the doctor appears). See `constant/hero-portrait.ts`
+ * for why the two are deliberately different assets.
  *
  * Recomposed (not shrunk) below `xl`: the doctor stacks above the copy below
- * `lg`, and the
- * artwork stops being a full-bleed background entirely — it becomes a bounded
- * panel behind the portrait, at the same 4:5 ratio the portrait already uses.
- * The two-zone landscape composition has nowhere to land at phone widths, and
- * stretching it behind the whole stacked hero meant covering a 0.26:1 box from a
- * 2.26:1 source. A bounded panel frames the artwork at a ratio a real source
- * asset can be composed for, and leaves the copy on the plain page ground.
- *
- * Artwork comes from `HERO_ARTWORK` per locale: `/ar` and `/en` are separately
- * composed rather than one image mirrored, because the copy's quiet zone sits on
- * opposite physical sides in the two directions.
+ * `lg`, and the artwork stops being a full-bleed background entirely — it
+ * becomes a bounded panel behind the portrait, at the same 4:5 ratio the
+ * portrait already uses. The border composition has nowhere to land at
+ * phone widths, and stretching it behind the whole stacked hero meant
+ * covering a 0.26:1 box from a 2.26:1 source. A bounded panel frames the
+ * artwork at a ratio a real source asset can be composed for, and leaves
+ * the copy on the plain page ground.
  *
  * Stays an async Server Component — only `HeroBackground` (the ambient
  * drift/parallax) and `Reveal` (the entrance animation) are Client
@@ -139,24 +142,30 @@ export async function HeroSection({ doctorProfile }: HeroSectionProps) {
               />
             </div>
 
-            {doctorProfile.avatar ? (
-              <Reveal direction="none" duration="slow" ease="soft" delay={0.1} className="w-full">
-                <div className="relative aspect-[4/5] w-full overflow-hidden rounded-full shadow-raised">
-                  <Image
-                    src={doctorProfile.avatar.secureUrl}
-                    alt={avatarAlt}
-                    fill
-                    sizes="(min-width: 1024px) 32rem, 24rem"
-                    className="object-cover object-top"
-                    placeholder={doctorProfile.avatar.placeholderUrl ? "blur" : undefined}
-                    blurDataURL={doctorProfile.avatar.placeholderUrl}
-                    priority
-                  />
-                </div>
-              </Reveal>
-            ) : (
-              <div aria-hidden="true" className="aspect-[4/5] w-full rounded-full bg-primary-soft" />
-            )}
+            {/*
+              The hero's own cutout, not `doctorProfile.avatar` — see
+              `constant/hero-portrait.ts` for why. It's a transparent cutout
+              whose subject already fills a ~0.79:1 box, so it renders with
+              `object-contain` and no circular mask: a circle crop would cut
+              through the shoulders and crossed arms instead of respecting
+              the silhouette the asset already has. No blur placeholder
+              (it's a static local asset, not a Cloudinary upload with a
+              generated one) and no `shadow-raised` — that box-shadow reads
+              as a soft ambient glow behind a nearly-full-bleed subject, but
+              was built for a hard-edged photo card, not a cutout.
+            */}
+            <Reveal direction="none" duration="slow" ease="soft" delay={0.1} className="w-full">
+              <div className="relative aspect-[4/5] w-full">
+                <Image
+                  src={HERO_PORTRAIT_SRC}
+                  alt={avatarAlt}
+                  fill
+                  sizes="(min-width: 1024px) 32rem, 24rem"
+                  className="object-contain object-center"
+                  priority
+                />
+              </div>
+            </Reveal>
             </div>
           </div>
         </div>

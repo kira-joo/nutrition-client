@@ -1,44 +1,49 @@
 import { Locale } from "@/constant/Locale.enum";
 
 export interface HeroArtwork {
-  /** Full-bleed section background, `lg` and up. Landscape. */
+  /** Full-bleed section background, `xl` and up. Landscape. */
   desktop: string;
-  /** Bounded 4:5 panel behind the doctor portrait, below `lg`. Portrait. */
+  /** Bounded 4:5 panel behind the doctor portrait, below `xl`. Portrait. */
   mobile: string;
 }
 
 /**
  * Hero artwork per locale and per breakpoint.
  *
- * **Four masters, not one flipped image.** The hero's quiet zone has to sit on
- * the opposite side in each direction — Arabic puts the copy on the inline start,
- * which is the physical right — and mirroring photographic artwork also mirrors
- * any text on packaging and the subject's own asymmetry, which reads as a
- * mistake rather than a translation. So `/ar` and `/en` get separately composed
- * files, and there is deliberately no `rtl:-scale-x-100` on the hero.
+ * **One pair of masters, not four.** The original plan assumed the copy's
+ * quiet zone would sit on opposite physical sides in each direction, which
+ * would have forced separately composed `/ar` and `/en` files. The real
+ * supplied artwork (`hero-section.jpg`, `mobile-hero-section.jpg`) is a
+ * botanical border framing a quiet centre — measured column-density
+ * left-half vs right-half within 1-3%, i.e. genuinely symmetric — so one
+ * asset per breakpoint reads correctly in both directions without
+ * mirroring. `HeroArtwork` still keys by locale (not just breakpoint) so a
+ * future asset that *is* directional can be dropped in per locale without
+ * touching call sites.
  *
- * **Two breakpoints, because one aspect ratio cannot serve both.** Measured, the
- * artwork box runs from 0.26:1 on a phone to 1.85:1 on a wide desktop. The
- * desktop entry is a landscape background; the mobile entry is a bounded 4:5
- * panel, which is why the mobile source is portrait rather than a crop of the
- * same landscape frame.
+ * **Desktop is under-resolved.** The supplied master is 1672×941; the
+ * artwork box reaches 1921×1037 at a 1920px viewport, so the widest common
+ * desktop width upscales the source by roughly 15%, with zero headroom for
+ * high-DPI beyond that. `docs/asset-requirements.md` carries the numbers
+ * for a proper 3200×1800 re-export. Mobile is fine as supplied: 1122×1402
+ * against a largest panel render of 552×704 is almost exactly the 2×
+ * minimum this asset needs.
  *
- * Every entry currently points at the one existing artwork, which is landscape.
- * That is provisional and deliberately visible here rather than hidden behind a
- * fallback: it means the desktop rendering is already correct, and the mobile
- * panel is centre-cropped from a landscape source until the real portrait
- * masters land. `docs/asset-requirements.md` carries the dimensions to supply;
- * swapping each in is a one-line change per entry.
+ * Both files were converted from the supplied PNG to JPEG (quality 88,
+ * mean per-channel difference under 1.1/255 against the source) — they are
+ * opaque photographic/illustrative artwork with no transparency need, and
+ * the PNG originals were 1.4-1.8MB against ~200-300KB as JPEG.
  */
-const PROVISIONAL_SHARED_ARTWORK = "/images/heroSection.png";
+const DESKTOP_ARTWORK = "/images/hero-section.jpg";
+const MOBILE_ARTWORK = "/images/mobile-hero-section.jpg";
 
 export const HERO_ARTWORK: Record<Locale, HeroArtwork> = {
   [Locale.AR]: {
-    desktop: PROVISIONAL_SHARED_ARTWORK,
-    mobile: PROVISIONAL_SHARED_ARTWORK,
+    desktop: DESKTOP_ARTWORK,
+    mobile: MOBILE_ARTWORK,
   },
   [Locale.EN]: {
-    desktop: PROVISIONAL_SHARED_ARTWORK,
-    mobile: PROVISIONAL_SHARED_ARTWORK,
+    desktop: DESKTOP_ARTWORK,
+    mobile: MOBILE_ARTWORK,
   },
 };

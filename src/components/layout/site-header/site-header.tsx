@@ -5,7 +5,6 @@ import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { ChevronDown, Menu } from "lucide-react";
 import { cn } from "@/lib/cn";
-import type { ImageAsset } from "@kira-joo/toolkit-common";
 import { Link } from "@/i18n/navigation";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
@@ -23,13 +22,12 @@ import AppRoute from "@/constant/AppRoute.enum";
 const MobileNavDrawer = dynamic(() => import("./mobile-nav-drawer").then((mod) => mod.MobileNavDrawer), { ssr: false });
 
 export interface SiteHeaderProps {
-  logo: ImageAsset | null;
   clinicName: string;
   whatsappNumber?: string;
   phone?: string;
 }
 
-export function SiteHeader({ logo, clinicName, whatsappNumber, phone }: SiteHeaderProps) {
+export function SiteHeader({ clinicName, whatsappNumber, phone }: SiteHeaderProps) {
   const t = useTranslations("layout");
   const moreMenuId = useId();
   const mobileDrawerId = useId();
@@ -132,23 +130,29 @@ export function SiteHeader({ logo, clinicName, whatsappNumber, phone }: SiteHead
               rather than a breakpoint, since a touch tablet needs it too.
             */}
             <Link href={AppRoute.Home} className="flex items-center gap-2 touch:min-h-touch-min">
-              {logo ? (
-                <Image
-                  src={logo.secureUrl}
-                  alt={clinicName}
-                  width={logo.width}
-                  height={logo.height}
-                  sizes="96px"
-                  className="h-10 w-auto object-contain lg:h-12"
-                  priority
-                />
-              ) : (
-                // Falls back to the bundled current official mark rather than
-                // re-typesetting the brand name as text — see docs/theme.md's
-                // asset-audit note. `siteSettings.logo` is still the preferred
-                // source; this only covers the CMS-empty case.
-                <Image src="/images/TopLogo.png" alt={clinicName} width={2000} height={550} sizes="140px" className="h-8 w-auto object-contain lg:h-10" priority />
-              )}
+              {/*
+                The compact mark, not `siteSettings.logo` — measured, not
+                assumed. The CMS mark (leaf emblem + script wordmark + an
+                illustrated figure) is a raster photo of that composition;
+                downscaled to this row's real 40-48px height it renders as
+                the "detailed illustration reads as a smudge" problem
+                `docs/asset-requirements.md` predicted — confirmed by
+                screenshotting the real header at 375px and zooming into the
+                captured pixels, not by eye on the live page. The supplied
+                `logo-mobile.png` isolates just the leaf-in-circle element,
+                which is what survives at this size. This makes the header
+                independent of `siteSettings.logo`; promoting a dedicated
+                compact-mark CMS field is a real follow-up, not done here.
+              */}
+              <Image
+                src="/images/logo-mobile.png"
+                alt={clinicName}
+                width={256}
+                height={256}
+                sizes="48px"
+                className="h-10 w-10 object-contain lg:h-12 lg:w-12"
+                priority
+              />
             </Link>
             {/*
               The painted pill stays exactly 36px — the approved composition —

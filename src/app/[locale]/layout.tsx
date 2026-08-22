@@ -143,7 +143,7 @@ const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
         </a>
         <NextIntlClientProvider messages={messages}>
           <Providers>
-            <SiteHeader logo={siteSettings.logo} clinicName={clinicName} whatsappNumber={siteSettings.whatsappNumber} phone={siteSettings.phone} />
+            <SiteHeader clinicName={clinicName} whatsappNumber={siteSettings.whatsappNumber} phone={siteSettings.phone} />
             <main id="main-content" className="flex min-h-[80vh] flex-col pt-16 lg:pt-20">
               {children}
             </main>

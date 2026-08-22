@@ -1,165 +1,235 @@
 # Production asset requirements
 
-Every number here was **measured in a real browser against the implemented
-layout** on 2026-08-22, at 375 / 768 / 1440 / 1920 in both `/ar` and `/en`, not
-carried over from `asset-specs.md`. Where this disagrees with that document, this
-one is current — the layout has changed since it was written.
+Originally measured in a real browser against the implemented layout on
+2026-08-22, at 375 / 768 / 1440 / 1920 in both `/ar` and `/en`. Updated the same
+day, second pass: seven candidate files landed in `public/images/` —
+`doctor.png`, `hero-section.png`, `logo-mobile.png`, `logo.svg`,
+`mobile-hero-section.png`, plus the already-audited `leaf.svg`. This revision
+records what was inspected, what got wired into the real implementation, what
+was left out and why, and what is still genuinely missing.
 
-Read `## What is wrong today` first: three of these assets are not merely
-missing, they are actively under-resolved or oversized in production.
+Read `## What this pass changed` first for the outcome; `## The asset table`
+below it still carries the numbers for what remains outstanding.
+
+## What this pass changed
+
+**Wired in, browser-verified at 375/768/1024/1440 in both locales:**
+
+- **Header logo → `logo-mobile.png`.** The CMS-driven full mark (leaf + script
+  wordmark + illustrated figure) was measurably illegible at the header's real
+  40-48px render — confirmed by screenshotting the live header and zooming into
+  the captured pixels, not by eye. The supplied compact mark (just the
+  leaf-in-circle) reads clean at that size. The header no longer takes a `logo`
+  prop at all; `SiteHeader`'s CMS-logo branch is gone, so it's independent of
+  `siteSettings.logo` now. See `site-header.tsx`.
+- **Hero desktop/mobile artwork → `hero-section.jpg` / `mobile-hero-section.jpg`**
+  (converted from the supplied PNGs — see below). Wired into `HERO_ARTWORK` for
+  **both locales from one pair**, not four masters — see `constant/hero-artwork.ts`
+  for the symmetry measurement that justified this.
+- **Doctor hero portrait → `doctor.png`.** Replaces the hero's CMS-avatar/circle
+  treatment with the supplied transparent cutout, `object-contain`, no circular
+  mask. See `constant/hero-portrait.ts` for why this is deliberately a different
+  asset from `doctorProfile.avatar` (still used, unchanged, in
+  `doctor-preview-section.tsx`, `doctor-intro-section.tsx`,
+  `consultation-trust-panel.tsx`).
+- **Favicon → derived from `logo-mobile.png`.** `src/app/favicon.ico` replaced
+  (1.06 MB → 6.8 KB, real 16/32/48 multi-resolution ICO, alpha preserved); added
+  `src/app/apple-icon.png` (180×180, flattened to opaque white — there wasn't one
+  before). Both are Next's file-based icon convention, so no code/metadata
+  change was needed; verified the real `<link rel="icon">` /
+  `<link rel="apple-touch-icon">` tags in the rendered page.
+
+**Inspected and deliberately not wired in:**
+
+- **`logo.svg`.** Audited structurally before use, not assumed usable from the
+  extension (see `## logo.svg audit` below). It's an auto-traced bitmap — real
+  vector paths, but traced from a raster, with an opaque full-canvas background
+  rect and a handful of stray near-white trace-artifact paths. The background
+  rect is a one-line mechanical strip (confirmed: exactly one path, exact
+  full-canvas bounds, exact single fill match), and the traced vector renders
+  genuinely crisp at any size — measured via canvas pixel sampling in a real
+  page, not eyeballed. **Not used anyway**, because `siteSettings.logo` (the
+  CMS field the header used to read and the footer still does) is *already* a
+  612×408 PNG of the same composition, with real verified alpha transparency —
+  fetched and inspected directly, not assumed from the CMS record. There is no
+  quality gap this file would close for the CMS-driven placements. It would only
+  matter if a genuinely vector-optimized logo pipeline were wanted later, which
+  also needs a `next.config.ts` decision (`images.dangerouslyAllowSVG`, unset
+  today) — flagged below as a follow-up, not made silently.
+- **`leaf.svg`.** Already audited (`## Audit of the supplied leaf.svg` below):
+  structurally unusable for a line-draw. Checked again this pass for static use
+  and found it's **the same 1536×1024 canvas as the already-deployed
+  `books/footer-leaf.png`** — almost certainly a re-trace of that exact file —
+  and it's heavier (2.43 MB vs 1.45 MB) for no visual gain. The existing footer
+  botanical treatment is untouched; this file adds nothing over it, static or
+  animated.
+
+**Still genuinely missing / open:**
+
+- **A true vector icon (`icon.svg`)** for the favicon set. What's supplied
+  (`logo-mobile.png`) is raster; the ICO/PNG pair above covers every real
+  surface (browser tab, iOS home screen) so this isn't blocking, just not
+  best-case.
+- **Desktop hero resolution.** The supplied `hero-section.png` is 1672×941
+  against a 3200×1800 ask — see the measured shortfall below. Wired in anyway
+  because it's a large improvement over the previous provisional asset, but
+  it's a real, specific gap, not a rounding error.
+- **Footer logo legibility.** Still the CMS raster mark at 84×56 — better than
+  the header was (the leaf-and-circle read fine; "Omnia" and the figure are
+  soft, not illegible), so left alone rather than changed pre-emptively.
+  Zoomed screenshot evidence below.
+- **Botanical line-draw animation.** Unchanged blocker — see the existing audit.
+- **A proper vector botanical asset** for that animation — still needed,
+  requirements below are unchanged and still current.
+
+## logo.svg audit (2026-08-22)
+
+Same method as the `leaf.svg` audit: structure inspected directly, not inferred
+from the file extension.
+
+| Measured | Value |
+|---|---|
+| Canvas | `viewBox="0 0 1536 1024"` (**3:2** — matches the header/footer spec) |
+| `<path>` elements | 528 |
+| Paths with a `stroke` | 0 (traced fills only, as expected for a logo mark) |
+| Distinct fill colours | 519 |
+| Background | **One path**, `d="M0 0 C506.88 0 …"` spanning the full 1536×1024 canvas,
+  `fill="#FCF7F4"` — an opaque near-white rect, present exactly once |
+| Real content transparency | Confirmed by removing that one path and sampling
+  the render on a canvas in a real page: ~91% of a 30×20 sample grid came back
+  `alpha=0`; the leaf/wordmark/figure paths came back fully opaque in their own
+  colours. A few near-white trace-artifact paths remain (expected from
+  auto-tracing) — harmless on light or white grounds, where they're
+  indistinguishable from the ground |
+| Crispness at real render size | Rendered at the literal 60×40 and 84×56 CSS
+  boxes in a real page and sampled via canvas — genuinely sharp, no bitmap
+  downscale blur, because it's vector geometry even though it was produced by
+  tracing |
+
+**Why it wasn't used anyway:** the CMS `siteSettings.logo` (612×408 PNG, fetched
+and confirmed to have real alpha at every sampled pixel) is the same design,
+already transparent, already the right aspect, at 8-10× the pixels the header
+or footer ever renders it at. Swapping in a heavier traced SVG with known
+tracing artifacts would be a lateral move at best. Recorded here so the file
+isn't silently ignored, and so "should the logo pipeline become SVG-based" is a
+real, answerable question later rather than a re-investigation.
 
 ## Measured rendered sizes
 
 | Surface | 375 | 768 | 1440 | 1920 | Aspect | Served today |
 |---|---|---|---|---|---|---|
-| Header logo | 60×40 | 60×40 | 72×48 | 72×48 | **3:2** | 96×64 |
-| Footer logo | 84×56 | 84×56 | 84×56 | 84×56 | **3:2** | 96×64 |
-| Footer botanical | 112×75 | 176×117 | 320×213 | 320×213 | **3:2** | matches box |
-| Hero artwork box *(before)* | 375×**1458** | 771×**1390** | 1450×1044 | 1921×1037 | **0.26 → 1.85** | 1885×834 |
-| Hero artwork box *(now)* | 383×493 | 424×544 | 1440×1037 | 1921×1037 | **0.78 below `xl`, 1.23–1.85 above** | 1885×834 |
-| Doctor portrait | 343×429 | 384×480 | 512×640 | 512×640 | **4:5** | 512×896 |
+| Header logo | 40×40 | 40×40 | 48×48 | 48×48 | **1:1** | `logo-mobile.png`, 1254×1254 |
+| Footer logo | 84×56 | 84×56 | 84×56 | 84×56 | **3:2** | CMS `siteSettings.logo`, 612×408 |
+| Footer botanical | 112×75 | 176×117 | 320×213 | 320×213 | **3:2** | `books/footer-leaf.png`, unchanged |
+| Hero artwork box | 383×493 | 424×544 | 1440×1037 | 1921×1037 | **0.78 below `xl`, 1.23-1.85 above** | `hero-section.jpg` 1672×941 (desktop), `mobile-hero-section.jpg` 1122×1402 (mobile) |
+| Doctor portrait | ~343×429 | ~384×480 | ~512×640 | ~512×640 | **4:5 box, `object-contain`** | `doctor.png`, 1254×1254 canvas, ~983×1246 real content (alpha bbox) — 0.79:1 |
 
-The hero row is the important one: the box is a **tall portrait on phones and a
-landscape band on desktop**. Its aspect ratio swings from 0.26:1 to 1.85:1 — a
-factor of seven — which no single master can serve.
+## What is still wrong
 
-## What is wrong today
-
-1. **The favicon is 1.06 MB.** `src/app/favicon.ico` is 1,062,495 bytes,
-   declaring `sizes="1254x1254"`. A favicon should be single-digit kilobytes.
-   There is also no `apple-icon`, no PNG variants and no web manifest.
-2. **Both logos are under-resolved on any retina screen.** They render up to
-   72×48 and 84×56 but are served at 96×64, so a 2× display needs 144×96 and
-   168×112 and does not get them.
-3. **The doctor portrait is under-resolved *and* mis-cropped.** Served 512×896
-   (0.57:1) into a 512×640 (0.80:1) box, so `object-cover` discards about 29% of
-   the image's height, and a 2× display wants 1024×1280.
-4. **The hero artwork is upscaled even at 1× on a wide desktop** — the box is
-   1921×1037 and the master is 1885×834 — and on a phone it covers a 0.26:1 box
-   from a 2.26:1 source, showing roughly the middle 11% of the image.
+1. **Desktop hero artwork is under-resolved.** `hero-section.png`/`.jpg` is
+   1672×941; the artwork box reaches 1921×1037 at a 1920px viewport, so the
+   widest common desktop width upscales the source by roughly 15%, with zero
+   headroom for high-DPI beyond that. A 3200×1800 re-export would close this
+   with real margin. Mobile is fine as supplied: 1122×1402 against a largest
+   panel render of 552×704 is almost exactly the 2× minimum needed.
+2. **Footer logo is still a raster, still a little soft at 84×56** (zoomed
+   screenshot: the leaf-and-circle reads fine, "Omnia" and the illustrated
+   figure are legible but not crisp). Not illegible the way the header was, so
+   left as-is rather than changed without being asked.
+3. **The botanical line-draw is still blocked** — see the audit below,
+   unchanged.
+4. Two of the nine originally-requested files were never supplied and remain
+   open: a true vector `icon.svg`, and the botanical line-art SVG.
 
 ## The asset table
 
-Dimensions are **source/master** pixels. "Rendered" repeats the measured CSS box
-so the multiplier is visible. Where a single master cannot serve a surface, that
-is called out rather than averaged away.
+Dimensions are **source/master** pixels. Sections below marked **Delivered**
+describe what was supplied and used; the numbers are kept for reference against
+what's actually in the repo. Sections marked **Still needed** are unchanged asks.
 
-### 1. Favicon
+### 1. Favicon — Delivered (derived from the compact mark, not separately supplied)
 
-| | |
-|---|---|
-| Source | `icon.svg` — any viewBox, square, drawn to read at 16px |
-| Plus | `apple-icon.png` **180×180**, and `favicon.ico` containing 16/32/48 |
-| Aspect | 1:1 |
-| Rendered | 16–32px browser tab; 180px iOS home screen |
-| Format | **SVG** primary, PNG for `apple-icon`, ICO as legacy fallback |
-| Background | SVG/ICO transparent; `apple-icon.png` **opaque** (iOS composites on white and a transparent one looks broken) |
-| Safe area | Design for 16px first. The full wordmark will not survive — use the leaf mark or a single letter |
-| Masters | One SVG plus the two derived raster files |
-| Budget | Whole set well under 30 KB. Today's single file is 1.06 MB |
+`favicon.ico` (16/32/48, alpha preserved, 6.8 KB) and `apple-icon.png`
+(180×180, flattened to opaque white, 20.6 KB) generated from `logo-mobile.png`.
+A true `icon.svg` is still a nice-to-have, not supplied, not blocking — both
+real consuming surfaces (browser tab, iOS home screen) are covered.
 
-### 2. Desktop header logo
+### 2. Desktop header logo — Delivered
 
-| | |
-|---|---|
-| Source | **SVG preferred.** If raster: **432×288** PNG |
-| Aspect | 3:2 (the container is fixed; anything else letterboxes inside `object-contain`) |
-| Rendered | 72×48 at ≥1440, 60×40 below |
-| Format | SVG, else PNG-24 |
-| Background | Transparent |
-| Safe area | ~4% padding inside the 3:2 box; it sits next to a 44px nav trigger |
-| Masters | One, shared with mobile if the mark reads at 40px — see #3 |
-| Min high-DPI | **144×96** (2×). 432×288 is 3× and future-proofs a larger header |
+`logo-mobile.png` used directly, `object-contain`, no crop. 1254×1254 source
+against a 48×48 max render is enormous headroom — no retina concern.
 
-### 3. Mobile compact / round logo
+### 3. Mobile compact / round logo — Delivered
+
+Same file as #2 — there's no separate breakpoint-swap in the header; the
+compact mark is now the *only* header mark, at every width, which is what the
+original "detailed illustration reads as a smudge at 40px" finding actually
+called for.
+
+### 4. Footer logo — Still the CMS raster mark, not changed
 
 | | |
 |---|---|
-| Source | **SVG preferred.** If raster: **256×256** PNG |
-| Aspect | 1:1 |
-| Rendered | ~40×40 |
-| Format | SVG, else PNG-24 |
-| Background | Transparent |
-| Safe area | Circular crop — keep everything inside a centred circle at 88% of the width |
-| Masters | **Worth a separate master.** This is the "detailed illustration reads as a smudge at 40px" problem already recorded: the full mark has a leaf emblem, a script wordmark *and* an illustrated figure. At 40px only one element can survive — pick the leaf |
-| Min high-DPI | **120×120** (3×, since phones are the 3× devices) |
-
-### 4. Footer logo
-
-| | |
-|---|---|
-| Source | **SVG preferred.** If raster: **504×336** PNG |
-| Aspect | 3:2 |
+| Current | `siteSettings.logo`, 612×408 PNG, real transparency, 3:2 |
 | Rendered | 84×56 at every breakpoint |
-| Format | SVG, else PNG-24 |
-| Background | **Transparent, and it must read on white.** It sits in a white chip on the dark green footer — that chip exists because the real mark is a dark-green full-colour illustration that disappears on the footer and turns into a white blob when inverted |
-| Safe area | Same as the header |
-| Masters | Same master as the header is fine — identical aspect, 17% larger render |
-| Min high-DPI | **168×112** (2×) |
+| Finding | Legible but soft at real size (zoomed-screenshot evidence, not assumed) |
+| If it should be sharpened | Either a from-scratch higher-res re-export, or a
+  vector logo pipeline (see the `logo.svg` audit above) — both are follow-ups, not
+  done this pass |
 
-### 5. Arabic hero artwork
+### 5. Arabic hero artwork — Delivered, resolution gap noted
 
 | | |
 |---|---|
-| Source | **Two masters.** Desktop/landscape **3200×1800**; mobile/portrait **1600×2000** |
+| Now | `hero-section.jpg` (desktop, 1672×941) + `mobile-hero-section.jpg`
+  (mobile, 1122×1402), converted from the supplied PNGs — quality-88 JPEG,
+  mean per-channel difference under 1.1/255 against the source, 84-86% smaller |
+| Still wanted | Desktop re-export at **3200×1800** to close the ~15% upscale
+  at 1920px and add real retina headroom. Mobile is already sized correctly |
 | Aspect | 16:9 desktop; **4:5** mobile |
-| Rendered | 1280×1037 → 1921×1037 from `xl`; **383×493 → 552×704 (0.78:1)** below `xl` |
-| Format | **JPEG** (photographic, full-bleed, no transparency needed) — today's 1503 KB PNG is the wrong container for this content |
-| Background | Opaque |
-| Safe area | `object-center` in both treatments. Compose the mobile master **for a 4:5 frame** — it is a panel behind the portrait, not a backdrop for text, so it can carry detail edge to edge. On the desktop master text sits over the artwork, so leave the inline-start 55% quiet |
-| Masters | **Two are genuinely needed**, and the mobile one is now a sane asset. The bounded panel holds a steady 0.78:1 from 375 to 1279, so 1600×2000 covers its largest render (552×704) at nearly 3× |
-| Min high-DPI | Desktop: 3200×1800 covers 1920 at ~1.6×; true 2× would be 3842×2074, not worth the bytes for a background. Mobile: **1104×1408** is 2× of the largest panel, so 1600×2000 has headroom |
+| Safe area | **Resolved differently than planned.** The supplied artwork is a
+  *symmetric* botanical border around a quiet centre, not a two-zone
+  composition with an offset quiet side — measured column-density left-half vs
+  right-half within 1-3%. So the "leave the inline-start 55% quiet" requirement
+  from the original spec doesn't apply to this artwork; see `constant/hero-artwork.ts` |
 
-> **Resolved — the bounded treatment is implemented.** Below `xl` the artwork is
-> a panel behind the doctor portrait at the portrait's own 4:5 ratio, and the copy
-> sits on the plain page ground. Measured before: a 375×1458 box (0.26:1) covered
-> from a 2.26:1 source — about an 8.8× upscale showing the middle ~11% of the
-> frame. Measured after: 383×493 at 375px, holding 0.78:1 all the way to 1279px,
-> and the mobile hero is 245px shorter.
->
-> The breakpoint is **`xl` (1280), not `lg` (1024)**, and that was measured too:
-> the hero's own box is still portrait at 1024 (0.79:1) and 1120 (0.92:1) and only
-> turns landscape at 1280 (1.23:1). Switching to the full-bleed landscape layer at
-> `lg` would have reintroduced the same crop across a 256px band.
+### 6. English hero artwork — Delivered from the same pair, not a separate master
 
-### 6. English hero artwork
+**Resolved differently than the original plan.** The original ask assumed the
+copy's quiet zone would sit on opposite physical sides per locale, requiring
+separately composed `/ar` and `/en` masters. The supplied artwork doesn't have
+that directional structure — it's a symmetric border, measured (above) — so one
+desktop/mobile pair serves both locales correctly, browser-verified at 375 and
+1440 in both directions with no visible mismatch. `HeroArtwork` still keys by
+locale in code, so a future directional asset can still be dropped in per
+locale without a refactor.
 
-Same numbers as #5 — **but separately composed, not mirrored.**
-
-There is currently no CSS mirroring on the hero at all (no `rtl:-scale-x-100` on
-`hero-background.tsx`), so `/ar` and `/en` share one unmirrored image today. Two
-compositions are the right call: the Arabic layout puts text on the inline-start
-which is the *right* in RTL, so the artwork's quiet zone needs to be on the
-opposite side from the English version. Flipping photographic artwork also
-mirrors any text, product packaging or the subject's parting, which reads as a
-mistake.
+### 7. Doctor hero portrait — Delivered, different presentation than planned
 
 | | |
 |---|---|
-| Masters | Desktop **3200×1800**, mobile **1600×2000** — one pair per locale, four files total. `constant/hero-artwork.ts` is the seam; each entry is a one-line swap |
-| Safe area | Quiet zone on the **left 55%** for `/en`; on the **right 55%** for `/ar` |
+| Supplied | `doctor.png`, 1254×1254 canvas, real alpha (corners sampled
+  `(0,0,0,0)`), content bounding box ~983×1246 — **0.79:1**, almost exactly the
+  4:5 box it now sits in |
+| Presentation | **`object-contain`, no circular mask** — not the
+  `rounded-full`/`object-cover` treatment the original spec assumed. The
+  supplied file is a pre-composed cutout, not an arbitrary rectangular photo, so
+  cropping it into a circle would cut through the shoulders and crossed arms
+  instead of respecting the silhouette the asset already has |
+| Relationship to the CMS avatar | **Deliberately separate.** `doctorProfile.avatar`
+  (731×1280 Cloudinary photo) still renders unchanged everywhere else the
+  doctor's photo appears. This file is hero-only, local, not CMS-managed — see
+  `constant/hero-portrait.ts` |
 
-### 7. Doctor hero portrait
+### 8. Botanical vector, for the line-draw animation — Still blocked
 
-| | |
-|---|---|
-| Source | **1600×2000** |
-| Aspect | **4:5** — this is the box's real ratio; today's 0.57:1 source loses 29% of its height |
-| Rendered | 343×429 / 384×480 / 512×640 |
-| Format | **JPEG** if the background is photographic; **PNG-24** only if it needs a transparent cut-out |
-| Background | Either, but see the safe area |
-| Safe area | **The container is `rounded-full` with `aspect-[4/5]`, so the crop is an ellipse, not a rectangle.** Keep the face and shoulders inside a centred ellipse at ~90% of the box, and expect the four corners to be cut entirely |
-| Masters | One. The 4:5 box is constant across breakpoints |
-| Min high-DPI | **1024×1280** (2× of the 512×640 render). 1600×2000 gives headroom |
+Audit unchanged from the previous pass (`leaf.svg` is a traced bitmap, no
+stroked geometry) and reconfirmed this pass: it also duplicates the
+already-deployed `footer-leaf.png` at greater weight, so there's no static use
+for it either. Full requirements below, unchanged.
 
-### 8. Botanical vector, for the line-draw animation
+## Audit of the supplied `public/images/leaf.svg` (2026-08-22, reconfirmed)
 
-See the next section — this one needs more than a row in a table.
-
-## The botanical asset, specifically
-
-> ## Audit of the supplied `public/images/leaf.svg` (2026-08-22)
->
 > **It cannot drive a line-draw animation.** That is not a judgement about the
 > artwork — it is a structural fact about the file, which is an auto-traced bitmap
 > rather than line art. Inspected, not inferred from the extension:
@@ -174,7 +244,7 @@ See the next section — this one needs more than a row in a table.
 > | `stroke-width` declarations | **0** | one, uniform |
 > | Closed subpaths | **2,866 of 2,866** | drawn lines must be open |
 > | Distinct fill colours | **3,037** | a handful |
-> | `viewBox` | **missing** (only width/height) | `0 0 1536 1024` |
+> | `viewBox` | **missing** (only width/height, 1536×1024) | `0 0 1536 1024` |
 > | `id` attributes | **0** | one per drawn path |
 > | `transform` attributes | **3,586** | none on drawn paths |
 > | Coords with 5+ decimals | 15,118 in the first 400 KB | — |
@@ -190,8 +260,11 @@ See the next section — this one needs more than a row in a table.
 > 8-decimal coordinates are the signature of a raster-to-vector trace: the PNG
 > approximated blob by blob. It is an SVG container holding a bitmap.
 >
-> It is also **larger than the PNG it would replace** — 2.43 MB against 1.41 MB —
-> so it is not worth swapping in even as a static decoration.
+> **Reconfirmed this pass: it's also a duplicate.** Same 1536×1024 canvas as the
+> already-deployed `books/footer-leaf.png` (1,447,186 bytes) — almost certainly a
+> re-trace of that exact file — and 2,430,906 bytes is heavier for identical
+> content. Not worth swapping in even as a static decoration; the existing PNG
+> is smaller and already deployed.
 >
 > **What to change, concretely.** The artwork looks right; the export is wrong.
 > It needs to be drawn or re-exported as line art rather than traced:
@@ -208,14 +281,13 @@ See the next section — this one needs more than a row in a table.
 > 7. Whole file **under ~20 KB**, under ~40 stroked paths.
 >
 > Until that arrives the animation stays blocked and the existing PNG remains the
-> static decoration. Everything below still describes the target.
-
+> static decoration.
 
 **Which artwork:** the **existing footer leaf**, not a new decoration. It is the
 established "Botanical Trust" signature element and the only botanical artwork on
 the site; introducing a second one would create a second visual language rather
 than animate the one that exists. Today it is `public/images/books/footer-leaf.png`,
-1536×1024, 1413 KB.
+1536×1024, 1,447,186 bytes.
 
 **Where it appears:** the footer's inline-start bottom corner, behind the brand
 block. Absolutely positioned, `pointer-events-none`, `opacity-60`, and mirrored
@@ -258,19 +330,14 @@ Once that asset exists, the animation itself is layer 2 work and already
 constrained: decorative surfaces only, one ambient element per viewport, and it
 must not run under `prefers-reduced-motion`.
 
-## Summary of what to supply
+## Summary of what's still needed
 
-| # | File | Source px | Format |
-|---|---|---|---|
-| 1 | `icon.svg` + `apple-icon.png` + `favicon.ico` | vector, 180×180, 16/32/48 | SVG + PNG + ICO |
-| 2 | Primary logo (header + footer) | vector, or 504×336 | SVG / PNG-24 |
-| 3 | Compact round mark | vector, or 256×256 | SVG / PNG-24 |
-| 4 | Hero — Arabic, desktop | 3200×1800 | JPEG |
-| 5 | Hero — Arabic, mobile | 1600×2000 | JPEG |
-| 6 | Hero — English, desktop | 3200×1800 | JPEG |
-| 7 | Hero — English, mobile | 1600×2000 | JPEG |
-| 8 | Doctor portrait | 1600×2000 | JPEG or PNG-24 |
-| 9 | Botanical | `viewBox 0 0 1536 1024`, stroked paths | SVG |
+| # | File | Source px | Format | Status |
+|---|---|---|---|---|
+| 1 | `icon.svg` (true vector favicon) | vector | SVG | Open, non-blocking |
+| 2 | Desktop hero re-export | 3200×1800 | JPEG | Open — current 1672×941 works but upscales ~15% at 1920px |
+| 3 | Footer logo, sharper | vector, or ≥1024×683 | SVG / PNG-24 | Open — current is legible, not crisp |
+| 4 | Botanical line-art | `viewBox 0 0 1536 1024`, stroked paths | SVG | Open, blocking the animation |
 
-Nine files, or six if the logo serves header, footer and compact mark from one
-vector.
+Everything else originally requested (favicon raster set, header/compact logo,
+hero mobile master, doctor portrait) is delivered and browser-verified.
