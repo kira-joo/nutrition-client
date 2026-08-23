@@ -1,7 +1,7 @@
 import "server-only";
 import { NextRequest, NextResponse } from "next/server";
 import { joinUrl, MethodType } from "@kira-joo/frontend-toolkit-core/server";
-import { PublicApiRoute } from "../../../../../../api/public-api-route";
+import { PublicApiRoute } from "../../../../../lib/api/public-api-route";
 import { ServerApiConfig } from "@/lib/api/server-api-config";
 
 export const dynamic = "force-dynamic";

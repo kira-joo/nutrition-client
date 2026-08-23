@@ -1,5 +1,5 @@
 import { localize, type LocalizedLocale } from "@kira-joo/toolkit-common";
-import { getDoctorProfileEndpoint } from "../../../api/doctor-profile.endpoints";
+import { getDoctorProfileEndpoint } from "../api/doctor-profile.endpoints";
 import { fetchPublic } from "@/lib/api/fetch-public";
 import { CacheTag } from "@/lib/cache/cache-tags";
 import type { DoctorProfile, LocalizedDoctorProfile } from "@/lib/domain/doctor-profile";

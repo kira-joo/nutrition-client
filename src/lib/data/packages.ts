@@ -1,5 +1,5 @@
 import { localize, type LocalizedLocale } from "@kira-joo/toolkit-common";
-import { getPackagesEndpoint } from "../../../api/packages.endpoints";
+import { getPackagesEndpoint } from "../api/packages.endpoints";
 import { fetchPublic } from "@/lib/api/fetch-public";
 import { CacheTag } from "@/lib/cache/cache-tags";
 import type { LocalizedPackage, Package } from "@/lib/domain/package";

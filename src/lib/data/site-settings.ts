@@ -1,5 +1,5 @@
 import { localize, type LocalizedLocale } from "@kira-joo/toolkit-common";
-import { getSiteSettingsEndpoint } from "../../../api/site-settings.endpoints";
+import { getSiteSettingsEndpoint } from "../api/site-settings.endpoints";
 import { fetchPublic } from "@/lib/api/fetch-public";
 import { CacheTag } from "@/lib/cache/cache-tags";
 import type { LocalizedSiteSettings, SiteSettings } from "@/lib/domain/site-settings";

@@ -1,6 +1,6 @@
 import type { PaginatedResponse } from "@kira-joo/toolkit-common";
 import { nullableOnNotFound } from "@kira-joo/frontend-toolkit-core/server";
-import { getBookEndpoint, listBooksEndpoint } from "../../../api/books.endpoints";
+import { getBookEndpoint, listBooksEndpoint } from "../api/books.endpoints";
 import { fetchPublic } from "@/lib/api/fetch-public";
 import { CacheTag } from "@/lib/cache/cache-tags";
 import type { Book, BooksListParams, PublicBookListItem } from "@/lib/domain/book";

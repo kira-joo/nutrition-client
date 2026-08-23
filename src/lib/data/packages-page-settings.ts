@@ -1,5 +1,5 @@
 import { localize, type LocalizedLocale } from "@kira-joo/toolkit-common";
-import { getPackagesPageSettingsEndpoint } from "../../../api/packages-page-settings.endpoints";
+import { getPackagesPageSettingsEndpoint } from "../api/packages-page-settings.endpoints";
 import { fetchPublic } from "@/lib/api/fetch-public";
 import { CacheTag } from "@/lib/cache/cache-tags";
 import type { LocalizedPackagesPageSettings, PackagesPageSettings } from "@/lib/domain/packages-page-settings";

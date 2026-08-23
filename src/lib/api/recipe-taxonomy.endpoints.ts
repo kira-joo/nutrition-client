@@ -1,6 +1,6 @@
 import { MethodType, type Endpoint } from "@kira-joo/frontend-toolkit-core/server";
 import { PublicApiRoute } from "./public-api-route";
-import type { RecipeTaxonomyTerm } from "../src/lib/domain/recipe-taxonomy";
+import type { RecipeTaxonomyTerm } from "../domain/recipe-taxonomy";
 
 export const getRecipeCategoriesEndpoint: Endpoint<{ returnType: RecipeTaxonomyTerm[] }> = {
   url: PublicApiRoute.RECIPE_CATEGORIES,

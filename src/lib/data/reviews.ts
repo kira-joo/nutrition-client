@@ -1,5 +1,5 @@
 import { localize, type LocalizedLocale, type PaginatedResponse } from "@kira-joo/toolkit-common";
-import { listReviewsEndpoint } from "../../../api/reviews.endpoints";
+import { listReviewsEndpoint } from "../api/reviews.endpoints";
 import { fetchPublic } from "@/lib/api/fetch-public";
 import { CacheTag } from "@/lib/cache/cache-tags";
 import type { LocalizedReview, Review, ReviewsListParams } from "@/lib/domain/review";

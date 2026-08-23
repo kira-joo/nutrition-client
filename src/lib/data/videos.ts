@@ -1,6 +1,6 @@
 import { localize, type LocalizedLocale, type PaginatedResponse } from "@kira-joo/toolkit-common";
 import { nullableOnNotFound } from "@kira-joo/frontend-toolkit-core/server";
-import { getVideoEndpoint, listVideosEndpoint } from "../../../api/videos.endpoints";
+import { getVideoEndpoint, listVideosEndpoint } from "../api/videos.endpoints";
 import { fetchPublic } from "@/lib/api/fetch-public";
 import { CacheTag } from "@/lib/cache/cache-tags";
 import type { LocalizedVideo, Video, VideosListParams } from "@/lib/domain/video";
