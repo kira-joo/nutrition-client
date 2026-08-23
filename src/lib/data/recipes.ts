@@ -1,6 +1,6 @@
 import { localize, type LocalizedLocale, type PaginatedResponse } from "@kira-joo/toolkit-common";
 import { nullableOnNotFound } from "@kira-joo/frontend-toolkit-core/server";
-import { getRecipeEndpoint, listRecipesEndpoint } from "../../../api/recipes.endpoints";
+import { getRecipeEndpoint, listRecipesEndpoint } from "../api/recipes.endpoints";
 import { fetchPublic } from "@/lib/api/fetch-public";
 import { CacheTag } from "@/lib/cache/cache-tags";
 import type { LocalizedRecipe, Recipe, RecipesListParams } from "@/lib/domain/recipe";

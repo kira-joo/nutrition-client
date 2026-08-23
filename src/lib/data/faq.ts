@@ -1,5 +1,5 @@
 import { localize, type LocalizedLocale } from "@kira-joo/toolkit-common";
-import { getFaqEndpoint } from "../../../api/faq.endpoints";
+import { getFaqEndpoint } from "../api/faq.endpoints";
 import { fetchPublic } from "@/lib/api/fetch-public";
 import { CacheTag } from "@/lib/cache/cache-tags";
 import type { FaqSectionWithItems, LocalizedFaqSectionWithItems } from "@/lib/domain/faq";

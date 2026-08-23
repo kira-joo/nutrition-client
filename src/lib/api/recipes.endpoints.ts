@@ -1,7 +1,7 @@
 import type { PaginatedResponse } from "@kira-joo/toolkit-common";
 import { MethodType, type Endpoint } from "@kira-joo/frontend-toolkit-core/server";
 import { PublicApiRoute } from "./public-api-route";
-import type { Recipe } from "../src/lib/domain/recipe";
+import type { Recipe } from "../domain/recipe";
 
 export const listRecipesEndpoint: Endpoint<{
   query: { page?: number; limit?: number; search?: string; category?: string; foodGroups?: string };

@@ -1,6 +1,6 @@
 import { MethodType, type Endpoint } from "@kira-joo/frontend-toolkit-core/server";
 import { PublicApiRoute } from "./public-api-route";
-import type { SiteSettings } from "../src/lib/domain/site-settings";
+import type { SiteSettings } from "../domain/site-settings";
 
 // Same api/<domain>.endpoints.ts convention as nutrition-staff's own
 // frontend (see nutrition-staff/api/site-settings.endpoints.ts) — one

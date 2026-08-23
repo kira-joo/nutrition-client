@@ -1,6 +1,6 @@
 import { MethodType, type Endpoint } from "@kira-joo/frontend-toolkit-core";
 import { PublicApiRoute } from "./public-api-route";
-import type { ConsultationRequestResult, CreateConsultationRequestInput } from "../src/lib/domain/consultation-request";
+import type { ConsultationRequestResult, CreateConsultationRequestInput } from "../domain/consultation-request";
 
 /**
  * This app's OWN proxy route (src/app/api/consultation-requests/route.ts),

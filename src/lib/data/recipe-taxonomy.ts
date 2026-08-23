@@ -1,5 +1,5 @@
 import { localize, type LocalizedLocale } from "@kira-joo/toolkit-common";
-import { getRecipeCategoriesEndpoint, getRecipeFoodGroupsEndpoint } from "../../../api/recipe-taxonomy.endpoints";
+import { getRecipeCategoriesEndpoint, getRecipeFoodGroupsEndpoint } from "../api/recipe-taxonomy.endpoints";
 import { fetchPublic } from "@/lib/api/fetch-public";
 import { CacheTag } from "@/lib/cache/cache-tags";
 import type { LocalizedRecipeTaxonomyTerm, RecipeTaxonomyTerm } from "@/lib/domain/recipe-taxonomy";

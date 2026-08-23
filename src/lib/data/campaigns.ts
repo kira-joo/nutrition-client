@@ -1,6 +1,6 @@
 import { localize, type LocalizedLocale } from "@kira-joo/toolkit-common";
 import { nullableOnNotFound } from "@kira-joo/frontend-toolkit-core/server";
-import { getActiveCampaignEndpoint, getCampaignEndpoint } from "../../../api/campaigns.endpoints";
+import { getActiveCampaignEndpoint, getCampaignEndpoint } from "../api/campaigns.endpoints";
 import { fetchPublic } from "@/lib/api/fetch-public";
 import { CacheTag } from "@/lib/cache/cache-tags";
 import type { Campaign, LocalizedCampaign } from "@/lib/domain/campaign";
