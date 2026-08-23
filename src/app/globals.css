@@ -91,6 +91,23 @@
    * fill without falling back to a muted tone. */
   --color-rating: #b45309; /* ~5.0:1 vs surface/background */
 
+  /* ---- Restrained gold, for the packages "minimal luxury" accent only ----
+   * Not `--color-rating` reused: same visual family (a warm gold) but a
+   * different role — this one is a decorative rule/border/icon colour,
+   * never body text, and computed against different backgrounds. Three
+   * tokens because one gold does not read the same on white as it does on
+   * the dark `primary`-filled recommended card:
+   * `--color-gold` (deeper, for light cards) is 4.99:1 against white —
+   * comfortably clears even the text threshold, though it is not used as
+   * text; `--color-gold-on-dark` is a lighter tint so it still shows up
+   * against the dark green fill (4.34:1 there); `--color-gold-soft` is a
+   * pale tint for a badge chip's *background*, always paired with
+   * `text-primary` for the chip's actual text (6.18:1) rather than gold
+   * text on gold, which measured only 4.33:1 — under AA for normal text. */
+  --color-gold: #8a6b24;
+  --color-gold-on-dark: #e0c888;
+  --color-gold-soft: #f5efd9;
+
   /* Darkened from #2f9e5c — white text on the original only cleared ~3.4:1 (fails AA). */
   --color-success: #237a47; /* white text on success: 5.3:1 */
   /* Darkened from #b8791c — the original failed AA as both a text color and
@@ -195,12 +212,17 @@
   --radius-lg: 1.25rem;
   --radius-xl: 1.75rem;
   --radius-full: 9999px;
+  /* The homepage redesign's card signature — see `.surface-notched` below. */
+  --radius-notch: 0.375rem;
 
   /* ---- Shadows (warm-tinted, never pure black) ---- */
   --shadow-sm: 0 1px 2px rgba(27, 35, 31, 0.06);
   --shadow-md: 0 4px 12px rgba(27, 35, 31, 0.08);
   --shadow-lg: 0 12px 32px rgba(27, 35, 31, 0.1);
   --shadow-raised: 0 20px 45px rgba(20, 99, 86, 0.18);
+  /* Deeper and warmer than --shadow-raised, reserved for the one recommended
+     package tier — see docs/homepage-redesign.md "Packages". */
+  --shadow-package: 0 28px 60px -8px rgba(20, 99, 86, 0.32);
 
   /* ---- Borders ---- */
   --border-width-hairline: 1px;
@@ -423,4 +445,26 @@ body {
 .focus-ring-inverse:focus-visible {
   outline: var(--focus-ring-width) solid var(--color-text-on-inverse);
   outline-offset: var(--focus-ring-offset);
+}
+
+/**
+ * The homepage redesign's card signature: three corners at the generous
+ * `--radius-xl`, the fourth clipped down to `--radius-notch` — a folded-leaf
+ * silhouette rather than a uniform rounded rectangle, without needing an
+ * image or an extra element. `border-end-end-radius` is a CSS *logical*
+ * property (block-end + inline-end), so the notch sits at the same reading
+ * corner in both directions — bottom-right in `/en`, bottom-left in `/ar` —
+ * and needs no `rtl:` override.
+ *
+ * Deliberately a plain class, not a Tailwind utility: Tailwind's
+ * `borderRadius` theme key only generates the four *physical* corners
+ * (`rounded-tl` etc.), not the logical ones, so expressing this as utilities
+ * would mean a hardcoded `rounded-br rtl:rounded-br-none rtl:rounded-bl`
+ * direction branch at every call site — exactly what logical properties
+ * exist to avoid. Matches the existing `.focus-ring-*` pattern above: a
+ * named CSS class for a treatment Tailwind's generator can't reach.
+ */
+.surface-notched {
+  border-radius: var(--radius-xl);
+  border-end-end-radius: var(--radius-notch);
 }

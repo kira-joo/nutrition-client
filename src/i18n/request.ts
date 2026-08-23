@@ -20,6 +20,7 @@ const NAMESPACE_FILES = {
   [DictionaryFiles.Reviews]: "reviews",
   [DictionaryFiles.Campaigns]: "campaigns",
   [DictionaryFiles.Consultation]: "consultation",
+  [DictionaryFiles.Seo]: "seo",
 } as const;
 
 async function loadMessages(locale: string) {

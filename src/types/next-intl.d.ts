@@ -17,6 +17,7 @@ type VideosMessages = typeof import("@/i18n/locales/en/videos.json");
 type ReviewsMessages = typeof import("@/i18n/locales/en/reviews.json");
 type CampaignsMessages = typeof import("@/i18n/locales/en/campaigns.json");
 type ConsultationMessages = typeof import("@/i18n/locales/en/consultation.json");
+type SeoMessages = typeof import("@/i18n/locales/en/seo.json");
 
 interface Messages {
   home: HomeMessages;
@@ -28,6 +29,7 @@ interface Messages {
   reviews: ReviewsMessages;
   campaigns: CampaignsMessages;
   consultation: ConsultationMessages;
+  seo: SeoMessages;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type -- next-intl's documented augmentation pattern

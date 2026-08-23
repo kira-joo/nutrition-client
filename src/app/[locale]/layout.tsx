@@ -12,7 +12,7 @@ import type { LocalizedSiteSettings } from "@/lib/domain/site-settings";
 import { SiteHeader } from "@/components/layout/site-header/site-header";
 import { SiteFooter } from "@/components/layout/site-footer/site-footer";
 import { siteMetadataBase } from "@/lib/config/site-origin.constant";
-import { buildAlternates, buildOgImage, resolveSeo } from "@/lib/seo/metadata";
+import { buildAlternates } from "@/lib/seo/metadata";
 import { buildOrganizationJsonLd, JsonLd } from "@/lib/seo/json-ld";
 
 import { Providers } from "../providers";
@@ -23,18 +23,34 @@ import "../globals.css";
 // instead of pairing two separate fonts.
 const cairo = Cairo({
   subsets: ["arabic", "latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  // 900 added for the homepage redesign's display moments (hero, section
+  // headings) — the existing family stays the single bilingual typeface
+  // (see docs/design-system.md "Typography" for why this app deliberately
+  // doesn't pair a second display face); this only extends its own range.
+  weight: ["400", "500", "600", "700", "800", "900"],
   variable: "--font-cairo",
   display: "swap",
 });
 
 /**
- * The site-wide fallback every route's own `generateMetadata` falls back
- * to when it has nothing more specific to say (§20 of the plan: no route
- * ever ships with an empty title/description). Pulled from real Site
- * Settings, not hardcoded copy — the previous static `metadata` export
- * here hardcoded "Dr.Omnia Ahmed" and a dead, expiring Facebook-CDN image
- * URL (`Images.Image1`) that had nothing to do with real CMS content.
+ * Site-wide metadata — title, description, OG/Twitter — is now static,
+ * client-owned, and localized via the `seo` next-intl namespace, not
+ * fetched from Site Settings. It previously read `siteSettings.defaultSeo`
+ * and `siteSettings.ogImage`, which made permanent site identity (the
+ * title every page falls back to, the image every social share uses)
+ * depend on a live nutrition-staff request and on a CMS field an editor
+ * could accidentally clear. Real *content* still comes from the CMS
+ * (recipe/book/package data, the doctor's own name and tagline elsewhere
+ * in this file) — this is specifically the fixed brand-identity layer,
+ * which belongs with the app the same way UI copy does (see this repo's
+ * `next-intl` vs `resolveLocalized` convention in `docs/architecture.md`).
+ *
+ * The OG/Twitter image is the client-local brand mark (`/images/logo.png`,
+ * the same asset the header/footer now use) rather than a fetched
+ * `ImageAsset` — no dedicated social-card asset exists yet, and a fixed
+ * local path needs no `buildOgImage` (that helper stays for CMS-owned
+ * per-route images, e.g. a book's own cover in `books/[slug]/page.tsx`).
+ * `metadataBase` resolves it against the real origin.
  *
  * `icons` is deliberately absent: `src/app/favicon.ico` already exists as
  * a real file, and Next's file-based favicon convention picks it up
@@ -46,11 +62,10 @@ const cairo = Cairo({
  * the favicon specifically is to stop declaring it at all.
  */
 export async function generateMetadata({ params }: { params: { locale: Locale } }): Promise<Metadata> {
-  const siteSettings = await getSiteSettings(params.locale);
-  const { title, description } = resolveSeo(siteSettings.defaultSeo, {
-    title: "Dr. Omnia Ahmed — Clinical Nutrition",
-    description: "Personalized clinical nutrition consultations and programs with Dr. Omnia Ahmed.",
-  });
+  const t = await getTranslations({ locale: params.locale, namespace: "seo" });
+  const title = t("title");
+  const description = t("description");
+  const ogImage = { url: "/images/logo.png", width: 1536, height: 1024 };
 
   return {
     metadataBase: siteMetadataBase,
@@ -60,13 +75,13 @@ export async function generateMetadata({ params }: { params: { locale: Locale } 
     openGraph: {
       title,
       description,
-      images: buildOgImage(siteSettings.ogImage),
+      images: [ogImage],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: buildOgImage(siteSettings.ogImage)?.map((image) => image.url),
+      images: [ogImage.url],
     },
   };
 }
@@ -88,9 +103,6 @@ interface LocaleLayoutProps {
 const FALLBACK_SITE_SETTINGS: LocalizedSiteSettings = {
   currencyCode: "EGP",
   socialLinks: [],
-  logo: null,
-  favicon: null,
-  defaultSeo: { title: "", description: "" },
 };
 
 /**
@@ -121,12 +133,18 @@ const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
   const messages = await getMessages();
   const { siteSettings, doctorProfile, clinicName } = await getShellData(locale);
   const t = await getTranslations("layout");
+  const tSeo = await getTranslations({ locale, namespace: "seo" });
 
   return (
     <html lang={locale} dir={locale === Locale.AR ? "rtl" : "ltr"} className={cairo.variable}>
       <body>
         {/* Site-wide MedicalBusiness identity — one Organization-family JSON-LD block for the whole site, never duplicated by a page-level override (see docs/architecture.md's SEO section). */}
-        <JsonLd data={buildOrganizationJsonLd(siteSettings, clinicName)} />
+        <JsonLd
+          data={buildOrganizationJsonLd(siteSettings, clinicName, {
+            description: tSeo("description"),
+            logoPath: "/images/logo.png",
+          })}
+        />
         {/*
           First focusable element in the DOM, before the header's own nav —
           invisible until it receives keyboard focus (`sr-only`/`focus:not-sr-only`),

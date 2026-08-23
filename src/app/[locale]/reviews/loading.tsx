@@ -47,10 +47,10 @@ export default function ReviewsLoading() {
   );
 }
 
-/** Approximates `ReviewCard`'s image-plus-quote shape: a 4:3 image, a couple of quote lines, then a name line. */
+/** Approximates `ReviewCard`'s image-plus-quote shape: a 4:3 image, a couple of quote lines, then a name line. `surface-notched`, matching the real card's shape post-unification — a plain `rounded-xl` skeleton would itself be a small shape-shift the instant real content replaces it. */
 function ReviewCardSkeleton() {
   return (
-    <div className="flex flex-col overflow-hidden rounded-xl border-hairline border-border bg-surface">
+    <div className="flex flex-col overflow-hidden surface-notched border-hairline border-border bg-surface">
       <Skeleton className="aspect-[4/3] w-full rounded-none" />
       <div className="flex flex-col gap-3 p-5">
         <TextLinesSkeleton lines={2} />

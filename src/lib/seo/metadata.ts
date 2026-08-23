@@ -4,27 +4,6 @@ import { Locale } from "@/constant/Locale.enum";
 import { routing } from "@/i18n/routing";
 import { SITE_ORIGIN } from "@/lib/config/site-origin.constant";
 
-export interface SeoTitleDescription {
-  title: string;
-  description: string;
-}
-
-/**
- * A page-specific title/description (e.g. a recipe's own title, a
- * `Package.seoOverride`) wins when both fields are actually populated;
- * otherwise falls back to Site Settings' `defaultSeo` — per §20 of the
- * project's plan, no route may ever ship with an empty title/description,
- * and a half-populated override (title set, description blank) isn't
- * genuinely more specific than the site default, so it doesn't count as
- * an override.
- */
-export function resolveSeo(override: Partial<SeoTitleDescription> | undefined, fallback: SeoTitleDescription): SeoTitleDescription {
-  return {
-    title: override?.title || fallback.title,
-    description: override?.description || fallback.description,
-  };
-}
-
 /**
  * Every locale variant of a page declares its own canonical (pointing at
  * itself, the standard hreflang pattern — never at one "master" locale)

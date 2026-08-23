@@ -18,6 +18,18 @@
 /** Card/panel fill for content that sits above the page — the default. */
 export const SURFACE_RAISED = "rounded-xl border-hairline border-border bg-surface";
 
+/**
+ * The homepage redesign's card signature (see `.surface-notched` in
+ * `globals.css`) — `SURFACE_RAISED`'s uniform rounded rectangle with one
+ * corner clipped to a small radius, like a folded leaf. A deliberately
+ * separate export rather than changing `SURFACE_RAISED` in place: this
+ * shape is scoped to the surfaces the homepage redesign actually touches
+ * (recipe/video/review/package cards), and `SURFACE_RAISED` still serves
+ * surfaces outside that scope (the book card, the gallery filmstrip) that
+ * should not change shape as a side effect of this pass.
+ */
+export const SURFACE_NOTCHED = "surface-notched border-hairline border-border bg-surface";
+
 /** Recessed panel for a container whose content is absent or secondary. */
 export const SURFACE_MUTED = "rounded-xl border-hairline border-border bg-surface-muted";
 

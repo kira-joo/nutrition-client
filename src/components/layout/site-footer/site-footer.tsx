@@ -101,7 +101,6 @@ export async function SiteFooter({ siteSettings, clinicName, doctorTagline }: Si
   const t = await getTranslations("layout");
   const year = new Date().getFullYear();
   const sortedSocialLinks = [...siteSettings.socialLinks].sort((a, b) => a.order - b.order);
-  const logo = siteSettings.logo;
 
   return (
     <footer className="relative overflow-hidden bg-surface-inverse">
@@ -120,32 +119,41 @@ export async function SiteFooter({ siteSettings, clinicName, doctorTagline }: Si
               {/*
                 A light chip rather than the `brightness-0 invert` treatment
                 the footer used to apply. That filter only works on a flat
-                silhouette-shaped mark; the real CMS asset is a detailed
-                full-colour illustration (leaf emblem + script wordmark + an
-                illustrated figure), and inverting it flattened the figure
-                into a featureless white blob — verified by rendering the
-                asset large on both grounds, filtered and unfiltered, not
-                inferred. Unfiltered on the dark green it instead nearly
-                disappears, since its own artwork is dark green too. A chip
-                lets the real brand asset render in its real colours, and is
-                aspect-ratio agnostic: the CMS owns the logo's shape, so this
-                component can't assume a wordmark's proportions.
+                silhouette-shaped mark, and inverting a detailed full-colour
+                illustration flattens it into a featureless white blob —
+                verified by rendering it large on both grounds, filtered and
+                unfiltered, not inferred. A chip lets the real brand asset
+                render in its real colours regardless of which mark ends up
+                here.
+
+                `footer-logo.png` is a manually-supplied asset (not the
+                header's `logo.png`, not `siteSettings.logo` — the CMS field
+                is read nowhere in the header or footer now) — kept exactly
+                as supplied. `footer-logo-trimmed.png` is a derived crop of
+                it, generated once and committed alongside it, not a second
+                asset choice: the source file's own transparent canvas had
+                0px of margin on the left and 48px on the right (measured
+                against its alpha channel), so the file itself wasn't
+                symmetric — the trim removes exactly that dead margin on all
+                four sides and nothing else; every visible pixel of the
+                supplied artwork is unchanged.
+
+                `mx-auto` (reset by `sm:mx-0` where the parent itself
+                switches to start-aligned) is required even after that trim:
+                Tailwind's preflight makes `img` `display: block`, and
+                `text-align: center` on the parent has no effect on a block
+                box — it only centers inline/inline-block content. Worse,
+                a block-level replaced element with fixed intrinsic width
+                and both margins computed to `0` (not `auto`) is
+                over-constrained, and the browser resolves that by
+                collapsing the line-*end* margin — which in this RTL-default
+                app is the *left* side — so without `mx-auto` the logo sat
+                flush against the right edge with all the slack on the
+                left, not centred at all despite `text-center` being
+                present on the parent. `mx-auto` forces genuine, symmetric
+                auto-margin centering regardless of direction.
               */}
-              <span className="inline-flex rounded-lg bg-surface px-4 py-3">
-                {logo ? (
-                  /* `sizes` differs per branch because the two assets have
-                     very different aspect ratios at the same height: the CMS
-                     logo is ~1.5:1 (≈84px wide at h-14), the bundled wordmark
-                     ~3.64:1 (≈204px). One shared value would over-fetch for
-                     one of them. */
-                  <Image src={logo.secureUrl} alt={clinicName} width={logo.width} height={logo.height} sizes="96px" className="h-14 w-auto object-contain" />
-                ) : (
-                  // The bundled official mark, never a re-typeset brand name
-                  // — same fallback the header uses. `siteSettings.logo`
-                  // stays the preferred source; this covers the CMS-empty case.
-                  <Image src="/images/TopLogo.png" alt={clinicName} width={2000} height={550} sizes="208px" className="h-14 w-auto object-contain" />
-                )}
-              </span>
+                <Image src="/images/footer-logo-trimmed.png" alt={clinicName} width={1624} height={849} sizes="208px" className="mx-auto h-16 w-auto object-contain sm:mx-0" />
               {/* `mx-auto` keeps the measure limit while centring the block
                   itself on phones — a centred paragraph that still wraps at
                   a comfortable line length, not one stretched edge to edge. */}

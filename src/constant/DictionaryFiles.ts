@@ -22,4 +22,6 @@ export enum DictionaryFiles {
   Reviews = "reviews",
   Campaigns = "campaigns",
   Consultation = "consultation",
+  /** Static site-identity metadata (title, description) — `generateMetadata` reads this, not `siteSettings.defaultSeo`. */
+  Seo = "seo",
 }

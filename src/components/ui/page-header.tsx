@@ -105,7 +105,13 @@ export function PageHeader({
         <Heading
           className={cn(
             "text-text-primary",
-            Heading === "h1" ? "text-display font-extrabold" : "text-heading-1 font-bold"
+            // `h2` here is exclusively `SectionHeader`'s homepage-preview
+            // path (verified: no other call site passes `as="h2"") — the
+            // heavier weight is the homepage redesign's display treatment,
+            // scoped to that one path so every page-level `h1` masthead
+            // (recipes/videos/reviews/packages/books/consultation) stays
+            // pixel-identical until the redesign is approved and extended.
+            Heading === "h1" ? "text-display font-extrabold" : "text-heading-1 font-black"
           )}
         >
           {title}

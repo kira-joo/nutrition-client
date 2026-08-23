@@ -4,7 +4,7 @@ import type { LocalizedRecipe } from "@/lib/domain/recipe";
 import { Link } from "@/i18n/navigation";
 import { appHref } from "@/constant/AppRoute.enum";
 import { MediaPill } from "@/components/ui/media-pill";
-import { SURFACE_HOVER_ELEVATION, SURFACE_MEDIA_ZOOM, SURFACE_RAISED } from "@/components/ui/surface";
+import { SURFACE_HOVER_ELEVATION, SURFACE_MEDIA_ZOOM, SURFACE_NOTCHED } from "@/components/ui/surface";
 import { cn } from "@/lib/cn";
 
 export interface RecipeCardProps {
@@ -53,7 +53,7 @@ export function RecipeCard({ headingLevel: Heading = "h3", recipe, priority = fa
   return (
     <Link
       href={appHref.recipe(recipe._id)}
-      className={cn("group flex h-full flex-col overflow-hidden", SURFACE_RAISED, SURFACE_HOVER_ELEVATION)}
+      className={cn("group flex h-full flex-col overflow-hidden", SURFACE_NOTCHED, SURFACE_HOVER_ELEVATION)}
     >
       <div className="relative aspect-[4/3] bg-surface-muted">
         {recipe.image?.secureUrl ? (
@@ -74,6 +74,10 @@ export function RecipeCard({ headingLevel: Heading = "h3", recipe, priority = fa
           </span>
         )}
 
+        {/* Depth for the overlay chip and a deliberate photographic edge —
+            not decoration for its own sake. `motion-safe:` is irrelevant
+            here (a static gradient, nothing animates), so it's plain. */}
+        <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-16 bg-scrim" />
         {recipe.category?.title && <MediaPill position="bottom-start">{recipe.category.title}</MediaPill>}
       </div>
 

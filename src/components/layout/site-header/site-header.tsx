@@ -109,7 +109,7 @@ export function SiteHeader({ clinicName, whatsappNumber, phone }: SiteHeaderProp
       )}
     >
       <Container width="wide">
-        <div className="flex h-16 items-center justify-between lg:h-20">
+        <div className="flex h-17 items-center justify-between lg:h-20">
           {/*
             Two mobile-only additions grouped with the logo, not with the
             hamburger: the mobile CTA lives here (hidden lg:flex has its own
@@ -131,57 +131,73 @@ export function SiteHeader({ clinicName, whatsappNumber, phone }: SiteHeaderProp
             */}
             <Link href={AppRoute.Home} className="flex items-center gap-2 touch:min-h-touch-min">
               {/*
-                The compact mark, not `siteSettings.logo` — measured, not
-                assumed. The CMS mark (leaf emblem + script wordmark + an
-                illustrated figure) is a raster photo of that composition;
-                downscaled to this row's real 40-48px height it renders as
-                the "detailed illustration reads as a smudge" problem
-                `docs/asset-requirements.md` predicted — confirmed by
-                screenshotting the real header at 375px and zooming into the
-                captured pixels, not by eye on the live page. The supplied
-                `logo-mobile.png` isolates just the leaf-in-circle element,
-                which is what survives at this size. This makes the header
-                independent of `siteSettings.logo`; promoting a dedicated
-                compact-mark CMS field is a real follow-up, not done here.
+                Two different local marks, not one asset stretched across
+                every width, and not the CMS `siteSettings.logo` this used
+                to read either way (removed — see `logo.png`'s own note in
+                `docs/asset-requirements.md` for why the brand mark is now
+                a client-local asset instead of staff-managed content).
+                Measured, not assumed: the full mark (leaf emblem + script
+                wordmark + an illustrated figure) downscaled to mobile
+                reads as the "detailed illustration becomes a smudge"
+                problem predicted — confirmed by screenshotting the real
+                header at 375px and zooming into the captured pixels. At
+                the taller 64px `lg` height the full mark reads fine (also
+                verified the same way), so `lg` and up shows the real brand
+                mark and only mobile/tablet falls back to the compact
+                leaf-only mark.
+
+                The real file is a 1254x1254 square (fixed here — `width`/
+                `height` previously carried a stand-in asset's 256x456,
+                which doesn't matter for layout since the box below is
+                sized in CSS, but did feed Next a wrong aspect ratio).
+                `w-16` (64px, square) rather than the previous `w-10`
+                (40px): that box's height was already `h-16`, so the old
+                narrower width was letterboxing the square art down to an
+                effective 40px mark with dead space above/below — not a
+                deliberate 40px size. Squaring the box renders the mark at
+                its full 64px, a real, visible increase, while the row
+                itself stays `h-17` (a fixed height unaffected by its
+                children) so nothing about the header's own height moves.
               */}
               <Image
                 src="/images/logo-mobile.png"
                 alt={clinicName}
-                width={256}
-                height={256}
-                sizes="48px"
-                className="h-10 w-10 object-contain lg:h-12 lg:w-12"
+                width={1254}
+                height={1254}
+                sizes="64px"
+                className="h-16 w-16 object-contain lg:hidden"
+                priority
+              />
+              {/*
+                `h-16` (64px) against the row's own `lg:h-20` (80px) —
+                8px of headroom top and bottom. The real master is
+                1536x1024 (3:2), so `width`/`height` here are its actual
+                intrinsic dimensions, not a stand-in asset's — Next needs
+                the real ratio to reserve the right box before the image
+                loads.
+              */}
+              <Image
+                src="/images/logo.png"
+                alt={clinicName}
+                width={1536}
+                height={1024}
+                sizes="184px"
+                className="hidden h-17 w-auto object-contain lg:block"
                 priority
               />
             </Link>
             {/*
-              The painted pill stays exactly 36px — the approved composition —
-              while the *touch* target reaches at least 44px through an `::after` overlay
-              extended 6px above and below — nominally 48px, measured 47. 6 rather than
-              the 4 that would arithmetically reach 44: the pill sits on a
-              fractional offset, so a 4px extension measured 43px. Verified in a
-              browser, not computed. A pseudo-element is what makes that
-              possible without a trade-off: it is absolutely positioned so it
-              adds nothing to layout, it paints nothing, and a tap landing on it
-              still targets this link because a pseudo-element's hits resolve to
-              its originating element.
-
-              Deliberately not `py-1 -my-1`: padding would grow the pill's own
-              painted background to 44px, which is the visual change this is
-              avoiding. And deliberately not applied to the focus ring — that
-              stays drawn on the 36px pill, so the visible focus indicator keeps
-              matching the visible control rather than outlining empty space.
-
-              6px is the whole extension and it is vertical only, so it cannot
-              reach the logo (12px away horizontally via `gap-3`) or the
-              hamburger at the opposite edge of the row, and it stays inside the
-              64px header.
+              `md` (44px) rather than the earlier `sm` (36px, with a
+              pseudo-element stretching only the *touch* target to 44px):
+              this is the site's single highest-priority conversion action,
+              called out for more visual weight specifically, and the old
+              36px pill under-represented that next to the header's own
+              64/80px row. `md` reaches the touch minimum natively, so the
+              old `after:` extension hack is gone — nothing to size or
+              verify separately anymore. Still well inside the 64px row,
+              vertically centered by the row's own `items-center`.
             */}
-            <Button
-              href={AppRoute.Consultation}
-              size="sm"
-              className="relative lg:hidden after:absolute after:inset-x-0 after:-inset-y-1.5 after:content-['']"
-            >
+            <Button href={AppRoute.Consultation} size="lg" className="lg:hidden font-bold">
               {t("cta.bookConsultation")}
             </Button>
           </div>
@@ -224,7 +240,7 @@ export function SiteHeader({ clinicName, whatsappNumber, phone }: SiteHeaderProp
 
           <div className="hidden items-center gap-6 lg:flex">
             <LanguageToggle />
-            <Button href={AppRoute.Consultation} size="sm">
+            <Button href={AppRoute.Consultation} size="lg" className="font-bold">
               {t("cta.bookConsultation")}
             </Button>
           </div>

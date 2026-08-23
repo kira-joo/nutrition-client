@@ -188,6 +188,31 @@ three reviews carry `featured: true`, and the database has zero. Nothing about
 that is a bug to fix in this app; feature three reviews in the CMS and the
 carousel appears with autoplay already working.
 
+### A seventh case: the homepage testimonial rail is not layer 2
+
+`TestimonialRail` (homepage) scrolls continuously — real review content
+travelling across the viewport on an infinite loop — which sounds like layer 2
+("Ambient") until you check what layer 2 actually rules out: "never on anything
+carrying information", and "amplitude small enough that a user cannot
+consciously track it". The rail is real customer names/quotes/photos, and its
+whole job is to be obviously, consciously moving. It fails both layer-2 tests on
+purpose, so it isn't layer 2 with a bigger amplitude — it's the same family as
+this file's featured-reviews strip above (real content, auto-advancing,
+governed by WCAG 2.2.2's pause requirement) with continuous motion instead of
+discrete steps. Filed here rather than added as a seventh row to the table,
+because it isn't one of the six aesthetic patterns at all — it's a UX/content
+pattern that happens to use Motion's `animate()` the same way layer 2 does.
+
+Its own rules, since none of the six apply cleanly: `ease: "linear"` always (any
+easing curve makes the loop's reset visible as a stutter); a real pause control
+is mandatory, not optional, the same as the discrete strip; hover/focus-within
+also pauses it, scoped to the rail and not the pause button, for the same
+resume-while-focused reason documented above; `prefers-reduced-motion` doesn't
+slow it down or gate the transform alone — it removes the loop entirely and
+falls back to a plain scrollable row, because "carrying information,
+continuously in motion, but slower" is still asking a reduced-motion user to
+track moving text.
+
 ### Botanical line animations: blocked on an asset, not on code
 
 A line-draw animation needs paths to draw. This app ships **zero SVG assets** —

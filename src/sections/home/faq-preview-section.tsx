@@ -23,7 +23,7 @@ export async function FaqPreviewSection({ faqSections }: FaqPreviewSectionProps)
       <Container width="narrow">
         <SectionHeader title={t("faq.heading")} actionLabel={t("faq.viewAll")} actionHref={AppRoute.Faq} />
 
-        <Reveal className="mt-heading-gap rounded-xl bg-surface px-6 shadow-sm sm:px-8">
+        <Reveal className="mt-heading-gap surface-notched bg-surface px-6 shadow-md sm:px-8">
           <Accordion items={items.map((item) => ({ id: item._id, question: item.question, answer: item.answer }))} />
         </Reveal>
       </Container>

@@ -125,7 +125,7 @@ export function MobileNavDrawer({ id, isOpen, onClose, clinicName, whatsappNumbe
         >
           <div className="flex flex-col gap-4">
             <LanguageToggle />
-            <Button href={AppRoute.Consultation} onClick={onClose}>
+            <Button href={AppRoute.Consultation} onClick={onClose} size="lg" className="font-bold">
               {t("cta.bookConsultation")}
             </Button>
             <div className="flex items-center justify-center gap-6">

@@ -94,6 +94,11 @@ const config: Config = {
           soft: "var(--color-accent-soft)",
         },
         rating: "var(--color-rating)",
+        gold: {
+          DEFAULT: "var(--color-gold)",
+          "on-dark": "var(--color-gold-on-dark)",
+          soft: "var(--color-gold-soft)",
+        },
         success: "var(--color-success)",
         warning: "var(--color-warning)",
         destructive: "rgb(var(--color-destructive-rgb) / <alpha-value>)",
@@ -148,6 +153,7 @@ const config: Config = {
         md: "var(--shadow-md)",
         lg: "var(--shadow-lg)",
         raised: "var(--shadow-raised)",
+        package: "var(--shadow-package)",
       },
       backgroundImage: {
         hero: "var(--gradient-hero)",

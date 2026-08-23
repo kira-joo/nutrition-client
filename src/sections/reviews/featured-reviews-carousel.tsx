@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight, Pause, Play, RotateCcw } from "lucide-react"
 import type { LocalizedReview } from "@/lib/domain/review";
 import { useIsRtl } from "@/hooks/useIsRtl";
 import { ReviewCard } from "@/components/reviews/review-card";
+import { CAROUSEL_CONTROL_BUTTON_CLASS } from "@/components/ui/carousel-control-button";
 import { useCarouselAutoplay, type AutoplayAction } from "./use-carousel-autoplay";
 
 export interface FeaturedReviewsCarouselProps {
@@ -22,18 +23,6 @@ export interface FeaturedReviewsCarouselProps {
  * keeps the type pinned to whatever version is actually installed.
  */
 type EmblaApi = NonNullable<UseEmblaCarouselType[1]>;
-
-/**
- * `touch:` grows these to a real 44px target on a coarse pointer. They were 36px
- * — measured, not assumed — which is below the app's own `--touch-target-min`,
- * and sat in the same row as the 44px header trigger. Gated on pointer
- * capability rather than a viewport breakpoint, because a wide touch tablet
- * passes `sm:` and still has no mouse; `control-md` is 2.75rem, the same value
- * `--touch-target-min` resolves to, so this is the token agreeing with itself
- * rather than a magic number.
- */
-const CONTROL_BUTTON_CLASS =
-  "flex h-control-sm w-control-sm items-center justify-center rounded-full border-hairline border-border bg-surface text-text-primary transition-colors duration-base ease-standard pointer:hover:border-primary pointer:hover:text-primary disabled:cursor-not-allowed disabled:opacity-40 touch:h-control-md touch:w-control-md";
 
 /**
  * The control says what pressing it does, so the label follows the action.
@@ -122,7 +111,7 @@ export function FeaturedReviewsCarousel({ reviews }: FeaturedReviewsCarouselProp
                  thing twice, inconsistently. This button also has three actions,
                  not two, which a pressed/unpressed toggle cannot express. */
               aria-label={t(AUTOPLAY_LABEL_KEY[autoplay.action])}
-              className={CONTROL_BUTTON_CLASS}
+              className={CAROUSEL_CONTROL_BUTTON_CLASS}
             >
               {autoplay.action === "pause" ? (
                 <Pause className="size-icon-sm" aria-hidden="true" />
@@ -138,7 +127,7 @@ export function FeaturedReviewsCarousel({ reviews }: FeaturedReviewsCarouselProp
             onClick={() => emblaApi?.scrollPrev()}
             disabled={!canScrollPrev}
             aria-label={t("pagination.previous")}
-            className={CONTROL_BUTTON_CLASS}
+            className={CAROUSEL_CONTROL_BUTTON_CLASS}
           >
             <PrevIcon className="size-icon-sm" aria-hidden="true" />
           </button>
@@ -147,7 +136,7 @@ export function FeaturedReviewsCarousel({ reviews }: FeaturedReviewsCarouselProp
             onClick={() => emblaApi?.scrollNext()}
             disabled={!canScrollNext}
             aria-label={t("pagination.next")}
-            className={CONTROL_BUTTON_CLASS}
+            className={CAROUSEL_CONTROL_BUTTON_CLASS}
           >
             <NextIcon className="size-icon-sm" aria-hidden="true" />
           </button>

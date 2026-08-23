@@ -5,7 +5,7 @@ import type { LocalizedVideo } from "@/lib/domain/video";
 import { Link } from "@/i18n/navigation";
 import { appHref } from "@/constant/AppRoute.enum";
 import { MediaPill } from "@/components/ui/media-pill";
-import { SURFACE_HOVER_ELEVATION, SURFACE_MEDIA_ZOOM, SURFACE_RAISED } from "@/components/ui/surface";
+import { SURFACE_HOVER_ELEVATION, SURFACE_MEDIA_ZOOM, SURFACE_NOTCHED } from "@/components/ui/surface";
 import { cn } from "@/lib/cn";
 import { PlayOverlay } from "@/components/videos/play-overlay";
 
@@ -54,7 +54,7 @@ export function VideoCard({ headingLevel: Heading = "h3", video, priority = fals
     <li className="flex">
       <Link
         href={appHref.video(video._id)}
-        className={cn("group flex h-full w-full flex-col overflow-hidden", SURFACE_RAISED, SURFACE_HOVER_ELEVATION)}
+        className={cn("group flex h-full w-full flex-col overflow-hidden", SURFACE_NOTCHED, SURFACE_HOVER_ELEVATION)}
       >
         <div className="relative aspect-video bg-surface-muted">
           {posterUrl ? (
@@ -73,6 +73,7 @@ export function VideoCard({ headingLevel: Heading = "h3", video, priority = fals
               <VideoIcon className="size-icon-lg" />
             </span>
           )}
+          <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-16 bg-scrim" />
           <PlayOverlay />
           <MediaPill position="bottom-start" icon={<Play className="size-icon-sm" aria-hidden="true" />}>
             {t("card.watch")}
