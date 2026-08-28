@@ -100,3 +100,33 @@ current policy.
 Real browser verification is part of this repo's definition of done, at 375/768/
 1440 in both locales. See `.claude/skills/browser-visual-qa/SKILL.md` — including
 the horizontal-overflow false positive, which is a documented trap here.
+
+## Rulings inherited from the old root constitution
+
+These were workspace-level rules until the root `CLAUDE.md` was generalised.
+They are Nutrition product decisions, so they live here now.
+
+**Cache tags stay app-local.** `CacheTag`'s tag strings, `CACHE_POLICY`'s
+intervals, every `domain/*.ts` type, `PublicApiRoute`'s route strings, and
+`publishRevalidation`'s HTTP implementation are deliberately not shared.
+Promoting cache tags to `toolkit-common` has been **proposed twice and rejected
+both times** — do not re-propose without a materially new argument.
+
+**The master design brief** at
+`/Users/joe/.claude/plans/nutrition-client-purring-toucan.md` is optional
+historical context, **not authority**. It lives outside the workspace, on one
+machine, unversioned with the repositories — treat it as unavailable by default.
+When present it is useful for architectural and product history, but load only
+the section a task needs and never let a decision depend on it. Anything from it
+that turns out to be load-bearing should be written into this repo's `docs/`
+instead. **Its visual composition rules are not binding on the redesign.**
+
+**The Books Flipbook is a preserved successful experience.** It is not
+redesigned as part of the current work unless the new surrounding design creates
+an inconsistency that genuinely requires it — and it is not a visual source of
+truth for the rest of the site either.
+
+**Two scheduled `apple-design-skill` audits** are planned for this app: a first
+pass at the next meaningful visual checkpoint once the refactor/foundation work
+is coherent, and a full-site pass at the end of the redesign as a final quality
+gate. See the root constitution for how findings must be classified.
