@@ -11,7 +11,9 @@
     "lint": "next lint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "vitest run"
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "verify": "npm run typecheck && npm run test && npm run build"
   },
   "dependencies": {
     "@kira-joo/frontend-toolkit-core": "^0.7.1",

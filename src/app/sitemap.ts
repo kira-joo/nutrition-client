@@ -63,7 +63,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Recipe ids are locale-independent (the same document, resolved per
   // locale at render time) — fetched once against the default locale
   // purely to get the id list, then emitted for every locale.
-  const recipeIds = await fetchAllRecipeIds(routing.defaultLocale);
+  const recipeIds = await fetchAllRecipeIds(routing.defaultLocale).catch(() => []);
   for (const id of recipeIds) {
     for (const locale of routing.locales) {
       entries.push({ url: urlFor(locale, appHref.recipe(id)), changeFrequency: "monthly", priority: 0.6 });
@@ -87,7 +87,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // `buildArabicOnlyAlternates` already documents for the per-page
   // `<link rel="alternate">` case.
   entries.push({ url: urlFor(Locale.AR, AppRoute.Books), changeFrequency: "weekly", priority: 0.7 });
-  const bookSlugs = await fetchAllBookSlugs();
+  const bookSlugs = await fetchAllBookSlugs().catch(() => []);
   for (const slug of bookSlugs) {
     entries.push({ url: urlFor(Locale.AR, appHref.book(slug)), changeFrequency: "monthly", priority: 0.6 });
   }
