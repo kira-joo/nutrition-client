@@ -4,7 +4,7 @@ import { PackagesPricingSection } from "@/sections/packages/packages-pricing-sec
 import { ClosingCtaSection } from "@/sections/shared/closing-cta-section";
 
 interface PackagesPageProps {
-  params: { locale: Locale };
+  params: Promise<{ locale: Locale }>;
 }
 
 /**
@@ -16,7 +16,7 @@ interface PackagesPageProps {
  * independent and one failure must not blank the rest.
  */
 export default async function PackagesPage({ params }: PackagesPageProps) {
-  const { locale } = params;
+  const { locale } = await params;
   const [packagesPageSettings, packages, siteSettings] = await Promise.all([
     getPackagesPageSettings(locale),
     getPackages(locale),

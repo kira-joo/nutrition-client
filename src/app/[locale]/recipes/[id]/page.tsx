@@ -4,7 +4,7 @@ import { getRecipe } from "@/lib/data";
 import { RecipeDetail } from "@/sections/recipes/recipe-detail";
 
 interface RecipeDetailPageProps {
-  params: { locale: Locale; id: string };
+  params: Promise<{ locale: Locale; id: string }>;
 }
 
 /** A Mongo ObjectId is exactly 24 hex characters; nothing else can identify a recipe. */
@@ -23,9 +23,10 @@ const OBJECT_ID = /^[0-9a-f]{24}$/i;
  * never succeed.
  */
 export default async function RecipeDetailPage({ params }: RecipeDetailPageProps) {
-  if (!OBJECT_ID.test(params.id)) notFound();
+  const { id, locale } = await params;
+  if (!OBJECT_ID.test(id)) notFound();
 
-  const recipe = await getRecipe(params.id, params.locale);
+  const recipe = await getRecipe(id, locale);
   if (!recipe) notFound();
 
   return <RecipeDetail recipe={recipe} />;

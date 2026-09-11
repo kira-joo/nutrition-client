@@ -4,7 +4,7 @@ import { getCampaign, getFaqSectionsWithItems } from "@/lib/data";
 import { CampaignBlockRenderer } from "@/components/campaigns/campaign-block-renderer";
 
 interface CampaignPageProps {
-  params: { locale: Locale; slug: string };
+  params: Promise<{ locale: Locale; slug: string }>;
 }
 
 /**
@@ -31,11 +31,12 @@ interface CampaignPageProps {
  * campaign that doesn't use the block type at all.
  */
 export default async function CampaignPage({ params }: CampaignPageProps) {
-  const campaign = await getCampaign(params.slug, params.locale);
+  const { slug, locale } = await params;
+  const campaign = await getCampaign(slug, locale);
   if (!campaign) notFound();
 
   const needsFaq = campaign.blocks.some((block) => block.type === "faqRef");
-  const faqSections = needsFaq ? await getFaqSectionsWithItems(params.locale) : [];
+  const faqSections = needsFaq ? await getFaqSectionsWithItems(locale) : [];
 
   return <CampaignBlockRenderer blocks={campaign.blocks} faqSections={faqSections} campaignTitle={campaign.title} />;
 }

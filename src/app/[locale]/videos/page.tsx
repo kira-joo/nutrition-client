@@ -6,8 +6,8 @@ import { VideosGallery } from "@/sections/videos/videos-gallery";
 import { VideosGallerySkeleton } from "@/sections/videos/videos-gallery-skeleton";
 
 interface VideosPageProps {
-  params: { locale: Locale };
-  searchParams: Record<string, string | string[] | undefined>;
+  params: Promise<{ locale: Locale }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
 // Fewer per page than the old dense 9:16 grid used (20): these are large
@@ -20,12 +20,13 @@ const VIDEOS_PER_PAGE = 9;
  * The `Suspense` boundary (rather than a sibling `loading.tsx`) replays the
  * skeleton per page number, matching the Recipes page's rationale.
  */
-export default function VideosPage({ params, searchParams }: VideosPageProps) {
-  const page = parsePage(searchParams.page);
+export default async function VideosPage({ params, searchParams }: VideosPageProps) {
+  const { locale } = await params;
+  const page = parsePage((await searchParams).page);
 
   return (
     <Suspense key={page} fallback={<VideosGallerySkeleton />}>
-      <VideosResults locale={params.locale} page={page} />
+      <VideosResults locale={locale} page={page} />
     </Suspense>
   );
 }

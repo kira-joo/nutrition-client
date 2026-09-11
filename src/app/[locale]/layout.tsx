@@ -61,8 +61,10 @@ const cairo = Cairo({
  * generally (OG images, canonical/alternates), but the correct fix for
  * the favicon specifically is to stop declaring it at all.
  */
-export async function generateMetadata({ params }: { params: { locale: Locale } }): Promise<Metadata> {
-  const t = await getTranslations({ locale: params.locale, namespace: "seo" });
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale: rawLocale } = await params;
+  const locale = rawLocale as Locale;
+  const t = await getTranslations({ locale, namespace: "seo" });
   const title = t("title");
   const description = t("description");
   const ogImage = { url: "/images/logo.png", width: 1536, height: 1024 };
@@ -71,7 +73,7 @@ export async function generateMetadata({ params }: { params: { locale: Locale } 
     metadataBase: siteMetadataBase,
     title: { default: title, template: `%s | ${title}` },
     description,
-    alternates: buildAlternates("", params.locale),
+    alternates: buildAlternates("", locale),
     openGraph: {
       title,
       description,
@@ -97,7 +99,7 @@ export async function generateMetadata({ params }: { params: { locale: Locale } 
 // of this i18n-engine swap.
 interface LocaleLayoutProps {
   children: ReactNode;
-  params: { locale: Locale };
+  params: Promise<{ locale: string }>;
 }
 
 const FALLBACK_SITE_SETTINGS: LocalizedSiteSettings = {
@@ -124,11 +126,13 @@ async function getShellData(locale: Locale) {
 }
 
 const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
-  const { locale } = params;
+  const { locale: rawLocale } = await params;
 
-  if (!routing.locales.includes(locale)) {
+  if (!routing.locales.includes(rawLocale as Locale)) {
     notFound();
   }
+
+  const locale = rawLocale as Locale;
 
   const messages = await getMessages();
   const { siteSettings, doctorProfile, clinicName } = await getShellData(locale);

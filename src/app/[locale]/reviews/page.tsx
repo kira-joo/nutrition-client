@@ -4,8 +4,8 @@ import { parsePage } from "@/lib/pagination/parse-page";
 import { ReviewsGrid } from "@/sections/reviews/reviews-grid";
 
 interface ReviewsPageProps {
-  params: { locale: Locale };
-  searchParams: Record<string, string | string[] | undefined>;
+  params: Promise<{ locale: Locale }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
 /**
@@ -18,8 +18,9 @@ interface ReviewsPageProps {
  * rather than rebuilt.
  */
 export default async function ReviewsPage({ params, searchParams }: ReviewsPageProps) {
-  const page = parsePage(searchParams.page);
-  const result = await getReviews(params.locale, { page });
+  const { locale } = await params;
+  const page = parsePage((await searchParams).page);
+  const result = await getReviews(locale, { page });
 
   return <ReviewsGrid result={result} page={page} />;
 }

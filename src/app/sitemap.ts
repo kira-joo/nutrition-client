@@ -80,7 +80,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
-  // Books is Arabic-only end to end (see `src/middleware.ts`) — every
+  // Books is Arabic-only end to end (see `src/proxy.ts`) — every
   // entry here is emitted ONLY under `Locale.AR`, never looped over
   // `routing.locales` like the blocks above. An `/en/books` entry would
   // advertise a URL that only ever 308s away, exactly the reasoning

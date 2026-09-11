@@ -7,7 +7,7 @@ const intlMiddleware = createMiddleware(routing);
 /** `/en/books` and every path under it (e.g. `/en/books/some-slug`) — Books is Arabic-only, so the English variant never renders; it always redirects to the exact matching Arabic path instead of a misleading 404. Slug and query string are preserved. */
 const ARABIC_ONLY_EN_PREFIX = "/en/books";
 
-export default function middleware(request: NextRequest) {
+export default function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
 
   if (pathname === ARABIC_ONLY_EN_PREFIX || pathname.startsWith(`${ARABIC_ONLY_EN_PREFIX}/`)) {

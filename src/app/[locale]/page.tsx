@@ -25,7 +25,7 @@ import { FaqPreviewSection } from "@/sections/home/faq-preview-section";
 import { ClosingCtaSection } from "@/sections/shared/closing-cta-section";
 
 interface HomePageProps {
-  params: { locale: Locale };
+  params: Promise<{ locale: Locale }>;
 }
 
 /**
@@ -40,7 +40,7 @@ interface HomePageProps {
  * receive resolved strings and never see `{ ar, en }`.
  */
 export default async function HomePage({ params }: HomePageProps) {
-  const { locale } = params;
+  const { locale } = await params;
 
   const [doctorProfile, activeCampaign, packagesPageSettings, packages, siteSettings, reviewsResult, recipesResult, videosResult, faqSections] =
     await Promise.all([

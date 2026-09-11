@@ -44,7 +44,14 @@ export async function POST(request: NextRequest) {
       : [];
 
   for (const tag of tags) {
-    revalidateTag(tag);
+    // Next 16 requires a second argument. `{ expire: 0 }` is the literal
+    // equivalent of the old single-argument call (Next's own docs: "No
+    // second argument (deprecated) — behaves like `{ expire: 0 }`") —
+    // immediate invalidation, no stale-while-revalidate window. This
+    // route exists for on-demand invalidation right after a write commits,
+    // so serving stale content afterward (the `"max"` profile) would be a
+    // behavior change, not a like-for-like migration.
+    revalidateTag(tag, { expire: 0 });
   }
 
   return NextResponse.json({ revalidated: true, tags });

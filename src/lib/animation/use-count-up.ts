@@ -10,7 +10,7 @@ const VIEWPORT_MARGIN = "0px 0px -8% 0px";
 
 export interface UseCountUpResult {
   /** Attach to the element wrapping the figure. */
-  ref: React.RefObject<HTMLSpanElement>;
+  ref: React.RefObject<HTMLSpanElement | null>;
   /** The figure to paint right now, already formatted. */
   display: string;
 }
