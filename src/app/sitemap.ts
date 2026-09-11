@@ -25,7 +25,6 @@ function urlFor(locale: string, path: string) {
 async function fetchAllRecipeIds(locale: LocalizedLocale): Promise<string[]> {
   const ids: string[] = [];
   let page = 1;
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     const result = await getRecipes(locale, { page, limit: RECIPES_PER_PAGE });
     ids.push(...result.data.map((recipe) => recipe._id));
@@ -40,7 +39,6 @@ async function fetchAllRecipeIds(locale: LocalizedLocale): Promise<string[]> {
 async function fetchAllBookSlugs(): Promise<string[]> {
   const slugs: string[] = [];
   let page = 1;
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     const result = await getBooks({ page, limit: 50 });
     slugs.push(...result.data.map((book) => book.slug));
@@ -76,7 +74,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const activeCampaign = await getActiveCampaign(routing.defaultLocale).catch(() => null);
   if (activeCampaign) {
     for (const locale of routing.locales) {
-      entries.push({ url: urlFor(locale, appHref.campaign(activeCampaign.slug)), changeFrequency: "daily", priority: 0.8 });
+      entries.push({
+        url: urlFor(locale, appHref.campaign(activeCampaign.slug)),
+        changeFrequency: "daily",
+        priority: 0.8,
+      });
     }
   }
 

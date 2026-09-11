@@ -107,7 +107,9 @@ export function CampaignBlockRenderer({ blocks, faqSections, campaignTitle }: Ca
             if (process.env.NODE_ENV === "development") {
               throw new Error(`Unknown campaign block type "${unrecognized.type}" (block id: ${unrecognized.id})`);
             }
-            console.error(`[campaign] Unknown block type "${unrecognized.type}" (block id: ${unrecognized.id}) — skipped`);
+            console.error(
+              `[campaign] Unknown block type "${unrecognized.type}" (block id: ${unrecognized.id}) — skipped`,
+            );
             return null;
           }
         }

@@ -114,7 +114,9 @@
    * a white-text fill. This value passes both. */
   --color-warning: #96600f; /* text-on-background: 5.0:1; white text on warning: 5.3:1 */
   --color-destructive-rgb: 193 67 46;
-  --color-destructive: rgb(var(--color-destructive-rgb)); /* white text on destructive: 5.1:1; text-on-background: 4.9:1 */
+  --color-destructive: rgb(
+    var(--color-destructive-rgb)
+  ); /* white text on destructive: 5.1:1; text-on-background: 4.9:1 */
 
   /* Two focus-ring colors, not one — see the note below the :root block.
    * --color-focus is for controls on light (background/surface) fills.

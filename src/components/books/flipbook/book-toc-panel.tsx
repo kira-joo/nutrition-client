@@ -65,7 +65,12 @@ export function BookTocPanel({ open, onClose, toc, onSelect, isNested = false }:
         >
           <div className="flex items-center justify-between p-4">
             <h2 className="text-lg font-semibold text-slate-900 dark:text-white">فهرس الكتاب</h2>
-            <button type="button" aria-label="إغلاق" onClick={onClose} className="rounded p-1 pointer:hover:bg-slate-100 dark:pointer:hover:bg-slate-700">
+            <button
+              type="button"
+              aria-label="إغلاق"
+              onClick={onClose}
+              className="rounded p-1 pointer:hover:bg-slate-100 dark:pointer:hover:bg-slate-700"
+            >
               <X className="h-5 w-5" aria-hidden="true" />
             </button>
           </div>
@@ -83,8 +88,12 @@ export function BookTocPanel({ open, onClose, toc, onSelect, isNested = false }:
                     className="flex w-full flex-col items-start gap-0.5 rounded px-3 py-2.5 text-right pointer:hover:bg-slate-100 disabled:opacity-40 dark:pointer:hover:bg-slate-700"
                   >
                     <div className="flex w-full items-center justify-between gap-2">
-                      <span className="text-caption font-semibold uppercase tracking-wide text-slate-400">{entry.label}</span>
-                      {entry.pageNumber !== null ? <span className="text-caption text-slate-400">{entry.pageNumber}</span> : null}
+                      <span className="text-caption font-semibold uppercase tracking-wide text-slate-400">
+                        {entry.label}
+                      </span>
+                      {entry.pageNumber !== null ? (
+                        <span className="text-caption text-slate-400">{entry.pageNumber}</span>
+                      ) : null}
                     </div>
                     <span className="text-sm text-slate-900 dark:text-white">{entry.title}</span>
                   </button>

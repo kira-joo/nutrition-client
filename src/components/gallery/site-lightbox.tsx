@@ -114,7 +114,10 @@ export function SiteLightbox({ images, index, onIndexChange, onClose, loop = tru
           {current && (
             <>
               {/* dvh, not vh: a mobile browser's address bar can otherwise push the image past what's actually reachable. */}
-              <div className="relative z-10 max-h-[90dvh] max-w-[92vw] lg:max-w-[85vw]" onClick={(event) => event.stopPropagation()}>
+              <div
+                className="relative z-10 max-h-[90dvh] max-w-[92vw] lg:max-w-[85vw]"
+                onClick={(event) => event.stopPropagation()}
+              >
                 <Image
                   src={current.src}
                   alt={current.alt}
@@ -125,7 +128,12 @@ export function SiteLightbox({ images, index, onIndexChange, onClose, loop = tru
                 />
               </div>
 
-              <button type="button" onClick={onClose} aria-label={t("lightbox.close")} className={cn("absolute end-4 top-4 z-20", CONTROL_BUTTON_CLASSNAME)}>
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label={t("lightbox.close")}
+                className={cn("absolute end-4 top-4 z-20", CONTROL_BUTTON_CLASSNAME)}
+              >
                 <X className="size-icon-md" aria-hidden="true" />
               </button>
 

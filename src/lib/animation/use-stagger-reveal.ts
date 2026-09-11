@@ -91,7 +91,6 @@ export function useStaggerReveal<T extends HTMLElement>(options: UseStaggerRevea
     );
 
     return () => stop();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [direction, distance, duration, ease, start, staggerGap, delay, prefersReducedMotion]);
 
   return ref;

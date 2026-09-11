@@ -12,6 +12,8 @@ import type { LocalizedPackagesPageSettings, PackagesPageSettings } from "@/lib/
  * request on the already-cached data.
  */
 export async function getPackagesPageSettings(locale: LocalizedLocale): Promise<LocalizedPackagesPageSettings> {
-  const raw: PackagesPageSettings = await fetchPublic(getPackagesPageSettingsEndpoint, { tags: [CacheTag.PACKAGES_PAGE_SETTINGS] });
+  const raw: PackagesPageSettings = await fetchPublic(getPackagesPageSettingsEndpoint, {
+    tags: [CacheTag.PACKAGES_PAGE_SETTINGS],
+  });
   return localize(raw, locale);
 }

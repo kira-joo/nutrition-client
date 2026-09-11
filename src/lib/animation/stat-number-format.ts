@@ -35,5 +35,5 @@ export function statNumberFormat(locale: Locale, decimals = 0): Intl.NumberForma
 
 /** How many decimals a stat should hold on to while counting. */
 export function decimalsFor(value: number): number {
-  return Number.isInteger(value) ? 0 : String(value).split(".")[1]?.length ?? 1;
+  return Number.isInteger(value) ? 0 : (String(value).split(".")[1]?.length ?? 1);
 }

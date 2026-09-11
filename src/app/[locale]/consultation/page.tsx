@@ -25,7 +25,9 @@ interface ConsultationPageProps {
 export default async function ConsultationPage({ params, searchParams }: ConsultationPageProps) {
   const { locale } = await params;
   const resolvedSearchParams = await searchParams;
-  const packageKeyParam = Array.isArray(resolvedSearchParams.package) ? resolvedSearchParams.package[0] : resolvedSearchParams.package;
+  const packageKeyParam = Array.isArray(resolvedSearchParams.package)
+    ? resolvedSearchParams.package[0]
+    : resolvedSearchParams.package;
 
   const [doctorProfile, siteSettings, packages] = await Promise.all([
     getDoctorProfile(locale),

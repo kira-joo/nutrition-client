@@ -42,18 +42,27 @@ interface HomePageProps {
 export default async function HomePage({ params }: HomePageProps) {
   const { locale } = await params;
 
-  const [doctorProfile, activeCampaign, packagesPageSettings, packages, siteSettings, reviewsResult, recipesResult, videosResult, faqSections] =
-    await Promise.all([
-      getDoctorProfile(locale),
-      safe(() => getActiveCampaign(locale)),
-      safe(() => getPackagesPageSettings(locale)),
-      safe(() => getPackages(locale)),
-      safe(() => getSiteSettings(locale)),
-      safe(() => getReviews(locale, { limit: 6 })),
-      safe(() => getRecipes(locale, { limit: 3 })),
-      safe(() => getVideos(locale, { limit: 3 })),
-      safe(() => getFaqSectionsWithItems(locale)),
-    ]);
+  const [
+    doctorProfile,
+    activeCampaign,
+    packagesPageSettings,
+    packages,
+    siteSettings,
+    reviewsResult,
+    recipesResult,
+    videosResult,
+    faqSections,
+  ] = await Promise.all([
+    getDoctorProfile(locale),
+    safe(() => getActiveCampaign(locale)),
+    safe(() => getPackagesPageSettings(locale)),
+    safe(() => getPackages(locale)),
+    safe(() => getSiteSettings(locale)),
+    safe(() => getReviews(locale, { limit: 6 })),
+    safe(() => getRecipes(locale, { limit: 3 })),
+    safe(() => getVideos(locale, { limit: 3 })),
+    safe(() => getFaqSectionsWithItems(locale)),
+  ]);
   // Mirrors the shell's own fallback (layout.tsx) for the same reason: a
   // packages-specific currency shouldn't be blocked on an unrelated
   // Site Settings hiccup.
@@ -68,7 +77,11 @@ export default async function HomePage({ params }: HomePageProps) {
       <ProgramHighlightsSection doctorProfile={doctorProfile} />
       <DoctorPreviewSection doctorProfile={doctorProfile} />
       {packagesPageSettings && packages && (
-        <PackagesPreviewSection packages={packages} packagesPageSettings={packagesPageSettings} currencyCode={currencyCode} />
+        <PackagesPreviewSection
+          packages={packages}
+          packagesPageSettings={packagesPageSettings}
+          currencyCode={currencyCode}
+        />
       )}
       {reviewsResult && <ReviewsPreviewSection reviews={reviewsResult.data} />}
       {recipesResult && <RecipesPreviewSection recipes={recipesResult.data} />}

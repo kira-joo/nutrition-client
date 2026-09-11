@@ -18,7 +18,11 @@ export function RichTextBlock({ block }: RichTextBlockProps) {
   return (
     <Container width="narrow">
       {block.heading && <h2 className="text-heading-1 font-bold text-text-primary">{block.heading}</h2>}
-      <p className={cn("whitespace-pre-line text-body-lg leading-relaxed text-text-secondary", block.heading && "mt-4")}>{block.body}</p>
+      <p
+        className={cn("whitespace-pre-line text-body-lg leading-relaxed text-text-secondary", block.heading && "mt-4")}
+      >
+        {block.body}
+      </p>
     </Container>
   );
 }

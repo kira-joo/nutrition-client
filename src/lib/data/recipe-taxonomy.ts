@@ -12,11 +12,15 @@ import type { LocalizedRecipeTaxonomyTerm, RecipeTaxonomyTerm } from "@/lib/doma
  * request on the already-cached data.
  */
 export async function getRecipeCategories(locale: LocalizedLocale): Promise<LocalizedRecipeTaxonomyTerm[]> {
-  const raw: RecipeTaxonomyTerm[] = await fetchPublic(getRecipeCategoriesEndpoint, { tags: [CacheTag.RECIPE_CATEGORIES] });
+  const raw: RecipeTaxonomyTerm[] = await fetchPublic(getRecipeCategoriesEndpoint, {
+    tags: [CacheTag.RECIPE_CATEGORIES],
+  });
   return localize(raw, locale);
 }
 
 export async function getRecipeFoodGroups(locale: LocalizedLocale): Promise<LocalizedRecipeTaxonomyTerm[]> {
-  const raw: RecipeTaxonomyTerm[] = await fetchPublic(getRecipeFoodGroupsEndpoint, { tags: [CacheTag.RECIPE_FOOD_GROUPS] });
+  const raw: RecipeTaxonomyTerm[] = await fetchPublic(getRecipeFoodGroupsEndpoint, {
+    tags: [CacheTag.RECIPE_FOOD_GROUPS],
+  });
   return localize(raw, locale);
 }

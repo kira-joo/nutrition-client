@@ -47,7 +47,7 @@ export function StatFigure({ value, suffix, locale, formatted }: StatFigureProps
    */
   const format = useCallback(
     (current: number) => statNumberFormat(locale, decimalsFor(value)).format(current),
-    [value, locale]
+    [value, locale],
   );
 
   const { ref, display } = useCountUp(value, format);

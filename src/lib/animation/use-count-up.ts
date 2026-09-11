@@ -76,7 +76,7 @@ export function useCountUp(value: number, format: (n: number) => string): UseCou
           onComplete: () => setDisplay(formatRef.current(value)),
         });
       },
-      { margin: VIEWPORT_MARGIN }
+      { margin: VIEWPORT_MARGIN },
     );
 
     return () => {

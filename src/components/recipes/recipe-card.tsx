@@ -96,7 +96,10 @@ export function RecipeCard({ headingLevel: Heading = "h3", recipe, priority = fa
         </p>
 
         {/* Always rendered — see the component doc comment on why this can't be conditional on `metadata.length`. */}
-        <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-1 pt-3 text-caption text-text-muted" style={{ minHeight: "calc(var(--leading-caption) * 1em)" }}>
+        <div
+          className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-1 pt-3 text-caption text-text-muted"
+          style={{ minHeight: "calc(var(--leading-caption) * 1em)" }}
+        >
           {recipe.prepTime && (
             <span className="flex items-center gap-1.5">
               <Clock className="size-icon-sm" aria-hidden="true" />

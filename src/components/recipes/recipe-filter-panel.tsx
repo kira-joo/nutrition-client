@@ -67,7 +67,10 @@ export function RecipeFilterPanel({ filters, categories, foodGroups, labels, onN
           {labels.searchLabel}
         </label>
         <div className="relative mt-2">
-          <Search aria-hidden="true" className="pointer-events-none absolute inset-y-0 start-3 my-auto size-icon-sm text-text-muted" />
+          <Search
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 start-3 my-auto size-icon-sm text-text-muted"
+          />
           <input
             id={searchId}
             name="search"
@@ -145,7 +148,9 @@ function FilterGroup({ legend, name, allLabel, options, value, onChange }: Filte
                    the compact rhythm back wherever a fine pointer exists. */
                 "flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-body-sm transition-colors duration-fast motion-reduce:transition-none touch:min-h-touch-min",
                 "focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-focus",
-                isActive ? "bg-primary-soft font-semibold text-primary" : "text-text-secondary pointer:hover:bg-surface-muted"
+                isActive
+                  ? "bg-primary-soft font-semibold text-primary"
+                  : "text-text-secondary pointer:hover:bg-surface-muted",
               )}
             >
               <input

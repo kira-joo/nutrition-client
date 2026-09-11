@@ -21,7 +21,7 @@ three more real gaps, fixed in order:
   Fixed twice, in the right direction the second time: first the panel
   was cut short at 80% height for an "overlap" effect, which instead read
   as the background ending too early beneath her; the panel now runs the
-  full height of the portrait box with only the *top* pulled in tight, and
+  full height of the portrait box with only the _top_ pulled in tight, and
   the portrait itself uses `object-bottom`. She's now visibly larger,
   anchored to the panel's base, with no empty margin around her.
 - **Desktop hero was too wide and too tall**, and the header logo was
@@ -111,7 +111,7 @@ corrected here:
   those four facts directly against the DOM, not inferred from the code.
 
 `docs/motion-system.md` gained a short section explaining why this is
-*not* layer 2 (Ambient) despite being a continuous loop — layer 2 is
+_not_ layer 2 (Ambient) despite being a continuous loop — layer 2 is
 explicitly barred from carrying information or being consciously
 trackable, and this rail is built to do both.
 
@@ -125,21 +125,21 @@ cards — wearing the new palette and fonts. This pass is the fix: the
 homepage section by section, using the surviving master brief
 (`/Users/joe/.claude/plans/nutrition-client-purring-toucan.md` §5–12) as
 the structural foundation, pushed further where the brief's own
-"design-quality gate" calls for it explicitly (§7: *"never one
-rounded-rectangle-plus-shadow reused for every content type"*).
+"design-quality gate" calls for it explicitly (§7: _"never one
+rounded-rectangle-plus-shadow reused for every content type"_).
 
 ## What's in `docs/redesign-reference/`
 
-| File | What it shows |
-|---|---|
-| `homepage-desktop-1440-ar.png` | Full homepage, 1440px, `/ar` (RTL) |
+| File                           | What it shows                                                                                                                             |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `homepage-desktop-1440-ar.png` | Full homepage, 1440px, `/ar` (RTL)                                                                                                        |
 | `homepage-desktop-1440-en.png` | Same page, `/en` (LTR) — proves the card shape, timeline and asymmetric layouts mirror correctly rather than just flipping text direction |
-| `homepage-mobile-375-ar.png` | Full homepage, 375px, `/ar` — the mobile composition is designed per-section, not a compressed desktop layout |
+| `homepage-mobile-375-ar.png`   | Full homepage, 375px, `/ar` — the mobile composition is designed per-section, not a compressed desktop layout                             |
 
 These are full-page captures of the real implementation. If this direction
 is approved and later changes drift from it, re-generate fresh screenshots
 the same way rather than trusting these to stay pixel-accurate forever —
-but the *decisions* below don't expire.
+but the _decisions_ below don't expire.
 
 ## The design plan
 
@@ -212,7 +212,7 @@ assumed from the class names.
   average computed from a partial fetch as if it were the real number
   would be a fabricated-sounding statistic from real data, which is worse
   than not having one.
-- **Recipe/video card *content* and grid composition** — only their shell
+- **Recipe/video card _content_ and grid composition** — only their shell
   shape and image treatment changed (`SURFACE_NOTCHED`, a bottom scrim for
   chip legibility). They're shared with `/recipes` and `/videos` (the "one
   canonical card per domain" rule already in place before this pass), so

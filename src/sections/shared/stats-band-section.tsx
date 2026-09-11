@@ -38,9 +38,7 @@ export interface StatsBandSectionProps {
 export async function StatsBandSection({ doctorProfile, locale }: StatsBandSectionProps) {
   const t = await getTranslations("layout");
 
-  const stats = (doctorProfile?.stats ?? [])
-    .filter((stat) => stat.enabled)
-    .sort((a, b) => a.order - b.order);
+  const stats = (doctorProfile?.stats ?? []).filter((stat) => stat.enabled).sort((a, b) => a.order - b.order);
 
   if (stats.length === 0) return null;
 
@@ -48,10 +46,7 @@ export async function StatsBandSection({ doctorProfile, locale }: StatsBandSecti
     <Section className="bg-primary-soft">
       <Container>
         <Reveal>
-          <ul
-            aria-label={t("stats.label")}
-            className="grid grid-cols-2 gap-x-6 gap-y-10 text-center lg:grid-cols-4"
-          >
+          <ul aria-label={t("stats.label")} className="grid grid-cols-2 gap-x-6 gap-y-10 text-center lg:grid-cols-4">
             {stats.map((stat) => (
               <li key={`${stat.order}-${stat.label}`} className="flex flex-col items-center gap-1">
                 <p className="text-heading-1 font-bold text-primary">

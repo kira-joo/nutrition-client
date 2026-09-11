@@ -40,8 +40,7 @@ const VARIANT_CLASS: Record<ButtonVariant, string> = {
     "bg-primary text-white shadow-md focus-ring-on-dark pointer:hover:bg-primary-hover pointer:hover:shadow-raised pointer:hover:-translate-y-0.5",
   secondary:
     "bg-surface text-text-primary border-hairline border-border pointer:hover:border-primary pointer:hover:text-primary",
-  soft:
-    "bg-surface text-primary shadow-sm border-hairline border-primary/25 pointer:hover:bg-primary pointer:hover:text-white pointer:hover:border-primary pointer:hover:shadow-md",
+  soft: "bg-surface text-primary shadow-sm border-hairline border-primary/25 pointer:hover:bg-primary pointer:hover:text-white pointer:hover:border-primary pointer:hover:shadow-md",
   ghost: "bg-transparent text-text-primary pointer:hover:text-primary",
 };
 
@@ -84,7 +83,10 @@ type ButtonAsButton = CommonProps &
   Omit<ButtonHTMLAttributes<HTMLButtonElement>, "className" | "children"> & { href?: undefined };
 
 type ButtonAsLink = CommonProps &
-  Omit<ComponentPropsWithoutRef<typeof Link>, "className" | "children"> & { href: ComponentPropsWithoutRef<typeof Link>["href"]; external?: false };
+  Omit<ComponentPropsWithoutRef<typeof Link>, "className" | "children"> & {
+    href: ComponentPropsWithoutRef<typeof Link>["href"];
+    external?: false;
+  };
 
 /**
  * A CMS-authored CTA URL (campaigns) can point off-site — routing that
@@ -93,7 +95,10 @@ type ButtonAsLink = CommonProps &
  * with correct `rel`, still styled identically to every other Button.
  */
 type ButtonAsExternalLink = CommonProps &
-  Omit<ComponentPropsWithoutRef<"a">, "className" | "children" | "href" | "target" | "rel"> & { href: string; external: true };
+  Omit<ComponentPropsWithoutRef<"a">, "className" | "children" | "href" | "target" | "rel"> & {
+    href: string;
+    external: true;
+  };
 
 export type ButtonProps = ButtonAsButton | ButtonAsLink | ButtonAsExternalLink;
 

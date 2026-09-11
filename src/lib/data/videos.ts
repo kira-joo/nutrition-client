@@ -12,8 +12,14 @@ import type { LocalizedVideo, Video, VideosListParams } from "@/lib/domain/video
  * share one cache entry and one revalidation, and `localize` runs per
  * request on the already-cached data.
  */
-export async function getVideos(locale: LocalizedLocale, params: VideosListParams = {}): Promise<PaginatedResponse<LocalizedVideo>> {
-  const raw: PaginatedResponse<Video> = await fetchPublic(listVideosEndpoint, { query: params, tags: [CacheTag.VIDEOS] });
+export async function getVideos(
+  locale: LocalizedLocale,
+  params: VideosListParams = {},
+): Promise<PaginatedResponse<LocalizedVideo>> {
+  const raw: PaginatedResponse<Video> = await fetchPublic(listVideosEndpoint, {
+    query: params,
+    tags: [CacheTag.VIDEOS],
+  });
   return localize(raw, locale);
 }
 
@@ -23,7 +29,7 @@ export async function getVideo(id: string, locale: LocalizedLocale): Promise<Loc
     fetchPublic(getVideoEndpoint, {
       params: { id },
       tags: [CacheTag.VIDEOS, CacheTag.video(id)],
-    })
+    }),
   );
   return raw && localize(raw, locale);
 }

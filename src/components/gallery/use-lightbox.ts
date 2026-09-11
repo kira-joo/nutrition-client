@@ -34,7 +34,7 @@ export function useLightbox() {
     (index: number) => (node: HTMLElement | null) => {
       triggersRef.current[index] = node;
     },
-    []
+    [],
   );
 
   return { openIndex, setOpenIndex, close, registerTrigger, isOpen: openIndex !== null };

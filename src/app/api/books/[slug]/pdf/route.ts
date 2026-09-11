@@ -23,7 +23,10 @@ export async function GET(request: NextRequest, context: { params: Promise<{ slu
   try {
     baseUrl = ServerApiConfig.baseURL;
   } catch {
-    return NextResponse.json({ statusCode: 500, message: "Server misconfigured", error: "SERVER_ERROR" }, { status: 500 });
+    return NextResponse.json(
+      { statusCode: 500, message: "Server misconfigured", error: "SERVER_ERROR" },
+      { status: 500 },
+    );
   }
 
   const { slug } = await context.params;

@@ -55,7 +55,9 @@ for (const variable of declared) {
   if (!variable.startsWith("--text-")) continue;
   const name = variable.slice("--text-".length);
   if (!tokenNames.has(name)) {
-    problems.push(`${variable} is declared in globals.css but "${name}" is not in font-size-tokens.json — it has no text-* utility and tailwind-merge cannot see it`);
+    problems.push(
+      `${variable} is declared in globals.css but "${name}" is not in font-size-tokens.json — it has no text-* utility and tailwind-merge cannot see it`,
+    );
   }
 }
 
@@ -70,18 +72,24 @@ for (const variable of declared) {
  */
 const configSource = readFileSync(path.join(projectRoot, "tailwind.config.ts"), "utf8");
 const alphaCapable = new Set(
-  [...configSource.matchAll(/^\s*"?([a-z-]+)"?:\s*"rgb\(var\(--color-[a-z-]+-rgb\) \/ <alpha-value>\)"/gim)].map((m) => m[1])
+  [...configSource.matchAll(/^\s*"?([a-z-]+)"?:\s*"rgb\(var\(--color-[a-z-]+-rgb\) \/ <alpha-value>\)"/gim)].map(
+    (m) => m[1],
+  ),
 );
 /* A nested `primary: { DEFAULT: ... }` reports its key as `DEFAULT`, so map
    those back to the family name by reading the enclosing key. */
-for (const match of configSource.matchAll(/^\s*([a-z-]+):\s*\{[^}]*?DEFAULT:\s*"rgb\(var\(--color-[a-z-]+-rgb\) \/ <alpha-value>\)"/gims)) {
+for (const match of configSource.matchAll(
+  /^\s*([a-z-]+):\s*\{[^}]*?DEFAULT:\s*"rgb\(var\(--color-[a-z-]+-rgb\) \/ <alpha-value>\)"/gims,
+)) {
   alphaCapable.add(match[1]);
 }
 alphaCapable.delete("DEFAULT");
 
 /* Colour names the config defines at all, so a typo'd utility is not mistaken
    for an alpha problem. */
-const configuredColors = new Set([...configSource.matchAll(/^\s*"?([a-z-]+)"?:\s*"(?:var\(--color-|rgb\(var\(--color-)/gim)].map((m) => m[1]));
+const configuredColors = new Set(
+  [...configSource.matchAll(/^\s*"?([a-z-]+)"?:\s*"(?:var\(--color-|rgb\(var\(--color-)/gim)].map((m) => m[1]),
+);
 
 const sourceDirs = ["src/components", "src/sections", "src/app", "src/pages"];
 const sourceFiles = [];
@@ -95,7 +103,8 @@ const collect = (dir) => {
 };
 sourceDirs.forEach(collect);
 
-const ALPHA_UTILITY = /\b(?:bg|text|border|ring|from|via|to|fill|stroke|divide|shadow|outline|decoration|placeholder|caret|accent)-([a-z][a-z-]*)\/(\d{1,3})\b/g;
+const ALPHA_UTILITY =
+  /\b(?:bg|text|border|ring|from|via|to|fill|stroke|divide|shadow|outline|decoration|placeholder|caret|accent)-([a-z][a-z-]*)\/(\d{1,3})\b/g;
 for (const file of sourceFiles) {
   const contents = readFileSync(path.join(projectRoot, file), "utf8");
   for (const [utility, color] of contents.matchAll(ALPHA_UTILITY)) {
@@ -103,7 +112,7 @@ for (const file of sourceFiles) {
     if (alphaCapable.has(color)) continue;
     problems.push(
       `${file}: "${utility}" cannot compile — "${color}" is declared as an opaque var(), so Tailwind emits no rule for it. ` +
-        `Declare it as rgb(var(--color-${color}-rgb) / <alpha-value>) and add the channel triplet to globals.css.`
+        `Declare it as rgb(var(--color-${color}-rgb) / <alpha-value>) and add the channel triplet to globals.css.`,
     );
   }
 }
@@ -116,5 +125,5 @@ if (problems.length > 0) {
 
 console.log(
   `[verify-design-tokens] ${tokenNames.size} typography tokens verified against globals.css; ` +
-    `${sourceFiles.length} files checked for uncompilable /opacity utilities (${alphaCapable.size} colours are alpha-capable)`
+    `${sourceFiles.length} files checked for uncompilable /opacity utilities (${alphaCapable.size} colours are alpha-capable)`,
 );

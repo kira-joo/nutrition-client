@@ -10,12 +10,12 @@ This repo's `docs/` directory is the primary project reference. Each document ha
 is already written down, and do not copy these into context wholesale — open the
 one the task needs:
 
-| Task | Read first |
-|---|---|
-| Anything touching data, API, caching, revalidation, i18n | `docs/architecture.md` |
-| Visual/design work — palette, type, spacing, card families, contrast | `docs/design-system.md` — **current-state reference, not the redesign spec** |
-| Writing actual styles — token names, Tailwind mappings, right/wrong usage | `docs/theme.md` — accurate for today's code; the vocabulary itself is open |
-| Picking up the project cold, or asking "why is it like this" | `docs/HANDOFF.md` |
+| Task                                                                      | Read first                                                                   |
+| ------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| Anything touching data, API, caching, revalidation, i18n                  | `docs/architecture.md`                                                       |
+| Visual/design work — palette, type, spacing, card families, contrast      | `docs/design-system.md` — **current-state reference, not the redesign spec** |
+| Writing actual styles — token names, Tailwind mappings, right/wrong usage | `docs/theme.md` — accurate for today's code; the vocabulary itself is open   |
+| Picking up the project cold, or asking "why is it like this"              | `docs/HANDOFF.md`                                                            |
 
 `docs/HANDOFF.md` is a snapshot, not a live document — its **non-visual
 conventions** are authoritative, but its branch names, version numbers, and

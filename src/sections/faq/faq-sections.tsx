@@ -76,7 +76,12 @@ export async function FaqSections({ faqSections }: FaqSectionsProps) {
             {sections.map((section) => (
               // `scroll-mt-*` clears the fixed site header, which would
               // otherwise cover the heading a jump link lands on.
-              <section key={section._id} id={sectionAnchor(section._id)} aria-labelledby={`${sectionAnchor(section._id)}-title`} className="scroll-mt-24 lg:scroll-mt-28">
+              <section
+                key={section._id}
+                id={sectionAnchor(section._id)}
+                aria-labelledby={`${sectionAnchor(section._id)}-title`}
+                className="scroll-mt-24 lg:scroll-mt-28"
+              >
                 <h2 id={`${sectionAnchor(section._id)}-title`} className="text-heading-2 font-bold text-text-primary">
                   {section.title}
                 </h2>

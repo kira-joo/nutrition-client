@@ -51,19 +51,19 @@ works.
 
 ### Domain inventory
 
-| Domain | Data function(s) | Endpoint(s) | Shape |
-|---|---|---|---|
-| Site Settings | `getSiteSettings()` | `GET /api/public/site-settings` | singleton |
-| Doctor Profile | `getDoctorProfile()` | `GET /api/public/doctor-profile` | singleton |
-| Packages Page Settings | `getPackagesPageSettings()` | `GET /api/public/packages-page-settings` | singleton |
-| Packages | `getPackages()` | `GET /api/public/packages` | unpaginated array |
-| Recipe taxonomy | `getRecipeCategories()`, `getRecipeFoodGroups()` | `GET /api/public/recipe-categories`, `/recipe-food-groups` | unpaginated arrays |
-| Recipes | `getRecipes(params)`, `getRecipe(id)` | `GET /api/public/recipes`, `/recipes/:id` | paginated list + detail |
-| Reviews | `getReviews(params)` | `GET /api/public/reviews` | paginated list (no detail endpoint) |
-| Videos | `getVideos(params)` | `GET /api/public/videos` | paginated list (no detail endpoint) |
-| FAQ | `getFaqSectionsWithItems()` | `GET /api/public/faq` | sections with items already joined, ordered, published-filtered |
-| Campaigns | `getCampaign(slug)` | `GET /api/public/campaigns/:slug` | single, time-gated |
-| Consultation | `useConsultationRequest()` | `POST /api/consultation-requests` (proxy) → nutrition-staff's `/api/public/consultation-requests` | mutation |
+| Domain                 | Data function(s)                                 | Endpoint(s)                                                                                       | Shape                                                           |
+| ---------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| Site Settings          | `getSiteSettings()`                              | `GET /api/public/site-settings`                                                                   | singleton                                                       |
+| Doctor Profile         | `getDoctorProfile()`                             | `GET /api/public/doctor-profile`                                                                  | singleton                                                       |
+| Packages Page Settings | `getPackagesPageSettings()`                      | `GET /api/public/packages-page-settings`                                                          | singleton                                                       |
+| Packages               | `getPackages()`                                  | `GET /api/public/packages`                                                                        | unpaginated array                                               |
+| Recipe taxonomy        | `getRecipeCategories()`, `getRecipeFoodGroups()` | `GET /api/public/recipe-categories`, `/recipe-food-groups`                                        | unpaginated arrays                                              |
+| Recipes                | `getRecipes(params)`, `getRecipe(id)`            | `GET /api/public/recipes`, `/recipes/:id`                                                         | paginated list + detail                                         |
+| Reviews                | `getReviews(params)`                             | `GET /api/public/reviews`                                                                         | paginated list (no detail endpoint)                             |
+| Videos                 | `getVideos(params)`                              | `GET /api/public/videos`                                                                          | paginated list (no detail endpoint)                             |
+| FAQ                    | `getFaqSectionsWithItems()`                      | `GET /api/public/faq`                                                                             | sections with items already joined, ordered, published-filtered |
+| Campaigns              | `getCampaign(slug)`                              | `GET /api/public/campaigns/:slug`                                                                 | single, time-gated                                              |
+| Consultation           | `useConsultationRequest()`                       | `POST /api/consultation-requests` (proxy) → nutrition-staff's `/api/public/consultation-requests` | mutation                                                        |
 
 All 8 read domains and the consultation proxy were verified against a real
 running nutrition-staff instance and real MongoDB data — see
@@ -85,6 +85,7 @@ next-intl).
 
 Concretely promoted into the toolkit ecosystem during this pass, all
 consumed back from the published package rather than duplicated:
+
 - `resolveLocalized`/`isLocalizedFallback` → `@kira-joo/toolkit-common`
   (pure `LocalizedString` display-side logic, zero framework dependency —
   see "CMS content vs. UI copy" below).
@@ -97,10 +98,10 @@ consumed back from the published package rather than duplicated:
   `requester` now consumes the same exported function instead of a
   private copy — see "Base URL and route composition" below).
 - `createCachePolicyResolver` → `@kira-joo/frontend-toolkit-core` (the
-  tag→revalidate-seconds lookup *mechanism*; the concrete tags/intervals
+  tag→revalidate-seconds lookup _mechanism_; the concrete tags/intervals
   stay local — see "Caching" below).
 - `createLazyEnvBaseUrlConfig` → `@kira-joo/frontend-toolkit-core` (the
-  lazy-env-var-config *pattern*; see "Base URL and route composition").
+  lazy-env-var-config _pattern_; see "Base URL and route composition").
 
 What stays local, and why: `CacheTag`'s concrete string values and
 `CACHE_POLICY`'s concrete intervals (nutrition-specific business
@@ -124,6 +125,7 @@ revision of this phase needed one). No data function or route handler
 ever hardcodes a path string; every `url` reads from `api/public-api-route.ts`.
 
 Two import sources, matched to execution context:
+
 - The 8 read-only domains import `Endpoint`/`MethodType` from
   frontend-toolkit-core's `./server` subpath (consumed by `fetchPublic`,
   which runs only in Server Components/Route Handlers).
@@ -141,7 +143,7 @@ silently never match anything).
 code (`AuthUserProvider`/`QueryParamsRouterProvider`/`ToolkitProviders`)
 together with everything else into one file. Server Components and Route
 Handlers resolve `react` through the "react-server" condition, which
-doesn't export `createContext` — so importing *anything* from that bundle,
+doesn't export `createContext` — so importing _anything_ from that bundle,
 even a plain enum like `MethodType`, crashed Next's "Collecting page data"
 build step with `TypeError: createContext is not a function`, for both
 Route Handlers and ordinary Server Component pages.
@@ -206,8 +208,9 @@ genuinely isn't set until runtime doesn't fail `next build` itself.
 ### Caching
 
 Two concerns, two files, deliberately not merged:
+
 - `src/lib/cache/cache-tags.ts` — the tag **taxonomy** (`CacheTag.
-  SITE_SETTINGS`, `CacheTag.recipe(id)`, etc.). Project-specific business
+SITE_SETTINGS`, `CacheTag.recipe(id)`, etc.). Project-specific business
   contract, not toolkit material — nutrition-staff will own a matching
   copy of the same string values for its Phase 5 revalidation trigger, as
   two intentionally separate project-level definitions, not a shared
@@ -273,7 +276,7 @@ backend afterward to confirm the fix.
 `resolveLocalized(value, locale)`/`isLocalizedFallback(value, locale)` now
 live in `@kira-joo/toolkit-common` — the display-side counterpart to that
 package's `isLocalizedComplete`/`findIncompleteLocalizedPaths` (which gate
-*publishing*, not *display*), resolving a CMS `LocalizedString` `{ar, en}`
+_publishing_, not _display_), resolving a CMS `LocalizedString` `{ar, en}`
 to a plain string with an honest fallback to the other locale when the
 requested one is empty. `useResolveLocalized()`
 (`src/lib/i18n/use-resolve-localized.ts`) is this app's own thin,
@@ -316,6 +319,7 @@ Real, not simulated: a local nutrition-staff instance was run against its
 actual MongoDB data (a temporary Server Component page exercised the data
 functions directly each time, since no real page consumes this layer yet
 — Phase 6 builds that; deleted after each check). Confirmed:
+
 - Every one of the 8 read domains returns real data, in both `ar` and
   `en`, including a genuine partial-translation case (`site-settings`'s
   `defaultSeo.description.en` is empty in the live database) correctly
@@ -327,7 +331,7 @@ functions directly each time, since no real page consumes this layer yet
   nutrition-staff's response.
 - The consultation-requests proxy was posted to directly and confirmed to
   round-trip through to nutrition-staff and back with a real `{success:
-  true}` response.
+true}` response.
 - After introducing `API_URL`'s owned `/api` prefix and switching to
   `joinUrl`, `getSiteSettings()` and the consultation proxy were both
   re-verified against the real backend to confirm the resolved request URL
@@ -340,7 +344,7 @@ functions directly each time, since no real page consumes this layer yet
   correctly nested.
 - A dormant Phase 3 regression, found and fixed during this phase's
   original pass: the `faq` UI-copy namespace (`src/i18n/locales/*/
-  faq.json`) stored flat keys with literal dots (`"section1.q1.question"`)
+faq.json`) stored flat keys with literal dots (`"section1.q1.question"`)
   instead of nested objects, which next-intl rejects outright
   (`INVALID_KEY`) — restructured into proper nested JSON.
 
@@ -399,16 +403,16 @@ nutrition-staff.
   detail page exists yet) or a list-only change.
 - Wired into all 38 mutating routes across the 12 public-facing entities —
   every `POST`/`PUT`/`DELETE` under `src/app/api/{site-settings,
-  doctor-profile,doctor-profile/gallery,packages-page-settings,packages,
-  recipe-categories,recipe-food-groups,recipes,reviews,videos,
-  faq-sections,faq-items,campaigns}/**` calls its entity's `revalidate*`
+doctor-profile,doctor-profile/gallery,packages-page-settings,packages,
+recipe-categories,recipe-food-groups,recipes,reviews,videos,
+faq-sections,faq-items,campaigns}/**` calls its entity's `revalidate*`
   function immediately after the write succeeds. `faq-sections` and
   `faq-items` both call `revalidateFaq()` — nutrition-client's composed
   `GET /api/public/faq` reads from both collections under that one tag.
   Campaign `PUT`/`DELETE` and every `blocks/**` mutation revalidate the
   campaign's `slug`-derived tag (read from the mutation's own return value
   — every block handler already returns the updated campaign document);
-  `PUT` additionally revalidates the *previous* slug unconditionally,
+  `PUT` additionally revalidates the _previous_ slug unconditionally,
   since `slug` itself is updatable and an old cached detail page must not
   linger stale under a slug the campaign no longer uses.
 
@@ -418,10 +422,11 @@ Real, not simulated — but scoped to what was reachable without a real
 nutrition-staff admin account (the live database has no seeded/known test
 credentials; guessing or bypassing auth was not attempted). What was
 verified directly, end to end, with both apps actually running:
+
 - **Cache hit within the fallback window**: a temporary debug page called
   `getRecipes()` (tagged `CacheTag.RECIPES`). The first request produced a
   real `GET /api/public/recipes` line in nutrition-staff's dev server log
-  (cache miss); an immediate second request produced *no* new line at all
+  (cache miss); an immediate second request produced _no_ new line at all
   (cache hit, served entirely from Next's Data Cache, zero requests
   reaching nutrition-staff).
 - **The receiving route**: direct `POST /api/revalidate` calls confirmed
@@ -525,12 +530,14 @@ own types do the narrowing as long as the namespace argument is a literal
 `src/hooks/useI18n.ts` is now a thin wrapper — kept specifically so the
 ~25 existing `const { t } = useI18n(DictionaryFiles.X)` call sites across
 the app didn't need touching in this phase:
+
 ```ts
 const useI18n = <TNamespace extends keyof IntlMessages>(namespace: TNamespace) => {
   const t = useTranslations(namespace);
   return { t };
 };
 ```
+
 The `<TNamespace extends ...>` generic is required, not decorative — if
 `namespace` is typed as the plain union `keyof IntlMessages` instead of a
 per-call-site-inferred generic, `useTranslations`'s own generic inference
@@ -559,6 +566,7 @@ regardless of what methods happen to be attached to the function.
 
 There was no explicit policy under i18next — this makes one, in
 [`src/i18n/request.ts`](../src/i18n/request.ts):
+
 - A missing key **never** crashes rendering, in development or production.
 - In development, it's logged loudly (`console.error`) so it's caught
   before merge.
@@ -597,16 +605,16 @@ plus an `isRTL` boolean. It's deleted. What replaced it, by pattern:
   the two branches were provably the same logical value — no `isRTL` left
   to read at all in those spots.
 - **Genuine layout decisions** (`flexDirection: isRTL ? "row-reverse" :
-  "row"`, flex `order` swaps, `transform: scaleX(-1)` icon mirroring,
+"row"`, flex `order` swaps, `transform: scaleX(-1)` icon mirroring,
   conditional rendering like the Arabic "؟" decoration in the 15-day-camp
   FAQ section, and per-locale size/spacing tweaks for glyph-width
   differences): **kept exactly as they were**, just re-sourced from a new
   `useIsRtl()` hook (`src/hooks/useIsRtl.ts`, one line: `useLocale() ===
-  Locale.AR`) instead of the deleted hook's theme-direction lookup. These
+Locale.AR`) instead of the deleted hook's theme-direction lookup. These
   are real authorial layout/content decisions specific to components that
   either persist unchanged or are already slated for full replacement
   (the 15-day-camp directory folds into the generic Campaign system in a
-  later phase) — rewriting their *logic*, not just their *data source*,
+  later phase) — rewriting their _logic_, not just their _data source_,
   is page-redesign work this phase deliberately doesn't do. Converting
   them to pure CSS would require verifying the resulting visual behavior
   in a browser against the current live site, which is exactly the kind of
@@ -614,7 +622,7 @@ plus an `isRTL` boolean. It's deleted. What replaced it, by pattern:
   be rebuilt anyway.
 
 Net effect: 9 files touched, all genuinely dynamic/branching RTL logic
-preserved 1:1, all *positional* branching eliminated in favor of logical
+preserved 1:1, all _positional_ branching eliminated in favor of logical
 properties.
 
 ### Locale switching preserves route and query
@@ -707,9 +715,9 @@ just present in `scrollWidth`:
 
 ```js
 const scrollWidthFlag = await page.evaluate(
-  () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1
+  () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
 );
-await page.mouse.wheel(500, 0);            // attempt a real horizontal scroll
+await page.mouse.wheel(500, 0); // attempt a real horizontal scroll
 await page.waitForTimeout(100);
 const realScrollX = await page.evaluate(() => window.scrollX);
 // A genuine bug is realScrollX > 1. scrollWidthFlag alone is not a
@@ -803,11 +811,11 @@ method, not assumed from the code change alone.
 
 ### Lighthouse (mobile, simulated throttling), real production build
 
-| Route | Score | LCP | CLS | TBT |
-|---|---|---|---|---|
-| Home | 92 | 3.2s | 0 | 0ms |
-| Packages | 91 | 3.5s | 0 | 10ms |
-| Recipe detail | 85 | 3.6s | 0 | 0ms |
+| Route         | Score | LCP  | CLS | TBT  |
+| ------------- | ----- | ---- | --- | ---- |
+| Home          | 92    | 3.2s | 0   | 0ms  |
+| Packages      | 91    | 3.5s | 0   | 10ms |
+| Recipe detail | 85    | 3.6s | 0   | 0ms  |
 
 Overall scores clear the plan's 90+ target (home/packages) with recipe
 detail just under it. CLS and TBT are already excellent everywhere — LCP
@@ -823,6 +831,7 @@ measured in, but likely pessimistic relative to an actual production
 deployment where both apps are built for production.
 
 Also surfaced, not acted on:
+
 - Recipe detail's hero image has a real but modest (~15KB) responsive-image
   opportunity — `sizes` is already present and reasoned (100vw on mobile
   for a full-width hero), so this wasn't a confident, low-risk fix the way
@@ -877,12 +886,13 @@ case.
 The real fix is adding a true root `src/app/not-found.tsx`, but Next
 hard-requires a true root `src/app/layout.tsx` for that file to exist at
 all (confirmed by trying it: `⨯ not-found.tsx doesn't have a root layout`)
+
 - and adding one would mean moving `<html>`/`<body>` out of
-`[locale]/layout.tsx` and up into the new root layout, since nested
-layouts can't each render their own `<html>` tag. That's a real
-restructuring of the app's most foundational file, not a Phase 8
-empty/error/loading fix - deliberately left as a documented, scoped-out
-finding rather than attempted under this phase's budget.
+  `[locale]/layout.tsx` and up into the new root layout, since nested
+  layouts can't each render their own `<html>` tag. That's a real
+  restructuring of the app's most foundational file, not a Phase 8
+  empty/error/loading fix - deliberately left as a documented, scoped-out
+  finding rather than attempted under this phase's budget.
 
 (Separately, but discovered while testing this: a request with a
 genuinely invalid locale segment, e.g. `/xx/doctor`, never reaches

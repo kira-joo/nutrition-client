@@ -23,7 +23,13 @@ export interface ToPricingCardLabels {
  * showing — the full `/packages` board resolves this from its own duration
  * state; the homepage preview always passes the shortest duration.
  */
-export function toPricingCardProps(pkg: LocalizedPackage, tier: PricingTier | undefined, currencyCode: string, labels: ToPricingCardLabels, featureLimit?: number): PricingCardProps {
+export function toPricingCardProps(
+  pkg: LocalizedPackage,
+  tier: PricingTier | undefined,
+  currencyCode: string,
+  labels: ToPricingCardLabels,
+  featureLimit?: number,
+): PricingCardProps {
   const Icon = ICONS[pkg.icon] ?? Sparkles;
   const savings = tier ? tier.originalPrice - tier.price : 0;
 
@@ -67,7 +73,7 @@ export function toPricingCardProps(pkg: LocalizedPackage, tier: PricingTier | un
         size="lg"
         className={cn(
           "w-full",
-          pkg.popular && "bg-surface text-primary pointer:hover:bg-surface pointer:hover:text-primary-hover"
+          pkg.popular && "bg-surface text-primary pointer:hover:bg-surface pointer:hover:text-primary-hover",
         )}
       >
         {labels.subscribe}

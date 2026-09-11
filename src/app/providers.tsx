@@ -37,7 +37,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       save: t("save"),
       fallbackMessage: t("fallbackMessage"),
     }),
-    [t]
+    [t],
   );
 
   return (

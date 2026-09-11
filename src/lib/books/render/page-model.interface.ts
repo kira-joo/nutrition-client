@@ -6,7 +6,8 @@
  * field (rather than being removed outright) so the shape stays visibly
  * comparable to the server-side one; it is always `false`.
  */
-export type FragmentKind = "content" | "chapterOpener" | "singlePage" | "tocReservation" | "pageBreakMarker" | "pageFooterNote";
+export type FragmentKind =
+  "content" | "chapterOpener" | "singlePage" | "tocReservation" | "pageBreakMarker" | "pageFooterNote";
 
 export interface StreamFragment {
   id: string;

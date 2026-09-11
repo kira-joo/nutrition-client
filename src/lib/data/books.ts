@@ -27,6 +27,6 @@ export async function getBook(slug: string): Promise<Book | null> {
     fetchPublic(getBookEndpoint, {
       params: { slug },
       tags: [CacheTag.BOOKS, CacheTag.book(slug)],
-    })
+    }),
   );
 }

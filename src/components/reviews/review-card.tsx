@@ -88,11 +88,28 @@ export function ReviewCard({ review, variant = "grid", decorative = false, class
   const hasBeforeAfter = Boolean(review.beforeImage && review.afterImage);
   const media = hasBeforeAfter
     ? [
-        { src: review.beforeImage!.secureUrl, alt: `${t("card.before")} — ${review.authorName}`, width: review.beforeImage!.width, height: review.beforeImage!.height },
-        { src: review.afterImage!.secureUrl, alt: `${t("card.after")} — ${review.authorName}`, width: review.afterImage!.width, height: review.afterImage!.height },
+        {
+          src: review.beforeImage!.secureUrl,
+          alt: `${t("card.before")} — ${review.authorName}`,
+          width: review.beforeImage!.width,
+          height: review.beforeImage!.height,
+        },
+        {
+          src: review.afterImage!.secureUrl,
+          alt: `${t("card.after")} — ${review.authorName}`,
+          width: review.afterImage!.width,
+          height: review.afterImage!.height,
+        },
       ]
     : review.image
-      ? [{ src: review.image.secureUrl, alt: t("card.photoAlt", { name: review.authorName }), width: review.image.width, height: review.image.height }]
+      ? [
+          {
+            src: review.image.secureUrl,
+            alt: t("card.photoAlt", { name: review.authorName }),
+            width: review.image.width,
+            height: review.image.height,
+          },
+        ]
       : [];
 
   // The rail's short-and-wide proportion is almost entirely this: a
@@ -110,23 +127,39 @@ export function ReviewCard({ review, variant = "grid", decorative = false, class
         !isRail && "mb-6 break-inside-avoid",
         isFeatured
           ? "bg-primary text-white shadow-package"
-          : cn("border-hairline border-primary/15 bg-surface text-text-primary", isRail ? "shadow-sm" : SURFACE_HOVER_ELEVATION),
-        className
+          : cn(
+              "border-hairline border-primary/15 bg-surface text-text-primary",
+              isRail ? "shadow-sm" : SURFACE_HOVER_ELEVATION,
+            ),
+        className,
       )}
     >
-      <div className={cn("flex items-center justify-between gap-3", isRail ? cn("p-5", isFeatured ? "pb-3" : "pb-2") : "p-5 pb-0")}>
+      <div
+        className={cn(
+          "flex items-center justify-between gap-3",
+          isRail ? cn("p-5", isFeatured ? "pb-3" : "pb-2") : "p-5 pb-0",
+        )}
+      >
         <div className="flex min-w-0 items-center gap-2">
           <span
             aria-hidden="true"
             className={cn(
               "flex shrink-0 items-center justify-center rounded-full",
               isRail ? "size-icon-lg" : "size-icon-xl",
-              isFeatured ? "bg-white/15 text-white" : "bg-primary-soft text-primary"
+              isFeatured ? "bg-white/15 text-white" : "bg-primary-soft text-primary",
             )}
           >
             <UserRound className={isRail ? "size-icon-sm" : "size-icon-md"} />
           </span>
-          <cite className={cn("min-w-0 truncate font-bold not-italic", isRail ? "text-body-sm" : "break-words text-body-lg", isFeatured ? "text-white" : "text-text-primary")}>{review.authorName}</cite>
+          <cite
+            className={cn(
+              "min-w-0 truncate font-bold not-italic",
+              isRail ? "text-body-sm" : "break-words text-body-lg",
+              isFeatured ? "text-white" : "text-text-primary",
+            )}
+          >
+            {review.authorName}
+          </cite>
         </div>
         {review.rating ? (
           <StarRating
@@ -189,7 +222,9 @@ export function ReviewCard({ review, variant = "grid", decorative = false, class
             src={review.image.secureUrl}
             alt={media[0]?.alt ?? ""}
             fill
-            sizes={isRail ? "(min-width: 1024px) 26rem, 20rem" : "(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 100vw"}
+            sizes={
+              isRail ? "(min-width: 1024px) 26rem, 20rem" : "(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 100vw"
+            }
             className={cn("object-cover", isRail ? "object-top" : "", SURFACE_MEDIA_ZOOM)}
             placeholder={review.image.placeholderUrl ? "blur" : undefined}
             blurDataURL={review.image.placeholderUrl}
@@ -202,14 +237,24 @@ export function ReviewCard({ review, variant = "grid", decorative = false, class
 
       <div className={cn("flex flex-1 flex-col gap-2", isRail ? "p-5 pt-3" : "gap-3 p-5")}>
         {review.content && (
-          <blockquote className={cn("min-w-0 break-words", isRail ? "line-clamp-2 text-body-sm" : "text-body", !isFeatured && "text-text-secondary")}>
+          <blockquote
+            className={cn(
+              "min-w-0 break-words",
+              isRail ? "line-clamp-2 text-body-sm" : "text-body",
+              !isFeatured && "text-text-secondary",
+            )}
+          >
             <p>&ldquo;{review.content}&rdquo;</p>
           </blockquote>
         )}
 
         <footer className={cn("flex min-w-0 items-center gap-2", isRail ? "mt-auto" : "mt-auto flex-col gap-2")}>
           {review.authorLabel && (
-            <span className={cn("min-w-0 flex-1 truncate text-caption", isFeatured ? "text-white/70" : "text-text-muted")}>{review.authorLabel}</span>
+            <span
+              className={cn("min-w-0 flex-1 truncate text-caption", isFeatured ? "text-white/70" : "text-text-muted")}
+            >
+              {review.authorLabel}
+            </span>
           )}
 
           {review.sourceUrl && (
@@ -222,12 +267,14 @@ export function ReviewCard({ review, variant = "grid", decorative = false, class
                 isRail
                   ? cn(
                       "flex size-8 shrink-0 items-center justify-center rounded-full transition-colors duration-fast",
-                      isFeatured ? "text-white/60 pointer:hover:text-white" : "text-text-muted pointer:hover:text-primary"
+                      isFeatured
+                        ? "text-white/60 pointer:hover:text-white"
+                        : "text-text-muted pointer:hover:text-primary",
                     )
                   : cn(
                       /* 25px as a bare text line, the smallest real target on the site. */
                       "inline-flex w-fit items-center gap-1.5 text-body-sm font-semibold pointer:hover:underline touch:min-h-touch-min",
-                      isFeatured ? "text-white" : "text-primary"
+                      isFeatured ? "text-white" : "text-primary",
                     )
               }
             >

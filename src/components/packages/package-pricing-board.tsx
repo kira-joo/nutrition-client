@@ -24,7 +24,14 @@ export interface PackagePricingBoardProps {
   header: ReactNode;
 }
 
-export function PackagePricingBoard({ packages, durations, subscribeLabel, currencyCode, labels, header }: PackagePricingBoardProps) {
+export function PackagePricingBoard({
+  packages,
+  durations,
+  subscribeLabel,
+  currencyCode,
+  labels,
+  header,
+}: PackagePricingBoardProps) {
   const [duration, setDuration] = useState<PackageDuration>(durations[0]?.value ?? PACKAGE_DURATIONS[0]);
 
   return (
@@ -46,28 +53,34 @@ export function PackagePricingBoard({ packages, durations, subscribeLabel, curre
           announced to a screen reader as an empty control, and visually just
           a stray bar. */}
       {durations.length > 0 && (
-      <SegmentedControl
-        legend={labels.chooseDuration}
-        options={durations}
-        value={duration}
-        onChange={setDuration}
-        className={cn(
-          "sticky top-16 z-sticky-cta -mx-4 border-b-hairline border-border bg-background/95 px-4 py-3 backdrop-blur",
-          // Matches Container's own sm:px-6 breakpoint exactly — without
-          // this, the sticky bar sat 0.5rem inset from the page's real
-          // gutter between 640–1023px (the negative margin at that width
-          // still only cancelled the 4px/1rem tier).
-          "sm:-mx-6 sm:px-6",
-          "lg:static lg:mx-0 lg:justify-self-end lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none"
-        )}
-      />
+        <SegmentedControl
+          legend={labels.chooseDuration}
+          options={durations}
+          value={duration}
+          onChange={setDuration}
+          className={cn(
+            "sticky top-16 z-sticky-cta -mx-4 border-b-hairline border-border bg-background/95 px-4 py-3 backdrop-blur",
+            // Matches Container's own sm:px-6 breakpoint exactly — without
+            // this, the sticky bar sat 0.5rem inset from the page's real
+            // gutter between 640–1023px (the negative margin at that width
+            // still only cancelled the 4px/1rem tier).
+            "sm:-mx-6 sm:px-6",
+            "lg:static lg:mx-0 lg:justify-self-end lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none",
+          )}
+        />
       )}
 
       {/* Rendered in the exact order the backend returned — no client-side sort, not even to lead with the popular tier. Column count follows the real count: 3+ packages earn a third column instead of forever capping at two and leaving a gap once the CMS grows past it. */}
       <ul className={cn("grid gap-8 sm:grid-cols-2 lg:col-span-2", packages.length >= 3 && "lg:grid-cols-3")}>
         {packages.map((pkg) => (
           <li key={pkg._id} className="flex">
-            <PricingCard {...toPricingCardProps(pkg, pkg.pricingTiers[duration], currencyCode, { ...labels, subscribe: subscribeLabel })} headingLevel="h2" />
+            <PricingCard
+              {...toPricingCardProps(pkg, pkg.pricingTiers[duration], currencyCode, {
+                ...labels,
+                subscribe: subscribeLabel,
+              })}
+              headingLevel="h2"
+            />
           </li>
         ))}
       </ul>

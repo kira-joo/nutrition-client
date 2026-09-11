@@ -65,7 +65,10 @@ async function DoctorPreviewContent({ doctorProfile, body }: { doctorProfile: Lo
                 />
               </div>
             ) : (
-              <div aria-hidden="true" className="mx-auto aspect-[4/5] w-full max-w-md surface-notched bg-surface lg:mx-0" />
+              <div
+                aria-hidden="true"
+                className="mx-auto aspect-[4/5] w-full max-w-md surface-notched bg-surface lg:mx-0"
+              />
             )}
 
             {/* Floating credential chip, overlapping the photo's inline-end
@@ -74,7 +77,10 @@ async function DoctorPreviewContent({ doctorProfile, body }: { doctorProfile: Lo
                 box here), not the image itself, so it never gets cropped by
                 the image's own `overflow-hidden`. */}
             <div className="absolute -bottom-6 end-4 flex items-center gap-3 rounded-2xl bg-surface p-4 shadow-package sm:end-8">
-              <span aria-hidden="true" className="flex size-icon-xl shrink-0 items-center justify-center rounded-full bg-primary text-white">
+              <span
+                aria-hidden="true"
+                className="flex size-icon-xl shrink-0 items-center justify-center rounded-full bg-primary text-white"
+              >
                 <Award className="size-icon-md" />
               </span>
               <div className="flex flex-col">

@@ -25,7 +25,11 @@ export default async function PackagesPage({ params }: PackagesPageProps) {
 
   return (
     <>
-      <PackagesPricingSection packagesPageSettings={packagesPageSettings} packages={packages} currencyCode={siteSettings.currencyCode} />
+      <PackagesPricingSection
+        packagesPageSettings={packagesPageSettings}
+        packages={packages}
+        currencyCode={siteSettings.currencyCode}
+      />
       <ClosingCtaSection />
     </>
   );

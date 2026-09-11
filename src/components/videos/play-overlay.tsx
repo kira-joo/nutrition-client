@@ -40,7 +40,7 @@ export function PlayOverlay({ restingScrim = "hidden", className }: PlayOverlayP
       className={cn(
         "absolute inset-0 flex items-center justify-center bg-scrim transition-opacity duration-base ease-standard pointer:group-hover:opacity-100",
         restingScrim === "hidden" ? "opacity-0" : "opacity-90",
-        className
+        className,
       )}
     >
       <span className="flex size-icon-xl items-center justify-center rounded-full bg-surface/90 text-primary shadow-md">

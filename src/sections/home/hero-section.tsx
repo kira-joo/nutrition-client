@@ -211,7 +211,13 @@ export async function HeroSection({ doctorProfile }: HeroSectionProps) {
               `HeroBackground` behind it has no hard bottom edge at this
               box's scale).
             */}
-              <Reveal direction="none" duration="slow" ease="soft" delay={0.1} className="w-full overflow-hidden xl:overflow-visible">
+              <Reveal
+                direction="none"
+                duration="slow"
+                ease="soft"
+                delay={0.1}
+                className="w-full overflow-hidden xl:overflow-visible"
+              >
                 <div className="relative aspect-[4/5] w-full max-w-sm translate-y-14 lg:mx-0 lg:ms-auto lg:max-w-lg lg:translate-y-6 xl:translate-y-16">
                   <Image
                     src={HERO_PORTRAIT_SRC}

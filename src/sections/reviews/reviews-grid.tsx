@@ -71,9 +71,7 @@ export async function ReviewsGrid({ result, page }: ReviewsGridProps) {
 async function EmptyReviews() {
   const t = await getTranslations("reviews");
 
-  return (
-    <EmptyPanel icon={Quote} message={t("empty.noReviews")} />
-  );
+  return <EmptyPanel icon={Quote} message={t("empty.noReviews")} />;
 }
 
 /** Real links, not buttons — a page is a distinct, shareable URL (matches the Recipes pagination convention). */

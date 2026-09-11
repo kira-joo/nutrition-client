@@ -94,7 +94,7 @@ beforeEach(() => {
       disconnect() {
         observerCallbacks.delete(this.callback);
       }
-    }
+    },
   );
   intersect = (isIntersecting) => {
     act(() => observerCallbacks.forEach((callback) => callback([{ isIntersecting }])));
@@ -303,9 +303,7 @@ describe("carousel autoplay", () => {
       const link = document.createElement("a");
       slides.append(link);
 
-      act(() =>
-        view.result.current.slidesProps.onFocus()
-      );
+      act(() => view.result.current.slidesProps.onFocus());
       dwell(2);
       expect(embla.api.scrollNext).not.toHaveBeenCalled();
 
@@ -314,7 +312,7 @@ describe("carousel autoplay", () => {
         view.result.current.slidesProps.onBlur({
           currentTarget: slides,
           relatedTarget: document.createElement("button"),
-        } as unknown as React.FocusEvent<HTMLElement>)
+        } as unknown as React.FocusEvent<HTMLElement>),
       );
       dwell();
       expect(embla.api.scrollNext).toHaveBeenCalledTimes(1);
@@ -332,7 +330,7 @@ describe("carousel autoplay", () => {
         view.result.current.slidesProps.onBlur({
           currentTarget: slides,
           relatedTarget: second,
-        } as unknown as React.FocusEvent<HTMLElement>)
+        } as unknown as React.FocusEvent<HTMLElement>),
       );
       dwell(2);
       expect(embla.api.scrollNext).not.toHaveBeenCalled();

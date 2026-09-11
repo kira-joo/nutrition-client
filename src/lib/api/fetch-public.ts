@@ -1,5 +1,13 @@
 import "server-only";
-import { buildUrl, joinUrl, toAppError, type Endpoint, type EndpointParams, type EndpointQuery, type EndpointReturn } from "@kira-joo/frontend-toolkit-core/server";
+import {
+  buildUrl,
+  joinUrl,
+  toAppError,
+  type Endpoint,
+  type EndpointParams,
+  type EndpointQuery,
+  type EndpointReturn,
+} from "@kira-joo/frontend-toolkit-core/server";
 import { ServerApiConfig } from "@/lib/api/server-api-config";
 import { resolvePolicyRevalidate } from "@/lib/cache/cache-policy";
 
@@ -44,7 +52,7 @@ interface FetchPublicOptions<TEndpoint extends Endpoint> {
  */
 export async function fetchPublic<TEndpoint extends Endpoint>(
   endpoint: TEndpoint,
-  { params, query, tags, revalidate }: FetchPublicOptions<TEndpoint>
+  { params, query, tags, revalidate }: FetchPublicOptions<TEndpoint>,
 ): Promise<EndpointReturn<TEndpoint>> {
   const path = buildUrl(endpoint.url, params, query);
   const resolvedRevalidate = revalidate ?? resolvePolicyRevalidate(tags);

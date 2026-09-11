@@ -11,7 +11,7 @@ export async function getCampaign(slug: string, locale: LocalizedLocale): Promis
     fetchPublic(getCampaignEndpoint, {
       params: { slug },
       tags: [CacheTag.CAMPAIGNS, CacheTag.campaign(slug)],
-    })
+    }),
   );
   return raw && localize(raw, locale);
 }
@@ -31,6 +31,8 @@ export async function getCampaign(slug: string, locale: LocalizedLocale): Promis
  * wall-clock time.
  */
 export async function getActiveCampaign(locale: LocalizedLocale): Promise<LocalizedCampaign | null> {
-  const raw = await nullableOnNotFound<Campaign>(() => fetchPublic(getActiveCampaignEndpoint, { tags: [CacheTag.CAMPAIGNS] }));
+  const raw = await nullableOnNotFound<Campaign>(() =>
+    fetchPublic(getActiveCampaignEndpoint, { tags: [CacheTag.CAMPAIGNS] }),
+  );
   return raw && localize(raw, locale);
 }

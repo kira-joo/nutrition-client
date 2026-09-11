@@ -97,7 +97,12 @@ export function MobileNavDrawer({ id, isOpen, onClose, clinicName, whatsappNumbe
           <span id={titleId} className="text-heading-3 font-bold text-primary">
             {clinicName}
           </span>
-          <button type="button" onClick={onClose} aria-label={t("nav.closeMenu")} className="flex size-touch-min items-center justify-center text-text-primary">
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label={t("nav.closeMenu")}
+            className="flex size-touch-min items-center justify-center text-text-primary"
+          >
             <X className="size-icon-lg" aria-hidden="true" />
           </button>
         </div>
@@ -130,7 +135,12 @@ export function MobileNavDrawer({ id, isOpen, onClose, clinicName, whatsappNumbe
             </Button>
             <div className="flex items-center justify-center gap-6">
               {whatsappNumber && (
-                <a href={`https://wa.me/${whatsappNumber}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-body-sm text-text-secondary">
+                <a
+                  href={`https://wa.me/${whatsappNumber}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 text-body-sm text-text-secondary"
+                >
                   <MessageCircle className="size-icon-sm" aria-hidden="true" />
                   {t("cta.whatsapp")}
                 </a>

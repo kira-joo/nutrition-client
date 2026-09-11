@@ -57,13 +57,7 @@ export interface CountdownBlock extends CampaignBlockBase {
 }
 
 export type CampaignBlock =
-  | HeroBlock
-  | RichTextBlock
-  | FeatureGridBlock
-  | MediaBlock
-  | CtaBlock
-  | FaqRefBlock
-  | CountdownBlock;
+  HeroBlock | RichTextBlock | FeatureGridBlock | MediaBlock | CtaBlock | FaqRefBlock | CountdownBlock;
 
 /**
  * Mirrors `GET /api/public/campaigns/[slug]`. The endpoint itself already

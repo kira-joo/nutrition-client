@@ -105,7 +105,9 @@ export function SiteHeader({ clinicName, whatsappNumber, phone }: SiteHeaderProp
     <header
       className={cn(
         "fixed inset-x-0 top-0 z-header transition-colors duration-base ease-standard",
-        isScrolled || isMobileOpen ? "border-b-hairline border-border bg-surface/95 shadow-sm backdrop-blur" : "bg-transparent"
+        isScrolled || isMobileOpen
+          ? "border-b-hairline border-border bg-surface/95 shadow-sm backdrop-blur"
+          : "bg-transparent",
       )}
     >
       <Container width="wide">
@@ -204,7 +206,11 @@ export function SiteHeader({ clinicName, whatsappNumber, phone }: SiteHeaderProp
 
           <nav className="hidden items-center gap-8 lg:flex">
             {PRIMARY_NAV_ITEMS.map((item) => (
-              <Link key={item.key} href={item.href} className="text-body font-medium text-text-primary transition-colors duration-fast pointer:hover:text-primary">
+              <Link
+                key={item.key}
+                href={item.href}
+                className="text-body font-medium text-text-primary transition-colors duration-fast pointer:hover:text-primary"
+              >
                 {t(`nav.${item.key}`)}
               </Link>
             ))}
@@ -218,10 +224,19 @@ export function SiteHeader({ clinicName, whatsappNumber, phone }: SiteHeaderProp
                 aria-controls={moreMenuId}
               >
                 {t("nav.more")}
-                <ChevronDown className={cn("size-icon-sm transition-transform duration-fast motion-reduce:transition-none", isMoreOpen && "rotate-180")} aria-hidden="true" />
+                <ChevronDown
+                  className={cn(
+                    "size-icon-sm transition-transform duration-fast motion-reduce:transition-none",
+                    isMoreOpen && "rotate-180",
+                  )}
+                  aria-hidden="true"
+                />
               </button>
               {isMoreOpen && (
-                <div id={moreMenuId} className="absolute end-0 top-full mt-2 min-w-40 rounded-lg border-hairline border-border bg-surface p-2 shadow-md">
+                <div
+                  id={moreMenuId}
+                  className="absolute end-0 top-full mt-2 min-w-40 rounded-lg border-hairline border-border bg-surface p-2 shadow-md"
+                >
                   {MORE_NAV_ITEMS.map((item) => (
                     <Link
                       key={item.key}
@@ -259,7 +274,14 @@ export function SiteHeader({ clinicName, whatsappNumber, phone }: SiteHeaderProp
       </Container>
 
       {hasOpenedDrawer && (
-        <MobileNavDrawer id={mobileDrawerId} isOpen={isMobileOpen} onClose={() => setIsMobileOpen(false)} clinicName={clinicName} whatsappNumber={whatsappNumber} phone={phone} />
+        <MobileNavDrawer
+          id={mobileDrawerId}
+          isOpen={isMobileOpen}
+          onClose={() => setIsMobileOpen(false)}
+          clinicName={clinicName}
+          whatsappNumber={whatsappNumber}
+          phone={phone}
+        />
       )}
     </header>
   );

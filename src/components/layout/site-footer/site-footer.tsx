@@ -48,8 +48,7 @@ const INVERSE_LINK =
  * the gap, which is exactly why an outline bug like this survives a page-by-page
  * look. The visual size is unchanged; it comes from `LABEL_TYPE`, not the tag.
  */
-const COLUMN_HEADING =
-  `flex items-center justify-center gap-2 ${LABEL_TYPE} text-on-inverse-muted sm:justify-start`;
+const COLUMN_HEADING = `flex items-center justify-center gap-2 ${LABEL_TYPE} text-on-inverse-muted sm:justify-start`;
 
 /**
  * "Botanical Trust" — the footer's dark brand-green surface now does real
@@ -153,11 +152,20 @@ export async function SiteFooter({ siteSettings, clinicName, doctorTagline }: Si
                 present on the parent. `mx-auto` forces genuine, symmetric
                 auto-margin centering regardless of direction.
               */}
-                <Image src="/images/footer-logo-trimmed.png" alt={clinicName} width={1624} height={849} sizes="208px" className="mx-auto h-16 w-auto object-contain sm:mx-0" />
+              <Image
+                src="/images/footer-logo-trimmed.png"
+                alt={clinicName}
+                width={1624}
+                height={849}
+                sizes="208px"
+                className="mx-auto h-16 w-auto object-contain sm:mx-0"
+              />
               {/* `mx-auto` keeps the measure limit while centring the block
                   itself on phones — a centred paragraph that still wraps at
                   a comfortable line length, not one stretched edge to edge. */}
-              <p className="mx-auto mt-4 max-w-xs text-body-sm text-on-inverse-muted sm:mx-0">{doctorTagline || t("footer.tagline")}</p>
+              <p className="mx-auto mt-4 max-w-xs text-body-sm text-on-inverse-muted sm:mx-0">
+                {doctorTagline || t("footer.tagline")}
+              </p>
               {sortedSocialLinks.length > 0 && (
                 <div className="mt-6 flex items-center justify-center gap-4 sm:justify-start">
                   {sortedSocialLinks.map((link) => (

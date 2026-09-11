@@ -154,9 +154,15 @@ export function BookImmersiveChrome({
   const [searchOpen, setSearchOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
 
-  const { isVisible, onChromeFocus, onChromeBlur } = useIdleVisibility({ suspended: tocOpen || searchOpen || helpOpen });
+  const { isVisible, onChromeFocus, onChromeBlur } = useIdleVisibility({
+    suspended: tocOpen || searchOpen || helpOpen,
+  });
   const fadeTransition = prefersReducedMotion() ? "none" : `opacity ${CHROME_FADE_MS}ms ease-in-out`;
-  const chromeStyle: React.CSSProperties = { opacity: isVisible ? 1 : 0, transition: fadeTransition, pointerEvents: isVisible ? "auto" : "none" };
+  const chromeStyle: React.CSSProperties = {
+    opacity: isVisible ? 1 : 0,
+    transition: fadeTransition,
+    pointerEvents: isVisible ? "auto" : "none",
+  };
 
   const [pageJumpValue, setPageJumpValue] = useState("");
   function submitPageJump(): void {
@@ -175,11 +181,20 @@ export function BookImmersiveChrome({
   // whatever `Flipbook` itself resolves for rendering.
   const spread = viewMode === "spread" ? spreadFor(currentPageNumber) : null;
   const pageIndicatorText =
-    spread && spread.left !== null && spread.left <= pageCount ? `${spread.right} - ${spread.left}` : String(currentPageNumber);
+    spread && spread.left !== null && spread.left <= pageCount
+      ? `${spread.right} - ${spread.left}`
+      : String(currentPageNumber);
 
   return (
     <Portal>
-      <div ref={panelRef} role="dialog" aria-modal="true" aria-label={bookTitle} dir="rtl" className="fixed inset-0 z-modal flex h-dvh flex-col bg-[#0f3a32]">
+      <div
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label={bookTitle}
+        dir="rtl"
+        className="fixed inset-0 z-modal flex h-dvh flex-col bg-[#0f3a32]"
+      >
         {/* Top bar — exit / spread-toggle+zoom / centered identity / bookmark+share+search+TOC */}
         <div
           className="grid shrink-0 grid-cols-[auto_1fr_auto] items-center gap-2 px-3 py-2.5 sm:px-6"
@@ -216,11 +231,27 @@ export function BookImmersiveChrome({
               <Columns2 className="h-4 w-4" aria-hidden="true" />
             </button>
             <span className="mx-1 hidden h-5 w-px bg-white/15 sm:block" aria-hidden="true" />
-            <button type="button" aria-label="تصغير" title="تصغير" onClick={() => onZoomChange(Math.max(ZOOM_MIN, zoom - ZOOM_STEP))} disabled={zoom <= ZOOM_MIN} className={`hidden sm:flex ${iconButtonClass}`}>
+            <button
+              type="button"
+              aria-label="تصغير"
+              title="تصغير"
+              onClick={() => onZoomChange(Math.max(ZOOM_MIN, zoom - ZOOM_STEP))}
+              disabled={zoom <= ZOOM_MIN}
+              className={`hidden sm:flex ${iconButtonClass}`}
+            >
               <ZoomOut className="h-4 w-4" aria-hidden="true" />
             </button>
-            <span className="hidden min-w-[3rem] text-center text-xs text-white/70 sm:inline">{Math.round(zoom * 100)}%</span>
-            <button type="button" aria-label="تكبير" title="تكبير" onClick={() => onZoomChange(Math.min(ZOOM_MAX, zoom + ZOOM_STEP))} disabled={zoom >= ZOOM_MAX} className={`hidden sm:flex ${iconButtonClass}`}>
+            <span className="hidden min-w-[3rem] text-center text-xs text-white/70 sm:inline">
+              {Math.round(zoom * 100)}%
+            </span>
+            <button
+              type="button"
+              aria-label="تكبير"
+              title="تكبير"
+              onClick={() => onZoomChange(Math.min(ZOOM_MAX, zoom + ZOOM_STEP))}
+              disabled={zoom >= ZOOM_MAX}
+              className={`hidden sm:flex ${iconButtonClass}`}
+            >
               <ZoomIn className="h-4 w-4" aria-hidden="true" />
             </button>
           </div>
@@ -240,7 +271,13 @@ export function BookImmersiveChrome({
             >
               <Bookmark className="h-4 w-4" aria-hidden="true" fill={isBookmarked ? "currentColor" : "none"} />
             </button>
-            <button type="button" aria-label="مشاركة الكتاب" title={shareCopied ? "تم نسخ الرابط" : "مشاركة الكتاب"} onClick={onShare} className={iconButtonClass}>
+            <button
+              type="button"
+              aria-label="مشاركة الكتاب"
+              title={shareCopied ? "تم نسخ الرابط" : "مشاركة الكتاب"}
+              onClick={onShare}
+              className={iconButtonClass}
+            >
               <Share2 className="h-4 w-4" aria-hidden="true" />
             </button>
             <button
@@ -252,7 +289,13 @@ export function BookImmersiveChrome({
             >
               <Search className="h-4 w-4" aria-hidden="true" />
             </button>
-            <button type="button" aria-label="فهرس الكتاب" title="فهرس الكتاب" onClick={onOpenToc} className={iconButtonClass}>
+            <button
+              type="button"
+              aria-label="فهرس الكتاب"
+              title="فهرس الكتاب"
+              onClick={onOpenToc}
+              className={iconButtonClass}
+            >
               <List className="h-4 w-4" aria-hidden="true" />
             </button>
           </div>
@@ -260,7 +303,12 @@ export function BookImmersiveChrome({
 
         {/* Search — a real inline panel, not a second Portal; suspends idle-fade while open (see useIdleVisibility above) */}
         {searchOpen ? (
-          <div className="mx-3 mb-1 shrink-0 rounded-lg bg-black/30 p-3 sm:mx-6" style={chromeStyle} onFocus={onChromeFocus} onBlur={onChromeBlur}>
+          <div
+            className="mx-3 mb-1 shrink-0 rounded-lg bg-black/30 p-3 sm:mx-6"
+            style={chromeStyle}
+            onFocus={onChromeFocus}
+            onBlur={onChromeBlur}
+          >
             <input
               type="text"
               autoFocus
@@ -341,12 +389,29 @@ export function BookImmersiveChrome({
         </div>
 
         {/* Bottom toolbar — visually secondary to the book: small, translucent, icon-first */}
-        <div className="relative flex shrink-0 flex-wrap items-center justify-center gap-1 px-3 py-3 sm:gap-2" style={chromeStyle} onFocus={onChromeFocus} onBlur={onChromeBlur}>
-          <button type="button" aria-label="الصفحة الأولى" title="الصفحة الأولى" onClick={onGoToStart} className={iconButtonClass}>
+        <div
+          className="relative flex shrink-0 flex-wrap items-center justify-center gap-1 px-3 py-3 sm:gap-2"
+          style={chromeStyle}
+          onFocus={onChromeFocus}
+          onBlur={onChromeBlur}
+        >
+          <button
+            type="button"
+            aria-label="الصفحة الأولى"
+            title="الصفحة الأولى"
+            onClick={onGoToStart}
+            className={iconButtonClass}
+          >
             <SkipForward className="h-4 w-4 rotate-180" aria-hidden="true" />
           </button>
 
-          <button type="button" aria-label="الصفحة السابقة" title="الصفحة السابقة" onClick={onPrev} className={`sm:hidden ${iconButtonClass}`}>
+          <button
+            type="button"
+            aria-label="الصفحة السابقة"
+            title="الصفحة السابقة"
+            onClick={onPrev}
+            className={`sm:hidden ${iconButtonClass}`}
+          >
             <ChevronRight className="h-4 w-4" aria-hidden="true" />
           </button>
 
@@ -354,11 +419,23 @@ export function BookImmersiveChrome({
             {pageIndicatorText} / {pageCount || "—"}
           </span>
 
-          <button type="button" aria-label="الصفحة التالية" title="الصفحة التالية" onClick={onNext} className={`sm:hidden ${iconButtonClass}`}>
+          <button
+            type="button"
+            aria-label="الصفحة التالية"
+            title="الصفحة التالية"
+            onClick={onNext}
+            className={`sm:hidden ${iconButtonClass}`}
+          >
             <ChevronLeft className="h-4 w-4" aria-hidden="true" />
           </button>
 
-          <button type="button" aria-label="الصفحة الأخيرة" title="الصفحة الأخيرة" onClick={onGoToEnd} className={iconButtonClass}>
+          <button
+            type="button"
+            aria-label="الصفحة الأخيرة"
+            title="الصفحة الأخيرة"
+            onClick={onGoToEnd}
+            className={iconButtonClass}
+          >
             <SkipBack className="h-4 w-4 rotate-180" aria-hidden="true" />
           </button>
 
@@ -383,8 +460,18 @@ export function BookImmersiveChrome({
 
           <span className="mx-1 h-5 w-px bg-white/15" aria-hidden="true" />
 
-          <button type="button" aria-label={soundEnabled ? "إيقاف صوت الصفحات" : "تفعيل صوت الصفحات"} title={soundEnabled ? "إيقاف صوت الصفحات" : "تفعيل صوت الصفحات"} onClick={onToggleSound} className={iconButtonClass}>
-            {soundEnabled ? <Volume2 className="h-4 w-4" aria-hidden="true" /> : <VolumeX className="h-4 w-4" aria-hidden="true" />}
+          <button
+            type="button"
+            aria-label={soundEnabled ? "إيقاف صوت الصفحات" : "تفعيل صوت الصفحات"}
+            title={soundEnabled ? "إيقاف صوت الصفحات" : "تفعيل صوت الصفحات"}
+            onClick={onToggleSound}
+            className={iconButtonClass}
+          >
+            {soundEnabled ? (
+              <Volume2 className="h-4 w-4" aria-hidden="true" />
+            ) : (
+              <VolumeX className="h-4 w-4" aria-hidden="true" />
+            )}
           </button>
 
           <button
@@ -397,8 +484,18 @@ export function BookImmersiveChrome({
             <HelpCircle className="h-4 w-4" aria-hidden="true" />
           </button>
 
-          <button type="button" aria-label={isFullscreen ? "إنهاء وضع ملء الشاشة" : "ملء الشاشة"} title={isFullscreen ? "إنهاء وضع ملء الشاشة" : "ملء الشاشة"} onClick={toggleFullscreen} className={iconButtonClass}>
-            {isFullscreen ? <Minimize className="h-4 w-4" aria-hidden="true" /> : <Maximize className="h-4 w-4" aria-hidden="true" />}
+          <button
+            type="button"
+            aria-label={isFullscreen ? "إنهاء وضع ملء الشاشة" : "ملء الشاشة"}
+            title={isFullscreen ? "إنهاء وضع ملء الشاشة" : "ملء الشاشة"}
+            onClick={toggleFullscreen}
+            className={iconButtonClass}
+          >
+            {isFullscreen ? (
+              <Minimize className="h-4 w-4" aria-hidden="true" />
+            ) : (
+              <Maximize className="h-4 w-4" aria-hidden="true" />
+            )}
           </button>
 
           {pdf.downloadAllowed ? (

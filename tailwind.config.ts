@@ -27,11 +27,14 @@ type FontSizeEntry = [fontSize: string, configuration: { lineHeight: string }];
  * preflight — every token utility silently absent.
  */
 const lineHeights: Record<string, string> = JSON.parse(
-  readFileSync(path.join(__dirname, "src/lib/design/font-size-tokens.json"), "utf8")
+  readFileSync(path.join(__dirname, "src/lib/design/font-size-tokens.json"), "utf8"),
 );
 
 const fontSize: Record<string, FontSizeEntry> = Object.fromEntries(
-  Object.entries(lineHeights).map(([token, lineHeight]): [string, FontSizeEntry] => [token, [`var(--text-${token})`, { lineHeight }]])
+  Object.entries(lineHeights).map(([token, lineHeight]): [string, FontSizeEntry] => [
+    token,
+    [`var(--text-${token})`, { lineHeight }],
+  ]),
 );
 const config: Config = {
   darkMode: "class",

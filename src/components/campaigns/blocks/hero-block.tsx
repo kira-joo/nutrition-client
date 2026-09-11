@@ -41,12 +41,21 @@ export function HeroBlock({ block, headingLevel = 1 }: HeroBlockProps) {
         />
       )}
       {/* Scrim only when there's an image to darken — an imageless hero needs no gradient over a flat surface color. */}
-      {hasImage && <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />}
+      {hasImage && (
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"
+        />
+      )}
 
       <div className="relative z-10 flex w-full flex-col gap-3 px-4 pb-10 pt-24 sm:px-8 sm:pb-14 lg:px-12">
-        <Heading className={cn("max-w-3xl text-display font-extrabold", hasImage ? "text-white" : "text-text-primary")}>{block.heading}</Heading>
+        <Heading className={cn("max-w-3xl text-display font-extrabold", hasImage ? "text-white" : "text-text-primary")}>
+          {block.heading}
+        </Heading>
         {block.subheading && (
-          <p className={cn("max-w-2xl text-body-lg", hasImage ? "text-white/90" : "text-text-secondary")}>{block.subheading}</p>
+          <p className={cn("max-w-2xl text-body-lg", hasImage ? "text-white/90" : "text-text-secondary")}>
+            {block.subheading}
+          </p>
         )}
         {block.ctaLabel && block.ctaUrl && (
           <CampaignCta label={block.ctaLabel} url={block.ctaUrl} variant="primary" className="mt-4 self-start" />

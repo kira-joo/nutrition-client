@@ -14,9 +14,9 @@
 > visual language, visual hierarchy, motion patterns, and the design-token
 > vocabulary itself.
 >
-> Still binding: accessibility *requirements* (a new palette must be
-> contrast-verified to the same standard recorded here), RTL *correctness*,
-> responsive *quality requirements*, and every non-visual engineering convention.
+> Still binding: accessibility _requirements_ (a new palette must be
+> contrast-verified to the same standard recorded here), RTL _correctness_,
+> responsive _quality requirements_, and every non-visual engineering convention.
 >
 > See `.claude/skills/ui-design-and-redesign/SKILL.md` for the full split.
 
@@ -41,20 +41,20 @@ hex strings). Rather than discard that brand identity, the new palette refines
 it into a real, coherent system — the doctor's existing visual identity
 carries forward; the inconsistency around it does not.
 
-| Token | Value | Role |
-|---|---|---|
-| `primary` | `#146356` | Deep, natural teal-green. Primary CTAs, links, active states, brand marks. |
-| `primary-hover` | `#0f4e44` | Hover/pressed state for anything using `primary`. |
-| `primary-soft` | `#e4f1ec` | Very light minty tint — soft backgrounds, badges, the hero gradient. |
-| `accent` | `#8f5f22` | Warm gold/bronze. A genuinely different hue from primary, reserved for highlight moments: `titleAccent` text, "popular" tags, stat numbers, campaign emphasis. |
-| `accent-hover` / `accent-soft` | `#714a1a` / `#f8ecd9` | Hover and soft-tint pairs for `accent`, mirroring `primary`'s structure. |
-| `background` | `#fbf9f4` | Warm off-white page background — never stark white. |
-| `surface` | `#ffffff` | Cards and raised content sit on true white, creating gentle depth against the warm background. |
-| `surface-muted` | `#f3f0e8` | Alternate section backgrounds, muted panels. |
-| `text-primary` / `text-secondary` / `text-muted` | `#1b231f` / `#445048` / `#5c6660` | A warm near-black rather than pure black, softening the reading experience without sacrificing contrast. |
-| `success` / `warning` / `destructive` | `#237a47` / `#96600f` / `#c1432e` | Deliberately distinct from `primary` and `accent` so status meaning is never ambiguous. |
-| `focus` / `focus-on-dark` | `#1d8570` / `#ffffff` | Two ring colors, not one — see "Accessibility & contrast" below for why a single focus color can't serve both light and dark/filled surfaces. |
-| `disabled-bg` / `disabled-text` | `#e3e0d6` (= `border`) / `#5c6660` (= `text-muted`) | Reused rather than new colors — disabled controls should look like "the border/muted-text pairing," not introduce a fourth neutral tone. |
+| Token                                            | Value                                               | Role                                                                                                                                                           |
+| ------------------------------------------------ | --------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `primary`                                        | `#146356`                                           | Deep, natural teal-green. Primary CTAs, links, active states, brand marks.                                                                                     |
+| `primary-hover`                                  | `#0f4e44`                                           | Hover/pressed state for anything using `primary`.                                                                                                              |
+| `primary-soft`                                   | `#e4f1ec`                                           | Very light minty tint — soft backgrounds, badges, the hero gradient.                                                                                           |
+| `accent`                                         | `#8f5f22`                                           | Warm gold/bronze. A genuinely different hue from primary, reserved for highlight moments: `titleAccent` text, "popular" tags, stat numbers, campaign emphasis. |
+| `accent-hover` / `accent-soft`                   | `#714a1a` / `#f8ecd9`                               | Hover and soft-tint pairs for `accent`, mirroring `primary`'s structure.                                                                                       |
+| `background`                                     | `#fbf9f4`                                           | Warm off-white page background — never stark white.                                                                                                            |
+| `surface`                                        | `#ffffff`                                           | Cards and raised content sit on true white, creating gentle depth against the warm background.                                                                 |
+| `surface-muted`                                  | `#f3f0e8`                                           | Alternate section backgrounds, muted panels.                                                                                                                   |
+| `text-primary` / `text-secondary` / `text-muted` | `#1b231f` / `#445048` / `#5c6660`                   | A warm near-black rather than pure black, softening the reading experience without sacrificing contrast.                                                       |
+| `success` / `warning` / `destructive`            | `#237a47` / `#96600f` / `#c1432e`                   | Deliberately distinct from `primary` and `accent` so status meaning is never ambiguous.                                                                        |
+| `focus` / `focus-on-dark`                        | `#1d8570` / `#ffffff`                               | Two ring colors, not one — see "Accessibility & contrast" below for why a single focus color can't serve both light and dark/filled surfaces.                  |
+| `disabled-bg` / `disabled-text`                  | `#e3e0d6` (= `border`) / `#5c6660` (= `text-muted`) | Reused rather than new colors — disabled controls should look like "the border/muted-text pairing," not introduce a fourth neutral tone.                       |
 
 **This revises the first draft of this palette.** `accent` was originally
 `#c98a3e` and `success`/`warning` were originally `#2f9e5c`/`#b8791c` —
@@ -68,7 +68,7 @@ cosmetic revision, it's a correction of an unverified first pass.
 **Why two hues, not one flat green everywhere**: the brief explicitly warns
 against a single flat green covering the whole site. `primary` (trust,
 action) and `accent` (warmth, celebration) let hierarchy come from color
-*meaning*, not just tone — a "popular" package tag or a campaign countdown
+_meaning_, not just tone — a "popular" package tag or a campaign countdown
 number should never compete visually with a plain "Book Consultation" button,
 and vice versa.
 
@@ -95,7 +95,7 @@ switching typefaces.
 
 **Arabic gets its own line-height, not the Latin values reused.** Arabic text
 runs visually longer than Latin for equivalent content, so `html[lang="ar"]`
-overrides the *content* line-height tokens (`heading-1/2/3`, `body*`) to be
+overrides the _content_ line-height tokens (`heading-1/2/3`, `body*`) to be
 more generous — see `globals.css`. Display and label/caption sizes are left
 alone: display type is already loose enough to not need it, and
 label/caption content is short enough in both languages that added leading
@@ -113,7 +113,7 @@ way (carried over from the approved plan's risk list).
 
 Tailwind's default spacing scale (0.25rem increments) is kept as-is — it's
 already a proven, fine-grained scale and reinventing it would add a second
-mental model for zero benefit. On top of it, a small set of *semantic*
+mental model for zero benefit. On top of it, a small set of _semantic_
 spacing tokens exists for the patterns that repeat everywhere: `section-y` /
 `section-y-sm` (vertical rhythm between major page sections, responsive via
 `clamp()` so it scales smoothly rather than jumping at a breakpoint) and
@@ -143,7 +143,7 @@ per-page rules; this document only fixes the breakpoint vocabulary).
 
 ## Card & surface families (structure, not components yet)
 
-Component implementation comes in Phase 6, but the *system* they'll draw from
+Component implementation comes in Phase 6, but the _system_ they'll draw from
 is fixed now so nothing gets built ad hoc later:
 
 1. **Soft-paper content surface** — `surface` fill, `border` hairline,
@@ -172,30 +172,30 @@ formula (not estimated) against the exact hex values in `globals.css`. AA
 thresholds: **4.5:1** for normal text, **3:1** for large text (≥18pt, or
 ≥14pt bold) and for non-text UI indicators like focus rings (WCAG 1.4.11).
 
-| Foreground | Background | Ratio | Passes |
-|---|---|---|---|
-| `text-primary` | `background` | 15.3:1 | AA + AAA |
-| `text-primary` | `surface` | 16.1:1 | AA + AAA |
-| `text-secondary` | `background` | 8.0:1 | AA + AAA |
-| `text-muted` | `background` | 5.7:1 | AA (normal text) |
-| `text-muted` | `surface` | 6.0:1 | AA (normal text) |
-| `primary` (as text) | `background` / `surface` | 6.8:1 / 7.1:1 | AA + AAA |
-| white | `primary` fill | 7.1:1 | AA + AAA |
-| white | `primary-hover` fill | 9.6:1 | AA + AAA |
-| `text-primary` | `primary-soft` fill | 13.9:1 | AA + AAA |
-| `accent` (as text) | `background` / `surface` | 5.2:1 / 5.5:1 | AA |
-| white | `accent` fill | 5.5:1 | AA |
-| white | `accent-hover` fill | 7.8:1 | AA + AAA |
-| `text-primary` | `accent-soft` fill | 13.8:1 | AA + AAA |
-| white | `success` fill | 5.3:1 | AA |
-| `warning` (as text) | `background` | 5.0:1 | AA |
-| white | `warning` fill | 5.3:1 | AA |
-| white | `destructive` fill | 5.1:1 | AA |
-| `destructive` (as text) | `background` | 4.9:1 | AA |
-| `focus` ring (single) | `surface`/`background` | 4.5:1 / 4.3:1 | Passes 3:1 non-text minimum with margin |
-| `focus-on-dark` inner band (white) | `primary` / `primary-hover` / `accent` / `accent-hover` fill | 7.1:1 / 9.6:1 / 5.5:1 / 7.8:1 | Passes 3:1 non-text minimum |
-| `focus-on-dark` outer band (green) | `background` / `surface` / `primary-soft` / `accent-soft` | 4.3:1 / 4.5:1 / 3.9:1 / 3.9:1 | Passes 3:1 non-text minimum |
-| `disabled-text` | `disabled-bg` | 4.5:1 | Not required by WCAG for inactive controls, but met anyway |
+| Foreground                         | Background                                                   | Ratio                         | Passes                                                     |
+| ---------------------------------- | ------------------------------------------------------------ | ----------------------------- | ---------------------------------------------------------- |
+| `text-primary`                     | `background`                                                 | 15.3:1                        | AA + AAA                                                   |
+| `text-primary`                     | `surface`                                                    | 16.1:1                        | AA + AAA                                                   |
+| `text-secondary`                   | `background`                                                 | 8.0:1                         | AA + AAA                                                   |
+| `text-muted`                       | `background`                                                 | 5.7:1                         | AA (normal text)                                           |
+| `text-muted`                       | `surface`                                                    | 6.0:1                         | AA (normal text)                                           |
+| `primary` (as text)                | `background` / `surface`                                     | 6.8:1 / 7.1:1                 | AA + AAA                                                   |
+| white                              | `primary` fill                                               | 7.1:1                         | AA + AAA                                                   |
+| white                              | `primary-hover` fill                                         | 9.6:1                         | AA + AAA                                                   |
+| `text-primary`                     | `primary-soft` fill                                          | 13.9:1                        | AA + AAA                                                   |
+| `accent` (as text)                 | `background` / `surface`                                     | 5.2:1 / 5.5:1                 | AA                                                         |
+| white                              | `accent` fill                                                | 5.5:1                         | AA                                                         |
+| white                              | `accent-hover` fill                                          | 7.8:1                         | AA + AAA                                                   |
+| `text-primary`                     | `accent-soft` fill                                           | 13.8:1                        | AA + AAA                                                   |
+| white                              | `success` fill                                               | 5.3:1                         | AA                                                         |
+| `warning` (as text)                | `background`                                                 | 5.0:1                         | AA                                                         |
+| white                              | `warning` fill                                               | 5.3:1                         | AA                                                         |
+| white                              | `destructive` fill                                           | 5.1:1                         | AA                                                         |
+| `destructive` (as text)            | `background`                                                 | 4.9:1                         | AA                                                         |
+| `focus` ring (single)              | `surface`/`background`                                       | 4.5:1 / 4.3:1                 | Passes 3:1 non-text minimum with margin                    |
+| `focus-on-dark` inner band (white) | `primary` / `primary-hover` / `accent` / `accent-hover` fill | 7.1:1 / 9.6:1 / 5.5:1 / 7.8:1 | Passes 3:1 non-text minimum                                |
+| `focus-on-dark` outer band (green) | `background` / `surface` / `primary-soft` / `accent-soft`    | 4.3:1 / 4.5:1 / 3.9:1 / 3.9:1 | Passes 3:1 non-text minimum                                |
+| `disabled-text`                    | `disabled-bg`                                                | 4.5:1                         | Not required by WCAG for inactive controls, but met anyway |
 
 **A two-layer ring for filled controls, not a single color swap.** The
 original single `focus` color (`#1d8570`) measured only **~1.6:1 against
@@ -240,7 +240,7 @@ Duration and easing values have exactly one canonical source —
 — not two hand-maintained copies. `motion-tokens.ts` reshapes that JSON into
 GSAP-friendly constants (seconds, not ms) for animation code to import, and
 `scripts/generate-motion-css.mjs` generates the matching
-`--duration-*`/`--ease-*` CSS custom properties from the *same* JSON file
+`--duration-*`/`--ease-*` CSS custom properties from the _same_ JSON file
 for the small number of plain-CSS transitions that aren't GSAP-driven (hover
 color changes, etc). The generator runs automatically via the `predev`/
 `prebuild` npm scripts, so the generated CSS can never drift out of sync
@@ -260,5 +260,5 @@ migration rather than something to work around.
 ## Correct vs. incorrect token usage
 
 See `theme.md`'s "Usage examples" section for the concrete right/wrong code
-samples — this document stays at the level of *why* the system is shaped
+samples — this document stays at the level of _why_ the system is shaped
 this way; `theme.md` is the enforceable reference.

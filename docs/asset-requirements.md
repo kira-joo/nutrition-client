@@ -49,7 +49,7 @@ below it still carries the numbers for what remains outstanding.
   full-canvas bounds, exact single fill match), and the traced vector renders
   genuinely crisp at any size — measured via canvas pixel sampling in a real
   page, not eyeballed. **Not used anyway**, because `siteSettings.logo` (the
-  CMS field the header used to read and the footer still does) is *already* a
+  CMS field the header used to read and the footer still does) is _already_ a
   612×408 PNG of the same composition, with real verified alpha transparency —
   fetched and inspected directly, not assumed from the CMS record. There is no
   quality gap this file would close for the CMS-driven placements. It would only
@@ -87,24 +87,24 @@ below it still carries the numbers for what remains outstanding.
 Same method as the `leaf.svg` audit: structure inspected directly, not inferred
 from the file extension.
 
-| Measured | Value |
-|---|---|
-| Canvas | `viewBox="0 0 1536 1024"` (**3:2** — matches the header/footer spec) |
-| `<path>` elements | 528 |
-| Paths with a `stroke` | 0 (traced fills only, as expected for a logo mark) |
-| Distinct fill colours | 519 |
-| Background | **One path**, `d="M0 0 C506.88 0 …"` spanning the full 1536×1024 canvas,
-  `fill="#FCF7F4"` — an opaque near-white rect, present exactly once |
-| Real content transparency | Confirmed by removing that one path and sampling
-  the render on a canvas in a real page: ~91% of a 30×20 sample grid came back
-  `alpha=0`; the leaf/wordmark/figure paths came back fully opaque in their own
-  colours. A few near-white trace-artifact paths remain (expected from
-  auto-tracing) — harmless on light or white grounds, where they're
-  indistinguishable from the ground |
-| Crispness at real render size | Rendered at the literal 60×40 and 84×56 CSS
-  boxes in a real page and sampled via canvas — genuinely sharp, no bitmap
-  downscale blur, because it's vector geometry even though it was produced by
-  tracing |
+| Measured                                                                      | Value                                                                    |
+| ----------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Canvas                                                                        | `viewBox="0 0 1536 1024"` (**3:2** — matches the header/footer spec)     |
+| `<path>` elements                                                             | 528                                                                      |
+| Paths with a `stroke`                                                         | 0 (traced fills only, as expected for a logo mark)                       |
+| Distinct fill colours                                                         | 519                                                                      |
+| Background                                                                    | **One path**, `d="M0 0 C506.88 0 …"` spanning the full 1536×1024 canvas, |
+| `fill="#FCF7F4"` — an opaque near-white rect, present exactly once            |
+| Real content transparency                                                     | Confirmed by removing that one path and sampling                         |
+| the render on a canvas in a real page: ~91% of a 30×20 sample grid came back  |
+| `alpha=0`; the leaf/wordmark/figure paths came back fully opaque in their own |
+| colours. A few near-white trace-artifact paths remain (expected from          |
+| auto-tracing) — harmless on light or white grounds, where they're             |
+| indistinguishable from the ground                                             |
+| Crispness at real render size                                                 | Rendered at the literal 60×40 and 84×56 CSS                              |
+| boxes in a real page and sampled via canvas — genuinely sharp, no bitmap      |
+| downscale blur, because it's vector geometry even though it was produced by   |
+| tracing                                                                       |
 
 **Why it wasn't used anyway:** the CMS `siteSettings.logo` (612×408 PNG, fetched
 and confirmed to have real alpha at every sampled pixel) is the same design,
@@ -116,13 +116,13 @@ real, answerable question later rather than a re-investigation.
 
 ## Measured rendered sizes
 
-| Surface | 375 | 768 | 1440 | 1920 | Aspect | Served today |
-|---|---|---|---|---|---|---|
-| Header logo | 40×40 | 40×40 | 48×48 | 48×48 | **1:1** | `logo-mobile.png`, 1254×1254 |
-| Footer logo | 84×56 | 84×56 | 84×56 | 84×56 | **3:2** | CMS `siteSettings.logo`, 612×408 |
-| Footer botanical | 112×75 | 176×117 | 320×213 | 320×213 | **3:2** | `books/footer-leaf.png`, unchanged |
-| Hero artwork box | 383×493 | 424×544 | 1440×1037 | 1921×1037 | **0.78 below `xl`, 1.23-1.85 above** | `hero-section.jpg` 1672×941 (desktop), `mobile-hero-section.jpg` 1122×1402 (mobile) |
-| Doctor portrait | ~343×429 | ~384×480 | ~512×640 | ~512×640 | **4:5 box, `object-contain`** | `doctor.png`, 1254×1254 canvas, ~983×1246 real content (alpha bbox) — 0.79:1 |
+| Surface          | 375      | 768      | 1440      | 1920      | Aspect                               | Served today                                                                        |
+| ---------------- | -------- | -------- | --------- | --------- | ------------------------------------ | ----------------------------------------------------------------------------------- |
+| Header logo      | 40×40    | 40×40    | 48×48     | 48×48     | **1:1**                              | `logo-mobile.png`, 1254×1254                                                        |
+| Footer logo      | 84×56    | 84×56    | 84×56     | 84×56     | **3:2**                              | CMS `siteSettings.logo`, 612×408                                                    |
+| Footer botanical | 112×75   | 176×117  | 320×213   | 320×213   | **3:2**                              | `books/footer-leaf.png`, unchanged                                                  |
+| Hero artwork box | 383×493  | 424×544  | 1440×1037 | 1921×1037 | **0.78 below `xl`, 1.23-1.85 above** | `hero-section.jpg` 1672×941 (desktop), `mobile-hero-section.jpg` 1122×1402 (mobile) |
+| Doctor portrait  | ~343×429 | ~384×480 | ~512×640  | ~512×640  | **4:5 box, `object-contain`**        | `doctor.png`, 1254×1254 canvas, ~983×1246 real content (alpha bbox) — 0.79:1        |
 
 ## What is still wrong
 
@@ -162,36 +162,36 @@ against a 48×48 max render is enormous headroom — no retina concern.
 ### 3. Mobile compact / round logo — Delivered
 
 Same file as #2 — there's no separate breakpoint-swap in the header; the
-compact mark is now the *only* header mark, at every width, which is what the
+compact mark is now the _only_ header mark, at every width, which is what the
 original "detailed illustration reads as a smudge at 40px" finding actually
 called for.
 
 ### 4. Footer logo — Still the CMS raster mark, not changed
 
-| | |
-|---|---|
-| Current | `siteSettings.logo`, 612×408 PNG, real transparency, 3:2 |
-| Rendered | 84×56 at every breakpoint |
-| Finding | Legible but soft at real size (zoomed-screenshot evidence, not assumed) |
-| If it should be sharpened | Either a from-scratch higher-res re-export, or a
-  vector logo pipeline (see the `logo.svg` audit above) — both are follow-ups, not
-  done this pass |
+|                                                                                  |                                                                         |
+| -------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| Current                                                                          | `siteSettings.logo`, 612×408 PNG, real transparency, 3:2                |
+| Rendered                                                                         | 84×56 at every breakpoint                                               |
+| Finding                                                                          | Legible but soft at real size (zoomed-screenshot evidence, not assumed) |
+| If it should be sharpened                                                        | Either a from-scratch higher-res re-export, or a                        |
+| vector logo pipeline (see the `logo.svg` audit above) — both are follow-ups, not |
+| done this pass                                                                   |
 
 ### 5. Arabic hero artwork — Delivered, resolution gap noted
 
-| | |
-|---|---|
-| Now | `hero-section.jpg` (desktop, 1672×941) + `mobile-hero-section.jpg`
-  (mobile, 1122×1402), converted from the supplied PNGs — quality-88 JPEG,
-  mean per-channel difference under 1.1/255 against the source, 84-86% smaller |
-| Still wanted | Desktop re-export at **3200×1800** to close the ~15% upscale
-  at 1920px and add real retina headroom. Mobile is already sized correctly |
-| Aspect | 16:9 desktop; **4:5** mobile |
-| Safe area | **Resolved differently than planned.** The supplied artwork is a
-  *symmetric* botanical border around a quiet centre, not a two-zone
-  composition with an offset quiet side — measured column-density left-half vs
-  right-half within 1-3%. So the "leave the inline-start 55% quiet" requirement
-  from the original spec doesn't apply to this artwork; see `constant/hero-artwork.ts` |
+|                                                                                      |                                                                    |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------ |
+| Now                                                                                  | `hero-section.jpg` (desktop, 1672×941) + `mobile-hero-section.jpg` |
+| (mobile, 1122×1402), converted from the supplied PNGs — quality-88 JPEG,             |
+| mean per-channel difference under 1.1/255 against the source, 84-86% smaller         |
+| Still wanted                                                                         | Desktop re-export at **3200×1800** to close the ~15% upscale       |
+| at 1920px and add real retina headroom. Mobile is already sized correctly            |
+| Aspect                                                                               | 16:9 desktop; **4:5** mobile                                       |
+| Safe area                                                                            | **Resolved differently than planned.** The supplied artwork is a   |
+| _symmetric_ botanical border around a quiet centre, not a two-zone                   |
+| composition with an offset quiet side — measured column-density left-half vs         |
+| right-half within 1-3%. So the "leave the inline-start 55% quiet" requirement        |
+| from the original spec doesn't apply to this artwork; see `constant/hero-artwork.ts` |
 
 ### 6. English hero artwork — Delivered from the same pair, not a separate master
 
@@ -206,20 +206,20 @@ locale without a refactor.
 
 ### 7. Doctor hero portrait — Delivered, different presentation than planned
 
-| | |
-|---|---|
-| Supplied | `doctor.png`, 1254×1254 canvas, real alpha (corners sampled
-  `(0,0,0,0)`), content bounding box ~983×1246 — **0.79:1**, almost exactly the
-  4:5 box it now sits in |
-| Presentation | **`object-contain`, no circular mask** — not the
-  `rounded-full`/`object-cover` treatment the original spec assumed. The
-  supplied file is a pre-composed cutout, not an arbitrary rectangular photo, so
-  cropping it into a circle would cut through the shoulders and crossed arms
-  instead of respecting the silhouette the asset already has |
-| Relationship to the CMS avatar | **Deliberately separate.** `doctorProfile.avatar`
-  (731×1280 Cloudinary photo) still renders unchanged everywhere else the
-  doctor's photo appears. This file is hero-only, local, not CMS-managed — see
-  `constant/hero-portrait.ts` |
+|                                                                                |                                                             |
+| ------------------------------------------------------------------------------ | ----------------------------------------------------------- |
+| Supplied                                                                       | `doctor.png`, 1254×1254 canvas, real alpha (corners sampled |
+| `(0,0,0,0)`), content bounding box ~983×1246 — **0.79:1**, almost exactly the  |
+| 4:5 box it now sits in                                                         |
+| Presentation                                                                   | **`object-contain`, no circular mask** — not the            |
+| `rounded-full`/`object-cover` treatment the original spec assumed. The         |
+| supplied file is a pre-composed cutout, not an arbitrary rectangular photo, so |
+| cropping it into a circle would cut through the shoulders and crossed arms     |
+| instead of respecting the silhouette the asset already has                     |
+| Relationship to the CMS avatar                                                 | **Deliberately separate.** `doctorProfile.avatar`           |
+| (731×1280 Cloudinary photo) still renders unchanged everywhere else the        |
+| doctor's photo appears. This file is hero-only, local, not CMS-managed — see   |
+| `constant/hero-portrait.ts`                                                    |
 
 ### 8. Botanical vector, for the line-draw animation — Still blocked
 
@@ -234,23 +234,23 @@ for it either. Full requirements below, unchanged.
 > artwork — it is a structural fact about the file, which is an auto-traced bitmap
 > rather than line art. Inspected, not inferred from the extension:
 >
-> | Measured | Value | Needed |
-> |---|---|---|
-> | File size | **2,430,906 bytes (2.43 MB)** | under ~20 KB |
-> | `<path>` elements | **3,586** | under ~40 |
-> | Paths with a `stroke` | **0** | all the drawn ones |
-> | Paths with a `fill` | **3,586** | leaf bodies only |
-> | `fill="none"` paths | **0** | one per drawn line |
-> | `stroke-width` declarations | **0** | one, uniform |
-> | Closed subpaths | **2,866 of 2,866** | drawn lines must be open |
-> | Distinct fill colours | **3,037** | a handful |
-> | `viewBox` | **missing** (only width/height, 1536×1024) | `0 0 1536 1024` |
-> | `id` attributes | **0** | one per drawn path |
-> | `transform` attributes | **3,586** | none on drawn paths |
-> | Coords with 5+ decimals | 15,118 in the first 400 KB | — |
+> | Measured                    | Value                                      | Needed                   |
+> | --------------------------- | ------------------------------------------ | ------------------------ |
+> | File size                   | **2,430,906 bytes (2.43 MB)**              | under ~20 KB             |
+> | `<path>` elements           | **3,586**                                  | under ~40                |
+> | Paths with a `stroke`       | **0**                                      | all the drawn ones       |
+> | Paths with a `fill`         | **3,586**                                  | leaf bodies only         |
+> | `fill="none"` paths         | **0**                                      | one per drawn line       |
+> | `stroke-width` declarations | **0**                                      | one, uniform             |
+> | Closed subpaths             | **2,866 of 2,866**                         | drawn lines must be open |
+> | Distinct fill colours       | **3,037**                                  | a handful                |
+> | `viewBox`                   | **missing** (only width/height, 1536×1024) | `0 0 1536 1024`          |
+> | `id` attributes             | **0**                                      | one per drawn path       |
+> | `transform` attributes      | **3,586**                                  | none on drawn paths      |
+> | Coords with 5+ decimals     | 15,118 in the first 400 KB                 | —                        |
 >
 > **Why those numbers mean it cannot work.** A line-draw animates
-> `stroke-dashoffset` along the *length of a stroked path*. Every path here is a
+> `stroke-dashoffset` along the _length of a stroked path_. Every path here is a
 > closed, filled polygon with **no stroke**, so there is no length to draw along.
 > Adding strokes would outline 3,586 blobs of colour at once — not a plant being
 > drawn — and animating 3,586 elements would be a serious performance problem
@@ -299,14 +299,14 @@ from the corner with leaves fanning into the page. The animation is a
 **line-draw**: the stem and leaf veins draw on as the footer enters view, once,
 then hold. Nothing loops, nothing moves after settling.
 
-| Requirement | Value |
-|---|---|
-| Format | **SVG**, hand-authored paths — not an auto-traced PNG, which produces thousands of unusable points |
-| Canvas / viewBox | **`viewBox="0 0 1536 1024"`** — keeping today's 3:2 means it drops into the existing box with no layout change |
-| Aspect | 3:2 |
-| Rendered | up to 320×213 |
+| Requirement      | Value                                                                                                                                                                                                               |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Format           | **SVG**, hand-authored paths — not an auto-traced PNG, which produces thousands of unusable points                                                                                                                  |
+| Canvas / viewBox | **`viewBox="0 0 1536 1024"`** — keeping today's 3:2 means it drops into the existing box with no layout change                                                                                                      |
+| Aspect           | 3:2                                                                                                                                                                                                                 |
+| Rendered         | up to 320×213                                                                                                                                                                                                       |
 | RTL/LTR variants | **One asset.** The existing `rtl:-scale-x-100` mirror is correct for a decorative botanical, and a line-draw mirrors cleanly. This is the opposite of the hero, where mirroring photographic content would be wrong |
-| Background | Transparent |
+| Background       | Transparent                                                                                                                                                                                                         |
 
 **What must be real paths, and how they need to be structured:**
 
@@ -332,12 +332,12 @@ must not run under `prefers-reduced-motion`.
 
 ## Summary of what's still needed
 
-| # | File | Source px | Format | Status |
-|---|---|---|---|---|
-| 1 | `icon.svg` (true vector favicon) | vector | SVG | Open, non-blocking |
-| 2 | Desktop hero re-export | 3200×1800 | JPEG | Open — current 1672×941 works but upscales ~15% at 1920px |
-| 3 | Footer logo, sharper | vector, or ≥1024×683 | SVG / PNG-24 | Open — current is legible, not crisp |
-| 4 | Botanical line-art | `viewBox 0 0 1536 1024`, stroked paths | SVG | Open, blocking the animation |
+| #   | File                             | Source px                              | Format       | Status                                                    |
+| --- | -------------------------------- | -------------------------------------- | ------------ | --------------------------------------------------------- |
+| 1   | `icon.svg` (true vector favicon) | vector                                 | SVG          | Open, non-blocking                                        |
+| 2   | Desktop hero re-export           | 3200×1800                              | JPEG         | Open — current 1672×941 works but upscales ~15% at 1920px |
+| 3   | Footer logo, sharper             | vector, or ≥1024×683                   | SVG / PNG-24 | Open — current is legible, not crisp                      |
+| 4   | Botanical line-art               | `viewBox 0 0 1536 1024`, stroked paths | SVG          | Open, blocking the animation                              |
 
 Everything else originally requested (favicon raster set, header/compact logo,
 hero mobile master, doctor portrait) is delivered and browser-verified.

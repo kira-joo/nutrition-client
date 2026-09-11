@@ -21,13 +21,41 @@
 export default function GlobalError({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
   return (
     <html>
-      <body style={{ margin: 0, fontFamily: "system-ui, sans-serif", display: "flex", minHeight: "100vh", alignItems: "center", justifyContent: "center" }}>
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem", padding: "2rem", textAlign: "center", maxWidth: "28rem" }}>
+      <body
+        style={{
+          margin: 0,
+          fontFamily: "system-ui, sans-serif",
+          display: "flex",
+          minHeight: "100vh",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "1rem",
+            padding: "2rem",
+            textAlign: "center",
+            maxWidth: "28rem",
+          }}
+        >
           <p style={{ fontSize: "1.25rem", fontWeight: 700, margin: 0 }}>Something went wrong. / حدث خطأ ما.</p>
           <p style={{ color: "#666", margin: 0 }}>Please try again. / يرجى المحاولة مرة أخرى.</p>
           <button
             onClick={reset}
-            style={{ marginTop: "0.5rem", padding: "0.625rem 1.5rem", borderRadius: "9999px", border: "none", background: "#0f766e", color: "white", fontWeight: 600, cursor: "pointer" }}
+            style={{
+              marginTop: "0.5rem",
+              padding: "0.625rem 1.5rem",
+              borderRadius: "9999px",
+              border: "none",
+              background: "#0f766e",
+              color: "white",
+              fontWeight: 600,
+              cursor: "pointer",
+            }}
           >
             Try again / إعادة المحاولة
           </button>

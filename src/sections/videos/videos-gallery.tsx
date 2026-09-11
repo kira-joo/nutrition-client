@@ -52,9 +52,7 @@ export async function VideosGallery({ result, page }: VideosGalleryProps) {
 async function EmptyVideos() {
   const t = await getTranslations("videos");
 
-  return (
-    <EmptyPanel icon={Clapperboard} message={t("empty.noVideos")} />
-  );
+  return <EmptyPanel icon={Clapperboard} message={t("empty.noVideos")} />;
 }
 
 /** Real links, not buttons — a page is a distinct, shareable URL (mirrors Recipes' pagination). */

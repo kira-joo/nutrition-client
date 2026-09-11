@@ -16,7 +16,13 @@ import type { LocalizedReview, Review, ReviewsListParams } from "@/lib/domain/re
  * share one cache entry and one revalidation, and `localize` runs per
  * request on the already-cached data.
  */
-export async function getReviews(locale: LocalizedLocale, params: ReviewsListParams = {}): Promise<PaginatedResponse<LocalizedReview>> {
-  const raw: PaginatedResponse<Review> = await fetchPublic(listReviewsEndpoint, { query: params, tags: [CacheTag.REVIEWS] });
+export async function getReviews(
+  locale: LocalizedLocale,
+  params: ReviewsListParams = {},
+): Promise<PaginatedResponse<LocalizedReview>> {
+  const raw: PaginatedResponse<Review> = await fetchPublic(listReviewsEndpoint, {
+    query: params,
+    tags: [CacheTag.REVIEWS],
+  });
   return localize(raw, locale);
 }

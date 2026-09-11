@@ -79,17 +79,24 @@ export async function RecipeDetail({ recipe }: RecipeDetailProps) {
             <header className="flex flex-col gap-4">
               <div className="flex flex-wrap items-center gap-2">
                 {recipe.category?.title && (
-                  <span className="rounded-full bg-primary-soft px-3 py-1 text-caption font-semibold text-primary">{recipe.category.title}</span>
+                  <span className="rounded-full bg-primary-soft px-3 py-1 text-caption font-semibold text-primary">
+                    {recipe.category.title}
+                  </span>
                 )}
                 {recipe.foodGroups?.map((group) => (
-                  <span key={group._id} className="rounded-full border-hairline border-border px-3 py-1 text-caption font-medium text-text-secondary">
+                  <span
+                    key={group._id}
+                    className="rounded-full border-hairline border-border px-3 py-1 text-caption font-medium text-text-secondary"
+                  >
                     {group.title}
                   </span>
                 ))}
               </div>
 
               <h1 className="min-w-0 break-words text-display font-extrabold text-text-primary">{recipe.title}</h1>
-              {recipe.description && <p className="max-w-narrow break-words text-body-lg text-text-secondary">{recipe.description}</p>}
+              {recipe.description && (
+                <p className="max-w-narrow break-words text-body-lg text-text-secondary">{recipe.description}</p>
+              )}
             </header>
 
             {recipe.ingredients.length > 0 && (
