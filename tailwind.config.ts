@@ -1,7 +1,5 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import plugin from "tailwindcss/plugin";
-import { toolkitContentGlob, toolkitPreset } from "@kira-joo/frontend-toolkit-tailwind/tailwind-preset";
 import type { Config } from "tailwindcss";
 
 /**
@@ -9,6 +7,24 @@ import type { Config } from "tailwindcss";
  * `src/app/globals.css` — this file only wires those tokens into Tailwind's
  * utility classes, it never introduces a new raw value of its own. See
  * docs/theme.md for the full token reference and usage examples.
+ *
+ * **v4: loaded via `@config` from `globals.css`, not auto-discovered.**
+ * Only `theme.extend` still lives here — it is the one piece of this
+ * contract that is genuinely *computed* (the `fontSize` scale is built from
+ * `font-size-tokens.json`, not hand-written) rather than a static mapping,
+ * and `@config` is v4's own compatibility path for exactly that case:
+ * verified against the real v4 engine that colours (including the
+ * `<alpha-value>` pattern), nested `DEFAULT`/variant keys, and a
+ * JSON-derived `fontSize` all still compile correctly through it.
+ *
+ * `darkMode`, `presets`, `content`, and `plugins` are gone: v4 has no
+ * equivalent config keys for the first and last (see the
+ * `@custom-variant dark`/`@custom-variant pointer`/`@custom-variant touch`
+ * declarations in `globals.css`, which replace them), `presets` is
+ * superseded by `@import "@kira-joo/frontend-toolkit-tailwind/theme.css";`
+ * (the toolkit's own v4 contract), and `content` by v4's automatic
+ * scanning — confirmed none of the four survive being loaded via `@config`
+ * regardless, so leaving them here would be dead, misleading configuration.
  */
 
 /**
@@ -37,36 +53,16 @@ const fontSize: Record<string, FontSizeEntry> = Object.fromEntries(
   ]),
 );
 const config: Config = {
-  darkMode: "class",
   /*
-    The toolkit preset supplies the semantic role vocabulary its components
-    render (`bg-surface`, `border-border-strong`, …). This app's own
-    `theme.extend.colors` below shadows the roles it already names, which is
-    intentional: those resolve straight to the measured `--color-*` values, and
-    the `--ftk-*` aliases in `globals.css` cover the rest. Renaming ~90
-    variables whose contrast ratios are recorded against those names would have
-    been a far larger and riskier change for no runtime difference.
+    The toolkit's `theme.css` (imported in `globals.css`) supplies the
+    semantic role vocabulary its components render (`bg-surface`,
+    `border-border-strong`, …). This app's own `theme.extend.colors` below
+    shadows the roles it already names, which is intentional: those resolve
+    straight to the measured `--color-*` values, and the `--ftk-*` aliases in
+    `globals.css` cover the rest. Renaming ~90 variables whose contrast ratios
+    are recorded against those names would have been a far larger and riskier
+    change for no runtime difference.
   */
-  presets: [toolkitPreset],
-  content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/sections/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-    /*
-      Without this the toolkit's components are compiled from classes this app
-      never scans, so whichever ones it happens to use elsewhere survive and the
-      rest are purged. That is not theoretical: it silently removed the entire
-      visible error state from the consultation form — the site's only lead
-      capture — leaving `text-red-600` computing to the body text colour and
-      `border-red-500` to the neutral border, plus a default blue focus ring on
-      a green-branded site. Measured in the browser, not inferred.
-
-      It has to live here rather than in the preset: Tailwind 3 discards
-      `content` declared by a preset.
-    */
-    toolkitContentGlob,
-  ],
   theme: {
     extend: {
       colors: {
@@ -185,25 +181,5 @@ const config: Config = {
       },
     },
   },
-  plugins: [
-    // Bare `hover:` fires on tap on touch devices (the hover state sticks
-    // until the next tap elsewhere) — every "hover elevation" the redesign
-    // adds to cards/packages must be pointer-gated instead, so it never
-    // shows as a stuck highlight after a tap. Not a Tailwind core variant,
-    // so it needs this one-line plugin rather than a new dependency.
-    plugin(({ addVariant }) => {
-      addVariant("pointer", "@media (hover: hover) and (pointer: fine)");
-      /*
-        `touch:` for TARGET SIZING, which is a different question from hover and
-        needs a different query. `pointer: fine` describes the *primary* pointer,
-        so a touchscreen laptop whose primary pointer is its trackpad matches it —
-        and would have been handed compact 33px rows while still being operated by
-        finger. `any-pointer: coarse` asks whether a coarse pointer is available
-        at all, which is the question that actually decides how big a target must
-        be. Sizing therefore stays compact by default and grows under `touch:`.
-      */
-      addVariant("touch", "@media (any-pointer: coarse)");
-    }),
-  ],
 };
 export default config;

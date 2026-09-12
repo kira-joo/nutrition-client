@@ -72,7 +72,8 @@ _meaning_, not just tone — a "popular" package tag or a campaign countdown
 number should never compete visually with a plain "Book Consultation" button,
 and vice versa.
 
-**Dark mode**: `tailwind.config.ts` declares `darkMode: "class"` so the
+**Dark mode**: `globals.css` declares `@custom-variant dark (&:where(.dark, .dark *));`
+(the Tailwind 4 counterpart to v3's `darkMode: "class"`) so the
 system is structurally ready, but no `.dark` values are shipped in v1. There
 is zero dark-mode precedent anywhere in this ecosystem today, and a
 half-finished dark theme would violate the project's own "no half-finished

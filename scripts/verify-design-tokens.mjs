@@ -17,18 +17,31 @@
  *     the reverse case where a variable is added but never registered (and
  *     so silently has no utility and is unknown to tailwind-merge).
  *
- * It then guards a second, unrelated contract: that every `/opacity` utility
- * the app writes on a token colour can actually be compiled. Tailwind cannot
- * synthesise an alpha channel from an opaque `var(--x)` colour, so such a
- * utility is dropped with no rule and no warning. Ten of them existed here and
- * none worked — including the sticky header's `bg-surface/95`, which left it
- * fully transparent on every page. A colour that takes a modifier must be
- * declared as `rgb(var(--color-x-rgb) / <alpha-value>)`.
+ * It used to guard a second, unrelated contract: that every `/opacity`
+ * utility the app writes on a token colour can actually be compiled. Under
+ * Tailwind 3, an opaque `var(--x)` colour could not synthesise an alpha
+ * channel at all — such a utility was dropped with no rule and no warning,
+ * and ten of them existed here, including the sticky header's `bg-surface/95`,
+ * which left it fully transparent on every page. A colour that took a
+ * modifier had to be declared as `rgb(var(--color-x-rgb) / <alpha-value>)`,
+ * and this script parsed `tailwind.config.ts` as text to check which ones
+ * were.
+ *
+ * **Removed under Tailwind 4, verified rather than assumed**: v4 applies an
+ * opacity modifier via `color-mix()` on the colour's *resolved* value, not by
+ * substituting into an `<alpha-value>` placeholder, so it works uniformly on
+ * every colour regardless of how it's declared — confirmed with a real
+ * compile of `bg-x/50` against a plain `var()`-referencing colour, which
+ * produced a correct `color-mix(in oklab, var(--color-x) 50%, transparent)`
+ * rule. The `<alpha-value>` pattern that remains in `tailwind.config.ts` still
+ * works (loaded via `@config`, itself also verified), but nothing distinct is
+ * true of the colours that carry it any more, so the distinction this script
+ * used to enforce no longer describes a real failure mode.
  *
  * Exits non-zero with the specific mismatch, failing the build rather than
- * shipping invisible text or an uncompiled background.
+ * shipping invisible text.
  */
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
@@ -61,69 +74,10 @@ for (const variable of declared) {
   }
 }
 
-/*
- * Every `<prefix>-<token>/<opacity>` utility written in the app, checked against
- * the colour entries that can actually express alpha.
- *
- * Reads `tailwind.config.ts` as text rather than importing it: the config is
- * TypeScript and reads a JSON file off disk at module scope, so importing it
- * from a plain `.mjs` would need a loader for no benefit — the two things this
- * needs are the colour keys and whether each carries `<alpha-value>`.
- */
-const configSource = readFileSync(path.join(projectRoot, "tailwind.config.ts"), "utf8");
-const alphaCapable = new Set(
-  [...configSource.matchAll(/^\s*"?([a-z-]+)"?:\s*"rgb\(var\(--color-[a-z-]+-rgb\) \/ <alpha-value>\)"/gim)].map(
-    (m) => m[1],
-  ),
-);
-/* A nested `primary: { DEFAULT: ... }` reports its key as `DEFAULT`, so map
-   those back to the family name by reading the enclosing key. */
-for (const match of configSource.matchAll(
-  /^\s*([a-z-]+):\s*\{[^}]*?DEFAULT:\s*"rgb\(var\(--color-[a-z-]+-rgb\) \/ <alpha-value>\)"/gims,
-)) {
-  alphaCapable.add(match[1]);
-}
-alphaCapable.delete("DEFAULT");
-
-/* Colour names the config defines at all, so a typo'd utility is not mistaken
-   for an alpha problem. */
-const configuredColors = new Set(
-  [...configSource.matchAll(/^\s*"?([a-z-]+)"?:\s*"(?:var\(--color-|rgb\(var\(--color-)/gim)].map((m) => m[1]),
-);
-
-const sourceDirs = ["src/components", "src/sections", "src/app", "src/pages"];
-const sourceFiles = [];
-const collect = (dir) => {
-  const abs = path.join(projectRoot, dir);
-  if (!existsSync(abs)) return;
-  for (const entry of readdirSync(abs, { withFileTypes: true })) {
-    if (entry.isDirectory()) collect(path.join(dir, entry.name));
-    else if (/\.(tsx?|jsx?|mdx)$/.test(entry.name)) sourceFiles.push(path.join(dir, entry.name));
-  }
-};
-sourceDirs.forEach(collect);
-
-const ALPHA_UTILITY =
-  /\b(?:bg|text|border|ring|from|via|to|fill|stroke|divide|shadow|outline|decoration|placeholder|caret|accent)-([a-z][a-z-]*)\/(\d{1,3})\b/g;
-for (const file of sourceFiles) {
-  const contents = readFileSync(path.join(projectRoot, file), "utf8");
-  for (const [utility, color] of contents.matchAll(ALPHA_UTILITY)) {
-    if (!configuredColors.has(color)) continue; // not one of ours
-    if (alphaCapable.has(color)) continue;
-    problems.push(
-      `${file}: "${utility}" cannot compile — "${color}" is declared as an opaque var(), so Tailwind emits no rule for it. ` +
-        `Declare it as rgb(var(--color-${color}-rgb) / <alpha-value>) and add the channel triplet to globals.css.`,
-    );
-  }
-}
-
 if (problems.length > 0) {
   console.error("[verify-design-tokens] token contract violation:");
   for (const problem of problems) console.error(`  - ${problem}`);
   process.exit(1);
 }
 
-console.log(
-  `[verify-design-tokens] ${tokenNames.size} typography tokens verified against globals.css; ` +
-    `${sourceFiles.length} files checked for uncompilable /opacity utilities (${alphaCapable.size} colours are alpha-capable)`,
-);
+console.log(`[verify-design-tokens] ${tokenNames.size} typography tokens verified against globals.css`);

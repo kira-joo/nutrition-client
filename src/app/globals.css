@@ -1,11 +1,28 @@
 /* @import must be the first rule in the file (CSS spec requirement) — this
  * is why it isn't inline next to the rest of the motion tokens below. See
  * src/lib/animation/motion-tokens.json for the canonical source. */
+@import "tailwindcss";
+@import "@kira-joo/frontend-toolkit-tailwind/theme.css";
 @import "./_generated/motion-tokens.css";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/*
+ * `theme.extend` (colours, fontSize, spacing, …) still lives in
+ * tailwind.config.ts — loaded via v4's own compatibility path for a
+ * genuinely computed config (fontSize is built from
+ * font-size-tokens.json, not hand-written). See that file's own comment.
+ */
+@config "../../tailwind.config.ts";
+
+/*
+ * v4 has no `darkMode`/`plugins` config keys — replaces
+ * `darkMode: "class"` and the `pointer:`/`touch:` variant plugin
+ * tailwind.config.ts used to carry. Dark mode itself is structurally
+ * supported but not shipped in v1 (see below) — this is the mechanism,
+ * unchanged either way.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant pointer (@media (hover: hover) and (pointer: fine));
+@custom-variant touch (@media (any-pointer: coarse));
 
 /**
  * Design tokens — the single source of truth for every color, type, spacing,
@@ -20,9 +37,8 @@
  * z-indexes) where a semantic token already exists or should exist for a
  * repeating product-level pattern. If nothing here fits, add a token first.
  *
- * Dark mode is structurally supported (`darkMode: "class"` in
- * tailwind.config.ts) but intentionally not shipped in v1 — see
- * docs/design-system.md for why.
+ * Dark mode is structurally supported (`@custom-variant dark` above) but
+ * intentionally not shipped in v1 — see docs/design-system.md for why.
  *
  * Every color pairing below has a verified WCAG contrast ratio recorded in
  * docs/design-system.md ("Accessibility & contrast") — do not add or change
