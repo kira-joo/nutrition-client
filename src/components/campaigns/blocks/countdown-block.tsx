@@ -63,7 +63,11 @@ export function CountdownBlock({ block }: CountdownBlockProps) {
 
   useEffect(() => {
     setRemaining(getRemaining(targetMs));
-    setEndsOnDate(new Intl.DateTimeFormat(locale, { timeZone: APP_TIMEZONE, dateStyle: "long", timeStyle: "short" }).format(targetMs));
+    setEndsOnDate(
+      new Intl.DateTimeFormat(locale, { timeZone: APP_TIMEZONE, dateStyle: "long", timeStyle: "short" }).format(
+        targetMs,
+      ),
+    );
     const interval = setInterval(() => setRemaining(getRemaining(targetMs)), 1000);
     return () => clearInterval(interval);
   }, [targetMs, locale]);
@@ -80,7 +84,9 @@ export function CountdownBlock({ block }: CountdownBlockProps) {
         rather than a value that silently shifts with their own browser's
         timezone. Empty until the client effect above fills it in.
       */}
-      <p className="min-h-[1.5em] text-body text-text-secondary">{endsOnDate && t("countdown.endsOn", { date: endsOnDate })}</p>
+      <p className="min-h-[1.5em] text-body text-text-secondary">
+        {endsOnDate && t("countdown.endsOn", { date: endsOnDate })}
+      </p>
 
       {/*
         `aria-live` wraps only the counting <-> expired state change, never

@@ -33,7 +33,14 @@ export interface SectionHeaderProps {
  * quietly changing what it did. Reintroduce it on the `Reveal` if a caller ever
  * needs it.
  */
-export function SectionHeader({ eyebrow, title, titleAccent, description, actionLabel, actionHref }: SectionHeaderProps) {
+export function SectionHeader({
+  eyebrow,
+  title,
+  titleAccent,
+  description,
+  actionLabel,
+  actionHref,
+}: SectionHeaderProps) {
   return (
     <Reveal>
       <PageHeader

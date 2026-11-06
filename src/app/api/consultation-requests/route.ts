@@ -24,7 +24,10 @@ export async function POST(request: NextRequest) {
   try {
     baseUrl = ServerApiConfig.baseURL;
   } catch {
-    return NextResponse.json({ statusCode: 500, message: "Server misconfigured", error: "SERVER_ERROR" }, { status: 500 });
+    return NextResponse.json(
+      { statusCode: 500, message: "Server misconfigured", error: "SERVER_ERROR" },
+      { status: 500 },
+    );
   }
 
   const body = await request.text();

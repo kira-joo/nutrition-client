@@ -57,7 +57,7 @@ export function BookReaderShell({ book }: { book: Book }) {
           ? { url: watermark.image.secureUrl, opacity: watermark.opacity, scaleMm: watermark.scaleMm }
           : undefined,
       }),
-    [geometry, watermark]
+    [geometry, watermark],
   );
 
   const isNarrowViewport = useIsMobileViewport();
@@ -107,7 +107,7 @@ export function BookReaderShell({ book }: { book: Book }) {
       const entry = pagination?.toc.find((item) => item.chapterId === chapterId);
       if (entry?.sequencePosition) goToPage(entry.sequencePosition);
     },
-    [pagination, goToPage]
+    [pagination, goToPage],
   );
 
   // Book Interaction mode, URL-addressable via `?read=1`: share links land

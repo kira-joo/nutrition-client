@@ -34,7 +34,9 @@ export async function ConsultationTrustPanel({ doctorProfile }: ConsultationTrus
 
       <div>
         <h2 className="text-heading-3 font-bold text-text-primary">{t("trust.welcomeHeading")}</h2>
-        <p className="mt-2 text-body-sm text-text-secondary">{t("trust.welcomeBody", { doctorName: doctorProfile.name })}</p>
+        <p className="mt-2 text-body-sm text-text-secondary">
+          {t("trust.welcomeBody", { doctorName: doctorProfile.name })}
+        </p>
       </div>
 
       <div>

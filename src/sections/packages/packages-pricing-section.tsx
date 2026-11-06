@@ -28,11 +28,18 @@ export interface PackagesPricingSectionProps {
  * Every string here arrives already resolved from the data layer, so this
  * section has no locale to know about.
  */
-export async function PackagesPricingSection({ packagesPageSettings, packages, currencyCode }: PackagesPricingSectionProps) {
+export async function PackagesPricingSection({
+  packagesPageSettings,
+  packages,
+  currencyCode,
+}: PackagesPricingSectionProps) {
   const t = await getTranslations("packages");
 
   // A duration with no authored label is dropped rather than shown with a raw key.
-  const durations = PACKAGE_DURATIONS.map((value) => ({ value, label: packagesPageSettings.durationLabels[value] })).filter((option) => option.label);
+  const durations = PACKAGE_DURATIONS.map((value) => ({
+    value,
+    label: packagesPageSettings.durationLabels[value],
+  })).filter((option) => option.label);
 
   /* `max-w-narrow` on the block rather than on the heading, which is where the
      hand-rolled copy had it. With no action in this header the two constrain the

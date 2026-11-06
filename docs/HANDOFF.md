@@ -14,39 +14,39 @@ A full ground-up rebuild of the public website for Dr. Omnia's nutrition clinic 
 
 ### Repositories involved
 
-| Repo | Role | Path |
-|---|---|---|
-| `nutrition-client` | Public Next.js 14 site (the product being rebuilt) | `/Users/joe/Desktop/code/personal/nutrition-client` |
-| `nutrition-staff` | Next.js 14 CMS/CRM admin app — the single backend | `/Users/joe/Desktop/code/personal/nutrition-staff` |
-| `frontend-toolkit-core` | Shared frontend primitives (API client, routing, React Query, auth helpers) | `/Users/joe/Desktop/code/personal/frontend-toolkit-core` |
-| `frontend-toolkit-tailwind` | Shared Tailwind UI components (AssetViewer, Timeline, etc.) | `/Users/joe/Desktop/code/personal/frontend-toolkit-tailwind` |
-| `toolkit-common` | Zero-dependency shared vocabulary (types, enums, pure helpers) used by both frontend and backend toolkits | `/Users/joe/Desktop/code/personal/toolkit-common` |
-| `backend-toolkit-core` | ODM-agnostic backend primitives (DTOs, errors, auth types) | `/Users/joe/Desktop/code/personal/backend-toolkit-core` |
-| `backend-toolkit-mongoose` | Mongoose-specific repository/schema layer | `/Users/joe/Desktop/code/personal/backend-toolkit-mongoose` |
-| `backend-toolkit-next` | Next.js Route Handler factories (auth pipeline, validation, **now: declarative cache revalidation**) | `/Users/joe/Desktop/code/personal/backend-toolkit-next` |
-| `backend-toolkit-cloudinary` | Cloudinary asset-upload integration | `/Users/joe/Desktop/code/personal/backend-toolkit-cloudinary` |
+| Repo                         | Role                                                                                                      | Path                                                          |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| `nutrition-client`           | Public Next.js 14 site (the product being rebuilt)                                                        | `/Users/joe/Desktop/code/personal/nutrition-client`           |
+| `nutrition-staff`            | Next.js 14 CMS/CRM admin app — the single backend                                                         | `/Users/joe/Desktop/code/personal/nutrition-staff`            |
+| `frontend-toolkit-core`      | Shared frontend primitives (API client, routing, React Query, auth helpers)                               | `/Users/joe/Desktop/code/personal/frontend-toolkit-core`      |
+| `frontend-toolkit-tailwind`  | Shared Tailwind UI components (AssetViewer, Timeline, etc.)                                               | `/Users/joe/Desktop/code/personal/frontend-toolkit-tailwind`  |
+| `toolkit-common`             | Zero-dependency shared vocabulary (types, enums, pure helpers) used by both frontend and backend toolkits | `/Users/joe/Desktop/code/personal/toolkit-common`             |
+| `backend-toolkit-core`       | ODM-agnostic backend primitives (DTOs, errors, auth types)                                                | `/Users/joe/Desktop/code/personal/backend-toolkit-core`       |
+| `backend-toolkit-mongoose`   | Mongoose-specific repository/schema layer                                                                 | `/Users/joe/Desktop/code/personal/backend-toolkit-mongoose`   |
+| `backend-toolkit-next`       | Next.js Route Handler factories (auth pipeline, validation, **now: declarative cache revalidation**)      | `/Users/joe/Desktop/code/personal/backend-toolkit-next`       |
+| `backend-toolkit-cloudinary` | Cloudinary asset-upload integration                                                                       | `/Users/joe/Desktop/code/personal/backend-toolkit-cloudinary` |
 
 All packages publish to GitHub Packages under the `@kira-joo` npm scope (`registry=https://npm.pkg.github.com`).
 
 ### Current package versions
 
-| Package | Published version | Consumed by nutrition-client at | Consumed by nutrition-staff at |
-|---|---|---|---|
-| `@kira-joo/frontend-toolkit-core` | **0.5.0** | `^0.5.0` ✅ | `^0.4.2` ⚠️ stale |
-| `@kira-joo/toolkit-common` | **0.3.0** | `^0.3.0` ✅ | `^0.2.0` ⚠️ stale |
-| `@kira-joo/backend-toolkit-next` | **0.4.0** | n/a | `^0.3.1` on `main`, `^0.4.0` on the **unmerged** `feature/on-demand-cache-invalidation` branch |
-| `@kira-joo/frontend-toolkit-tailwind` | 0.4.2 | `^0.4.2` | `^0.4.2` |
-| `@kira-joo/backend-toolkit-core` | 0.3.4 | — | `^0.3.4` |
-| `@kira-joo/backend-toolkit-mongoose` | 0.3.2 | — | `^0.3.2` |
-| `@kira-joo/backend-toolkit-cloudinary` | 0.1.1 | — | `^0.1.1` |
+| Package                                | Published version | Consumed by nutrition-client at | Consumed by nutrition-staff at                                                                 |
+| -------------------------------------- | ----------------- | ------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `@kira-joo/frontend-toolkit-core`      | **0.5.0**         | `^0.5.0` ✅                     | `^0.4.2` ⚠️ stale                                                                              |
+| `@kira-joo/toolkit-common`             | **0.3.0**         | `^0.3.0` ✅                     | `^0.2.0` ⚠️ stale                                                                              |
+| `@kira-joo/backend-toolkit-next`       | **0.4.0**         | n/a                             | `^0.3.1` on `main`, `^0.4.0` on the **unmerged** `feature/on-demand-cache-invalidation` branch |
+| `@kira-joo/frontend-toolkit-tailwind`  | 0.4.2             | `^0.4.2`                        | `^0.4.2`                                                                                       |
+| `@kira-joo/backend-toolkit-core`       | 0.3.4             | —                               | `^0.3.4`                                                                                       |
+| `@kira-joo/backend-toolkit-mongoose`   | 0.3.2             | —                               | `^0.3.2`                                                                                       |
+| `@kira-joo/backend-toolkit-cloudinary` | 0.1.1             | —                               | `^0.1.1`                                                                                       |
 
 **⚠️ nutrition-staff has not been bumped onto the new `frontend-toolkit-core`/`toolkit-common` versions.** It only consumes `frontend-toolkit-core` for the type-only `LocalizedString` re-export today, so this is low-risk, but it's real drift — see §10.
 
 ### Branch strategy
 
 - **Toolkit packages** (`frontend-toolkit-core`, `toolkit-common`, `backend-toolkit-next`, and the other backend-toolkit-\* packages): commit and push directly to their default branch (`main`, except `frontend-toolkit-core` which is still on `master` — see §12, this was deliberately **not** renamed per explicit user instruction: "Branch naming consistency is not important enough to justify changing an already-working repository").
-- **nutrition-client**: *(historical — see §9 for current policy)* work happened on branch `new-1`. Implementation work now happens on `staging`, branched from `master`, and is never merged by Claude.
-- **nutrition-staff**: *(historical — see §9 for current policy; the `staging` model now applies here too)* as of this handoff, a **standing rule**: *never push nutrition-staff work directly to `main`*. Every phase/feature's nutrition-staff changes go on its own `feature/<name>` branch, get fully verified there, and are pushed. The user explicitly merges (or asks Claude to merge) feature branches into `main` themselves, phase by phase, after reviewing. Two branches were previously merged and deleted (`feature/public-faq-composed-endpoint`, `feature/on-demand-cache-invalidation` — the *first* incarnation, before the `revalidateTags` refactor). A **new** `feature/on-demand-cache-invalidation` branch exists right now with the `revalidateTags` migration, **not yet merged** — see §12 for exact commit hashes.
+- **nutrition-client**: _(historical — see §9 for current policy)_ work happened on branch `new-1`. Implementation work now happens on `staging`, branched from `master`, and is never merged by Claude.
+- **nutrition-staff**: _(historical — see §9 for current policy; the `staging` model now applies here too)_ as of this handoff, a **standing rule**: _never push nutrition-staff work directly to `main`_. Every phase/feature's nutrition-staff changes go on its own `feature/<name>` branch, get fully verified there, and are pushed. The user explicitly merges (or asks Claude to merge) feature branches into `main` themselves, phase by phase, after reviewing. Two branches were previously merged and deleted (`feature/public-faq-composed-endpoint`, `feature/on-demand-cache-invalidation` — the _first_ incarnation, before the `revalidateTags` refactor). A **new** `feature/on-demand-cache-invalidation` branch exists right now with the `revalidateTags` migration, **not yet merged** — see §12 for exact commit hashes.
 
 ### Current phase
 
@@ -96,6 +96,7 @@ Every route under `src/app/[locale]/**` now renders real CMS data through the Ph
 **The one MUI holdout.** `/calculator` is the last page not rebuilt on the Tailwind/next-intl stack. It still imports `@mui/material`, is the only file in the repo using `sx` props, and is the sole remaining consumer of the `useI18n` shim (`src/hooks/useI18n.ts`). It is **deliberately retained**, not overlooked: rebuilding it is redesign work, not cleanup, and it was explicitly out of scope for Phase 10. It keeps four dependencies alive (`@mui/material`, `@emotion/react`, `@emotion/styled`, plus MUI's global `ThemeProvider`/`CssBaseline` wrapping every page from `src/app/[locale]/layout.tsx`).
 
 The removal chain, when the redesign reaches it, is strictly ordered:
+
 1. Rebuild `src/app/[locale]/calculator/page.tsx` in Tailwind (it also holds two untranslated English strings and hardcoded hex colors).
 2. Delete `src/hooks/useI18n.ts` and `src/app/[locale]/calculator/Calculate.tsx` (a hardcoded SVG illustration) — both die with it. Keep `src/constant/DictionaryFiles.ts`; `src/i18n/request.ts` keys its namespace map off it.
 3. Drop the `ThemeProvider` import/wrapper from `src/app/[locale]/layout.tsx`, then delete `src/utils/` entirely (`Provider/ThemeProvider.tsx` and `theme/theme.ts`, whose ~165 lines are almost entirely a hand-rolled MUI RTL shim that the app's logical-property convention already replaces).
@@ -105,7 +106,7 @@ Only after step 4 is the "zero MUI references" sweep genuinely satisfiable.
 
 ### Unfinished work (blocking or advisory)
 
-- **A real credential/environment problem**: partway through publishing `backend-toolkit-next@0.4.0`, the GitHub Packages registry started returning `401 Unauthorized` for *every* package read (confirmed via `npm whoami` also failing with 403). The publish itself had already succeeded (confirmed by inspecting the published tarball's contents). This means:
+- **A real credential/environment problem**: partway through publishing `backend-toolkit-next@0.4.0`, the GitHub Packages registry started returning `401 Unauthorized` for _every_ package read (confirmed via `npm whoami` also failing with 403). The publish itself had already succeeded (confirmed by inspecting the published tarball's contents). This means:
   - `nutrition-staff`'s `package-lock.json` could **not** be regenerated against the real registry version of `backend-toolkit-next@0.4.0` — verification for that dependency was done via a local tarball built from the exact commit that was published, not a real `npm install` from the registry.
   - **First thing the next engineer should do**: check/refresh the GitHub Packages auth token (`~/.npmrc`'s `//npm.pkg.github.com/:_authToken`), then run a clean `npm install` in `nutrition-staff` on the `feature/on-demand-cache-invalidation` branch to regenerate `package-lock.json` for real, and re-verify build/typecheck once more before merging to `main`.
 - nutrition-staff's `frontend-toolkit-core`/`toolkit-common` dependency versions are stale (see §1's table) — low risk today, but should be bumped before anything in nutrition-staff starts depending on the newer exports (e.g. `resolveLocalized`).
@@ -117,7 +118,7 @@ Only after step 4 is the "zero MUI references" sweep genuinely satisfiable.
 
 ### Phase 1 — Foundation
 
-**What was implemented:** Added `@kira-joo/frontend-toolkit-core`, `@kira-joo/frontend-toolkit-tailwind`, `@kira-joo/toolkit-common` as dependencies. Removed `@mui/material`, `@mui/icons-material`, `@emotion/react`, `@emotion/styled`, `i18next`/`react-i18next`, `framer-motion`, `mongodb`. Added GSAP. Renamed `package.json`'s name from the leftover `"sendemail"` to `"nutrition-client"`. Set up ESLint using the same conventions as the rest of the `@kira-joo` ecosystem, *before* Phase 2 started (explicit requirement: lint had to be available throughout implementation, not bolted on at the end). Kept Embla as the sole carousel dependency.
+**What was implemented:** Added `@kira-joo/frontend-toolkit-core`, `@kira-joo/frontend-toolkit-tailwind`, `@kira-joo/toolkit-common` as dependencies. Removed `@mui/material`, `@mui/icons-material`, `@emotion/react`, `@emotion/styled`, `i18next`/`react-i18next`, `framer-motion`, `mongodb`. Added GSAP. Renamed `package.json`'s name from the leftover `"sendemail"` to `"nutrition-client"`. Set up ESLint using the same conventions as the rest of the `@kira-joo` ecosystem, _before_ Phase 2 started (explicit requirement: lint had to be available throughout implementation, not bolted on at the end). Kept Embla as the sole carousel dependency.
 
 **Why:** the existing codebase was a fully static MUI app with zero live backend integration — a genuine rewrite, not a migration (see the master plan's "Rewrite policy" section, which governs the whole project: existing code is business-logic/content source material only, never a UI or architecture constraint).
 
@@ -128,18 +129,19 @@ Only after step 4 is the "zero MUI references" sweep genuinely satisfiable.
 **What was implemented:** A complete CSS-custom-property + `tailwind.config.ts` token system, documented in `docs/design-system.md` and `docs/theme.md`. Categories: semantic colors, typography scale (Arabic line-height tuned independently from Latin), spacing, container widths, breakpoints, radii, shadows, borders, gradients, animation durations/easings, z-index layers, focus rings, overlay/scrim tokens, icon sizing, control heights, touch target sizing.
 
 **Architectural decisions and why:**
+
 - **Dual-layer focus rings** for filled controls (inner white ring + outer focus-colored ring) — chosen specifically for forced-colors-mode compatibility, and to stay visible on filled/light/dark/image-backed surfaces without breaking border radius. Only fires on `:focus-visible`.
 - **Contrast claims are measured, not assumed** — the user explicitly rejected an earlier draft that stated WCAG pass/fail without computing actual relative-luminance ratios. Every documented pairing was re-verified with real contrast math.
 - **One motion-token source, not two** — an earlier draft had motion durations/easings defined in two places (CSS custom properties and a JS constants file) that could drift; consolidated to one source of truth with the other generated from it (see `scripts/generate-motion-css.mjs`, which the build pipeline runs via `prebuild`/`predev`).
 - **`darkMode: "class"` enabled structurally, but dark mode itself is not shipped** — no existing usage anywhere in the ecosystem; shipping it half-finished would violate the project's explicit "no half-finished implementations" standard.
 
-**Verification:** the *implementation* was validated against a checklist, not just the docs — confirmed the actual CSS variables/Tailwind config match what the docs claim, not only that the docs read correctly.
+**Verification:** the _implementation_ was validated against a checklist, not just the docs — confirmed the actual CSS variables/Tailwind config match what the docs claim, not only that the docs read correctly.
 
 ### Phase 3 — RTL and localization infrastructure
 
 **What was implemented:** Migrated from i18next/react-i18next to `next-intl` v3.26.3. `src/i18n/routing.ts` is the one place supported locales (`ar`, `en`) and the default locale (`ar`) are declared. `src/middleware.ts` uses next-intl's `createMiddleware`. Every route lives under `src/app/[locale]/**`; the locale segment's layout sets `<html dir>` server-side once. Deleted the old `useRTL()` hook in favor of Tailwind logical properties (`ms-*`/`me-*`/`text-start`/`start-*`).
 
-**Why:** the previous app had *four* uncoordinated RTL mechanisms (html `dir`, a `LanguageProvider`'s `document.dir` mutation, MUI theme `direction`, and the ad hoc `useRTL()` hook per page) — consolidating to next-intl's routing + CSS logical properties collapses that to one mechanism.
+**Why:** the previous app had _four_ uncoordinated RTL mechanisms (html `dir`, a `LanguageProvider`'s `document.dir` mutation, MUI theme `direction`, and the ad hoc `useRTL()` hook per page) — consolidating to next-intl's routing + CSS logical properties collapses that to one mechanism.
 
 **Verification:** confirmed `/ar/*` and `/en/*` routes both resolve, `lang`/`dir` attributes render correctly, locale switching works, via real browser/curl checks (not just code reading).
 
@@ -151,13 +153,14 @@ Only after step 4 is the "zero MUI references" sweep genuinely satisfiable.
 
 **What was implemented:** A complete server-side public data layer covering all 9 CMS domains (site settings, doctor profile, packages, recipes, reviews, videos, FAQ, campaigns, consultation). Server-first caching via Next's `fetch(url, {next:{revalidate,tags}})`. One consistent `AppError` model. A BFF proxy pattern (`nutrition-client`'s own `/api/consultation-requests` route, never the browser calling nutrition-staff directly — nutrition-staff has no CORS support).
 
-**A real, serious bug found and worked around:** `@kira-joo/frontend-toolkit-core`'s single barrel entry point called `React.createContext()` at module top level unconditionally (for `AuthUserContext`/`QueryParamsRouterContext`). Server Components and Route Handlers resolve `react` through Next's `"react-server"` condition, which has no `createContext` — so importing **anything** from that barrel, even a plain enum like `MethodType`, crashed Next's "Collecting page data" build step. Confirmed for both Route Handlers *and* ordinary Server Component pages (the two-sided nature of the bug is what made it expensive to track down — early fixes only addressed the Route Handler case before a Server Component hit the same wall).
+**A real, serious bug found and worked around:** `@kira-joo/frontend-toolkit-core`'s single barrel entry point called `React.createContext()` at module top level unconditionally (for `AuthUserContext`/`QueryParamsRouterContext`). Server Components and Route Handlers resolve `react` through Next's `"react-server"` condition, which has no `createContext` — so importing **anything** from that barrel, even a plain enum like `MethodType`, crashed Next's "Collecting page data" build step. Confirmed for both Route Handlers _and_ ordinary Server Component pages (the two-sided nature of the bug is what made it expensive to track down — early fixes only addressed the Route Handler case before a Server Component hit the same wall).
 
 **The workaround (temporary, later removed in Pass 2):** four local reimplementations verified byte-for-byte against the package's own compiled output — `build-url.ts`, `normalize-api-error.ts`, `classify-api-error.ts`, `public-endpoint.type.ts` — plus a local `error-model.ts` (an `AppError` shape) and a local `resolve-localized.ts` (display-side CMS-content locale resolution, since no such helper existed anywhere in the toolkit ecosystem).
 
 **Backend work (nutrition-staff):** a new `POST /api/public/consultation-requests` endpoint (real CRM lead creation — `Client`/`ClientProfile`, `ClientSource.WEBSITE`, `ClientLifecycle.LEAD`), a simple in-memory sliding-window rate limiter, honeypot + minimum-time-to-submit anti-spam. Also fixed a real, unrelated backend bug: `Reflect.getMetadata is not a function` on several public GET routes, caused by a missing global `reflect-metadata` polyfill import — fixed in `src/instrumentation.ts`.
 
 **Explicit corrections applied mid-phase** (user-driven, not self-initiated):
+
 - "Do not hardcode API paths as string literals" → led to the `api/<domain>.endpoints.ts` convention (mirroring nutrition-staff's own frontend).
 - "Do not hardcode default sorting in the public client" → removed a client-side `.sort()` from `getPackages()` (kept one justified exception in FAQ item grouping, since real backend data proved the raw order didn't match intended display order).
 - A cache-tag/cache-policy separation request, **explicitly rejecting** moving the tag taxonomy into `toolkit-common` ("these tags are project-specific business contracts... the toolkit packages must not contain nutrition-specific tags, enums, routes, or domain knowledge") — cache tags stay a hand-kept-in-sync duplicate between the two apps, never a shared package.
@@ -165,19 +168,20 @@ Only after step 4 is the "zero MUI references" sweep genuinely satisfiable.
 
 #### Pass 2 (package-first refactor)
 
-Triggered by an explicit new instruction set: *"Packages are the default, not the fallback... audit the packages first... promote genuinely reusable code into the packages... remove temporary duplicated helpers."*
+Triggered by an explicit new instruction set: _"Packages are the default, not the fallback... audit the packages first... promote genuinely reusable code into the packages... remove temporary duplicated helpers."_
 
 **What changed:**
+
 - **Root-caused and fixed the barrel bug** at the source: `frontend-toolkit-core@0.5.0` ships a genuinely separate `/server` build entry (`tsup` multi-entry output) containing only React-free modules — never bundled alongside the context/provider code, so importing it can never pull that code in even transitively. Verified by grepping the compiled `dist/server.mjs` for zero `createContext` references.
 - **Promoted five genuinely generic pieces into the toolkits, all consumed back from the published packages:**
   - `resolveLocalized`/`isLocalizedFallback` → `toolkit-common` (pure `LocalizedString` display logic, zero framework dependency).
   - `AppError`/`isAppError`/`toAppError`/`isNotFoundError`/`nullableOnNotFound` → `frontend-toolkit-core` (built on that package's own `classifyApiError`/`normalizeApiError`/`isApiError`).
   - `joinUrl` → `frontend-toolkit-core` (extracted from `requester`'s own internal private helper into a named export; `requester` now imports the same function instead of a private copy).
-  - `createCachePolicyResolver` → `frontend-toolkit-core` (the generic tag→revalidate-seconds lookup *mechanism*; concrete tags/intervals stay local).
-  - `createLazyEnvBaseUrlConfig` → `frontend-toolkit-core` (the lazy-env-var-config *pattern*; defaults to reading `API_URL` with zero arguments — the common one-upstream-backend case).
+  - `createCachePolicyResolver` → `frontend-toolkit-core` (the generic tag→revalidate-seconds lookup _mechanism_; concrete tags/intervals stay local).
+  - `createLazyEnvBaseUrlConfig` → `frontend-toolkit-core` (the lazy-env-var-config _pattern_; defaults to reading `API_URL` with zero arguments — the common one-upstream-backend case).
 - **Deleted all four Pass-1 local workaround files** plus the local `error-model.ts`/`resolve-localized.ts` — every call site now imports the real published functions.
 - **Centralized every route string** into `api/public-api-route.ts` — no `"/api/..."` literal anywhere else in the codebase.
-- **Fixed a real base-URL bug**: switched from `new URL(path, base)` to `joinUrl(base, path)` everywhere. `new URL()`'s resolution algorithm treats a leading-`/` `path` as *replacing* the base's entire path (keeping only its origin) — `new URL("/public/x", "https://host/api")` resolves to `"https://host/public/x"`, silently dropping `/api`. This was caught specifically because the env var was renamed from `STAFF_API_BASE_URL` (origin-only, e.g. `http://localhost:3333`, which never exposed the bug since there was no path segment to lose) to `API_URL` (which now *owns* the `/api` prefix, e.g. `http://localhost:3333/api`) to match `createLazyEnvBaseUrlConfig()`'s new zero-argument default.
+- **Fixed a real base-URL bug**: switched from `new URL(path, base)` to `joinUrl(base, path)` everywhere. `new URL()`'s resolution algorithm treats a leading-`/` `path` as _replacing_ the base's entire path (keeping only its origin) — `new URL("/public/x", "https://host/api")` resolves to `"https://host/public/x"`, silently dropping `/api`. This was caught specifically because the env var was renamed from `STAFF_API_BASE_URL` (origin-only, e.g. `http://localhost:3333`, which never exposed the bug since there was no path segment to lose) to `API_URL` (which now _owns_ the `/api` prefix, e.g. `http://localhost:3333/api`) to match `createLazyEnvBaseUrlConfig()`'s new zero-argument default.
 - **FAQ moved from two client-merged endpoints to one backend-composed endpoint.** `GET /api/public/faq` (nutrition-staff) now joins sections with their items, applies the staff-authored `order` field, and filters to published-only, server-side — replacing `/api/public/faq-sections` + `/api/public/faq-items` + a client-side `groupFaqItemsBySection` merge. Rationale (explicit from the user): "grouping/sorting/filtering published content is backend business logic, not frontend presentation logic."
 
 **Verification:** every change in this pass was verified against a real running nutrition-staff instance and real MongoDB data (not code inspection) — including a before/after proof that FAQ sections previously came back in the wrong order (`["Section 2", "Section 1"]`) and now come back correctly ordered from the new composed endpoint.
@@ -188,19 +192,19 @@ Triggered by an explicit new instruction set: *"Packages are the default, not th
 
 **What was implemented:** `nutrition-client`'s `POST /api/revalidate` — authenticates via constant-time comparison (`crypto.timingSafeEqual`) against `Bearer <REVALIDATE_SECRET>`, then calls Next's `revalidateTag()` for each tag in the request body. `nutrition-staff`'s `publishRevalidation(tags)` — POSTs to that endpoint, awaited (not fire-and-forget — genuine detached fire-and-forget is unsafe on serverless), bounded by a hard 2.5s `AbortController` timeout. Wired into all 38 mutating routes across 12 public-facing entities via **imperative** calls (`await revalidateRecipes(id)`, etc.) placed directly inside each route's handler body.
 
-**Verification (real, not simulated):** with both apps actually running — a tagged fetch was a genuine cache miss on first request (logged in nutrition-staff's dev server) and a genuine cache hit on immediate repeat (zero requests reaching nutrition-staff); calling `/api/revalidate` for that tag made the *next* request a fresh cache miss again, proving `revalidateTag()` actually evicted the entry. Resilience proven directly: with nutrition-client killed, `publishRevalidation` resolved in ~0.1s without throwing (immediate `ECONNREFUSED`, nowhere near the 2.5s timeout).
+**Verification (real, not simulated):** with both apps actually running — a tagged fetch was a genuine cache miss on first request (logged in nutrition-staff's dev server) and a genuine cache hit on immediate repeat (zero requests reaching nutrition-staff); calling `/api/revalidate` for that tag made the _next_ request a fresh cache miss again, proving `revalidateTag()` actually evicted the entry. Resilience proven directly: with nutrition-client killed, `publishRevalidation` resolved in ~0.1s without throwing (immediate `ECONNREFUSED`, nowhere near the 2.5s timeout).
 
 **A real gap disclosed honestly:** no real nutrition-staff admin credentials exist in this environment (the live database has production-shaped data, not seeded test accounts), so an actual authenticated `PUT`/`POST`/`DELETE` through nutrition-staff's real HTTP routes was never independently curled to prove the exact wired call site fires at request time. Both halves of the pipeline (the receiving endpoint, and `publishRevalidation` itself) were verified directly instead.
 
 #### Pass 2 (declarative `revalidateTags` refactor)
 
-Triggered by an explicit instruction: move the repeated `const result = await mutate(...); await revalidateEntity(...); return result;` pattern out of route handlers and into the shared route-factory layer, as a **declarative** option — with dynamic, typed tag resolution, and correct handling of the campaign slug-change case (which needs to invalidate the *previous* slug's cached page, not just the new one).
+Triggered by an explicit instruction: move the repeated `const result = await mutate(...); await revalidateEntity(...); return result;` pattern out of route handlers and into the shared route-factory layer, as a **declarative** option — with dynamic, typed tag resolution, and correct handling of the campaign slug-change case (which needs to invalidate the _previous_ slug's cached page, not just the new one).
 
 **What changed — see §6/§9 for the full design, and §10 for why the toolkit (not app-local code) was the right place for this:**
 
 - `@kira-joo/backend-toolkit-next`'s `createRoute` gained a `revalidateTags` option: a static `string[]`, or a function `(context) => string[] | Promise<string[]>` where `context` is `{result, params, body, query, request, user}` (the handler's own return value plus everything the handler itself received). Resolved once, strictly after the handler succeeds (never on a thrown error), deduplicated, empty strings dropped, published via a new optional `config.cache.publishRevalidation` hook.
-- Added `withRevalidationMeta(response, meta)` for the one genuinely exceptional case: a campaign header update can change `slug`, and the tag resolver needs the *previous* slug to invalidate the old cached page — data the public `Campaign` response itself must not carry. `createRoute` unwraps this transparently: the HTTP response becomes `response`; the resolver's `result` context becomes the whole `{response, meta}` object.
-- `nutrition-staff`'s `publishRevalidation` was **inverted**: it now *throws* (distinguishable messages for timeout/non-2xx/network failure, never including `REVALIDATE_SECRET`) instead of swallowing everything itself. The toolkit's `createRoute` is what now catches and logs (`console.warn`) any rejection, and guarantees a cache-invalidation failure never turns a successful write into a failed response.
+- Added `withRevalidationMeta(response, meta)` for the one genuinely exceptional case: a campaign header update can change `slug`, and the tag resolver needs the _previous_ slug to invalidate the old cached page — data the public `Campaign` response itself must not carry. `createRoute` unwraps this transparently: the HTTP response becomes `response`; the resolver's `result` context becomes the whole `{response, meta}` object.
+- `nutrition-staff`'s `publishRevalidation` was **inverted**: it now _throws_ (distinguishable messages for timeout/non-2xx/network failure, never including `REVALIDATE_SECRET`) instead of swallowing everything itself. The toolkit's `createRoute` is what now catches and logs (`console.warn`) any rejection, and guarantees a cache-invalidation failure never turns a successful write into a failed response.
 - `revalidate-entity.ts` was rewritten from a set of async `revalidateX()` functions (each calling `publishRevalidation` itself) into a set of plain tag arrays/pure resolver functions (`RECIPES_TAGS`, `recipeDetailTags(id)`, `campaignSlugChangeTags(previousSlug, newSlug)`, etc.) — consumed directly as a route's `revalidateTags` value, with zero function calls inside any handler body.
 - All 38 mutating routes across 12 entities were migrated. Every route's handler reverted to its pre-Phase-5 shape (a bare repository call, no manual restructuring to thread a revalidate call through).
 
@@ -217,8 +221,8 @@ Triggered by an explicit instruction: move the repeated `const result = await mu
 ## 4. Remaining roadmap
 
 > **Resequenced 2026-08-19 — combined refactor + redesign.** The roadmap below was
-> written assuming Phase 6 would build pages against the *approved existing visual
-> system*, with any redesign as separate later work. That is no longer the plan.
+> written assuming Phase 6 would build pages against the _approved existing visual
+> system_, with any redesign as separate later work. That is no longer the plan.
 > The frontend architecture cleanup and the `nutrition-client` UI/UX redesign are
 > now a **single pass**, so we do not perfectly refactor a visual system we
 > already intend to replace. See §15 for the authoritative/open split and the
@@ -229,7 +233,7 @@ Triggered by an explicit instruction: move the repeated `const result = await mu
 
 **Objective:** build the actual public pages that render real CMS content through the data layer already built in Phases 4–5.
 
-**Recommended implementation order** (per the master plan's dependency ordering, and unchanged by the resequencing — the *content* dependency order is still correct): global layout (site settings: header/footer/contact/social) → doctor profile → packages → FAQ → recipes (introduces the filter/pagination pattern) → reviews/videos (introduces the video player + carousel) → campaign block renderer → consultation form wired to the real backend endpoint.
+**Recommended implementation order** (per the master plan's dependency ordering, and unchanged by the resequencing — the _content_ dependency order is still correct): global layout (site settings: header/footer/contact/social) → doctor profile → packages → FAQ → recipes (introduces the filter/pagination pattern) → reviews/videos (introduces the video player + carousel) → campaign block renderer → consultation form wired to the real backend endpoint.
 
 **What changed is what happens per item in that order.** Each one is now a combined unit of work rather than "build it to the old design, redesign later":
 
@@ -248,6 +252,7 @@ The design step is a **prerequisite of** the implementation step for each item, 
 **Dependencies:** none blocking — the entire data layer is ready. The one real gap: recipes' missing `foodGroups` filter query param on the backend (client-side post-filter is the documented, accepted workaround per `docs/architecture.md`).
 
 **Risks:**
+
 - The master plan has a hard design-quality gate: sections must not read as a generic AI-landing-page template (no repeated "hero → three cards → heading → three cards" pattern). This needs active design judgment per section, not just implementation speed.
 - Mobile is designed first, but tablet/desktop must independently pass the same quality bar — not a "collapse in reverse" of the mobile layout. See master plan §6 for the explicit list of disallowed desktop failure modes.
 - The animation stack is mid-migration: Motion is the target, GSAP is legacy and still installed (§9). Build new animation on Motion; do not add GSAP.
@@ -274,7 +279,7 @@ Per-module empty states (recipes/reviews/videos/FAQ/packages/campaigns/doctor-ga
 
 Built in during Phase 6 component-by-component per the master plan, but a dedicated final pass against the full WCAG 2.2 AA checklist (keyboard nav, focus trapping + restoration, RTL icon-mirroring rules, `prefers-reduced-motion`, screen-reader labels) is still owed as its own explicit step.
 
-**Dependency:** Phase 6. **Raised in importance by the resequencing:** a redesign that replaces the palette, type scale, and focus-ring treatment invalidates the previously-verified contrast and focus work, so this pass re-establishes accessibility against the *new* system rather than confirming the old one.
+**Dependency:** Phase 6. **Raised in importance by the resequencing:** a redesign that replaces the palette, type scale, and focus-ring treatment invalidates the previously-verified contrast and focus work, so this pass re-establishes accessibility against the _new_ system rather than confirming the old one.
 
 ### Phase 10 — Cleanup sweep
 
@@ -289,6 +294,7 @@ Final `grep` sweep confirming zero remaining MUI/mongodb references anywhere in 
 **Purpose:** the public website being rebuilt.
 
 **Important folders:**
+
 - `src/app/[locale]/**` — every route, locale-scoped. **Currently still pre-rebuild/stub pages** — Phase 6 replaces these.
 - `src/app/api/` — this app's own Route Handlers: `consultation-requests/route.ts` (BFF proxy to nutrition-staff), `revalidate/route.ts` (on-demand cache invalidation receiver).
 - `src/lib/data/` — one function per CMS domain (`getSiteSettings`, `getRecipes`, `getFaqSectionsWithItems`, etc.) — **read this first**, it's the entire public-facing data contract.
@@ -307,6 +313,7 @@ Final `grep` sweep confirming zero remaining MUI/mongodb references anywhere in 
 **Purpose:** the CMS/CRM admin app — the single backend for everything.
 
 **Important folders:**
+
 - `src/app/api/public/**` — every public, unauthenticated endpoint nutrition-client reads from.
 - `src/app/api/<entity>/**` — the authenticated admin CRUD routes for each entity (the ones with `revalidateTags` wired in — see §8).
 - `src/server/<entity>/` — schema, repository, DTOs per entity.
@@ -322,6 +329,7 @@ Final `grep` sweep confirming zero remaining MUI/mongodb references anywhere in 
 **Purpose:** shared frontend primitives — API client (`requester`), routing (`buildAppHref`), React Query wiring, auth context, storage, CRUD generator.
 
 **Important files:**
+
 - `src/index.ts` — the root barrel (client-safe, includes React context/provider code).
 - `src/server.ts` — **the server-safe entry point** (`@kira-joo/frontend-toolkit-core/server`) — no React-context code anywhere in its module graph. Use this for anything running in a Server Component or Route Handler.
 - `src/api/app-error.ts` — the `AppError` model.
@@ -343,6 +351,7 @@ Final `grep` sweep confirming zero remaining MUI/mongodb references anywhere in 
 **Purpose:** Next.js Route Handler factories — auth pipeline, DTO validation, deterministic response/error serialization, and (as of 0.4.0) declarative cache-tag revalidation.
 
 **Important files:**
+
 - `src/routes/create-route.ts` — **the core orchestrator**, read this first. Every route factory (`createGetRoute`/`createPostRoute`/`createPutRoute`/`createDeleteRoute`) is a thin wrapper around this.
 - `src/routes/create-route-options.interface.ts` — the `CreateRouteOptions`/`RevalidateTagsContext`/`RevalidateTagsResolver` types.
 - `src/routes/route-result-with-meta.ts` — `withRevalidationMeta`.
@@ -365,7 +374,7 @@ Not substantially touched during this project. Has genuinely reusable `AssetView
 
 ### Package-first philosophy
 
-Standing rule, restated verbatim from the instruction that established it: *"Before writing any generic (non-nutrition-specific) helper, hook, mapping function, or server/client abstraction, check whether `@kira-joo/frontend-toolkit-core` or `@kira-joo/toolkit-common` already provides it. If it does, consume it directly. If it's genuinely generic and doesn't exist yet, it belongs in the toolkit — implemented there, documented, exported, and consumed back — not built locally 'for now.'"* This applies to the backend toolkits too, as the `revalidateTags` refactor demonstrates.
+Standing rule, restated verbatim from the instruction that established it: _"Before writing any generic (non-nutrition-specific) helper, hook, mapping function, or server/client abstraction, check whether `@kira-joo/frontend-toolkit-core` or `@kira-joo/toolkit-common` already provides it. If it does, consume it directly. If it's genuinely generic and doesn't exist yet, it belongs in the toolkit — implemented there, documented, exported, and consumed back — not built locally 'for now.'"_ This applies to the backend toolkits too, as the `revalidateTags` refactor demonstrates.
 
 ### What belongs in a toolkit package
 
@@ -388,7 +397,7 @@ See §3's Phase 4 Pass 2 and Phase 5 Pass 2 write-ups for the full list with rat
 
 ### Temporary workarounds
 
-**None remain as of this handoff.** The four Pass-1 Phase-4 local reimplementations were deleted once `frontend-toolkit-core@0.5.0`'s `/server` entry made them unnecessary. The Phase-5 imperative revalidation calls were removed once `backend-toolkit-next@0.4.0`'s `revalidateTags` made them unnecessary. If a future workaround is genuinely needed temporarily, the established pattern is: build it locally, document *why* it's temporary and *what* upstream fix would remove it, and actually remove it once that fix lands — not leave it indefinitely.
+**None remain as of this handoff.** The four Pass-1 Phase-4 local reimplementations were deleted once `frontend-toolkit-core@0.5.0`'s `/server` entry made them unnecessary. The Phase-5 imperative revalidation calls were removed once `backend-toolkit-next@0.4.0`'s `revalidateTags` made them unnecessary. If a future workaround is genuinely needed temporarily, the established pattern is: build it locally, document _why_ it's temporary and _what_ upstream fix would remove it, and actually remove it once that fix lands — not leave it indefinitely.
 
 ---
 
@@ -412,7 +421,7 @@ See §3 Phase 5 and §8 for the full design. From nutrition-client's side, the o
 
 ### Lead capture
 
-`src/lib/mutations/use-consultation-request.ts` (`"use client"`) → `requester`/`useRequesterMutation` → this app's own `/api/consultation-requests` (never nutrition-staff directly) → nutrition-staff's real `POST /api/public/consultation-requests` → real CRM `Client`/`ClientProfile` creation. WhatsApp (not yet built in Phase 6) is meant to be the visitor-facing *continuation*, never the sole record and never shown as "success" ahead of backend confirmation — this is a master-plan requirement (§15) for Phase 6 to implement, not yet built.
+`src/lib/mutations/use-consultation-request.ts` (`"use client"`) → `requester`/`useRequesterMutation` → this app's own `/api/consultation-requests` (never nutrition-staff directly) → nutrition-staff's real `POST /api/public/consultation-requests` → real CRM `Client`/`ClientProfile` creation. WhatsApp (not yet built in Phase 6) is meant to be the visitor-facing _continuation_, never the sole record and never shown as "success" ahead of backend confirmation — this is a master-plan requirement (§15) for Phase 6 to implement, not yet built.
 
 ### Endpoint organization
 
@@ -468,11 +477,11 @@ Every convention below was either explicitly stated by the user during this proj
 - **Route constants, not string literals.** No `url`/`fetch` call site anywhere hardcodes an API path. nutrition-client: `api/public-api-route.ts`. nutrition-staff: each entity route file inlines its own literal once (matching nutrition-staff's own pre-existing convention — this is the one place a literal is acceptable, since it's the single definition site, not a repeated one).
 - **A base URL owns the shared prefix; a route constant owns only the resource path.** Never both, never neither. Always join via `joinUrl`, never `new URL(path, base)` (see §3 Phase 4 Pass 2 for the exact bug this prevents).
 - **Endpoint objects, not bare method+URL pairs.** Every API call site uses a named `Endpoint<TSchema>` constant (`api/<domain>.endpoints.ts`), never an inline path string passed straight to a fetch call.
-- **Mobile-first design, equal quality bar across all three breakpoints.** Mobile is designed and validated *first* (sequencing), but tablet and desktop must each independently pass the same design-quality bar — not a "collapse in reverse" of the mobile layout. See master plan §6 for the explicit list of disallowed desktop failure modes.
-- **Motion is the animation stack of record; GSAP is legacy.** *(Superseded 2026-08-19 — this convention previously read "GSAP is the sole animation engine.")* Motion (`motion`, imported as `motion/react` — never `framer-motion`) is the preferred library for new animation and interaction work; prefer CSS/native transitions where they are sufficient. GSAP remains installed and still drives the existing animation code, so it must keep working until migrated, and is being migrated away during the planned implementation wherever equivalent behaviour can be preserved. Do not add new GSAP code, and do not keep both stacks without a concrete, verified technical reason — where a specific GSAP behaviour genuinely cannot be reproduced safely with Motion or CSS, document that exception rather than silently retaining a second engine. Reduced motion, RTL, accessibility, performance, and first-render stability remain required on either stack.
+- **Mobile-first design, equal quality bar across all three breakpoints.** Mobile is designed and validated _first_ (sequencing), but tablet and desktop must each independently pass the same design-quality bar — not a "collapse in reverse" of the mobile layout. See master plan §6 for the explicit list of disallowed desktop failure modes.
+- **Motion is the animation stack of record; GSAP is legacy.** _(Superseded 2026-08-19 — this convention previously read "GSAP is the sole animation engine.")_ Motion (`motion`, imported as `motion/react` — never `framer-motion`) is the preferred library for new animation and interaction work; prefer CSS/native transitions where they are sufficient. GSAP remains installed and still drives the existing animation code, so it must keep working until migrated, and is being migrated away during the planned implementation wherever equivalent behaviour can be preserved. Do not add new GSAP code, and do not keep both stacks without a concrete, verified technical reason — where a specific GSAP behaviour genuinely cannot be reproduced safely with Motion or CSS, document that exception rather than silently retaining a second engine. Reduced motion, RTL, accessibility, performance, and first-render stability remain required on either stack.
 - **Tailwind-only styling.** No MUI/Emotion/`sx` anywhere in the rebuilt app.
 - **Server/client separation is explicit and load-bearing, not incidental.** `import "server-only"` on server-only modules. Two separate config objects (`APIConfig` for client-side same-origin calls, `ServerApiConfig` for server-side upstream calls) specifically because they're both process-wide statics that would otherwise stomp on each other in the same Node process (Next.js evaluates `"use client"` modules server-side too, during SSR).
-- **Cache strategy: tags identify *what*, policy decides *how stale*, invalidation decides *when to stop waiting*.** Three distinct concerns, three distinct files/mechanisms, never merged.
+- **Cache strategy: tags identify _what_, policy decides _how stale_, invalidation decides _when to stop waiting_.** Three distinct concerns, three distinct files/mechanisms, never merged.
 - **Clean architecture layering** (nutrition-client): `lib/data` (fetch) → `lib/domain` (types) → `sections` (composition, not yet built) → `app/[locale]` (thin route files). Repositories (nutrition-staff) are database-only — they never make external calls (e.g. cache invalidation) themselves; that's the route-factory layer's job, triggered only from an actual HTTP mutation, never from a migration/script/test/bulk operation that happens to call the same repository method.
 - **Branch workflow (updated 2026-08-19 — supersedes what follows).** Implementation work happens on a **`staging`** branch in every repository: branch it from that repo's current default branch, work there, and commit and push to it freely. **Never merge `staging` into `main`/`master`** — the user personally handles every merge into a default branch when they decide the work is ready. This replaces the previous per-repo convention (toolkits committing straight to their default branch; nutrition-client on `new-1`; nutrition-staff on `feature/<name>`), which is retained elsewhere in this document only as a record of past practice.
 - **Verification means real, not code-inspection**, wherever practically possible. Starting explicitly from Phase 4 onward: run real dev/build servers, curl real endpoints, read real logs — state plainly when something genuinely can't be verified that way (e.g. the missing-admin-credentials gap in Phase 5) rather than silently substituting code review and calling it verification.
@@ -482,16 +491,16 @@ Every convention below was either explicitly stated by the user during this proj
 
 ## 10. Pending refactors / technical debt
 
-| Item | Why postponed | What to do about it |
-|---|---|---|
-| **nutrition-staff's `package-lock.json` not regenerated against the real published `backend-toolkit-next@0.4.0`** | A GitHub Packages auth failure (401 on every package read, including `npm whoami`) started immediately after the 0.4.0 publish succeeded — an environment/credential problem, not something fixable from within the coding session. | Refresh the GitHub Packages token in `~/.npmrc`, then run a clean `npm install` on `feature/on-demand-cache-invalidation` to regenerate the lockfile for real, and re-run typecheck/build once more before merging to `main`. |
-| **nutrition-staff still depends on stale `frontend-toolkit-core@^0.4.2`/`toolkit-common@^0.2.0`** | Out of scope for the work requested so far — nutrition-staff only consumes `LocalizedString` (type-only) from these today, so there's no functional break, just version drift. | Bump both once nutrition-staff needs anything from the newer versions (e.g. `resolveLocalized`), or as routine hygiene during a future phase. |
-| **`requester`'s lack of Next fetch-option passthrough** | Deliberate architectural boundary (see §6), not a bug — but flagged in the master plan as a real gap worth eventually closing in the toolkit rather than permanently working around. | Revisit if/when a second app needs the same server-fetch-with-tags pattern `fetchPublic` implements — that repetition would be the signal it's time to promote. |
-| **No `foodGroups` filter query param on the recipes list endpoint** | A confirmed backend gap noted since Phase 4; client-side post-filtering is the accepted, documented workaround (can under-fill a page after filtering). | Add the query param support to nutrition-staff's `ListRecipesQueryDto`/repository query when Phase 6 builds the recipe filter UI and the under-fill behavior becomes user-visible. |
-| **No `featured` filter param on reviews** | Same category as above — a client-side "featured first" workaround is planned for Phase 6's reviews page. | Add if/when it becomes a real product problem. |
-| **Dark mode structurally supported (`darkMode: "class"`) but not implemented** | No existing usage anywhere in the ecosystem; shipping it half-finished violates the project's "no half-finished implementations" standard. | Build only if explicitly requested — do not half-build speculatively. |
-| **GSAP/ScrollTrigger plugin licensing not reconfirmed** | Flagged from the master plan's own knowledge-cutoff uncertainty (Webflow's 2025 GreenSock acquisition changed licensing terms). | **Largely superseded by the move to Motion** (see §9): the migration removes the dependency rather than resolving its licensing. Only reconfirm terms if a GSAP plugin is deliberately retained as a documented exception. |
-| **`revalidateTags`'s generic mechanism could theoretically extend beyond cache invalidation** (any "run this after a successful mutation" cross-cutting concern — e.g. audit logging, webhooks) | Not requested; scope was explicitly cache invalidation only. | Do not speculatively generalize further until a second real use case actually needs it — this exact caution is itself a project convention (§9). |
+| Item                                                                                                                                                                                            | Why postponed                                                                                                                                                                                                                       | What to do about it                                                                                                                                                                                                           |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **nutrition-staff's `package-lock.json` not regenerated against the real published `backend-toolkit-next@0.4.0`**                                                                               | A GitHub Packages auth failure (401 on every package read, including `npm whoami`) started immediately after the 0.4.0 publish succeeded — an environment/credential problem, not something fixable from within the coding session. | Refresh the GitHub Packages token in `~/.npmrc`, then run a clean `npm install` on `feature/on-demand-cache-invalidation` to regenerate the lockfile for real, and re-run typecheck/build once more before merging to `main`. |
+| **nutrition-staff still depends on stale `frontend-toolkit-core@^0.4.2`/`toolkit-common@^0.2.0`**                                                                                               | Out of scope for the work requested so far — nutrition-staff only consumes `LocalizedString` (type-only) from these today, so there's no functional break, just version drift.                                                      | Bump both once nutrition-staff needs anything from the newer versions (e.g. `resolveLocalized`), or as routine hygiene during a future phase.                                                                                 |
+| **`requester`'s lack of Next fetch-option passthrough**                                                                                                                                         | Deliberate architectural boundary (see §6), not a bug — but flagged in the master plan as a real gap worth eventually closing in the toolkit rather than permanently working around.                                                | Revisit if/when a second app needs the same server-fetch-with-tags pattern `fetchPublic` implements — that repetition would be the signal it's time to promote.                                                               |
+| **No `foodGroups` filter query param on the recipes list endpoint**                                                                                                                             | A confirmed backend gap noted since Phase 4; client-side post-filtering is the accepted, documented workaround (can under-fill a page after filtering).                                                                             | Add the query param support to nutrition-staff's `ListRecipesQueryDto`/repository query when Phase 6 builds the recipe filter UI and the under-fill behavior becomes user-visible.                                            |
+| **No `featured` filter param on reviews**                                                                                                                                                       | Same category as above — a client-side "featured first" workaround is planned for Phase 6's reviews page.                                                                                                                           | Add if/when it becomes a real product problem.                                                                                                                                                                                |
+| **Dark mode structurally supported (`darkMode: "class"`) but not implemented**                                                                                                                  | No existing usage anywhere in the ecosystem; shipping it half-finished violates the project's "no half-finished implementations" standard.                                                                                          | Build only if explicitly requested — do not half-build speculatively.                                                                                                                                                         |
+| **GSAP/ScrollTrigger plugin licensing not reconfirmed**                                                                                                                                         | Flagged from the master plan's own knowledge-cutoff uncertainty (Webflow's 2025 GreenSock acquisition changed licensing terms).                                                                                                     | **Largely superseded by the move to Motion** (see §9): the migration removes the dependency rather than resolving its licensing. Only reconfirm terms if a GSAP plugin is deliberately retained as a documented exception.    |
+| **`revalidateTags`'s generic mechanism could theoretically extend beyond cache invalidation** (any "run this after a successful mutation" cross-cutting concern — e.g. audit logging, webhooks) | Not requested; scope was explicitly cache invalidation only.                                                                                                                                                                        | Do not speculatively generalize further until a second real use case actually needs it — this exact caution is itself a project convention (§9).                                                                              |
 
 ---
 
@@ -501,7 +510,7 @@ For a new engineer or a fresh AI session picking this project up cold:
 
 1. **This document, in full**, first. It's written specifically to orient without prior context.
 2. **`nutrition-client/docs/architecture.md`** — the living technical doc for the public site's data/API/caching architecture. More granular and more likely to have been updated since this handoff than the summary in §7 above.
-3. **The master plan** (`/Users/joe/.claude/plans/nutrition-client-purring-toucan.md`) — the full original design brief. Long, but it's the source of nearly every "why" behind a convention in §9. Skim it once fully, then keep it as a reference for whichever section you're building (it's organized by concern: IA/navigation, design system, mobile/tablet/desktop, card system, recipes, reviews, packages, doctor profile, campaigns, image/video delivery, animation, forms, empty states, error states, loading states, accessibility, SEO, performance, code architecture). **Its visual composition rules are no longer mandatory** — see §15. Treat it as architectural/product history, requirements context, and rationale for the existing implementation; its *product requirements* and *non-visual architecture* still carry weight, its prescribed card layouts, hero compositions, section structures, visual treatments, and animation patterns may be reconsidered.
+3. **The master plan** (`/Users/joe/.claude/plans/nutrition-client-purring-toucan.md`) — the full original design brief. Long, but it's the source of nearly every "why" behind a convention in §9. Skim it once fully, then keep it as a reference for whichever section you're building (it's organized by concern: IA/navigation, design system, mobile/tablet/desktop, card system, recipes, reviews, packages, doctor profile, campaigns, image/video delivery, animation, forms, empty states, error states, loading states, accessibility, SEO, performance, code architecture). **Its visual composition rules are no longer mandatory** — see §15. Treat it as architectural/product history, requirements context, and rationale for the existing implementation; its _product requirements_ and _non-visual architecture_ still carry weight, its prescribed card layouts, hero compositions, section structures, visual treatments, and animation patterns may be reconsidered.
 4. **`backend-toolkit-next/src/routes/create-route.ts` and its test file** — the single most-referenced piece of infrastructure in this handoff. Understanding this file's exact 9-step sequence makes every route file in nutrition-staff trivially readable.
 5. **One representative nutrition-staff entity end to end** — e.g. `recipes`: `src/server/recipes/recipes.schema.ts` → `recipes.repository.ts` → `src/app/api/recipes/route.ts` + `[id]/route.ts` → `src/server/core/revalidation/revalidate-entity.ts`'s `RECIPES_TAGS`/`recipeDetailTags`. This one entity is a template for all the others.
 6. **`nutrition-client/src/lib/data/recipes.ts`** and its sibling `api/recipes.endpoints.ts` — the frontend half of the same entity, showing how it's consumed.
@@ -516,17 +525,17 @@ For a new engineer or a fresh AI session picking this project up cold:
 
 State as of this handoff (2026-08-06):
 
-| Repo | Current branch | Latest commit | Notes |
-|---|---|---|---|
-| `nutrition-client` | `new-1` | `726529f` — "Phase 5: on-demand cache invalidation receiver" | Active working branch. |
-| `nutrition-staff` | `main` | `61f80b7` — "Merge feature/on-demand-cache-invalidation into main" (the *first*, imperative-revalidation version) | **Safe to merge later:** `feature/on-demand-cache-invalidation` (recreated) — commit `2424a0d` — "Migrate all 38 mutation routes to declarative revalidateTags". **Not merged, awaiting review.** |
-| `frontend-toolkit-core` | `master` (deliberately not renamed — see §1) | `e62896e` — "Use a domain-neutral path in joinUrl's test fixture" | Published as 0.5.0. |
-| `toolkit-common` | `main` | `3eb65a5` — "Add resolveLocalized/isLocalizedFallback (0.3.0)" | Published as 0.3.0. |
-| `backend-toolkit-next` | `main` | `f814831` — "Add declarative revalidateTags route option (0.4.0)" | Published as 0.4.0. **This publish succeeded**, immediately after which the registry started 401'ing on reads — see §2/§10. |
-| `frontend-toolkit-tailwind` | `main` | `6ac5569` — "Fix absolutely-positioned descendants escaping scroll/clip containers to the document root" | Not touched this project; version 0.4.2 unchanged. |
-| `backend-toolkit-core` | `main` | `d930db8` — "Bump toolkit-common peer range to ^0.2.0" | Not touched this project; version 0.3.4 unchanged. |
-| `backend-toolkit-mongoose` | `main` | `3924a16` — "Bump toolkit-common peer range to ^0.2.0" | Not touched this project; version 0.3.2 unchanged. |
-| `backend-toolkit-cloudinary` | `main` | `1c1abf9` — "Bump toolkit-common peer range to ^0.2.0" | Not touched this project; version 0.1.1 unchanged. |
+| Repo                         | Current branch                               | Latest commit                                                                                                     | Notes                                                                                                                                                                                             |
+| ---------------------------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `nutrition-client`           | `new-1`                                      | `726529f` — "Phase 5: on-demand cache invalidation receiver"                                                      | Active working branch.                                                                                                                                                                            |
+| `nutrition-staff`            | `main`                                       | `61f80b7` — "Merge feature/on-demand-cache-invalidation into main" (the _first_, imperative-revalidation version) | **Safe to merge later:** `feature/on-demand-cache-invalidation` (recreated) — commit `2424a0d` — "Migrate all 38 mutation routes to declarative revalidateTags". **Not merged, awaiting review.** |
+| `frontend-toolkit-core`      | `master` (deliberately not renamed — see §1) | `e62896e` — "Use a domain-neutral path in joinUrl's test fixture"                                                 | Published as 0.5.0.                                                                                                                                                                               |
+| `toolkit-common`             | `main`                                       | `3eb65a5` — "Add resolveLocalized/isLocalizedFallback (0.3.0)"                                                    | Published as 0.3.0.                                                                                                                                                                               |
+| `backend-toolkit-next`       | `main`                                       | `f814831` — "Add declarative revalidateTags route option (0.4.0)"                                                 | Published as 0.4.0. **This publish succeeded**, immediately after which the registry started 401'ing on reads — see §2/§10.                                                                       |
+| `frontend-toolkit-tailwind`  | `main`                                       | `6ac5569` — "Fix absolutely-positioned descendants escaping scroll/clip containers to the document root"          | Not touched this project; version 0.4.2 unchanged.                                                                                                                                                |
+| `backend-toolkit-core`       | `main`                                       | `d930db8` — "Bump toolkit-common peer range to ^0.2.0"                                                            | Not touched this project; version 0.3.4 unchanged.                                                                                                                                                |
+| `backend-toolkit-mongoose`   | `main`                                       | `3924a16` — "Bump toolkit-common peer range to ^0.2.0"                                                            | Not touched this project; version 0.3.2 unchanged.                                                                                                                                                |
+| `backend-toolkit-cloudinary` | `main`                                       | `1c1abf9` — "Bump toolkit-common peer range to ^0.2.0"                                                            | Not touched this project; version 0.1.1 unchanged.                                                                                                                                                |
 
 **Repositories intentionally not merged:** `nutrition-staff`'s `feature/on-demand-cache-invalidation` (the `revalidateTags` migration) — explicit instruction: "Do not merge the nutrition-staff branch into main." The user reviews and merges nutrition-staff feature branches themselves.
 
@@ -539,15 +548,18 @@ State as of this handoff (2026-08-06):
 ## 13. Known issues
 
 **Open issues:**
+
 - GitHub Packages registry auth failure in this environment (see §2/§10) — blocks a real `npm install` from the registry for `backend-toolkit-next@0.4.0` specifically (and, transiently, for every other `@kira-joo` package too, confirmed via `npm whoami` failing).
 - No real authenticated-mutation smoke test exists for either Phase 5 pass, due to lacking real nutrition-staff admin credentials in this environment.
 
 **Architectural limitations:**
+
 - `requester` (frontend-toolkit-core) can't participate in Next's Data Cache (no `next: {revalidate, tags}` passthrough) — server reads permanently bypass it in favor of native `fetch`. This is accepted, not a bug to fix opportunistically.
 - Cache tags are a hand-kept-in-sync duplicate between nutrition-client and nutrition-staff, by explicit design (see §6). If one side's tag strings drift from the other's, invalidation silently stops matching — there's no automated check for this today.
 - The in-memory sliding-window rate limiter for the consultation-requests endpoint is single-instance only (documented limitation from Phase 4) — won't work correctly if nutrition-staff ever runs multiple instances without a shared store.
 
 **Assumptions:**
+
 - `NUTRITION_CLIENT_URL`/`REVALIDATE_SECRET` being unset in nutrition-staff's environment is treated as "feature not configured here" (silent no-op), not a configuration error — deliberate, so local development against a not-currently-running nutrition-client doesn't break every mutation.
 - Campaign block sub-resource routes (add/replace/remove/reorder) assume the block-mutation function's return value always includes the campaign's current `slug` — true today (confirmed by reading every one of those functions), but would silently need updating if any of them ever stopped returning the full campaign document.
 
@@ -559,12 +571,12 @@ State as of this handoff (2026-08-06):
 
 Context and reasoning that isn't obvious from the code alone:
 
-- **The master plan is unusually load-bearing for this project — for requirements and architecture, no longer for visual composition.** Almost every non-obvious choice in `nutrition-client`'s work traces back to a specific numbered section of it, and for product requirements, data expectations, and non-visual architecture it is still the best answer available. For *visual* questions ("what should this card look like", "how should this hero be composed", "is this animation excessive") it now describes the superseded direction — see §15. Check it for context, then decide against the current redesign direction rather than deferring to it.
-- **The barrel-bug story (Phase 4) is worth understanding as a pattern, not just a fixed bug.** The sequence was: hit a real blocker → build a documented, verified-correct temporary local workaround → keep shipping → once the real fix became available (a new toolkit version), delete the workaround completely and consume the fix. This is the template for how *any* future temporary workaround in this project should be handled — never a permanent local fork of toolkit logic.
+- **The master plan is unusually load-bearing for this project — for requirements and architecture, no longer for visual composition.** Almost every non-obvious choice in `nutrition-client`'s work traces back to a specific numbered section of it, and for product requirements, data expectations, and non-visual architecture it is still the best answer available. For _visual_ questions ("what should this card look like", "how should this hero be composed", "is this animation excessive") it now describes the superseded direction — see §15. Check it for context, then decide against the current redesign direction rather than deferring to it.
+- **The barrel-bug story (Phase 4) is worth understanding as a pattern, not just a fixed bug.** The sequence was: hit a real blocker → build a documented, verified-correct temporary local workaround → keep shipping → once the real fix became available (a new toolkit version), delete the workaround completely and consume the fix. This is the template for how _any_ future temporary workaround in this project should be handled — never a permanent local fork of toolkit logic.
 - **Two explicit rejections of moving cache tags into `toolkit-common`** happened at different points in the project, worded almost identically both times. This is a strong, considered, repeated signal — not a one-off preference. Don't re-propose it a third time without a materially new argument.
 - **"Ask before publishing" is per-instance, not a standing blanket approval**, even though every publish request so far in this project has been approved. Each of the ~4 publishes in this project (`toolkit-common` 0.3.0, `frontend-toolkit-core` 0.5.0, `backend-toolkit-next` 0.4.0, and the earlier `frontend-toolkit-core`/`toolkit-common` round) was preceded by an explicit `AskUserQuestion` confirmation. Continue asking every time, not just the first time.
-- **The nutrition-staff branch-workflow rule arrived mid-project, retroactively.** Two feature branches (`feature/public-faq-composed-endpoint`, the first `feature/on-demand-cache-invalidation`) had already been merged into `main` by direct instruction *before* the standing "never push nutrition-staff to main" rule was stated. Don't be confused by `main`'s history containing merge commits from before the rule existed — the rule applies going forward, not retroactively.
-- **The `revalidateTags` refactor was explicitly framed as "this works, but it's repetitive and easy to forget"** — i.e., the imperative Phase-5-Pass-1 version wasn't *wrong*, it was a real, working, fully-verified feature that got intentionally superseded for maintainability reasons once the pattern proved out across 38 real call sites. This is a useful precedent: a first, simpler implementation that gets replaced once its shape is proven is a legitimate and expected part of this project's process, not a sign the first attempt was a mistake.
+- **The nutrition-staff branch-workflow rule arrived mid-project, retroactively.** Two feature branches (`feature/public-faq-composed-endpoint`, the first `feature/on-demand-cache-invalidation`) had already been merged into `main` by direct instruction _before_ the standing "never push nutrition-staff to main" rule was stated. Don't be confused by `main`'s history containing merge commits from before the rule existed — the rule applies going forward, not retroactively.
+- **The `revalidateTags` refactor was explicitly framed as "this works, but it's repetitive and easy to forget"** — i.e., the imperative Phase-5-Pass-1 version wasn't _wrong_, it was a real, working, fully-verified feature that got intentionally superseded for maintainability reasons once the pattern proved out across 38 real call sites. This is a useful precedent: a first, simpler implementation that gets replaced once its shape is proven is a legitimate and expected part of this project's process, not a sign the first attempt was a mistake.
 - **This handoff document itself was explicitly requested in place of starting Phase 6** — the instruction was unusually explicit: finish the in-flight refactor, verify it, then stop and write this instead of continuing the roadmap. Whoever picks this project up next should treat Phase 6 as the actual next unit of work, with this document as the entire required context to start it.
 - **Multiple concurrent Claude Code sessions share some of these working trees** (confirmed via `ps aux` showing several resumed sessions with overlapping `--add-dir` scopes, and the presence of `DASHBOARD_PLAN.md`/`CRM_PLAN.md` untracked files in nutrition-staff/frontend-toolkit-core that don't belong to this project's work). Any future session should `git status` before any branch-switching or destructive git operation, and never assume the working tree is in the exact state this document describes without checking first — that's a snapshot-at-write-time guarantee, not a live one.
 
@@ -595,8 +607,8 @@ accessibility **requirements** · responsive **quality requirements** ·
 server/client boundaries · verification standards · branch and release rules ·
 business and domain behaviour.
 
-Note the distinction in the middle of that list: the *requirements* bind, the
-*specific values and implementations* currently satisfying them do not. A new
+Note the distinction in the middle of that list: the _requirements_ bind, the
+_specific values and implementations_ currently satisfying them do not. A new
 palette is allowed; an unverified one is not — any replacement is
 contrast-measured and annotated to the standard already set in
 `design-system.md`.
@@ -609,7 +621,7 @@ composition · hero structure · section layouts · navigation presentation ·
 component visual language · visual hierarchy · motion and interaction patterns ·
 **the design-token vocabulary itself**.
 
-The token *mechanism* still binds even while the vocabulary changes: tokens are
+The token _mechanism_ still binds even while the vocabulary changes: tokens are
 declared once and consumed everywhere. Replace the vocabulary deliberately and
 wholesale; do not erode it with one-off values mid-migration.
 

@@ -1,6 +1,5 @@
 import "@/lib/datetime/configure-timezone";
 import { Metadata } from "next";
-import { Cairo } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -16,21 +15,8 @@ import { buildAlternates } from "@/lib/seo/metadata";
 import { buildOrganizationJsonLd, JsonLd } from "@/lib/seo/json-ld";
 
 import { Providers } from "../providers";
+import { cairo } from "../fonts";
 import "../globals.css";
-
-// Single bilingual family for both locales — see docs/design-system.md
-// ("Typography") for why one typeface covers both Arabic and Latin here
-// instead of pairing two separate fonts.
-const cairo = Cairo({
-  subsets: ["arabic", "latin"],
-  // 900 added for the homepage redesign's display moments (hero, section
-  // headings) — the existing family stays the single bilingual typeface
-  // (see docs/design-system.md "Typography" for why this app deliberately
-  // doesn't pair a second display face); this only extends its own range.
-  weight: ["400", "500", "600", "700", "800", "900"],
-  variable: "--font-cairo",
-  display: "swap",
-});
 
 /**
  * Site-wide metadata — title, description, OG/Twitter — is now static,
@@ -61,8 +47,10 @@ const cairo = Cairo({
  * generally (OG images, canonical/alternates), but the correct fix for
  * the favicon specifically is to stop declaring it at all.
  */
-export async function generateMetadata({ params }: { params: { locale: Locale } }): Promise<Metadata> {
-  const t = await getTranslations({ locale: params.locale, namespace: "seo" });
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale: rawLocale } = await params;
+  const locale = rawLocale as Locale;
+  const t = await getTranslations({ locale, namespace: "seo" });
   const title = t("title");
   const description = t("description");
   const ogImage = { url: "/images/logo.png", width: 1536, height: 1024 };
@@ -71,7 +59,7 @@ export async function generateMetadata({ params }: { params: { locale: Locale } 
     metadataBase: siteMetadataBase,
     title: { default: title, template: `%s | ${title}` },
     description,
-    alternates: buildAlternates("", params.locale),
+    alternates: buildAlternates("", locale),
     openGraph: {
       title,
       description,
@@ -97,7 +85,7 @@ export async function generateMetadata({ params }: { params: { locale: Locale } 
 // of this i18n-engine swap.
 interface LocaleLayoutProps {
   children: ReactNode;
-  params: { locale: Locale };
+  params: Promise<{ locale: string }>;
 }
 
 const FALLBACK_SITE_SETTINGS: LocalizedSiteSettings = {
@@ -124,11 +112,13 @@ async function getShellData(locale: Locale) {
 }
 
 const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
-  const { locale } = params;
+  const { locale: rawLocale } = await params;
 
-  if (!routing.locales.includes(locale)) {
+  if (!routing.locales.includes(rawLocale as Locale)) {
     notFound();
   }
+
+  const locale = rawLocale as Locale;
 
   const messages = await getMessages();
   const { siteSettings, doctorProfile, clinicName } = await getShellData(locale);
@@ -161,7 +151,11 @@ const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
         </a>
         <NextIntlClientProvider messages={messages}>
           <Providers>
-            <SiteHeader clinicName={clinicName} whatsappNumber={siteSettings.whatsappNumber} phone={siteSettings.phone} />
+            <SiteHeader
+              clinicName={clinicName}
+              whatsappNumber={siteSettings.whatsappNumber}
+              phone={siteSettings.phone}
+            />
             <main id="main-content" className="flex min-h-[80vh] flex-col pt-16 lg:pt-20">
               {children}
             </main>

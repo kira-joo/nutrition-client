@@ -27,7 +27,11 @@ export default function DoctorLoading() {
       <Section spacing="sm" className="border-y-hairline border-border bg-surface-muted">
         <Container>
           <Skeleton className="h-8 w-48" />
-          <MediaTilesSkeleton count={3} className="mt-8 lg:grid lg:grid-cols-3" tileClassName="w-56 sm:w-64 lg:w-full" />
+          <MediaTilesSkeleton
+            count={3}
+            className="mt-8 lg:grid lg:grid-cols-3"
+            tileClassName="w-56 sm:w-64 lg:w-full"
+          />
         </Container>
       </Section>
     </>

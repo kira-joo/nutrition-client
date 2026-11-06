@@ -26,19 +26,34 @@ export interface ConsultationSectionProps {
  * an accordion) — a single, focused two-part layout is what a real
  * conversion page looks like.
  */
-export async function ConsultationSection({ doctorProfile, whatsappNumber, packageKey, packageName }: ConsultationSectionProps) {
+export async function ConsultationSection({
+  doctorProfile,
+  whatsappNumber,
+  packageKey,
+  packageName,
+}: ConsultationSectionProps) {
   const t = await getTranslations("consultation");
 
   return (
     <Section>
       <Container width="narrow">
-        <PageHeader align="center" lead title={t("heading")} description={t("intro", { doctorName: doctorProfile.name })} />
+        <PageHeader
+          align="center"
+          lead
+          title={t("heading")}
+          description={t("intro", { doctorName: doctorProfile.name })}
+        />
       </Container>
 
       <Container className="mt-10">
         <div className="grid gap-8 lg:grid-cols-[1fr_20rem] lg:items-start lg:gap-12">
           <div className="rounded-2xl border-hairline border-border bg-surface p-6 shadow-sm sm:p-8">
-            <ConsultationForm doctorName={doctorProfile.name} packageKey={packageKey} packageName={packageName} whatsappNumber={whatsappNumber} />
+            <ConsultationForm
+              doctorName={doctorProfile.name}
+              packageKey={packageKey}
+              packageName={packageName}
+              whatsappNumber={whatsappNumber}
+            />
           </div>
 
           <ConsultationTrustPanel doctorProfile={doctorProfile} />

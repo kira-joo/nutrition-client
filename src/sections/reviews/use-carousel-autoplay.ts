@@ -135,7 +135,7 @@ export function useCarouselAutoplay(emblaApi: EmblaApi | undefined): CarouselAut
     const observer = new IntersectionObserver(
       ([entry]) => setIsOnScreen(entry.isIntersecting),
       /* Any part visible counts — a partly-visible strip is still being read. */
-      { threshold: 0 }
+      { threshold: 0 },
     );
     observer.observe(rootNode);
     return () => observer.disconnect();

@@ -10,12 +10,12 @@ This repo's `docs/` directory is the primary project reference. Each document ha
 is already written down, and do not copy these into context wholesale — open the
 one the task needs:
 
-| Task | Read first |
-|---|---|
-| Anything touching data, API, caching, revalidation, i18n | `docs/architecture.md` |
-| Visual/design work — palette, type, spacing, card families, contrast | `docs/design-system.md` — **current-state reference, not the redesign spec** |
-| Writing actual styles — token names, Tailwind mappings, right/wrong usage | `docs/theme.md` — accurate for today's code; the vocabulary itself is open |
-| Picking up the project cold, or asking "why is it like this" | `docs/HANDOFF.md` |
+| Task                                                                      | Read first                                                                   |
+| ------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| Anything touching data, API, caching, revalidation, i18n                  | `docs/architecture.md`                                                       |
+| Visual/design work — palette, type, spacing, card families, contrast      | `docs/design-system.md` — **current-state reference, not the redesign spec** |
+| Writing actual styles — token names, Tailwind mappings, right/wrong usage | `docs/theme.md` — accurate for today's code; the vocabulary itself is open   |
+| Picking up the project cold, or asking "why is it like this"              | `docs/HANDOFF.md`                                                            |
 
 `docs/HANDOFF.md` is a snapshot, not a live document — its **non-visual
 conventions** are authoritative, but its branch names, version numbers, and
@@ -41,9 +41,15 @@ split.
   `@kira-joo/frontend-toolkit-core/server`**, never the root entry. The root
   bundle carries React context code and crashes Server Component / Route Handler
   builds with `TypeError: createContext is not a function`.
-- **No API path is hardcoded at a call site.** `api/public-api-route.ts` holds
-  every route string; `api/<domain>.endpoints.ts` holds one `Endpoint` constant
-  per domain. Placeholders are `:id`/`:slug`, not `[id]`/`[slug]`.
+- **No API path is hardcoded at a call site.** `src/lib/api/public-api-route.ts`
+  holds every route string; `src/lib/api/<domain>.endpoints.ts` holds one
+  `Endpoint` constant per domain. Placeholders are `:id`/`:slug`, not
+  `[id]`/`[slug]`.
+- **Never put a file in a repo-root `api/` directory.** Vercel turns every file
+  under a top-level `/api/` into its own Serverless Function, independently of
+  Next.js — 13 constant files there once pushed `staging` past the Hobby plan's
+  12-function cap (`exceeded_serverless_functions_per_deployment`). Next.js
+  Route Handlers live in `src/app/api/`; shared API code lives in `src/lib/api/`.
 - **Join URLs with `joinUrl`, never `new URL(path, base)`** — the latter drops
   the base's path segment silently.
 - **Tailwind only.** No MUI, no Emotion, no `sx`. All three are fully removed;
@@ -100,3 +106,43 @@ current policy.
 Real browser verification is part of this repo's definition of done, at 375/768/
 1440 in both locales. See `.claude/skills/browser-visual-qa/SKILL.md` — including
 the horizontal-overflow false positive, which is a documented trap here.
+
+## Rulings inherited from the old root constitution
+
+These were workspace-level rules until the root `CLAUDE.md` was generalised.
+They are Nutrition product decisions, so they live here now.
+
+**Cache tags stay app-local.** `CacheTag`'s tag strings, `CACHE_POLICY`'s
+intervals, every `domain/*.ts` type, `PublicApiRoute`'s route strings, and
+`publishRevalidation`'s HTTP implementation are deliberately not shared.
+Promoting cache tags to `toolkit-common` has been **proposed twice and rejected
+both times** — do not re-propose without a materially new argument.
+
+**The master design brief** at
+`/Users/joe/.claude/plans/nutrition-client-purring-toucan.md` is optional
+historical context, **not authority**. It lives outside the workspace, on one
+machine, unversioned with the repositories — treat it as unavailable by default.
+When present it is useful for architectural and product history, but load only
+the section a task needs and never let a decision depend on it. Anything from it
+that turns out to be load-bearing should be written into this repo's `docs/`
+instead. **Its visual composition rules are not binding on the redesign.**
+
+**The Books Flipbook is a preserved successful experience.** It is not
+redesigned as part of the current work unless the new surrounding design creates
+an inconsistency that genuinely requires it — and it is not a visual source of
+truth for the rest of the site either.
+
+**Two scheduled `apple-design-skill` audits** are planned for this app: a first
+pass at the next meaningful visual checkpoint once the refactor/foundation work
+is coherent, and a full-site pass at the end of the redesign as a final quality
+gate. See the root constitution for how findings must be classified.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

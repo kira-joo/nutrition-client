@@ -25,7 +25,13 @@ export function MediaBlock({ block }: MediaBlockProps) {
     <Container>
       <div className="overflow-hidden rounded-2xl bg-black shadow-md">
         {block.video ? (
-          <video controls preload="metadata" poster={block.video.posterUrl} playsInline className="aspect-video w-full object-cover">
+          <video
+            controls
+            preload="metadata"
+            poster={block.video.posterUrl}
+            playsInline
+            className="aspect-video w-full object-cover"
+          >
             <source src={block.video.secureUrl} type={`video/${block.video.format}`} />
           </video>
         ) : (

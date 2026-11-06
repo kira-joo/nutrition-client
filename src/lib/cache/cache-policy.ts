@@ -50,5 +50,5 @@ export const CACHE_POLICY: Record<StaticCacheTagValue, number> = {
  */
 export const resolvePolicyRevalidate = createCachePolicyResolver(
   CACHE_POLICY as Record<string, number>,
-  DEFAULT_REVALIDATE_SECONDS
+  DEFAULT_REVALIDATE_SECONDS,
 );

@@ -73,7 +73,10 @@ export async function VideoDetail({ video }: VideoDetailProps) {
                 user what will happen but never what they are opening.
               */
               aria-label={`${t("detail.watchExternallyGeneric")}: ${video.title}`}
-              className={cn("group relative flex aspect-video w-full items-center justify-center overflow-hidden shadow-sm", SURFACE_MUTED)}
+              className={cn(
+                "group relative flex aspect-video w-full items-center justify-center overflow-hidden shadow-sm",
+                SURFACE_MUTED,
+              )}
             >
               {posterUrl ? (
                 <Image

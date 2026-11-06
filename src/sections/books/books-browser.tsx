@@ -62,9 +62,7 @@ export async function BooksBrowser({ result, page }: BooksBrowserProps) {
 }
 
 function EmptyBooks() {
-  return (
-    <EmptyPanel icon={BookOpen} message="لا توجد كتب منشورة حتى الآن. تفقدي الصفحة قريبًا." />
-  );
+  return <EmptyPanel icon={BookOpen} message="لا توجد كتب منشورة حتى الآن. تفقدي الصفحة قريبًا." />;
 }
 
 /** Real links, not buttons — a page is a distinct, shareable URL (mirrors Recipes'/Videos' pagination). Always the Arabic canonical, per `BookCard`'s own reasoning. */

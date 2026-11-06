@@ -108,12 +108,19 @@ export async function RecipesBrowser({ result, categories, foodGroups, filters }
 async function EmptyResults({ filters, activeCount }: { filters: RecipeFilters; activeCount: number }) {
   const t = await getTranslations("recipes");
 
-  const { icon: Icon, message, hint } =
-    activeCount === 0
-      ? { icon: UtensilsCrossed, message: t("empty.noRecipes"), hint: null }
-      : filters.search
-        ? { icon: SearchX, message: t("empty.noSearchResults", { query: filters.search }), hint: t("empty.noSearchResultsHint") }
-        : { icon: SearchX, message: t("empty.noResults"), hint: t("empty.noResultsHint") };
+  const {
+    icon: Icon,
+    message,
+    hint,
+  } = activeCount === 0
+    ? { icon: UtensilsCrossed, message: t("empty.noRecipes"), hint: null }
+    : filters.search
+      ? {
+          icon: SearchX,
+          message: t("empty.noSearchResults", { query: filters.search }),
+          hint: t("empty.noSearchResultsHint"),
+        }
+      : { icon: SearchX, message: t("empty.noResults"), hint: t("empty.noResultsHint") };
 
   return (
     <EmptyPanel icon={Icon} message={message} hint={hint}>

@@ -1,5 +1,10 @@
 import type { RichTextDoc, RichTextMark, RichTextNode } from "@/lib/books/rich-text-doc.interface";
-import { DEFAULT_HIGHLIGHT_COLOR, isFontSizeToken, isHighlightColorToken, isTextColorToken } from "@/lib/books/rich-text-tokens";
+import {
+  DEFAULT_HIGHLIGHT_COLOR,
+  isFontSizeToken,
+  isHighlightColorToken,
+  isTextColorToken,
+} from "@/lib/books/rich-text-tokens";
 
 /**
  * Hand-synced from nutrition-staff's
@@ -12,7 +17,12 @@ import { DEFAULT_HIGHLIGHT_COLOR, isFontSizeToken, isHighlightColorToken, isText
  * emitted as an attribute.
  */
 export function escapeHtml(text: string): string {
-  return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 const SAFE_HREF_PATTERN = /^(https?:\/\/|\/)/;

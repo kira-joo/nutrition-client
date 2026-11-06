@@ -11,7 +11,7 @@ import { APIConfig, ContentType } from "@kira-joo/frontend-toolkit-core";
  * `baseURL` is same-origin, `"/api"` — the browser only ever calls this
  * app's own `/api/*` proxy routes, never nutrition-staff directly. Owns
  * the shared `/api` prefix so route constants (`PublicApiRoute` in
- * api/public-api-route.ts) only need to name the resource path, e.g.
+ * src/lib/api/public-api-route.ts) only need to name the resource path, e.g.
  * `CONSULTATION_REQUESTS: "/consultation-requests"`. Call this once, e.g.
  * from src/app/providers.tsx, before any `requester` call.
  */

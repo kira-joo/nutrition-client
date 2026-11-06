@@ -103,7 +103,7 @@ const SWIPE_MIN_PX = 30;
  */
 function trackPointerMovement(
   stage: HTMLElement,
-  onSwipe: (towards: "forward" | "backward") => void
+  onSwipe: (towards: "forward" | "backward") => void,
 ): { moved: boolean; dispose: () => void } {
   const guard = { moved: false, dispose: () => {} };
   let origin: { x: number; y: number; at: number; touch: boolean } | null = null;
@@ -237,39 +237,40 @@ function turnPage(pageFlip: PageFlipInstance, towards: "forward" | "backward", r
 }
 
 function buildPageElements(deck: RenderedPage[]): HTMLElement[] {
-  const elements = deck
-    .map((page, index) => {
-      const item = document.createElement("div");
-      // No inline styles on this element, ever: `HTMLPage.draw()`
-      // overwrites its ENTIRE `cssText` on every animation frame. All of
-      // our own styling lives on the scaler child below.
-      if (isHardBoard(page)) item.dataset.density = "hard";
+  const elements = deck.map((page, index) => {
+    const item = document.createElement("div");
+    // No inline styles on this element, ever: `HTMLPage.draw()`
+    // overwrites its ENTIRE `cssText` on every animation frame. All of
+    // our own styling lives on the scaler child below.
+    if (isHardBoard(page)) item.dataset.density = "hard";
 
-      // StPageFlip sizes `item` in real CSS px, but our pages are laid
-      // out in physical `mm` against the same template CSS the PDF uses.
-      // The scaler bridges the two WITHOUT touching `template-css.ts`,
-      // and — critically — without a transform on any ancestor of the
-      // library's own coordinate space, which would desynchronise visual
-      // px from the layout px its pointer math assumes.
-      const scaler = document.createElement("div");
-      scaler.className = "book-flip-scaler";
+    // StPageFlip sizes `item` in real CSS px, but our pages are laid
+    // out in physical `mm` against the same template CSS the PDF uses.
+    // The scaler bridges the two WITHOUT touching `template-css.ts`,
+    // and — critically — without a transform on any ancestor of the
+    // library's own coordinate space, which would desynchronise visual
+    // px from the layout px its pointer math assumes.
+    const scaler = document.createElement("div");
+    scaler.className = "book-flip-scaler";
 
-      const bookPage = document.createElement("div");
-      bookPage.className = "book-page";
-      // Initial guess only; `syncOrientation` keeps it true to whichever
-      // slot the library actually places the page in.
-      bookPage.dataset.side = sideOf(index + 1);
-      bookPage.innerHTML =
-        `<div class="book-page-content">${page.html}</div>` +
-        // Hand-synced with nutrition-staff's `build-book-html.ts`. The inner
+    const bookPage = document.createElement("div");
+    bookPage.className = "book-page";
+    // Initial guess only; `syncOrientation` keeps it true to whichever
+    // slot the library actually places the page in.
+    bookPage.dataset.side = sideOf(index + 1);
+    bookPage.innerHTML =
+      `<div class="book-page-content">${page.html}</div>` +
+      // Hand-synced with nutrition-staff's `build-book-html.ts`. The inner
       // span carries the flanking dots; `.book-folio`'s own pseudo-elements
       // are the thin rules and leaf marks.
-      (page.pageNumber !== null ? `<div class="book-folio"><span class="book-folio-leaf" aria-hidden="true"></span><span class="book-folio-number">${page.pageNumber}</span><span class="book-folio-leaf" aria-hidden="true"></span></div>` : "");
+      (page.pageNumber !== null
+        ? `<div class="book-folio"><span class="book-folio-leaf" aria-hidden="true"></span><span class="book-folio-number">${page.pageNumber}</span><span class="book-folio-leaf" aria-hidden="true"></span></div>`
+        : "");
 
-      scaler.appendChild(bookPage);
-      item.appendChild(scaler);
-      return item;
-    });
+    scaler.appendChild(bookPage);
+    item.appendChild(scaler);
+    return item;
+  });
   return elements.reverse();
 }
 
@@ -335,8 +336,21 @@ const ENGINE_CSS = `
 `;
 
 export const StPageFlipEngine = forwardRef<FlipEngineHandle, FlipEngineProps>(function StPageFlipEngine(
-  { pages, geometry, initialPageNumber, singlePage, reducedMotion, zoom, maxScale, fillRatio, fillContainer, onPageChange, onTurnStart, onTocLinkClick },
-  ref
+  {
+    pages,
+    geometry,
+    initialPageNumber,
+    singlePage,
+    reducedMotion,
+    zoom,
+    maxScale,
+    fillRatio,
+    fillContainer,
+    onPageChange,
+    onTurnStart,
+    onTocLinkClick,
+  },
+  ref,
 ) {
   const stageRef = useRef<HTMLDivElement>(null);
   const mountRef = useRef<HTMLDivElement | null>(null);
@@ -385,7 +399,12 @@ export const StPageFlipEngine = forwardRef<FlipEngineHandle, FlipEngineProps>(fu
     const pageFlip = pageFlipRef.current;
     if (!stage || !mount || !pageFlip) return;
 
-    const { zoom: currentZoom, maxScale: currentMaxScale, fillRatio: currentFillRatio, singlePage: currentSinglePage } = layoutRef.current;
+    const {
+      zoom: currentZoom,
+      maxScale: currentMaxScale,
+      fillRatio: currentFillRatio,
+      singlePage: currentSinglePage,
+    } = layoutRef.current;
     const stageRect = stage.getBoundingClientRect();
     // A stage this small is never a real reading surface — it means the
     // element is mid-layout, detached, or inside a hidden container.
@@ -470,7 +489,6 @@ export const StPageFlipEngine = forwardRef<FlipEngineHandle, FlipEngineProps>(fu
       if (page.getDrawingDensity() !== real) page.setDrawingDensity(real);
     }
   }, []);
-
 
   useEffect(() => {
     const stage = stageRef.current;
@@ -631,7 +649,6 @@ export const StPageFlipEngine = forwardRef<FlipEngineHandle, FlipEngineProps>(fu
         applyLayout();
       })
       .catch((error) => {
-        // eslint-disable-next-line no-console
         console.error("[flip-engine] failed to load page-flip", error);
       });
 
@@ -654,7 +671,6 @@ export const StPageFlipEngine = forwardRef<FlipEngineHandle, FlipEngineProps>(fu
     // the book is built, so the engine is rebuilt (reopening at the page
     // it is currently on, via `initialPageNumberRef`) rather than mutated
     // in place.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deck, pageWidthPx, pageHeightPx, maxScale, singlePage, reducedMotion, applyLayout, repairDensityBleed]);
 
   // Keep the reopen point current so a `singlePage`/`reducedMotion`
@@ -716,37 +732,33 @@ export const StPageFlipEngine = forwardRef<FlipEngineHandle, FlipEngineProps>(fu
     };
   }, []);
 
-  useImperativeHandle(
-    ref,
-    (): FlipEngineHandle => {
-      return {
-        next: () => {
-          const pageFlip = pageFlipRef.current;
-          if (pageFlip) turnPage(pageFlip, "forward", reducedMotion);
-        },
-        prev: () => {
-          const pageFlip = pageFlipRef.current;
-          if (pageFlip) turnPage(pageFlip, "backward", reducedMotion);
-        },
-        goTo: (pageNumber: number) => {
-          const pageFlip = pageFlipRef.current;
-          if (!pageFlip) return;
-          const clamped = Math.min(realPageCount, Math.max(1, Math.round(pageNumber)));
-          const target = invertIndex(deckLength, clamped);
-          if (reducedMotion) {
-            pageFlip.turnToPage(target);
-            // `turnToPage` is instant and fires no `flip` event, so the
-            // reader would otherwise never learn the page changed.
-            currentPageNumberRef.current = clamped;
-            onPageChangeRef.current(clamped);
-            return;
-          }
-          pageFlip.flip(target);
-        },
-      };
-    },
-    [deckLength, realPageCount, reducedMotion]
-  );
+  useImperativeHandle(ref, (): FlipEngineHandle => {
+    return {
+      next: () => {
+        const pageFlip = pageFlipRef.current;
+        if (pageFlip) turnPage(pageFlip, "forward", reducedMotion);
+      },
+      prev: () => {
+        const pageFlip = pageFlipRef.current;
+        if (pageFlip) turnPage(pageFlip, "backward", reducedMotion);
+      },
+      goTo: (pageNumber: number) => {
+        const pageFlip = pageFlipRef.current;
+        if (!pageFlip) return;
+        const clamped = Math.min(realPageCount, Math.max(1, Math.round(pageNumber)));
+        const target = invertIndex(deckLength, clamped);
+        if (reducedMotion) {
+          pageFlip.turnToPage(target);
+          // `turnToPage` is instant and fires no `flip` event, so the
+          // reader would otherwise never learn the page changed.
+          currentPageNumberRef.current = clamped;
+          onPageChangeRef.current(clamped);
+          return;
+        }
+        pageFlip.flip(target);
+      },
+    };
+  }, [deckLength, realPageCount, reducedMotion]);
 
   return (
     <div className={fillContainer ? "book-page-scope book-flip-root--fill" : "book-page-scope"} dir="rtl">
@@ -756,7 +768,10 @@ export const StPageFlipEngine = forwardRef<FlipEngineHandle, FlipEngineProps>(fu
           style choice: the engine does not exist yet while the paginator
           is measuring against it. */}
       <style dangerouslySetInnerHTML={{ __html: ENGINE_CSS }} />
-      <div ref={stageRef} className={`book-flip-stage ${fillContainer ? "book-flip-stage--fill" : "book-flip-stage--page"}`} />
+      <div
+        ref={stageRef}
+        className={`book-flip-stage ${fillContainer ? "book-flip-stage--fill" : "book-flip-stage--page"}`}
+      />
     </div>
   );
 });

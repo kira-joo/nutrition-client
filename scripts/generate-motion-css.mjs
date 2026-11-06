@@ -33,7 +33,7 @@ const unknown = Object.keys(source).filter((key) => !KNOWN_GROUPS.includes(key))
 if (unknown.length > 0) {
   throw new Error(
     `[generate-motion-css] unhandled token group(s): ${unknown.join(", ")}. ` +
-      `Add them to this generator (and to motion-tokens.ts) or remove them from the JSON.`
+      `Add them to this generator (and to motion-tokens.ts) or remove them from the JSON.`,
   );
 }
 /* And the other direction: a missing group would otherwise fail deep inside

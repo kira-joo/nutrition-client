@@ -24,7 +24,17 @@ export interface FlipbookControlsProps {
  * obvious way into the real reading experience, not a peer of the other
  * controls.
  */
-export function FlipbookControls({ currentPageNumber, pageCount, onNext, onPrev, onGoToPage, onOpenToc, pdf, bookSlug, onEnterImmersive }: FlipbookControlsProps) {
+export function FlipbookControls({
+  currentPageNumber,
+  pageCount,
+  onNext,
+  onPrev,
+  onGoToPage,
+  onOpenToc,
+  pdf,
+  bookSlug,
+  onEnterImmersive,
+}: FlipbookControlsProps) {
   const [pageJumpValue, setPageJumpValue] = useState("");
 
   function submitPageJump(): void {
@@ -38,9 +48,18 @@ export function FlipbookControls({ currentPageNumber, pageCount, onNext, onPrev,
   const canDownloadPdf = pdf.downloadAllowed && pdf.ready;
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 rounded-md bg-white/90 p-2 shadow-sm dark:bg-slate-800/90" dir="rtl">
+    <div
+      className="flex flex-wrap items-center justify-between gap-3 rounded-md bg-white/90 p-2 shadow-sm dark:bg-slate-800/90"
+      dir="rtl"
+    >
       <div className="flex flex-wrap items-center gap-2">
-        <button type="button" aria-label="الصفحة السابقة" title="الصفحة السابقة" onClick={onPrev} className="rounded p-2 pointer:hover:bg-slate-100 dark:pointer:hover:bg-slate-700">
+        <button
+          type="button"
+          aria-label="الصفحة السابقة"
+          title="الصفحة السابقة"
+          onClick={onPrev}
+          className="rounded p-2 pointer:hover:bg-slate-100 dark:pointer:hover:bg-slate-700"
+        >
           <ChevronRight className="h-5 w-5" aria-hidden="true" />
         </button>
 
@@ -48,7 +67,13 @@ export function FlipbookControls({ currentPageNumber, pageCount, onNext, onPrev,
           {currentPageNumber} / {pageCount || "—"}
         </span>
 
-        <button type="button" aria-label="الصفحة التالية" title="الصفحة التالية" onClick={onNext} className="rounded p-2 pointer:hover:bg-slate-100 dark:pointer:hover:bg-slate-700">
+        <button
+          type="button"
+          aria-label="الصفحة التالية"
+          title="الصفحة التالية"
+          onClick={onNext}
+          className="rounded p-2 pointer:hover:bg-slate-100 dark:pointer:hover:bg-slate-700"
+        >
           <ChevronLeft className="h-5 w-5" aria-hidden="true" />
         </button>
 
@@ -71,7 +96,13 @@ export function FlipbookControls({ currentPageNumber, pageCount, onNext, onPrev,
           />
         </form>
 
-        <button type="button" aria-label="فهرس المحتويات" title="فهرس المحتويات" onClick={onOpenToc} className="rounded p-2 pointer:hover:bg-slate-100 dark:pointer:hover:bg-slate-700">
+        <button
+          type="button"
+          aria-label="فهرس المحتويات"
+          title="فهرس المحتويات"
+          onClick={onOpenToc}
+          className="rounded p-2 pointer:hover:bg-slate-100 dark:pointer:hover:bg-slate-700"
+        >
           <List className="h-5 w-5" aria-hidden="true" />
         </button>
 
@@ -88,7 +119,10 @@ export function FlipbookControls({ currentPageNumber, pageCount, onNext, onPrev,
               تنزيل PDF
             </a>
           ) : (
-            <span className="rounded bg-slate-100 px-3 py-2 text-sm text-slate-400 dark:bg-slate-700" title="ملف PDF قيد التحضير">
+            <span
+              className="rounded bg-slate-100 px-3 py-2 text-sm text-slate-400 dark:bg-slate-700"
+              title="ملف PDF قيد التحضير"
+            >
               PDF قيد التحضير
             </span>
           )

@@ -35,7 +35,7 @@ export function StarRating({ rating, max = 5, label, className, tone = "default"
           <Star key={index} aria-hidden="true" className={cn("size-icon-md", filled)} />
         ) : (
           <Star key={index} aria-hidden="true" className={cn("size-icon-md", empty)} />
-        )
+        ),
       )}
     </div>
   );

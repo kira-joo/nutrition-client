@@ -4,7 +4,7 @@ import { FaqSections } from "@/sections/faq/faq-sections";
 import { ClosingCtaSection } from "@/sections/shared/closing-cta-section";
 
 interface FaqPageProps {
-  params: { locale: Locale };
+  params: Promise<{ locale: Locale }>;
 }
 
 /**
@@ -14,7 +14,8 @@ interface FaqPageProps {
  * real empty state inside FaqSections.
  */
 export default async function FaqPage({ params }: FaqPageProps) {
-  const faqSections = await getFaqSectionsWithItems(params.locale);
+  const { locale } = await params;
+  const faqSections = await getFaqSectionsWithItems(locale);
 
   return (
     <>

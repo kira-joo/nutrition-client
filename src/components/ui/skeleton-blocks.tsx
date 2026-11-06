@@ -78,7 +78,9 @@ export interface CardSkeletonProps {
 
 export function CardSkeleton({ lines = 4, withAction = false, className }: CardSkeletonProps) {
   return (
-    <div className={cn("flex flex-col gap-4 rounded-xl border-hairline border-border bg-surface p-6 sm:p-8", className)}>
+    <div
+      className={cn("flex flex-col gap-4 rounded-xl border-hairline border-border bg-surface p-6 sm:p-8", className)}
+    >
       <Skeleton className="h-8 w-40" />
       <Skeleton className="h-10 w-32" />
       <TextLinesSkeleton lines={lines} />

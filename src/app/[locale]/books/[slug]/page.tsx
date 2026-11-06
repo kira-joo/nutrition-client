@@ -6,7 +6,7 @@ import { buildArabicOnlyAlternates, buildOgImage } from "@/lib/seo/metadata";
 import { appHref } from "@/constant/AppRoute.enum";
 
 interface BookPageProps {
-  params: { locale: string; slug: string };
+  params: Promise<{ locale: string; slug: string }>;
 }
 
 /**
@@ -18,13 +18,14 @@ interface BookPageProps {
  * merely redundant, since English never actually renders this content.
  */
 export async function generateMetadata({ params }: BookPageProps): Promise<Metadata> {
-  const book = await getBook(params.slug);
+  const { slug } = await params;
+  const book = await getBook(slug);
   if (!book) return {};
 
   return {
     title: book.title,
     description: book.shortDescription || book.subtitle || book.title,
-    alternates: buildArabicOnlyAlternates(appHref.book(params.slug)),
+    alternates: buildArabicOnlyAlternates(appHref.book(slug)),
     openGraph: {
       title: book.title,
       description: book.shortDescription || book.subtitle || book.title,
@@ -41,7 +42,8 @@ export async function generateMetadata({ params }: BookPageProps): Promise<Metad
  * status, so an inner `notFound()` would otherwise render as a 200.
  */
 export default async function BookPage({ params }: BookPageProps) {
-  const book = await getBook(params.slug);
+  const { slug } = await params;
+  const book = await getBook(slug);
   if (!book) notFound();
 
   return <BookReader book={book} />;

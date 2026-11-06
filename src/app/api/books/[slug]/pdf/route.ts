@@ -18,15 +18,19 @@ export const dynamic = "force-dynamic";
  * on its own if either isn't true, so this route's status code IS
  * nutrition-staff's, forwarded verbatim.
  */
-export async function GET(request: NextRequest, context: { params: { slug: string } }) {
+export async function GET(request: NextRequest, context: { params: Promise<{ slug: string }> }) {
   let baseUrl: string;
   try {
     baseUrl = ServerApiConfig.baseURL;
   } catch {
-    return NextResponse.json({ statusCode: 500, message: "Server misconfigured", error: "SERVER_ERROR" }, { status: 500 });
+    return NextResponse.json(
+      { statusCode: 500, message: "Server misconfigured", error: "SERVER_ERROR" },
+      { status: 500 },
+    );
   }
 
-  const upstreamUrl = joinUrl(baseUrl, PublicApiRoute.BOOK_PDF_UPSTREAM.replace(":slug", context.params.slug));
+  const { slug } = await context.params;
+  const upstreamUrl = joinUrl(baseUrl, PublicApiRoute.BOOK_PDF_UPSTREAM.replace(":slug", slug));
 
   const upstreamResponse = await fetch(upstreamUrl, { method: MethodType.GET, cache: "no-store" });
 

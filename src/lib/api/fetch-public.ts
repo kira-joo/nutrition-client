@@ -1,5 +1,13 @@
 import "server-only";
-import { buildUrl, joinUrl, toAppError, type Endpoint, type EndpointParams, type EndpointQuery, type EndpointReturn } from "@kira-joo/frontend-toolkit-core/server";
+import {
+  buildUrl,
+  joinUrl,
+  toAppError,
+  type Endpoint,
+  type EndpointParams,
+  type EndpointQuery,
+  type EndpointReturn,
+} from "@kira-joo/frontend-toolkit-core/server";
 import { ServerApiConfig } from "@/lib/api/server-api-config";
 import { resolvePolicyRevalidate } from "@/lib/cache/cache-policy";
 
@@ -15,7 +23,7 @@ interface FetchPublicOptions<TEndpoint extends Endpoint> {
 /**
  * The one place every server-side read of nutrition-staff's public API
  * goes through. Takes the same `Endpoint` object defined under
- * `api/*.endpoints.ts` — never a bare path string at a call site — and
+ * `src/lib/api/*.endpoints.ts` — never a bare path string at a call site — and
  * infers its return type from the endpoint definition, so call sites don't
  * repeat a generic.
  *
@@ -35,7 +43,7 @@ interface FetchPublicOptions<TEndpoint extends Endpoint> {
  * this from a client component — the base URL comes from
  * `ServerApiConfig` (server-api-config.ts), itself sourced from
  * `API_URL` (which owns nutrition-staff's shared `/api`
- * prefix — see api/public-api-route.ts), a server-only env var with no
+ * prefix — see src/lib/api/public-api-route.ts), a server-only env var with no
  * `NEXT_PUBLIC_` prefix, specifically so the browser can never be pointed
  * at nutrition-staff directly. Joined with `joinUrl`, not `new URL(path,
  * base)` — the latter would silently drop `API_URL`'s `/api`
@@ -44,7 +52,7 @@ interface FetchPublicOptions<TEndpoint extends Endpoint> {
  */
 export async function fetchPublic<TEndpoint extends Endpoint>(
   endpoint: TEndpoint,
-  { params, query, tags, revalidate }: FetchPublicOptions<TEndpoint>
+  { params, query, tags, revalidate }: FetchPublicOptions<TEndpoint>,
 ): Promise<EndpointReturn<TEndpoint>> {
   const path = buildUrl(endpoint.url, params, query);
   const resolvedRevalidate = revalidate ?? resolvePolicyRevalidate(tags);

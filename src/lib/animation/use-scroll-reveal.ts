@@ -111,7 +111,6 @@ export function useScrollReveal<T extends HTMLElement>(options: UseScrollRevealO
     );
 
     return () => stop();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [direction, distance, duration, ease, delay, start, prefersReducedMotion]);
 
   return ref;

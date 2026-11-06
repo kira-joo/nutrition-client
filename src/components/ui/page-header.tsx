@@ -87,7 +87,7 @@ export function PageHeader({
            line below that rather than being squeezed into a narrow row. Logical
            flow puts it on the correct side under RTL with no JS branching. */
         action && "sm:flex-row sm:items-end sm:justify-between",
-        className
+        className,
       )}
     >
       <div
@@ -98,7 +98,7 @@ export function PageHeader({
              `gap-2`. A section heading is smaller, so the same gap around it
              reads as looser — matching them was never arbitrary. */
           Heading === "h1" ? "gap-3" : "gap-2",
-          centred ? "items-center text-center" : "items-start"
+          centred ? "items-center text-center" : "items-start",
         )}
       >
         {eyebrow ? <p className={cn(LABEL_TYPE, "text-accent")}>{eyebrow}</p> : null}
@@ -111,14 +111,25 @@ export function PageHeader({
             // scoped to that one path so every page-level `h1` masthead
             // (recipes/videos/reviews/packages/books/consultation) stays
             // pixel-identical until the redesign is approved and extended.
-            Heading === "h1" ? "text-display font-extrabold" : "text-heading-1 font-black"
+            Heading === "h1" ? "text-display font-extrabold" : "text-heading-1 font-black",
           )}
         >
           {title}
-          {titleAccent ? <> <span className="text-primary">{titleAccent}</span></> : null}
+          {titleAccent ? (
+            <>
+              {" "}
+              <span className="text-primary">{titleAccent}</span>
+            </>
+          ) : null}
         </Heading>
         {description ? (
-          <p className={cn("max-w-narrow text-text-secondary", lead ? "text-body-lg" : "text-body", centred && "mx-auto")}>
+          <p
+            className={cn(
+              "max-w-narrow text-text-secondary",
+              lead ? "text-body-lg" : "text-body",
+              centred && "mx-auto",
+            )}
+          >
             {description}
           </p>
         ) : null}

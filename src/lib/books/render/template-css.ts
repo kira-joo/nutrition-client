@@ -138,7 +138,9 @@ ${BOOK_TEMPLATE_FONT_FACES}
 .book-page-footer-note p { font-size: 7.5pt; line-height: 1.5; color: ${BRAND_COLORS.muted}; margin-bottom: 1mm; }
 .book-page-footer-note p:last-child { margin-bottom: 0; }
 
-${watermark ? `
+${
+  watermark
+    ? `
 /* Tiled watermark for ordinary paper pages only — hand-synced with
    nutrition-staff's template.css.ts. The exclusion list is the template's
    existing one: uploaded/generated covers and chapter openers carry their
@@ -175,7 +177,9 @@ ${watermark ? `
   position: relative;
   z-index: 1;
 }
-` : ""}
+`
+    : ""
+}
 .book-running-head {
   position: absolute;
   z-index: 2;
@@ -239,7 +243,9 @@ ${watermark ? `
 }
 .book-folio-number::before { left: 0; }
 .book-folio-number::after { right: 0; }
-${leafUrl ? `
+${
+  leafUrl
+    ? `
 /* Botanical mark at each outer end of the footer. ONE asset, mirrored on
    the far side via scaleX(-1) so the pair reads as a symmetric composition
    rather than the same image printed twice facing the same way.
@@ -263,7 +269,9 @@ ${leafUrl ? `
 }
 .book-folio-leaf:first-child { order: -1; }
 .book-folio-leaf:last-child { order: 1; transform: scaleX(-1); }
-` : ""}
+`
+    : ""
+}
 
 /* Chapter openers are real, numbered pages (they count toward pagination/
    TOC), but the full-bleed artwork has no room for a folio digit or

@@ -34,7 +34,18 @@ interface CoverBookFields {
 export function renderCoverPage(book: CoverBookFields, identity: PublicResolvedIdentity): StreamFragment {
   if (book.coverMode === "uploaded" && book.coverImage) {
     const html = `<div class="book-cover book-cover--uploaded" style="--book-cover-image-url: url('${escapeHtml(book.coverImage.secureUrl)}')"></div>`;
-    return { id: "cover", kind: "singlePage", pageKind: "cover", chapterId: null, html, atomic: true, splittable: false, keepWithNext: false, forceNewPage: false, numbered: false };
+    return {
+      id: "cover",
+      kind: "singlePage",
+      pageKind: "cover",
+      chapterId: null,
+      html,
+      atomic: true,
+      splittable: false,
+      keepWithNext: false,
+      forceNewPage: false,
+      numbered: false,
+    };
   }
   const html = `
     <div class="book-cover">
@@ -43,7 +54,18 @@ export function renderCoverPage(book: CoverBookFields, identity: PublicResolvedI
       ${identity.bookLogo ? `<img class="book-cover-logo" src="${escapeHtml(identity.bookLogo.secureUrl)}" alt="" />` : ""}
       ${identity.doctorName ? `<div class="book-cover-doctor">${escapeHtml(identity.doctorName)}</div>` : ""}
     </div>`;
-  return { id: "cover", kind: "singlePage", pageKind: "cover", chapterId: null, html, atomic: true, splittable: false, keepWithNext: false, forceNewPage: false, numbered: false };
+  return {
+    id: "cover",
+    kind: "singlePage",
+    pageKind: "cover",
+    chapterId: null,
+    html,
+    atomic: true,
+    splittable: false,
+    keepWithNext: false,
+    forceNewPage: false,
+    numbered: false,
+  };
 }
 
 /**
@@ -67,7 +89,10 @@ function buildLegalFooterHtml(identity: PublicResolvedIdentity): string {
     </div>`;
 }
 
-export function renderTitlePage(book: Pick<CoverBookFields, "title" | "subtitle">, identity: PublicResolvedIdentity): StreamFragment {
+export function renderTitlePage(
+  book: Pick<CoverBookFields, "title" | "subtitle">,
+  identity: PublicResolvedIdentity,
+): StreamFragment {
   const html = `
     <div class="book-title-page">
       <div class="book-title-page-main">
@@ -77,7 +102,18 @@ export function renderTitlePage(book: Pick<CoverBookFields, "title" | "subtitle"
       </div>
       ${buildLegalFooterHtml(identity)}
     </div>`;
-  return { id: "title-page", kind: "singlePage", pageKind: "titlePage", chapterId: null, html, atomic: true, splittable: false, keepWithNext: false, forceNewPage: false, numbered: false };
+  return {
+    id: "title-page",
+    kind: "singlePage",
+    pageKind: "titlePage",
+    chapterId: null,
+    html,
+    atomic: true,
+    splittable: false,
+    keepWithNext: false,
+    forceNewPage: false,
+    numbered: false,
+  };
 }
 
 export function renderAboutDoctorPage(identity: PublicResolvedIdentity): StreamFragment | null {
@@ -89,11 +125,31 @@ export function renderAboutDoctorPage(identity: PublicResolvedIdentity): StreamF
       ${identity.doctorTitle ? `<div class="book-doctor-title">${escapeHtml(identity.doctorTitle)}</div>` : ""}
       ${identity.doctorBio ? `<p>${escapeHtml(identity.doctorBio)}</p>` : ""}
     </div>`;
-  return { id: "about-doctor-page", kind: "singlePage", pageKind: "aboutDoctorPage", chapterId: null, html, atomic: true, splittable: false, keepWithNext: false, forceNewPage: true, numbered: true };
+  return {
+    id: "about-doctor-page",
+    kind: "singlePage",
+    pageKind: "aboutDoctorPage",
+    chapterId: null,
+    html,
+    atomic: true,
+    splittable: false,
+    keepWithNext: false,
+    forceNewPage: true,
+    numbered: true,
+  };
 }
 
 export function renderTocReservationFragment(): StreamFragment {
-  return { id: "toc-reservation", kind: "tocReservation", html: "", chapterId: null, atomic: true, splittable: false, keepWithNext: false, forceNewPage: true };
+  return {
+    id: "toc-reservation",
+    kind: "tocReservation",
+    html: "",
+    chapterId: null,
+    atomic: true,
+    splittable: false,
+    keepWithNext: false,
+    forceNewPage: true,
+  };
 }
 
 /**
@@ -111,9 +167,15 @@ export function renderTocReservationFragment(): StreamFragment {
  * since a `singlePage` fragment always gets its own page regardless.
  * Hand-synced with nutrition-staff's identical function.
  */
-export function renderChapterOpenerFragment(chapter: Chapter, chapterNumber: number, identity: PublicResolvedIdentity): StreamFragment {
+export function renderChapterOpenerFragment(
+  chapter: Chapter,
+  chapterNumber: number,
+  identity: PublicResolvedIdentity,
+): StreamFragment {
   const hasCustomCover = Boolean(chapter.coverImage);
-  const style = hasCustomCover ? ` style="--book-chapter-cover-url: url('${escapeHtml(chapter.coverImage!.secureUrl)}')"` : "";
+  const style = hasCustomCover
+    ? ` style="--book-chapter-cover-url: url('${escapeHtml(chapter.coverImage!.secureUrl)}')"`
+    : "";
   const html = `
     <div class="book-chapter-opener${hasCustomCover ? " book-chapter-opener--custom-cover" : ""}"${style}>
       <div class="book-chapter-band">
@@ -141,11 +203,32 @@ export function renderChapterOpenerFragment(chapter: Chapter, chapterNumber: num
 export function renderReferencesPage(references: BookReference[]): StreamFragment[] {
   if (references.length === 0) return [];
   const entries = references
-    .map((reference) => `<div class="book-reference-entry"><span class="book-reference-label">${escapeHtml(reference.label)}:</span> ${escapeHtml(reference.text)}</div>`)
+    .map(
+      (reference) =>
+        `<div class="book-reference-entry"><span class="book-reference-label">${escapeHtml(reference.label)}:</span> ${escapeHtml(reference.text)}</div>`,
+    )
     .join("");
   return [
-    { id: "references-heading", kind: "content", html: `<h2 class="book-heading">المراجع</h2>`, chapterId: null, atomic: true, splittable: false, keepWithNext: true, forceNewPage: true },
-    { id: "references-list", kind: "content", html: `<div class="book-references-page">${entries}</div>`, chapterId: null, atomic: false, splittable: false, keepWithNext: false, forceNewPage: false },
+    {
+      id: "references-heading",
+      kind: "content",
+      html: `<h2 class="book-heading">المراجع</h2>`,
+      chapterId: null,
+      atomic: true,
+      splittable: false,
+      keepWithNext: true,
+      forceNewPage: true,
+    },
+    {
+      id: "references-list",
+      kind: "content",
+      html: `<div class="book-references-page">${entries}</div>`,
+      chapterId: null,
+      atomic: false,
+      splittable: false,
+      keepWithNext: false,
+      forceNewPage: false,
+    },
   ];
 }
 
@@ -158,11 +241,22 @@ export function renderReferencesPage(references: BookReference[]): StreamFragmen
  */
 export async function renderBackCoverPage(
   book: { backCoverMode: "generated" | "uploaded"; backCoverImage: { secureUrl: string } | null },
-  identity: PublicResolvedIdentity
+  identity: PublicResolvedIdentity,
 ): Promise<StreamFragment> {
   if (book.backCoverMode === "uploaded" && book.backCoverImage) {
     const html = `<div class="book-back-cover book-back-cover--uploaded" style="--book-back-cover-image-url: url('${escapeHtml(book.backCoverImage.secureUrl)}')"></div>`;
-    return { id: "back-cover", kind: "singlePage", pageKind: "backCover", chapterId: null, html, atomic: true, splittable: false, keepWithNext: false, forceNewPage: true, numbered: false };
+    return {
+      id: "back-cover",
+      kind: "singlePage",
+      pageKind: "backCover",
+      chapterId: null,
+      html,
+      atomic: true,
+      splittable: false,
+      keepWithNext: false,
+      forceNewPage: true,
+      numbered: false,
+    };
   }
 
   const ltrContactLines = [identity.contact.phone, identity.contact.whatsapp, identity.contact.email].filter(Boolean);
@@ -179,5 +273,16 @@ export async function renderBackCoverPage(
       ${qrSvg ? `<div class="book-back-cover-qr">${qrSvg}</div>` : ""}
       ${identity.bookLogo ? `<img class="book-back-cover-logo" src="${escapeHtml(identity.bookLogo.secureUrl)}" alt="" />` : ""}
     </div>`;
-  return { id: "back-cover", kind: "singlePage", pageKind: "backCover", chapterId: null, html, atomic: true, splittable: false, keepWithNext: false, forceNewPage: true, numbered: false };
+  return {
+    id: "back-cover",
+    kind: "singlePage",
+    pageKind: "backCover",
+    chapterId: null,
+    html,
+    atomic: true,
+    splittable: false,
+    keepWithNext: false,
+    forceNewPage: true,
+    numbered: false,
+  };
 }

@@ -16,14 +16,14 @@ generated rather than designed.
 Each layer has its own timescale, its own trigger, and its own token family. A
 surface may combine layers, but never two patterns from the same layer.
 
-| # | Layer | Job | Trigger | Tokens |
-|---|---|---|---|---|
-| 1 | **Entrance** | Establish reading order as content arrives | Scroll-in, once | `reveal` / `emphasized`, stagger 0.08s |
-| 2 | **Ambient** | Make a decorative surface feel alive | Continuous | `ambient-drift` / `ambient` ease |
-| 3 | **Scroll-linked** | Depth and spatial hierarchy | Scroll progress | No duration — progress-bound, linear |
-| 4 | **Interaction** | Confirm a control responded | Hover / press / focus | `fast`–`base` / `standard` |
-| 5 | **State** | Explain where a surface came from | Open / close | `base`, `emphasized` in, `standard` out |
-| 6 | **Data** | Let a number land as a fact | Scroll-in, once | `count` / `soft` |
+| #   | Layer             | Job                                        | Trigger               | Tokens                                  |
+| --- | ----------------- | ------------------------------------------ | --------------------- | --------------------------------------- |
+| 1   | **Entrance**      | Establish reading order as content arrives | Scroll-in, once       | `reveal` / `emphasized`, stagger 0.08s  |
+| 2   | **Ambient**       | Make a decorative surface feel alive       | Continuous            | `ambient-drift` / `ambient` ease        |
+| 3   | **Scroll-linked** | Depth and spatial hierarchy                | Scroll progress       | No duration — progress-bound, linear    |
+| 4   | **Interaction**   | Confirm a control responded                | Hover / press / focus | `fast`–`base` / `standard`              |
+| 5   | **State**         | Explain where a surface came from          | Open / close          | `base`, `emphasized` in, `standard` out |
+| 6   | **Data**          | Let a number land as a fact                | Scroll-in, once       | `count` / `soft`                        |
 
 ### 1. Entrance — `Reveal` / `RevealGroup`
 
@@ -126,14 +126,14 @@ never updates, which silently broke mid-session toggling.
 
 ## Implementation status (2026-08-21)
 
-| Layer | State |
-|---|---|
-| 1 Entrance | Implemented — `useScrollReveal` / `useStaggerReveal` |
-| 2 Ambient | Implemented — `hero-background` |
-| 3 Scroll-linked | Implemented — `hero-background` |
-| 4 Interaction | Implemented for cards — `SURFACE_HOVER_ELEVATION` + `SURFACE_MEDIA_ZOOM`, CSS only, which this document prefers where CSS suffices |
-| 5 State | Implemented — `useDrawerTransition` |
-| 6 **Data** | **Not built, and blocked on content rather than code** |
+| Layer           | State                                                                                                                              |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| 1 Entrance      | Implemented — `useScrollReveal` / `useStaggerReveal`                                                                               |
+| 2 Ambient       | Implemented — `hero-background`                                                                                                    |
+| 3 Scroll-linked | Implemented — `hero-background`                                                                                                    |
+| 4 Interaction   | Implemented for cards — `SURFACE_HOVER_ELEVATION` + `SURFACE_MEDIA_ZOOM`, CSS only, which this document prefers where CSS suffices |
+| 5 State         | Implemented — `useDrawerTransition`                                                                                                |
+| 6 **Data**      | **Not built, and blocked on content rather than code**                                                                             |
 
 ### Why layer 6 has not been built
 
@@ -179,7 +179,7 @@ verified through a temporary harness route with real review data, since the real
 The autoplay state machine is covered by 24 tests
 (`use-carousel-autoplay.test.tsx` for the state, `featured-reviews-carousel.test.tsx`
 for the wiring), every guard mutation-tested. The split matters: the
-resume-with-focus bug lived in *which element carried the pause handlers*, and no
+resume-with-focus bug lived in _which element carried the pause handlers_, and no
 hook test can reproduce that — it fires focus events by hand, so the control is
 never actually inside the paused region.
 
@@ -230,7 +230,7 @@ genuinely continuous loop, and never on anything carrying information.
 
 `Reveal` / `useScrollReveal` / `useStaggerReveal` cover 22 files. Of the home
 sections only two lack a reveal, and one of those is correct: `hero-background`
-*is* the ambient/parallax layer and sits above the fold, where a reveal would
+_is_ the ambient/parallax layer and sits above the fold, where a reveal would
 delay the first thing a visitor sees. That leaves `campaign-banner-section` as the
 single genuine gap.
 
@@ -241,7 +241,7 @@ decorative surfaces only and explicitly "never on anything carrying
 information". So the cue is the hover/press depth gesture the cards already use —
 lift plus shadow on hover, `active:scale-[0.98]` on press. The press state matters
 more than it looks: once hover is correctly scoped to fine pointers, `:active` is
-the *only* feedback a touch device gets.
+the _only_ feedback a touch device gets.
 
 ### Two measurement traps, both cost real time
 

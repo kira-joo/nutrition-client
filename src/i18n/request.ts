@@ -21,6 +21,7 @@ const NAMESPACE_FILES = {
   [DictionaryFiles.Campaigns]: "campaigns",
   [DictionaryFiles.Consultation]: "consultation",
   [DictionaryFiles.Seo]: "seo",
+  [DictionaryFiles.Lectures]: "lectures",
 } as const;
 
 async function loadMessages(locale: string) {
@@ -28,7 +29,7 @@ async function loadMessages(locale: string) {
     Object.entries(NAMESPACE_FILES).map(async ([namespace, file]) => {
       const messages = (await import(`./locales/${locale}/${file}.json`)).default;
       return [namespace, messages] as const;
-    })
+    }),
   );
   return Object.fromEntries(entries);
 }

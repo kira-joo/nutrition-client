@@ -14,7 +14,10 @@ export const PAGE_SIZE_MM: Record<BookPrintSettings["pageSize"], { widthMm: numb
   a4: { widthMm: 210, heightMm: 297 },
 };
 
-export const MARGIN_PRESET_MM: Record<BookPrintSettings["marginPreset"], { topMm: number; bottomMm: number; outerMm: number }> = {
+export const MARGIN_PRESET_MM: Record<
+  BookPrintSettings["marginPreset"],
+  { topMm: number; bottomMm: number; outerMm: number }
+> = {
   compact: { topMm: 14, bottomMm: 16, outerMm: 12 },
   standard: { topMm: 16, bottomMm: 18, outerMm: 14 },
   generous: { topMm: 20, bottomMm: 22, outerMm: 18 },

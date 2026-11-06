@@ -6,8 +6,8 @@ import { RecipesBrowser } from "@/sections/recipes/recipes-browser";
 import { RecipesBrowserSkeleton } from "@/sections/recipes/recipes-browser-skeleton";
 
 interface RecipesPageProps {
-  params: { locale: Locale };
-  searchParams: Record<string, string | string[] | undefined>;
+  params: Promise<{ locale: Locale }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
 /**
@@ -21,12 +21,13 @@ interface RecipesPageProps {
  * on the filters replays the skeleton on every filter change instead of
  * only the first load.
  */
-export default function RecipesPage({ params, searchParams }: RecipesPageProps) {
-  const filters = parseRecipeFilters(searchParams);
+export default async function RecipesPage({ params, searchParams }: RecipesPageProps) {
+  const { locale } = await params;
+  const filters = parseRecipeFilters(await searchParams);
 
   return (
     <Suspense key={JSON.stringify(filters)} fallback={<RecipesBrowserSkeleton />}>
-      <RecipesResults locale={params.locale} filters={filters} />
+      <RecipesResults locale={locale} filters={filters} />
     </Suspense>
   );
 }

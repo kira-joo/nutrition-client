@@ -62,7 +62,20 @@ export interface PricingCardProps {
  * X" clearly, where the previous inline "1250 850 EGP" read as one string
  * of digits at a glance.
  */
-export function PricingCard({ headingLevel: Heading = "h3", isRecommended, title, subtitle, icon, badge, price, features, featureLimit, action, labels, className }: PricingCardProps) {
+export function PricingCard({
+  headingLevel: Heading = "h3",
+  isRecommended,
+  title,
+  subtitle,
+  icon,
+  badge,
+  price,
+  features,
+  featureLimit,
+  action,
+  labels,
+  className,
+}: PricingCardProps) {
   const details = featureLimit ? features.slice(0, featureLimit) : features;
   const hasSavings = price?.original !== undefined && price.original > price.current;
 
@@ -73,7 +86,7 @@ export function PricingCard({ headingLevel: Heading = "h3", isRecommended, title
         isRecommended
           ? "border border-gold-on-dark/50 bg-primary text-white shadow-package lg:-translate-y-4"
           : "border-hairline border-primary/10 bg-surface text-text-primary shadow-sm pointer:hover:-translate-y-1 pointer:hover:shadow-md",
-        className
+        className,
       )}
     >
       <div className="flex flex-wrap items-center gap-3">
@@ -82,7 +95,7 @@ export function PricingCard({ headingLevel: Heading = "h3", isRecommended, title
             aria-hidden="true"
             className={cn(
               "flex size-icon-xl items-center justify-center rounded-full",
-              isRecommended ? "bg-white/15 text-white" : "bg-primary-soft text-primary"
+              isRecommended ? "bg-white/15 text-white" : "bg-primary-soft text-primary",
             )}
           >
             {icon}
@@ -93,7 +106,7 @@ export function PricingCard({ headingLevel: Heading = "h3", isRecommended, title
           <span
             className={cn(
               "rounded-full px-3 py-1 text-caption font-semibold uppercase tracking-wide",
-              isRecommended ? "bg-gold-soft text-primary" : "bg-primary text-white"
+              isRecommended ? "bg-gold-soft text-primary" : "bg-primary text-white",
             )}
           >
             {badge}
@@ -101,7 +114,11 @@ export function PricingCard({ headingLevel: Heading = "h3", isRecommended, title
         )}
       </div>
 
-      {subtitle && <p className={cn("mt-3 break-words text-body-sm", isRecommended ? "text-white/75" : "text-text-secondary")}>{subtitle}</p>}
+      {subtitle && (
+        <p className={cn("mt-3 break-words text-body-sm", isRecommended ? "text-white/75" : "text-text-secondary")}>
+          {subtitle}
+        </p>
+      )}
 
       {price && (
         <>
@@ -111,19 +128,25 @@ export function PricingCard({ headingLevel: Heading = "h3", isRecommended, title
 
           <div className="mt-5">
             {hasSavings && (
-              <span className={cn("block text-body-sm line-through", isRecommended ? "text-white/50" : "text-text-muted")}>
+              <span
+                className={cn("block text-body-sm line-through", isRecommended ? "text-white/50" : "text-text-muted")}
+              >
                 {price.original} {price.currency}
               </span>
             )}
             <div className="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-1">
               <span className="text-stat font-black tabular-nums">{price.current}</span>
-              <span className={cn("text-body-sm font-semibold", isRecommended ? "text-white/75" : "text-text-secondary")}>{price.currency}</span>
+              <span
+                className={cn("text-body-sm font-semibold", isRecommended ? "text-white/75" : "text-text-secondary")}
+              >
+                {price.currency}
+              </span>
             </div>
             {price.savingsLabel && (
               <p
                 className={cn(
                   "mt-2 inline-flex rounded-full px-3 py-1 text-body-sm font-semibold",
-                  isRecommended ? "bg-white/15 text-white" : "bg-primary-soft text-success"
+                  isRecommended ? "bg-white/15 text-white" : "bg-primary-soft text-success",
                 )}
               >
                 {price.savingsLabel}
@@ -135,7 +158,9 @@ export function PricingCard({ headingLevel: Heading = "h3", isRecommended, title
 
       {details.length > 0 && (
         <>
-          <p className={cn("mt-6", LABEL_TYPE, isRecommended ? "text-white/60" : "text-text-muted")}>{labels.includes}</p>
+          <p className={cn("mt-6", LABEL_TYPE, isRecommended ? "text-white/60" : "text-text-muted")}>
+            {labels.includes}
+          </p>
           <ul className="mt-3 flex flex-1 flex-col gap-3">
             {details.map((detail, index) => (
               <li key={index} className="flex items-start gap-2.5 text-body-sm">
@@ -143,12 +168,14 @@ export function PricingCard({ headingLevel: Heading = "h3", isRecommended, title
                   aria-hidden="true"
                   className={cn(
                     "mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full",
-                    isRecommended ? "bg-white/15" : "bg-primary-soft"
+                    isRecommended ? "bg-white/15" : "bg-primary-soft",
                   )}
                 >
                   <Check className={cn("size-3", isRecommended ? "text-white" : "text-primary")} />
                 </span>
-                <span className={cn("min-w-0 break-words", isRecommended ? "text-white/90" : "text-text-secondary")}>{detail}</span>
+                <span className={cn("min-w-0 break-words", isRecommended ? "text-white/90" : "text-text-secondary")}>
+                  {detail}
+                </span>
               </li>
             ))}
           </ul>

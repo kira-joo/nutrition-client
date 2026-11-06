@@ -43,7 +43,11 @@ export async function paginateBook(book: Book): Promise<PaginationResult> {
   const tocChapters = book.content.chapters
     .map((chapter, index) => ({ chapter, chapterNumber: index + 1 }))
     .filter(({ chapter }) => chapter.includeInToc)
-    .map(({ chapter, chapterNumber }) => ({ chapterId: chapter.id, title: chapter.tocTitle || chapter.title, label: chapterLabel(chapterNumber) }));
+    .map(({ chapter, chapterNumber }) => ({
+      chapterId: chapter.id,
+      title: chapter.tocTitle || chapter.title,
+      label: chapterLabel(chapterNumber),
+    }));
 
   const { widthPx: contentBoxWidthPx, heightPx: contentBoxHeightPx } = measureContentBoxPx();
 
@@ -72,17 +76,26 @@ export async function paginateBook(book: Book): Promise<PaginationResult> {
     let targetImageHeight = pageHeightPx;
     for (let attempt = 0; attempt < 4; attempt++) {
       const targetImageWidth = targetImageHeight * aspectRatio;
-      const candidate = html.replace(/<img /, `<img style="height:${Math.floor(targetImageHeight)}px;width:${Math.floor(targetImageWidth)}px;max-width:100%;" `);
+      const candidate = html.replace(
+        /<img /,
+        `<img style="height:${Math.floor(targetImageHeight)}px;width:${Math.floor(targetImageWidth)}px;max-width:100%;" `,
+      );
       const totalHeight = measureHtmlHeight(candidate);
       const overflow = totalHeight - pageHeightPx;
       if (overflow <= 0.5) return candidate;
       targetImageHeight = Math.max(1, targetImageHeight - overflow - 1);
     }
     const finalWidth = targetImageHeight * aspectRatio;
-    return html.replace(/<img /, `<img style="height:${Math.floor(targetImageHeight)}px;width:${Math.floor(finalWidth)}px;max-width:100%;" `);
+    return html.replace(
+      /<img /,
+      `<img style="height:${Math.floor(targetImageHeight)}px;width:${Math.floor(finalWidth)}px;max-width:100%;" `,
+    );
   }
 
-  function layoutPass(tocPageCount: number): { pages: { kind: string; chapterId: string | null; html: string; numbered: boolean }[]; chapterPageIndex: Map<string, number> } {
+  function layoutPass(tocPageCount: number): {
+    pages: { kind: string; chapterId: string | null; html: string; numbered: boolean }[];
+    chapterPageIndex: Map<string, number>;
+  } {
     const pages: { kind: string; chapterId: string | null; html: string; numbered: boolean }[] = [];
     const chapterPageIndex = new Map<string, number>();
     // Placed fragments for the page currently being packed — kept as
@@ -112,7 +125,10 @@ export async function paginateBook(book: Book): Promise<PaginationResult> {
     // uses, reserving the footer's real height instead of overlaying it.
     function closePage(numbered: boolean, footerNoteHtml?: string): void {
       const bodyHtml = currentPageHtml();
-      const html = footerNoteHtml !== undefined ? `<div class="book-page-content-body">${bodyHtml}</div>${footerNoteHtml}` : bodyHtml;
+      const html =
+        footerNoteHtml !== undefined
+          ? `<div class="book-page-content-body">${bodyHtml}</div>${footerNoteHtml}`
+          : bodyHtml;
       pages.push({ kind: currentKind, chapterId: currentChapterId, html, numbered });
     }
 
@@ -124,7 +140,10 @@ export async function paginateBook(book: Book): Promise<PaginationResult> {
     while (queue.length > 0) {
       guard += 1;
       if (guard > 5000) {
-        warnings.push({ code: "PAGINATION_GUARD", message: "Pagination safety guard triggered — stopping to avoid an infinite loop." });
+        warnings.push({
+          code: "PAGINATION_GUARD",
+          message: "Pagination safety guard triggered — stopping to avoid an infinite loop.",
+        });
         break;
       }
       const fragment = queue.shift()!;
@@ -184,7 +203,10 @@ export async function paginateBook(book: Book): Promise<PaginationResult> {
             openPage("content", currentChapterId);
           }
           closePage(true, html);
-          warnings.push({ code: "FOOTER_NOTE_OVERFLOW", message: `Fragment ${fragment.id} does not fit within a single page even alone — it will overflow visually.` });
+          warnings.push({
+            code: "FOOTER_NOTE_OVERFLOW",
+            message: `Fragment ${fragment.id} does not fit within a single page even alone — it will overflow visually.`,
+          });
           openPage("content", currentChapterId);
           continue;
         }
@@ -196,7 +218,11 @@ export async function paginateBook(book: Book): Promise<PaginationResult> {
         // checked above) guarantees this loop always terminates with a
         // fit once the page is empty.
         const requeued: StreamFragment[] = [];
-        while (currentPageParts.length > 0 && measureHtmlHeight(`<div class="book-page-content-body">${currentPageHtml()}</div>${html}`) > contentBoxHeightPx) {
+        while (
+          currentPageParts.length > 0 &&
+          measureHtmlHeight(`<div class="book-page-content-body">${currentPageHtml()}</div>${html}`) >
+            contentBoxHeightPx
+        ) {
           const popped = currentPageParts.pop()!;
           if (popped.fragment) requeued.unshift(popped.fragment);
         }
@@ -232,11 +258,17 @@ export async function paginateBook(book: Book): Promise<PaginationResult> {
         const scaled = scaleImageFragmentToFit(html, contentBoxHeightPx);
         currentPageParts.push({ fragment, html: scaled });
         usedHeight = measureHtmlHeight(currentPageHtml());
-        warnings.push({ code: "IMAGE_SCALED_DOWN", message: `An oversized image/caption was scaled down to fit the page (fragment ${fragment.id}).` });
+        warnings.push({
+          code: "IMAGE_SCALED_DOWN",
+          message: `An oversized image/caption was scaled down to fit the page (fragment ${fragment.id}).`,
+        });
         continue;
       }
 
-      warnings.push({ code: "BLOCK_OVERFLOW", message: `Fragment ${fragment.id} does not fit on an empty page and could not be split or scaled — it will overflow visually.` });
+      warnings.push({
+        code: "BLOCK_OVERFLOW",
+        message: `Fragment ${fragment.id} does not fit on an empty page and could not be split or scaled — it will overflow visually.`,
+      });
       currentPageParts.push({ fragment, html });
       usedHeight = measureHtmlHeight(currentPageHtml());
     }
@@ -248,7 +280,8 @@ export async function paginateBook(book: Book): Promise<PaginationResult> {
   let tocPageCount = tocChapters.length > 0 ? Math.max(1, Math.ceil(tocChapters.length / TOC_ENTRIES_PER_PAGE)) : 0;
   let lastResult = layoutPass(tocPageCount);
   for (let pass = 0; pass < 2; pass++) {
-    const nextTocPageCount = tocChapters.length > 0 ? Math.max(1, Math.ceil(tocChapters.length / TOC_ENTRIES_PER_PAGE)) : 0;
+    const nextTocPageCount =
+      tocChapters.length > 0 ? Math.max(1, Math.ceil(tocChapters.length / TOC_ENTRIES_PER_PAGE)) : 0;
     if (nextTocPageCount === tocPageCount) break;
     tocPageCount = nextTocPageCount;
     lastResult = layoutPass(tocPageCount);
@@ -267,7 +300,7 @@ export async function paginateBook(book: Book): Promise<PaginationResult> {
 
   const toc: TocResultEntry[] = tocChapters.map((chapter) => {
     const pageIndex = lastResult.chapterPageIndex.get(chapter.chapterId);
-    const pageNumber = pageIndex !== undefined ? numberedPages[pageIndex]?.pageNumber ?? null : null;
+    const pageNumber = pageIndex !== undefined ? (numberedPages[pageIndex]?.pageNumber ?? null) : null;
     // 1-based physical position — `pageIndex` is the 0-based array index
     // `chapterPageIndex` already stores. Never derive this from `pageNumber`
     // (the printed folio): any unnumbered page before this chapter (cover,
@@ -295,7 +328,7 @@ function fillTocPages(pages: RenderedPage[], toc: TocResultEntry[]): void {
     const rows = entries
       .map(
         (entry) =>
-          `<div class="book-toc-entry" data-toc-chapter-id="${entry.chapterId}"><span class="book-toc-entry-title">${escapeHtmlInline(entry.title)}</span><span class="book-toc-entry-leader"></span><span class="book-toc-entry-page">${entry.pageNumber !== null ? entry.pageNumber : ""}</span></div>`
+          `<div class="book-toc-entry" data-toc-chapter-id="${entry.chapterId}"><span class="book-toc-entry-title">${escapeHtmlInline(entry.title)}</span><span class="book-toc-entry-leader"></span><span class="book-toc-entry-page">${entry.pageNumber !== null ? entry.pageNumber : ""}</span></div>`,
       )
       .join("");
     const heading = position === 0 ? '<div class="book-toc-title">المحتويات</div>' : "";
@@ -309,7 +342,11 @@ function escapeHtmlInline(text: string): string {
 
 async function ensureFontsReady(): Promise<void> {
   if (typeof document === "undefined" || !document.fonts) return;
-  await Promise.all(BOOK_FONT_READINESS_PROBES.map((probe) => document.fonts.load(`${probe.weight} 16px "${probe.family}"`, probe.sampleText)));
+  await Promise.all(
+    BOOK_FONT_READINESS_PROBES.map((probe) =>
+      document.fonts.load(`${probe.weight} 16px "${probe.family}"`, probe.sampleText),
+    ),
+  );
   await document.fonts.ready;
 }
 
@@ -339,15 +376,22 @@ async function buildStream(book: Book): Promise<StreamFragment[]> {
   // template's own fixed identity page), "Introduction" (frontMatter.introduction),
   // THEN the reserved TOC pages, then chapters. Hand-synced with
   // nutrition-staff's identical ordering.
-  stream.push(renderCoverPage({ title: book.title, subtitle: book.subtitle, coverMode: book.coverMode, coverImage: book.coverImage }, identity));
+  stream.push(
+    renderCoverPage(
+      { title: book.title, subtitle: book.subtitle, coverMode: book.coverMode, coverImage: book.coverImage },
+      identity,
+    ),
+  );
   stream.push(renderTitlePage({ title: book.title, subtitle: book.subtitle }, identity));
 
-  for (const block of book.content.frontMatter.aboutBook.blocks) stream.push(await renderBlockToFragment(block, book.content.references, book.recipeSnapshots));
+  for (const block of book.content.frontMatter.aboutBook.blocks)
+    stream.push(await renderBlockToFragment(block, book.content.references, book.recipeSnapshots));
 
   const aboutDoctor = renderAboutDoctorPage(identity);
   if (aboutDoctor) stream.push(aboutDoctor);
 
-  for (const block of book.content.frontMatter.introduction.blocks) stream.push(await renderBlockToFragment(block, book.content.references, book.recipeSnapshots));
+  for (const block of book.content.frontMatter.introduction.blocks)
+    stream.push(await renderBlockToFragment(block, book.content.references, book.recipeSnapshots));
 
   stream.push(renderTocReservationFragment());
 
@@ -360,9 +404,12 @@ async function buildStream(book: Book): Promise<StreamFragment[]> {
     }
   }
 
-  for (const block of book.content.backMatter.conclusion.blocks) stream.push(await renderBlockToFragment(block, book.content.references, book.recipeSnapshots));
+  for (const block of book.content.backMatter.conclusion.blocks)
+    stream.push(await renderBlockToFragment(block, book.content.references, book.recipeSnapshots));
   for (const fragment of renderReferencesPage(book.content.references)) stream.push(fragment);
-  stream.push(await renderBackCoverPage({ backCoverMode: book.backCoverMode, backCoverImage: book.backCoverImage }, identity));
+  stream.push(
+    await renderBackCoverPage({ backCoverMode: book.backCoverMode, backCoverImage: book.backCoverImage }, identity),
+  );
 
   return stream;
 }

@@ -35,7 +35,6 @@ export function useBookPagination(book: Book): UseBookPaginationResult {
       })
       .catch((error) => {
         if (cancelled) return;
-        // eslint-disable-next-line no-console
         console.error("Book pagination failed", error);
         setStatus("error");
       });

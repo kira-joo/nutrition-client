@@ -112,7 +112,10 @@ declare module "page-flip" {
     getSettings(): FlipSetting;
     getState(): FlippingState;
 
-    on(eventName: "flip" | "changeState" | "changeOrientation" | "init" | "update", callback: (e: WidgetEvent) => void): PageFlip;
+    on(
+      eventName: "flip" | "changeState" | "changeOrientation" | "init" | "update",
+      callback: (e: WidgetEvent) => void,
+    ): PageFlip;
     off(eventName: string): void;
   }
 }

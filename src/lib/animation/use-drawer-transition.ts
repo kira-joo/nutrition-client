@@ -87,7 +87,11 @@ export function useDrawerTransition({ isOpen, panel, fromEdge = "end" }: UseDraw
       // fade-out both need to actually be seen) — only hidden once a
       // close genuinely finishes, mirroring GSAP's `autoAlpha` timing.
       if (isOpen) setVisible(backdrop, true);
-      backdropAnimation = animate(backdrop, { opacity: isOpen ? 1 : 0 }, { duration: DURATIONS.base, ease: MOTION_EASES.standard });
+      backdropAnimation = animate(
+        backdrop,
+        { opacity: isOpen ? 1 : 0 },
+        { duration: DURATIONS.base, ease: MOTION_EASES.standard },
+      );
       if (!isOpen) backdropAnimation.then(() => setVisible(backdrop, false));
     }
 
@@ -99,7 +103,6 @@ export function useDrawerTransition({ isOpen, panel, fromEdge = "end" }: UseDraw
       panelAnimation.stop();
       backdropAnimation?.stop();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, panel, fromEdge, prefersReducedMotion]);
 
   return { backdropRef };

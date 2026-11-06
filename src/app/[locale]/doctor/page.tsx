@@ -8,7 +8,7 @@ import { ProgramHighlightsSection } from "@/sections/shared/program-highlights-s
 import { TrustBandSection } from "@/sections/shared/trust-band-section";
 
 interface DoctorPageProps {
-  params: { locale: Locale };
+  params: Promise<{ locale: Locale }>;
 }
 
 /**
@@ -29,7 +29,8 @@ interface DoctorPageProps {
  * until real data exists for it.
  */
 export default async function DoctorPage({ params }: DoctorPageProps) {
-  const doctorProfile = await getDoctorProfile(params.locale);
+  const { locale } = await params;
+  const doctorProfile = await getDoctorProfile(locale);
 
   return (
     <>

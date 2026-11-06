@@ -47,7 +47,7 @@ export function TrustBandSection({ doctorProfile }: TrustBandSectionProps) {
               className={cn(
                 "relative flex min-h-32 flex-col justify-end overflow-hidden p-6",
                 SURFACE_NOTCHED,
-                SURFACE_HOVER_ELEVATION
+                SURFACE_HOVER_ELEVATION,
               )}
             >
               {/* Decorative watermark numeral — real content is the `<p>` below, so this is `aria-hidden` and never the accessible label for the list item. Clipped by the card's own `overflow-hidden`, which is also what keeps it from ever pushing layout — but only a little: `text-display` bottoms out at 40px on a small screen, and the original `-end-2 -top-6` offset was tuned against its ~72px desktop size, so at 40px that same fixed offset pushed most of the glyph out of frame instead of just its corner. */}

@@ -42,7 +42,14 @@ export function IngredientChecklist({ ingredients, label }: IngredientChecklistP
                 onChange={() => toggle(index)}
                 className="mt-1 size-icon-sm shrink-0 accent-primary"
               />
-              <span className={cn("min-w-0 break-words text-body text-text-secondary", isChecked && "text-text-muted line-through")}>{ingredient}</span>
+              <span
+                className={cn(
+                  "min-w-0 break-words text-body text-text-secondary",
+                  isChecked && "text-text-muted line-through",
+                )}
+              >
+                {ingredient}
+              </span>
             </label>
           </li>
         );

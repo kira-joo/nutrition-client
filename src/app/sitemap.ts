@@ -25,7 +25,6 @@ function urlFor(locale: string, path: string) {
 async function fetchAllRecipeIds(locale: LocalizedLocale): Promise<string[]> {
   const ids: string[] = [];
   let page = 1;
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     const result = await getRecipes(locale, { page, limit: RECIPES_PER_PAGE });
     ids.push(...result.data.map((recipe) => recipe._id));
@@ -40,7 +39,6 @@ async function fetchAllRecipeIds(locale: LocalizedLocale): Promise<string[]> {
 async function fetchAllBookSlugs(): Promise<string[]> {
   const slugs: string[] = [];
   let page = 1;
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     const result = await getBooks({ page, limit: 50 });
     slugs.push(...result.data.map((book) => book.slug));
@@ -63,7 +61,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Recipe ids are locale-independent (the same document, resolved per
   // locale at render time) — fetched once against the default locale
   // purely to get the id list, then emitted for every locale.
-  const recipeIds = await fetchAllRecipeIds(routing.defaultLocale);
+  const recipeIds = await fetchAllRecipeIds(routing.defaultLocale).catch(() => []);
   for (const id of recipeIds) {
     for (const locale of routing.locales) {
       entries.push({ url: urlFor(locale, appHref.recipe(id)), changeFrequency: "monthly", priority: 0.6 });
@@ -76,18 +74,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const activeCampaign = await getActiveCampaign(routing.defaultLocale).catch(() => null);
   if (activeCampaign) {
     for (const locale of routing.locales) {
-      entries.push({ url: urlFor(locale, appHref.campaign(activeCampaign.slug)), changeFrequency: "daily", priority: 0.8 });
+      entries.push({
+        url: urlFor(locale, appHref.campaign(activeCampaign.slug)),
+        changeFrequency: "daily",
+        priority: 0.8,
+      });
     }
   }
 
-  // Books is Arabic-only end to end (see `src/middleware.ts`) — every
+  // Books is Arabic-only end to end (see `src/proxy.ts`) — every
   // entry here is emitted ONLY under `Locale.AR`, never looped over
   // `routing.locales` like the blocks above. An `/en/books` entry would
   // advertise a URL that only ever 308s away, exactly the reasoning
   // `buildArabicOnlyAlternates` already documents for the per-page
   // `<link rel="alternate">` case.
   entries.push({ url: urlFor(Locale.AR, AppRoute.Books), changeFrequency: "weekly", priority: 0.7 });
-  const bookSlugs = await fetchAllBookSlugs();
+  const bookSlugs = await fetchAllBookSlugs().catch(() => []);
   for (const slug of bookSlugs) {
     entries.push({ url: urlFor(Locale.AR, appHref.book(slug)), changeFrequency: "monthly", priority: 0.6 });
   }

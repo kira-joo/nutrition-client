@@ -28,7 +28,10 @@ function stripHtml(html: string): string {
 export function useBookSearch(pagination: PaginationResult | null) {
   const [query, setQuery] = useState("");
 
-  const plainTextByPosition = useMemo(() => (pagination?.pages ?? []).map((page) => stripHtml(page.html)), [pagination]);
+  const plainTextByPosition = useMemo(
+    () => (pagination?.pages ?? []).map((page) => stripHtml(page.html)),
+    [pagination],
+  );
 
   const results = useMemo<BookSearchResult[]>(() => {
     const needle = query.trim().toLowerCase();

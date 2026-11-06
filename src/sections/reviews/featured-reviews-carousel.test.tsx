@@ -31,8 +31,7 @@ let emblaRootNode: HTMLElement;
 let atEnd = false;
 
 /** Real Embla hands its api to every handler, and the component's `onSelect` reads it. */
-const emitEmbla = (event: string) =>
-  act(() => emblaListeners.get(event)?.forEach((handler) => handler(emblaApi)));
+const emitEmbla = (event: string) => act(() => emblaListeners.get(event)?.forEach((handler) => handler(emblaApi)));
 
 /**
  * The api, the ref and the root node are built once per test and returned
@@ -116,7 +115,7 @@ beforeEach(() => {
       disconnect() {
         callbacks.delete(this.callback);
       }
-    }
+    },
   );
   intersect = (isIntersecting) => act(() => callbacks.forEach((cb) => cb([{ isIntersecting }])));
 });

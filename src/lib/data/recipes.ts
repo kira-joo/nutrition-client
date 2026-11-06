@@ -12,13 +12,19 @@ import type { LocalizedRecipe, Recipe, RecipesListParams } from "@/lib/domain/re
  * share one cache entry and one revalidation, and `localize` runs per
  * request on the already-cached data.
  */
-export async function getRecipes(locale: LocalizedLocale, params: RecipesListParams = {}): Promise<PaginatedResponse<LocalizedRecipe>> {
+export async function getRecipes(
+  locale: LocalizedLocale,
+  params: RecipesListParams = {},
+): Promise<PaginatedResponse<LocalizedRecipe>> {
   // Every filter, `foodGroups` included, is now a real backend query param,
   // so paging and totals stay correct. Food group used to be post-filtered
   // here because the endpoint didn't support it; that workaround narrowed
   // only the current page, so a filtered page could come back under-filled
   // with a `total` that disagreed with the pager.
-  const raw: PaginatedResponse<Recipe> = await fetchPublic(listRecipesEndpoint, { query: params, tags: [CacheTag.RECIPES] });
+  const raw: PaginatedResponse<Recipe> = await fetchPublic(listRecipesEndpoint, {
+    query: params,
+    tags: [CacheTag.RECIPES],
+  });
   return localize(raw, locale);
 }
 
@@ -28,7 +34,7 @@ export async function getRecipe(id: string, locale: LocalizedLocale): Promise<Lo
     fetchPublic(getRecipeEndpoint, {
       params: { id },
       tags: [CacheTag.RECIPES, CacheTag.recipe(id)],
-    })
+    }),
   );
   return raw && localize(raw, locale);
 }

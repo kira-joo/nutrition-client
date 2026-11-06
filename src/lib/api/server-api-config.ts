@@ -18,7 +18,7 @@ import { createLazyEnvBaseUrlConfig } from "@kira-joo/frontend-toolkit-core/serv
  *
  * `API_URL` owns nutrition-staff's shared `/api` prefix (e.g.
  * `"https://staff.example.com/api"`) — route constants in
- * `api/public-api-route.ts` are resource paths only. `fetchPublic` joins
+ * `src/lib/api/public-api-route.ts` are resource paths only. `fetchPublic` joins
  * the two via frontend-toolkit-core's `joinUrl`, not `new URL(path, base)`
  * (see fetch-public.ts's doc comment for why that would silently drop
  * this prefix). `fetchPublic` is the only intended reader — every

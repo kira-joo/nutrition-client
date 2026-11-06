@@ -44,7 +44,11 @@ export function GalleryFilmstrip({ items }: GalleryFilmstripProps) {
               ref={registerTrigger(index)}
               type="button"
               onClick={() => setOpenIndex(index)}
-              className={cn("group relative block aspect-[4/3] w-56 shrink-0 snap-start overflow-hidden sm:w-64 lg:w-full", SURFACE_MUTED, SURFACE_HOVER_ELEVATION)}
+              className={cn(
+                "group relative block aspect-[4/3] w-56 shrink-0 snap-start overflow-hidden sm:w-64 lg:w-full",
+                SURFACE_MUTED,
+                SURFACE_HOVER_ELEVATION,
+              )}
             >
               <Image
                 src={item.src}

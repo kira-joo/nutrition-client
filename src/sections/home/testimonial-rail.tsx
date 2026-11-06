@@ -110,7 +110,11 @@ export function TestimonialRail({ reviews }: TestimonialRailProps) {
     if (!track || !shouldAnimate) return;
 
     const target = isRtl ? "50%" : "-50%";
-    controlsRef.current = animate(track, { x: ["0%", target] }, { duration: ordered.length * (INTERVALS_MS.slideDwell / 1000), ease: "linear", repeat: Infinity });
+    controlsRef.current = animate(
+      track,
+      { x: ["0%", target] },
+      { duration: ordered.length * (INTERVALS_MS.slideDwell / 1000), ease: "linear", repeat: Infinity },
+    );
 
     return () => {
       controlsRef.current?.stop();
@@ -119,7 +123,6 @@ export function TestimonialRail({ reviews }: TestimonialRailProps) {
     // `ordered.length` (not `ordered` itself) — a stable dependency; the review
     // set doesn't change client-side, and re-keying on array identity would
     // restart the animation from 0% on every render for no reason.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shouldAnimate, isRtl, ordered.length]);
 
   useEffect(() => {
@@ -136,8 +139,17 @@ export function TestimonialRail({ reviews }: TestimonialRailProps) {
     <div>
       {shouldAnimate && (
         <div className="mb-4 flex justify-end px-4 sm:px-6 lg:px-8 xl:px-12">
-          <button type="button" onClick={() => setUserPaused((paused) => !paused)} aria-label={pauseLabel} className={CAROUSEL_CONTROL_BUTTON_CLASS}>
-            {userPaused ? <Play className="size-icon-sm" aria-hidden="true" /> : <Pause className="size-icon-sm" aria-hidden="true" />}
+          <button
+            type="button"
+            onClick={() => setUserPaused((paused) => !paused)}
+            aria-label={pauseLabel}
+            className={CAROUSEL_CONTROL_BUTTON_CLASS}
+          >
+            {userPaused ? (
+              <Play className="size-icon-sm" aria-hidden="true" />
+            ) : (
+              <Pause className="size-icon-sm" aria-hidden="true" />
+            )}
           </button>
         </div>
       )}

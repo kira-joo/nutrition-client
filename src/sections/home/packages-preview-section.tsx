@@ -29,7 +29,11 @@ const PREVIEW_MAX_DETAILS = 4;
  * a capped detail list, and no sticky duration control. Package order is
  * rendered exactly as the backend returned it, matching the board.
  */
-export async function PackagesPreviewSection({ packages, packagesPageSettings, currencyCode }: PackagesPreviewSectionProps) {
+export async function PackagesPreviewSection({
+  packages,
+  packagesPageSettings,
+  currencyCode,
+}: PackagesPreviewSectionProps) {
   if (packages.length === 0) return null;
   const t = await getTranslations("home");
   const tPackages = await getTranslations("packages");
@@ -53,8 +57,12 @@ export async function PackagesPreviewSection({ packages, packagesPageSettings, c
                   pkg,
                   pkg.pricingTiers[PREVIEW_DURATION],
                   currencyCode,
-                  { save: tPackages("save"), includes: tPackages("includes"), subscribe: packagesPageSettings.subscribeButtonLabel },
-                  PREVIEW_MAX_DETAILS
+                  {
+                    save: tPackages("save"),
+                    includes: tPackages("includes"),
+                    subscribe: packagesPageSettings.subscribeButtonLabel,
+                  },
+                  PREVIEW_MAX_DETAILS,
                 )}
               />
             </div>

@@ -88,7 +88,7 @@ export function Accordion({ items, className, allowMultiple = false, headingLeve
                 <ChevronDown
                   className={cn(
                     "size-icon-md shrink-0 text-text-muted transition-transform duration-fast motion-reduce:transition-none",
-                    isOpen && "rotate-180"
+                    isOpen && "rotate-180",
                   )}
                   aria-hidden="true"
                 />
@@ -96,7 +96,12 @@ export function Accordion({ items, className, allowMultiple = false, headingLeve
             </Heading>
 
             {isOpen && (
-              <div id={panelId} role="region" aria-labelledby={triggerId} className="mt-3 break-words text-body text-text-secondary">
+              <div
+                id={panelId}
+                role="region"
+                aria-labelledby={triggerId}
+                className="mt-3 break-words text-body text-text-secondary"
+              >
                 {item.answer}
               </div>
             )}

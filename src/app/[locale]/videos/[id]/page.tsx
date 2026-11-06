@@ -4,7 +4,7 @@ import { getVideo } from "@/lib/data";
 import { VideoDetail } from "@/sections/videos/video-detail";
 
 interface VideoDetailPageProps {
-  params: { locale: Locale; id: string };
+  params: Promise<{ locale: Locale; id: string }>;
 }
 
 /** A Mongo ObjectId is exactly 24 hex characters; nothing else can identify a video — mirrors the recipe detail route's guard. */
@@ -18,9 +18,10 @@ const OBJECT_ID = /^[0-9a-f]{24}$/i;
  * page didn't load" for what is really just a mistyped URL).
  */
 export default async function VideoDetailPage({ params }: VideoDetailPageProps) {
-  if (!OBJECT_ID.test(params.id)) notFound();
+  const { id, locale } = await params;
+  if (!OBJECT_ID.test(id)) notFound();
 
-  const video = await getVideo(params.id, params.locale);
+  const video = await getVideo(id, locale);
   if (!video) notFound();
 
   return <VideoDetail video={video} />;

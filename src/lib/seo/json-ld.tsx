@@ -20,7 +20,7 @@ import { SITE_ORIGIN } from "@/lib/config/site-origin.constant";
 export function buildOrganizationJsonLd(
   siteSettings: LocalizedSiteSettings,
   clinicName: string,
-  brand: { description: string; logoPath: string }
+  brand: { description: string; logoPath: string },
 ) {
   // JSON-LD wants an absolute URL, unlike Next's Metadata API (which
   // resolves a relative one against `metadataBase` itself) — built from
