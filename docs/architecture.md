@@ -113,16 +113,23 @@ type (mirrors nutrition-staff's actual response shapes), `PublicApiRoute`
 next-intl's `useLocale()`, an app-specific i18n library choice the
 toolkit shouldn't assume).
 
-### Endpoint definitions (`api/*.endpoints.ts`)
+### Endpoint definitions (`src/lib/api/*.endpoints.ts`)
 
 Same convention as nutrition-staff's own frontend (`api/site-settings.
-endpoints.ts` there): one file per domain under a top-level `api/`
-directory (sibling to `src/`, not inside it), each exporting named
+endpoints.ts` there): one file per domain under `src/lib/api/`, beside
+`fetch-public.ts` and the other API infrastructure, each exporting named
 endpoint constants against frontend-toolkit-core's real `Endpoint`/
 `MethodType` — no separate local `Endpoint`-shaped type anymore (see "The
 barrel-import build bug, and its real fix" below for why an earlier
 revision of this phase needed one). No data function or route handler
-ever hardcodes a path string; every `url` reads from `api/public-api-route.ts`.
+ever hardcodes a path string; every `url` reads from
+`src/lib/api/public-api-route.ts`.
+
+These files used to sit in a top-level `api/` directory, sibling to `src/`.
+They were moved because Vercel treats every file under a repo-root `/api/` as
+its own Serverless Function regardless of framework, so 13 constant-only
+files became 13 functions and exceeded the Hobby plan's 12-per-deployment
+limit. Nothing may live in a repo-root `api/` directory.
 
 Two import sources, matched to execution context:
 
@@ -158,7 +165,7 @@ React-free modules (`APIConfig`, `requester`, `buildUrl`/`joinUrl`,
 context/provider code, so importing it can't pull that code in even
 transitively. This app now imports every server-side toolkit value from
 that subpath (`fetch-public.ts`, `server-api-config.ts`, `cache-policy.ts`,
-every read-only `api/*.endpoints.ts` file, the consultation proxy Route
+every read-only `src/lib/api/*.endpoints.ts` file, the consultation proxy Route
 Handler); Client Components keep importing the root package, which still
 carries the context/provider code they actually need.
 
@@ -182,7 +189,7 @@ never both, never neither.**
   backend, so it uses the helper's default env var (`API_URL`) and default
   hint (`"see .env.example"`) rather than overriding them. `API_URL`
   includes nutrition-staff's `/api` prefix (e.g.
-  `"https://staff.example.com/api"`); `api/public-api-route.ts`'s
+  `"https://staff.example.com/api"`); `src/lib/api/public-api-route.ts`'s
   `PublicApiRoute` constants are resource paths only (e.g.
   `"/public/site-settings"`).
 - `APIConfig.baseURL` (`api-config.ts`) is set to `"/api"` — this app's

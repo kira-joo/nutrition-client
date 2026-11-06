@@ -41,9 +41,15 @@ split.
   `@kira-joo/frontend-toolkit-core/server`**, never the root entry. The root
   bundle carries React context code and crashes Server Component / Route Handler
   builds with `TypeError: createContext is not a function`.
-- **No API path is hardcoded at a call site.** `api/public-api-route.ts` holds
-  every route string; `api/<domain>.endpoints.ts` holds one `Endpoint` constant
-  per domain. Placeholders are `:id`/`:slug`, not `[id]`/`[slug]`.
+- **No API path is hardcoded at a call site.** `src/lib/api/public-api-route.ts`
+  holds every route string; `src/lib/api/<domain>.endpoints.ts` holds one
+  `Endpoint` constant per domain. Placeholders are `:id`/`:slug`, not
+  `[id]`/`[slug]`.
+- **Never put a file in a repo-root `api/` directory.** Vercel turns every file
+  under a top-level `/api/` into its own Serverless Function, independently of
+  Next.js — 13 constant files there once pushed `staging` past the Hobby plan's
+  12-function cap (`exceeded_serverless_functions_per_deployment`). Next.js
+  Route Handlers live in `src/app/api/`; shared API code lives in `src/lib/api/`.
 - **Join URLs with `joinUrl`, never `new URL(path, base)`** — the latter drops
   the base's path segment silently.
 - **Tailwind only.** No MUI, no Emotion, no `sx`. All three are fully removed;

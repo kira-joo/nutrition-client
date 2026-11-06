@@ -1,5 +1,5 @@
 /**
- * Every route this app's `api/*.endpoints.ts` files and Route Handlers
+ * Every route this app's `src/lib/api/*.endpoints.ts` files and Route Handlers
  * point at, in one place — no `url`/`fetch` call site anywhere in the
  * project hardcodes an API path string literal directly; they all read
  * from here instead. Plain string constants, zero dependency on
