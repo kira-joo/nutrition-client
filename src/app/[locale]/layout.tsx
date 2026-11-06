@@ -1,6 +1,5 @@
 import "@/lib/datetime/configure-timezone";
 import { Metadata } from "next";
-import { Cairo } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -16,21 +15,8 @@ import { buildAlternates } from "@/lib/seo/metadata";
 import { buildOrganizationJsonLd, JsonLd } from "@/lib/seo/json-ld";
 
 import { Providers } from "../providers";
+import { cairo } from "../fonts";
 import "../globals.css";
-
-// Single bilingual family for both locales — see docs/design-system.md
-// ("Typography") for why one typeface covers both Arabic and Latin here
-// instead of pairing two separate fonts.
-const cairo = Cairo({
-  subsets: ["arabic", "latin"],
-  // 900 added for the homepage redesign's display moments (hero, section
-  // headings) — the existing family stays the single bilingual typeface
-  // (see docs/design-system.md "Typography" for why this app deliberately
-  // doesn't pair a second display face); this only extends its own range.
-  weight: ["400", "500", "600", "700", "800", "900"],
-  variable: "--font-cairo",
-  display: "swap",
-});
 
 /**
  * Site-wide metadata — title, description, OG/Twitter — is now static,

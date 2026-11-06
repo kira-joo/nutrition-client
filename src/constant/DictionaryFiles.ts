@@ -24,4 +24,6 @@ export enum DictionaryFiles {
   Consultation = "consultation",
   /** Static site-identity metadata (title, description) — `generateMetadata` reads this, not `siteSettings.defaultSeo`. */
   Seo = "seo",
+  /** The standalone `/lectures` surface (registration gate + audio player) — Arabic-only, like Books. */
+  Lectures = "lectures",
 }

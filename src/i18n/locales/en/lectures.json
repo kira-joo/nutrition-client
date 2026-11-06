@@ -1,0 +1,49 @@
+{
+  "eyebrow": "Audio lecture",
+  "metaTitle": "Audio lecture",
+  "gate": {
+    "heading": "Register to listen to the lecture",
+    "body": "Enter your name and phone number once, and the lecture unlocks right away on this device.",
+    "name": "Name",
+    "namePlaceholder": "Your name",
+    "phone": "Phone number",
+    "phonePlaceholder": "01xxxxxxxxx",
+    "submit": "Start listening",
+    "submitting": "Registering...",
+    "privacy": "We only use your details to contact you, and never share them.",
+    "checking": "Loading...",
+    "validation": {
+      "nameRequired": "Please enter your name",
+      "nameMinLength": "Name must be at least 2 characters",
+      "phoneRequired": "Please enter your phone number",
+      "phoneInvalid": "Please enter a valid phone number"
+    },
+    "error": {
+      "heading": "Registration failed",
+      "body": "Something went wrong sending your details. Check your connection and try again.",
+      "fieldInvalid": "Please check this field"
+    }
+  },
+  "player": {
+    "regionLabel": "Lecture player",
+    "play": "Play",
+    "pause": "Pause",
+    "back": "Back 15 seconds",
+    "forward": "Forward 15 seconds",
+    "seek": "Playback position",
+    "position": "{current} of {total}",
+    "elapsed": "Elapsed",
+    "duration": "Total duration",
+    "volume": "Volume",
+    "mute": "Mute",
+    "unmute": "Unmute",
+    "speed": "Playback speed",
+    "loading": "Loading audio...",
+    "error": "The lecture could not be loaded. Check your connection and try again.",
+    "retry": "Try again"
+  },
+  "notFound": {
+    "heading": "Lecture not found",
+    "body": "Please check the link you were sent."
+  }
+}
